@@ -1,0 +1,216 @@
+
+@media only screen and (min-width: 992px)  and (max-width:1199px){
+header#myHeader li.nav-item a.nav-link ,
+header#myHeader li.nav-item.phone_nav a.nav-link
+{
+    font-size: 12px;
+    padding: 9px 4px;
+}	
+header#myHeader .navbar-brand img {
+    height: 22px;
+}
+header .navbar.header_px20 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+}	
+@media only screen and (min-width: 768px)  and (max-width:991px){
+header#myHeader .navbar-brand img {
+    height: 17px;
+}
+header#myHeader li.nav-item a.nav-link ,
+header#myHeader li.nav-item.phone_nav a.nav-link 
+{
+    font-size: 11px;
+    padding: 9px 4px;
+}
+select.selectpicker {
+    font-size: 11px;
+    margin: 0px 5px;
+    padding: 10px 7px;
+}
+header#myHeader li.nav-item .btn {
+    font-size: 11px;
+    padding: 0.45rem 0.5rem;
+}.about-us .about-content h3  , .section-title h3{
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+.section-title p{
+	  font-size: 16px;
+}
+.get-started .section-title h3{
+	font-size:32px;
+}
+span.subheading {
+    font-size: 12px;
+    margin-bottom: 10px;
+}.about-us .about-content h5 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+.content-section .cbox-3 .cbox-3-txt h5 {
+    font-size: 16px;
+}
+.content-section .cbox-3 .cbox-3-txt  p
+{
+	font-size: 14px;
+}.testimonials .testimonials-inner{
+	padding:50px 0px 100px;
+}.pricing-packages .pricing-plan h5 {
+    font-size: 12px;
+}.pricing-packages .pricing-table , .pricing-packages .pricing-table.highlight {
+    padding: 20px;
+}.pricing-packages .pricing-table span.price {
+    font-size: 45px;
+    line-height: 45px;
+}.pricing-packages .pricing-table sup {
+    font-size: 24px;
+}.pricing-packages ul.features li , .footer .footer-links li , .footer .footer-info p{
+    font-size: 14px;
+}
+.mypetition.myaccount #msform .step-wizard .btn {
+    font-size: 10px;
+    padding: 0.5rem 1rem;
+}
+.mypetition.myaccount #progressbar.progessbar2 li {
+    font-size: 13px;
+	    padding: 10px;
+}
+}
+@media only screen and (max-width: 991px) {
+	header .navbar.header_px20 {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.resource-detail .islands_columns
+{
+	columns: 2;
+}
+header#myHeader nav.navbar a.navbar-brand {
+    margin-right: 7px;
+}
+}	
+@media only screen and (max-width: 767px) {
+	.mypetition.myaccount #msform .step-wizard  .btn {
+    font-size: 10px;
+    padding: 0.5rem 1rem;
+	    margin-left: 0!important;
+		margin-bottom: 5px;
+}.mypetition.myaccount #progressbar.progessbar2 li {
+    font-size: 14px;
+	    padding: 10px;
+}.mypetition.myaccount .section-title {
+    margin-bottom: 12px!important;
+}.myaccount .dashboard-nav {
+    margin-bottom: 20px;
+}
+.about-us .about-content h3  , .section-title h3{
+    font-size: 24px;
+    margin-bottom: 15px;
+}.pricing-packages .pricing-table span.price {
+    font-size: 45px;
+    line-height: 45px;
+}.pricing-packages .pricing-table sup {
+    font-size: 24px;
+}.pricing-packages ul.features li , .footer .footer-links li , .footer .footer-info p {
+    font-size: 14px;
+}.pricing-packages .pricing-table , .pricing-packages .pricing-table.highlight {
+    padding: 20px;
+}.about-us .about-img-block {
+    margin-bottom: 50px;
+}.flex-inner .f-image
+{
+	margin-bottom:25px;
+}.how-it-works .flex-inner {
+    margin-bottom: 30px;
+}.content-section .img-block {
+    margin-bottom: 30px;
+}.banner-home h2 {
+    font-size: 2.5rem;
+    line-height: 1.25;
+}select.selectpicker {
+    margin: 0px 6px;
+}
+header#myHeader li.nav-item  .btn{
+	margin-left: 15px;min-width: 117px;    margin-bottom: 10px;
+}header#myHeader ul.navbar-nav {
+    border-top: 1px solid #eee;
+    margin-top: 10px;
+}
+header#myHeader li.nav-item.ms-2{
+	margin:0px!important;
+}
+.section-title p{
+	  font-size: 16px;
+}
+.get-started .section-title h3{
+	font-size:32px;
+}.content-section .cbox-3 .cbox-3-txt  p
+{
+	font-size: 14px;
+}
+.testimonials .testimonials-inner{
+	padding:50px 0px 100px;
+}.pricing-packages .pricing-plan h5 {
+    font-size: 12px;
+}
+span.subheading {
+    font-size: 12px;
+    margin-bottom: 10px;
+}.about-us .about-content h5 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+.content-section .cbox-3 .cbox-3-txt h5 {
+    font-size: 16px;
+}
+.visa-main .visa-inner {
+   margin-bottom:20px;
+}.about-us .about-content.mb-mob-50{
+	margin-bottom:50px;
+}
+.services .service-main .service-block
+{
+	margin-bottom:40px;
+}.services.ptb-60-100 {
+    padding-top: 60px;
+    padding-bottom: 60px;
+}.about-us.ptb-115 {
+    padding-bottom: 80px;
+    padding-top: 80px;
+}.login-form {
+    padding: 20px;
+}.login-form .login-head h2 {
+    font-size: 20px;
+}.login-form .login-head {
+    margin-bottom: 30px;
+}
+header .navbar.header_px20
+{
+	padding-left: 0px;
+	padding-right: 0px;
+}
+.resource-detail .islands_columns
+{
+	columns: 1;
+}
+}
+@media only screen and (min-width:768px)
+{
+	.flex-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin:  0 0 46px;
+}
+.flex-inner .f-image {
+    flex: 0 0 400px;
+}
+.flex-inner .f-text {
+    flex: 1;
+    text-align: left;
+}
+}
