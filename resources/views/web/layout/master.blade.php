@@ -10,6 +10,7 @@
 		<link href="{{ asset('assets/css/responsive.css') }}" rel="stylesheet">
 		<link href="{{ asset('assets/css/owl.carousel.min.css') }}" rel="stylesheet">
 		<link href="{{ asset('assets/css/animation.css') }}" rel="stylesheet">
+		<link href="{{ asset('assets/css/responsive-custom.css') }}" rel="stylesheet">
 		<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 		<link rel="icon" href="{{ asset('assets/img/favicon.png') }}" sizes="16x16" type="image/png">
 		<link href="{{ asset('assets/css/toastr.css') }}" rel="stylesheet" />

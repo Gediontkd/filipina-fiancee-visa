@@ -128,7 +128,7 @@
                     <div class="pricing-plan">
                         <h5 class="primary-color">ADJUSTMENT OF STATUS</h5>
                         <sup>$</sup>
-                        <span class="price">700</span>
+                        <span class="price">800</span>
                         <a href="javascript:void(0)" class="p-md" data-bs-toggle="modal" data-bs-target="#secModal">+ Gov. Fees</a>
                     </div>
                     <ul class="features">
@@ -159,45 +159,44 @@
             </div>
             <div class="modal-body">
                 <div class="cbox-3-txt mb-2">
-                    <h5>Fees for an Adjustment of Status (Green Card)</h5>
-                    <ul>
-                        <li><i class="fas fa-stop-circle"></i> $700 Total Fee to Filipina Fiancée Visa</li>
-                    </ul>
-                </div>
-                <div class="cbox-3-txt mb-2">
-                    <h5>Government Fees:</h5>
-                    <ul>
-                        <li><i class="fas fa-stop-circle"></i>$1,225 Adult Filing Fee (Due at time of filing)</li>
-                        <li><i class="fas fa-stop-circle"></i> $1,925 Total of All Fees</li>
-                    </ul>
-                </div>
-                <div class="cbox-3-txt mb-2">
-                    <h5>Fees for Children Filing with Parent</h5>
-                    <ul>
-                        <li><i class="fas fa-stop-circle"></i> $200 fee to Filipina Fiancée Visa</li>
-                    </ul>
-                </div>
-                <div class="cbox-3-txt mb-2">
-                    <h5>Government Fees:</h5>
-                    <ul>
-                        <li><i class="fas fa-stop-circle"></i>$1,225 Filing fee for Children 14 or over (Due at time of filing)</li>
-                        <li><i class="fas fa-stop-circle"></i>$1,425 Total of All Fees</li>
-                        <li><i class="fas fa-stop-circle"></i>$750 Filing fee for Children under 14 years of age filing with the application of at least one parent</li>
-                    </ul>
-                </div>
-                <div class="cbox-3-txt mb-2">
-                    <h5>Fees for Children NOT Filing with Parent</h5>
-                    <ul>
-                        <li><i class="fas fa-stop-circle"></i>$700 Fee to Filipina Fiancée Visa</li>
-                    </ul>
-                </div>
-                <div class="cbox-3-txt mb-2">
-                    <h5>Government Fees:</h5>
-                    <ul>
-                        <li><i class="fas fa-stop-circle"></i>$1,140 Filing fee for Children under 14 years of age not filing with at least one parent</li>
-                        <li><i class="fas fa-stop-circle"></i>$1,840 Total of All Fees</li>
-                    </ul>
-                </div>
+								<h5>Fees for an Adjustment of Status</h5>
+								<ul><li><i class="fas fa-stop-circle"></i> $800 – Filipina Fiancée Visa Service Fee (Paid upfront)</li></ul>
+							</div>
+							 <div class="cbox-3-txt mb-2">
+								<h5>Government Fees:</h5>
+								<ul><li><i class="fas fa-stop-circle"></i>$1,440 – U.S. Government Filing Fee (Paid at the time of filing)</li>
+								<li><i class="fas fa-stop-circle"></i>  Total Cost: $2,240</li>
+								
+								</ul>
+							</div>
+							<div class="cbox-3-txt mb-2">
+								<h5>Fees for Children Filing with Parent</h5>
+								
+								<ul><li><i class="fas fa-stop-circle"></i> $300 – Filipina Fiancée Visa Service Fee (Paid upfront)</li>
+								<li><i class="fas fa-stop-circle"></i> Government fees vary based on age and circumstances (Paid at the time of filing)</li>
+							
+								</ul>
+							</div>
+							<!-- <div class="cbox-3-txt mb-2">	<h5>Government Fees:</h5>
+								<ul><li><i class="fas fa-stop-circle"></i>$1,225 Filing fee for Children 14 or over (Due at time of filing)</li>
+								<li><i class="fas fa-stop-circle"></i>$1,425 Total of All Fees</li>
+								<li><i class="fas fa-stop-circle"></i>$750 Filing fee for Children under 14 years of age filing with the application of at least one parent</li>
+								
+								</ul>
+							</div> -->
+	                   <!-- <div class="cbox-3-txt mb-2">
+								<h5>Fees for Children NOT Filing with Parent</h5>
+								
+								<ul><li><i class="fas fa-stop-circle"></i>$700 Fee to Filipina Fiancée Visa</li>
+							
+								</ul>
+							</div> -->
+							<!-- <div class="cbox-3-txt mb-2">
+								<h5>Government Fees:</h5>
+								<ul><li><i class="fas fa-stop-circle"></i>$1,140 Filing fee for Children under 14 years of age not filing with at least one parent</li>
+								<li><i class="fas fa-stop-circle"></i>$1,840 Total of All Fees</li>
+								
+								</ul>	</div> -->
             </div>
         </div>
     </div>

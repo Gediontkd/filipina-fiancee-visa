@@ -177,7 +177,7 @@
 						<div class="pricing-plan">
 							<h5 class="primary-color">SPOUSE VISA (CR1)</h5>
 							<sup>$</sup>
-							<span class="price">650</span>
+							<span class="price">800</span>
 								<a href="javascript:void(0)" class="p-md" data-bs-toggle="modal" data-bs-target="#secModal">+ Gov. Fees</a>
 						</div>
 						<ul class="features">
@@ -208,31 +208,31 @@
       <div class="modal-body">
        <div class="cbox-3-txt mb-2">
 								<h5>Fees for a Spouse Visa</h5>
-								<ul><li><i class="fas fa-stop-circle"></i> $650 Total Fee to Filipina Fiancee Visa</li></ul>
+								<ul><li><i class="fas fa-stop-circle"></i> $800 Total Fee to Filipina Fiancée Visa (Paid to get Started)</li></ul>
 							</div>
 							 <div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
-								<ul><li><i class="fas fa-stop-circle"></i> $535 Filing Fee to US Government (Due at Filing)</li>
+								<ul><li><i class="fas fa-stop-circle"></i> $675 Filing Fee to United States Government (Due at Filing) (Can be paid by Credit Card)</li>
 								<li><i class="fas fa-stop-circle"></i> $445 National Visa Center Fees (Due Much Later)</li>
-								<li><i class="fas fa-stop-circle"></i> $330 Adult Medical Exam Fee (Due Much Later)</li>
+								<li><i class="fas fa-stop-circle"></i> $495 Adult Medical Exam Fee (Due Much Later)</li>
 								<li><i class="fas fa-stop-circle"></i> $220 Immigrant Fee to US Government for Green Card (Due After Embassy Interview)</li>
-								<li><i class="fas fa-stop-circle"></i> $1,735 Total Fees</li>
+								<li><i class="fas fa-stop-circle"></i> $2,635 Total All Fees</li>
 								</ul>
 							</div>
 							<div class="cbox-3-txt mb-2">
 								<h5>Fees for Children (Per Child)</h5>
 								
-								<ul><li><i class="fas fa-stop-circle"></i> $250 Fee to Filipina Fiancee Visa (Per Child)</li>
+								<ul><li><i class="fas fa-stop-circle"></i> $300 Fee to Filipina Fiancée Visa (Per Child) (Paid to get Started)</li>
 							
 								</ul>
 							</div>
 							<div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
-								<ul><li><i class="fas fa-stop-circle"></i>$535 Filing Fee to US Government (Due at Filing)</li>
+								<ul><li><i class="fas fa-stop-circle"></i>$675 Filing Fee to United States Government (Due at Filing) (Can be paid by Credit Card)</li>
 								<li><i class="fas fa-stop-circle"></i>$445 National Visa Center Fees (Due Much Later)</li>
-								<li><i class="fas fa-stop-circle"></i>$200 Child Medical Exam fee (Approximately) (Due Much Later)</li>
+								<li><i class="fas fa-stop-circle"></i>$240 Child Medical Exam fee (14 years and younger) (Due Much Later)</li>
 								<li><i class="fas fa-stop-circle"></i> $220 Immigrant Fee to US Government for Green Card (Due After Embassy Interview)</li>
-								<li><i class="fas fa-stop-circle"></i> $1,650 Total Fees</li>
+								<li><i class="fas fa-stop-circle"></i> $1,880 Total All Fees</li>
 								</ul>
 								<p>Children must have been under 18 years of age as of the date you were married to qualify.</p>
 							</div></div>

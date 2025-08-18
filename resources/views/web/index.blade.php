@@ -12,7 +12,7 @@
 						<p data-aos="fade-up">
 							{{ __('message.homeBannerPeragraph') }}
 						</p>
-						<a data-aos="fade-up" href="#" class="btn btn-tra-grey lh-25">
+						<a data-aos="fade-up" href="{{ route('register') }}" class="btn btn-tra-grey lh-25">
 							{{ __('message.createMyAccount') }}
 						</a>
 					</div>
@@ -79,7 +79,7 @@
 					
 					</div>
 				</div>
-				<div class="col-md-6" >
+				<div class="col-md-4" >
 					<div class="about-img-blocks" data-aos="fade-left">
 						<img src="{{ asset('assets/img/waw.jpg') }}" style=" float: right;">
 					</div>
@@ -88,26 +88,35 @@
 			</div>
 				</div>
 	</section>
-	<!--- How It Works Start--->
-	<section class="how-it-works bg-lightgrey ptb-100-50">
-		<div class="container-s">
-			<div class="row">
-				<div class="col-lg-10 offset-lg-1 section-title text-center">
-					<h3  data-aos="fade-up">
-						{{ __('message.howItWorks') }}
-					</h3>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-lg-12">
-				<video preload="yes" controls playsinline autoplay muted loop width="800" height="473" >
-  <source src="/assets/img/ffv.mp4" muted="true" type="video/mp4">
-</video>
-				
-				</div>
-			</div>
-		</div>
-	</section>
+<!-- How It Works Section - MOBILE RESPONSIVE -->
+<section class="how-it-works bg-lightgrey ptb-100-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1 section-title text-center">
+                <h3 data-aos="fade-up">
+                    {{ __('message.howItWorks') }}
+                </h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <!-- Responsive video wrapper -->
+                <div class="video-wrapper" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+                    <video 
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                        preload="yes" 
+                        controls 
+                        playsinline 
+                        autoplay 
+                        muted 
+                        loop>
+                        <source src="/assets/img/ffv.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 	<!--- How It Works End--->
 	<!--- Get Started End--->
 	@if (!Auth::check())
@@ -293,7 +302,7 @@
 						<div class="pricing-plan">
 							<h5 class="primary-color">Fiancee Visa (K1)</h5>
 							<sup>$</sup>
-							<span class="price">600</span>
+							<span class="price">800</span>
 							<!--p class="p-md">+ Gov. Fees</p--><a href="javascript:void(0)" class="p-md" data-bs-toggle="modal" data-bs-target="#exampleModal">+ Gov. Fees</a>
 						</div>
 						<ul class="features">
@@ -312,7 +321,7 @@
 						<div class="pricing-plan">
 							<h5 class="primary-color">Adjustment of Status</h5>
 							<sup>$</sup>
-							<span class="price">700</span>
+							<span class="price">800</span>
 									<a href="javascript:void(0)" class="p-md" data-bs-toggle="modal" data-bs-target="#secModalsec">+ Gov. Fees</a>
 						</div>
 						<ul class="features">
@@ -330,7 +339,7 @@
 						<div class="pricing-plan">
 							<h5 class="primary-color">Spouse Visa (CR1)</h5>
 							<sup>$</sup>
-							<span class="price">650</span>
+							<span class="price">800</span>
 						<a href="javascript:void(0)" class="p-md" data-bs-toggle="modal" data-bs-target="#secModal">+ Gov. Fees</a>
 						</div>
 						<ul class="features">
@@ -357,22 +366,23 @@
       <div class="modal-body">
        <div class="cbox-3-txt mb-2">
 								<h5>Fees for a Fiancee Visa</h5>
-								<ul><li><i class="fas fa-stop-circle"></i> $600 Total Fee to Filipina Fiancée Visa</li></ul>
+								<ul><li><i class="fas fa-stop-circle"></i> $800 Service Fee to Filipina Fiancée Visa (Paid upfront to start your petition)</li></ul>
 							</div>
 							 <div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
-								<ul><li><i class="fas fa-stop-circle"></i> $535 Filing Fee to United States Government (Due when petition is filed)</li>
-								<li><i class="fas fa-stop-circle"></i> $330 Adult Medical Fee to Clinic (Due months from now)</li>
-								<li><i class="fas fa-stop-circle"></i> $265 Embassy Visa Fee (Due months from now)</li>
-								<li><i class="fas fa-stop-circle"></i> $1,730 Total Fees</li>
+								<ul><li><i class="fas fa-stop-circle"></i> $675 USCIS Filing Fee (Paid when petition is filed)</li>
+								<li><i class="fas fa-stop-circle"></i> $495 Medical Examination Fee (Due later in the process)</li>
+								<li><i class="fas fa-stop-circle"></i> $265 U.S. Embassy Visa Fee (Due before the interview)</li>
+								<li><i class="fas fa-stop-circle"></i> $2,235 Total Fees</li>
 								</ul>
 							</div>
 							<div class="cbox-3-txt mb-2">
 								<h5>Extra Fees Per Child to be Included</h5>
 								<h5>Government Fees:</h5>
-								<ul><li><i class="fas fa-stop-circle"></i> $200 Child Medical Fee (Approximately) (Due months from now)</li>
-								<li><i class="fas fa-stop-circle"></i> $265 Embassy Visa Fee (Due months from now)</li>
-								<li><i class="fas fa-stop-circle"></i> $465 Total Fees Per Child</li>
+								<ul><li><i class="fas fa-stop-circle"></i> $200 Service Fee to Filipina Fiancée Visa</li>
+								<li><i class="fas fa-stop-circle"></i> $240 Child Medical Exam</li>
+								<li><i class="fas fa-stop-circle"></i> $265 Embassy Visa Fee</li>
+								<li><i class="fas fa-stop-circle"></i> $705 Total Fees Per Child</li>
 								</ul>
 							</div>
 							
@@ -390,42 +400,44 @@
       </div>
       <div class="modal-body">
        <div class="cbox-3-txt mb-2">
-								<h5>Fees for an Adjustment of Status (Green Card)</h5>
-								<ul><li><i class="fas fa-stop-circle"></i> $700 Total Fee to Filipina Fiancée Visa</li></ul>
+								<h5>Fees for an Adjustment of Status</h5>
+								<ul><li><i class="fas fa-stop-circle"></i> $800 – Filipina Fiancée Visa Service Fee (Paid upfront)</li></ul>
 							</div>
 							 <div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
-								<ul><li><i class="fas fa-stop-circle"></i>$1,225 Adult Filing Fee (Due at time of filing)</li>
-								<li><i class="fas fa-stop-circle"></i> $1,925 Total of All Fees</li>
+								<ul><li><i class="fas fa-stop-circle"></i>$1,440 – U.S. Government Filing Fee (Paid at the time of filing)</li>
+								<li><i class="fas fa-stop-circle"></i>  Total Cost: $2,240</li>
 								
 								</ul>
 							</div>
 							<div class="cbox-3-txt mb-2">
 								<h5>Fees for Children Filing with Parent</h5>
 								
-								<ul><li><i class="fas fa-stop-circle"></i> $200 fee to Filipina Fiancée Visa</li>
+								<ul><li><i class="fas fa-stop-circle"></i> $300 – Filipina Fiancée Visa Service Fee (Paid upfront)</li>
+								<li><i class="fas fa-stop-circle"></i> Government fees vary based on age and circumstances (Paid at the time of filing)</li>
 							
 								</ul>
 							</div>
-							<div class="cbox-3-txt mb-2">	<h5>Government Fees:</h5>
+							<!-- <div class="cbox-3-txt mb-2">	<h5>Government Fees:</h5>
 								<ul><li><i class="fas fa-stop-circle"></i>$1,225 Filing fee for Children 14 or over (Due at time of filing)</li>
 								<li><i class="fas fa-stop-circle"></i>$1,425 Total of All Fees</li>
 								<li><i class="fas fa-stop-circle"></i>$750 Filing fee for Children under 14 years of age filing with the application of at least one parent</li>
 								
-								</ul></div>
-	<div class="cbox-3-txt mb-2">
+								</ul>
+							</div> -->
+	                   <!-- <div class="cbox-3-txt mb-2">
 								<h5>Fees for Children NOT Filing with Parent</h5>
 								
 								<ul><li><i class="fas fa-stop-circle"></i>$700 Fee to Filipina Fiancée Visa</li>
 							
 								</ul>
-							</div>
-							<div class="cbox-3-txt mb-2">
+							</div> -->
+							<!-- <div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
 								<ul><li><i class="fas fa-stop-circle"></i>$1,140 Filing fee for Children under 14 years of age not filing with at least one parent</li>
 								<li><i class="fas fa-stop-circle"></i>$1,840 Total of All Fees</li>
 								
-								</ul>	</div>
+								</ul>	</div> -->
 							</div>
 							
       </div>
@@ -442,31 +454,31 @@
       <div class="modal-body">
        <div class="cbox-3-txt mb-2">
 								<h5>Fees for a Spouse Visa</h5>
-								<ul><li><i class="fas fa-stop-circle"></i> $650 Total Fee to Filipina Fiancee Visa</li></ul>
+								<ul><li><i class="fas fa-stop-circle"></i> $800 Total Fee to Filipina Fiancée Visa (Paid to get Started)</li></ul>
 							</div>
 							 <div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
-								<ul><li><i class="fas fa-stop-circle"></i> $535 Filing Fee to US Government (Due at Filing)</li>
+								<ul><li><i class="fas fa-stop-circle"></i> $675 Filing Fee to United States Government (Due at Filing) (Can be paid by Credit Card)</li>
 								<li><i class="fas fa-stop-circle"></i> $445 National Visa Center Fees (Due Much Later)</li>
-								<li><i class="fas fa-stop-circle"></i> $330 Adult Medical Exam Fee (Due Much Later)</li>
-								<li><i class="fas fa-stop-circle"></i> $220 Immigrant Fee to US Government for Green Card (Due After Embassy Interview)</li>
-								<li><i class="fas fa-stop-circle"></i> $1,735 Total Fees</li>
+								<li><i class="fas fa-stop-circle"></i> $495 Adult Medical Exam Fee (Due Much Later)</li>
+								<li><i class="fas fa-stop-circle"></i> $220 Immigrant Fee to US Immigration Service for Green Card (Due After the Embassy Interview)</li>
+								<li><i class="fas fa-stop-circle"></i> $2,635 Total All Fees</li>
 								</ul>
 							</div>
 							<div class="cbox-3-txt mb-2">
 								<h5>Fees for Children (Per Child)</h5>
 								
-								<ul><li><i class="fas fa-stop-circle"></i> $250 Fee to Filipina Fiancee Visa (Per Child)</li>
+								<ul><li><i class="fas fa-stop-circle"></i> $300 Fee to Filipina Fiancée Visa (Per Child) (Paid to get Started)</li>
 							
 								</ul>
 							</div>
 							<div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
-								<ul><li><i class="fas fa-stop-circle"></i>$535 Filing Fee to US Government (Due at Filing)</li>
+								<ul><li><i class="fas fa-stop-circle"></i>$675 Filing Fee to United States Government (Due at Filing) (Can be paid by Credit Card)</li>
 								<li><i class="fas fa-stop-circle"></i>$445 National Visa Center Fees (Due Much Later)</li>
-								<li><i class="fas fa-stop-circle"></i>$200 Child Medical Exam fee (Approximately) (Due Much Later)</li>
-								<li><i class="fas fa-stop-circle"></i> $220 Immigrant Fee to US Government for Green Card (Due After Embassy Interview)</li>
-								<li><i class="fas fa-stop-circle"></i> $1,650 Total Fees</li>
+								<li><i class="fas fa-stop-circle"></i>$240 Child Medical Exam fee (14 years and younger) (Due Much Later)</li>
+								<li><i class="fas fa-stop-circle"></i>$220 Immigrant Fee to US Immigration Service for Green Card (Due After the Embassy Interview)</li>
+								<li><i class="fas fa-stop-circle"></i> $1,880 Total All Fees</li>
 								</ul>
 								<p>Children must have been under 18 years of age as of the date you were married to qualify.</p>
 							</div></div>

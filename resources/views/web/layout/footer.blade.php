@@ -91,7 +91,7 @@
 		<div class="bottom-footer">
 			<div class="row">
 				<div class="col-md-12">
-					<p class="footer-copyright" >© 2022 
+					<p class="footer-copyright" >© 2025 
 						<span>{{ __('message.filipinaFianceeVisa') }}</span>
 						. {{ __('message.allRightsReserved') }}
 					</p>

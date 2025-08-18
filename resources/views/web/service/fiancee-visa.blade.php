@@ -248,7 +248,7 @@
                         <div class="pricing-plan">
                             <h5 class="primary-color">FIANCEE VISA (K1)</h5>
                             <sup>$</sup>
-                            <span class="price">600</span>
+                            <span class="price">800</span>
                             <a href="javascript:void(0)" class="p-md" data-bs-toggle="modal"
                                 data-bs-target="#exampleModal">+ Gov. Fees</a>
                         </div>
@@ -283,28 +283,27 @@
                     <div class="cbox-3-txt mb-2">
                         <h5>Fees for a Fiancee Visa</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $600 Total Fee to Filipina Fiancée Visa</li>
+                            <li><i class="fas fa-stop-circle"></i> $800 Service Fee to Filipina Fiancée Visa (Paid upfront to start your petition)</li>
                         </ul>
                     </div>
                     <div class="cbox-3-txt mb-2">
                         <h5>Government Fees:</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $535 Filing Fee to United States Government (Due when
-                                petition is filed)</li>
-                            <li><i class="fas fa-stop-circle"></i> $330 Adult Medical Fee to Clinic (Due months from now)
+                            <li><i class="fas fa-stop-circle"></i> $675 USCIS Filing Fee (Paid when petition is filed)</li>
+                            <li><i class="fas fa-stop-circle"></i> $495 Medical Examination Fee (Due later in the process)
                             </li>
-                            <li><i class="fas fa-stop-circle"></i> $265 Embassy Visa Fee (Due months from now)</li>
-                            <li><i class="fas fa-stop-circle"></i> $1,730 Total Fees</li>
+                            <li><i class="fas fa-stop-circle"></i> $265 U.S. Embassy Visa Fee (Due before the interview)</li>
+                            <li><i class="fas fa-stop-circle"></i> $2,235 Total Fees</li>
                         </ul>
                     </div>
                     <div class="cbox-3-txt mb-2">
                         <h5>Extra Fees Per Child to be Included</h5>
                         <h5>Government Fees:</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $200 Child Medical Fee (Approximately) (Due months from
-                                now)</li>
-                            <li><i class="fas fa-stop-circle"></i> $265 Embassy Visa Fee (Due months from now)</li>
-                            <li><i class="fas fa-stop-circle"></i> $465 Total Fees Per Child</li>
+                            <li><i class="fas fa-stop-circle"></i> $200 Service Fee to Filipina Fiancée Visa</li>
+                            <li><i class="fas fa-stop-circle"></i> $240 Child Medical Exam</li>
+                            <li><i class="fas fa-stop-circle"></i> $265 Embassy Visa Fee</li>
+                            <li><i class="fas fa-stop-circle"></i> $705 Total Fees Per Child</li>
                         </ul>
                     </div>
 
