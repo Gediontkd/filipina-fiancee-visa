@@ -11,6 +11,7 @@ return [
     'register' => 'Comienza tu viaje de visa',
     'contactNo' => 'Teléfono: 702-426-4503',
     'workingHour' => 'L-V 9 am-5 pm Hora del Pacífico',
+    'address' => '6955 N. Durango Dr. Suite 1115-318 Las Vegas, NV 89149 USA',
     'applyingFor' => 'Solicitar',
     'fianceeVisa' => 'Visa de prometida',
     'spouseVisa' => 'Visa de cónyuge',
