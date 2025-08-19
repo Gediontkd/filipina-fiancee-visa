@@ -130,7 +130,23 @@ header#myHeader nav.navbar a.navbar-brand {
 }.banner-home h2 {
     font-size: 2.5rem;
     line-height: 1.25;
-}select.selectpicker {
+}.banner-home {
+    position: relative;
+}
+.banner-home .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+}
+.banner-home .container {
+    position: relative;
+    z-index: 2;
+}
+select.selectpicker {
     margin: 0px 6px;
 }
 header#myHeader li.nav-item  .btn{
