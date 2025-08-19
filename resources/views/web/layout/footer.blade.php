@@ -10,6 +10,9 @@
 					<p>
 						{{ __('message.workingHour') }}
 					</p>
+					<p>
+						{{ __('message.address') }}
+					</p>
 					<div class="footer-socials-links mt-20">
 						<ul class="foo-socials text-center clearfix">
 							<li>

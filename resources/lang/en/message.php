@@ -11,6 +11,7 @@ return [
     'register' => 'Begin Your Visa Journey',
     'contactNo' => 'P: 702-426-4503',
     'workingHour' => 'M-F 9am-5pm Pacific Time',
+    'address' => '6955 N. Durango Dr. Suite 1115-318 Las Vegas, NV 89149 USA',
     'applyingFor' => 'Applying For',
     'fianceeVisa' => 'Fiancee Visa',
     'spouseVisa' => 'Spouse Visa',
