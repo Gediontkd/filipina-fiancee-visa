@@ -5,7 +5,7 @@
 			<div class="row">
 				<div id="breadcrumb">
 				<div class="breadcrumb-txt">
-				<h3>uuuuuuuuuuServices</h3>
+				<h3>Services</h3>
 				</div>
 				<div class="row">
 					<div class="col">
