@@ -36,6 +36,44 @@ header#myHeader li.nav-item:last-child a.nav-link {
     padding-right: 0px
 }
 
+/* Zoom in/out animation for register button */
+.btn-tra-primary {
+    animation: pulseZoom 2s ease-in-out infinite;
+    transform-origin: center;
+    display: inline-block;
+}
+
+@keyframes pulseZoom {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.08);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Optional: Pause animation on hover for better UX */
+.btn-tra-primary:hover {
+    animation-play-state: paused;
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+/* Mobile optimization - slightly reduce animation scale */
+@media (max-width: 768px) {
+    @keyframes pulseZoom {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+}
+
 header#myHeader {
     width: 100%;
     background-color: #fff;
@@ -135,6 +173,54 @@ select.selectpicker option {
     color: #fff !important;
     background-color: #0038A9;
     border-color: #0038A9;
+}
+
+/* Zoom animation for Create My Account button */
+.btn-tra-grey {
+    color: #555;
+    background-color: transparent;
+    border-color: #ccc;
+    animation: gentlePulse 2.5s ease-in-out infinite;
+    transform-origin: center;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+@keyframes gentlePulse {
+    0%, 100% {
+        transform: scale(1);
+        border-color: #ccc;
+    }
+    50% {
+        transform: scale(1.06);
+        border-color: #999;
+    }
+}
+
+/* Preserve your hover effect and stop animation on hover */
+.btn-tra-grey:hover {
+    color: #fff !important;
+    background-color: #0038A9;
+    border-color: #0038A9;
+    animation-play-state: paused;
+    transform: scale(1.08);
+}
+
+/* Ensure animation works well with AOS fade-up */
+.btn-tra-grey[data-aos="fade-up"] {
+    animation-delay: 0.5s; /* Start after AOS animation completes */
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+    @keyframes gentlePulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.04);
+        }
+    }
 }
 
 .btn-tra-primary:hover {
