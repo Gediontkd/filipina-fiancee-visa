@@ -1,625 +1,491 @@
 @extends('web.layout.master')
 @section('content')
-<!-- Hero Section with Strong CTA -->
-<section id="banner" class="banner-home-modern">
-    <div class="hero-overlay"></div>
+	<section id="banner" class="banner-home">
+		{{getLanguage()}}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-10 col-lg-10 offset-md-1 offset-lg-1">
+					<div class="banner-txt text-center">
+						<h2 data-aos="fade-up">
+							{{ __('message.homeBannerHeading') }}
+						</h2>
+						<p data-aos="fade-up">
+							{{ __('message.homeBannerPeragraph') }}
+						</p>
+						<a data-aos="fade-up" href="{{ route('register') }}" class="btn btn-tra-grey lh-25">
+							{{ __('message.createMyAccount') }}
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!--- Banner End--->
+	<!--- About Us Start--->
+	<section class="about-us test ptb-115">
+		<div class="container">
+			<div class="row d-flex align-items-center">
+				<div class="col-md-6" >
+					<div class="about-img-block mt-90" data-aos="fade-left">
+						<img src="{{ asset('assets/img/aboutimg1.jpg') }}">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="about-content"  data-aos="fade-right">
+						<div class="section-title">
+							<h4>
+								Start Your New Life Together in the United States! Skip the Stress—Let Us Make the Process Easy for You
+								<!-- <h4>with a Fiancée/Fiancé Visa!</h4> -->
+							</h4>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<div class="row">
+			<div class="col-sm-12  mt-90">
+				<p>Government bureaucracy can surely deny you and your fiancée the happiness you deserve. You
+				must apply for a fiancee visa if you are a citizen of the United States and want to marry your
+				foreign fiancee in the United States. Obtaining a fiancee visa is never easy because there is so
+				much bureaucracy involved.</p>
+				<p>The United States government is very eager to screen all the people seeking admission into the
+				United States. This is for the purpose of weeding out people with ill motives like criminals,
+				terrorists, and the like. However, in the process of weeding out unwanted people, genuine
+				applicants, and couples that are in love and want to marry, often find themselves mired in
+				bureaucratic procedures.</p>	
+			</div>
+			</div>
+		</div>
+	</section>
+	<!--- About Us End--->
+	<section class="about-us test ptb-115">
+		<div class="container">
+			<div class="row d-flex align-items-center">
+			<div class="col-md-6">
+					<div class="about-content"  data-aos="fade-right">
+						<div class="section-title">
+							<h3>
+								Who Are We?
+							</h3>
+						</div>
+						<p>
+							We are <strong>Filipina Fiancée Visa,</strong> and we are
+							located in Las Vegas, Nevada, USA. We are a
+							<strong>Christian company,</strong> and our business is guided
+							by Christian principles. Filipina Fiancee Visa was
+							created with the goal of assisting United States
+							citizens to marry their Filipina sweethearts.
+						</p>
+					
+					</div>
+				</div>
+				<div class="col-md-4" >
+					<div class="about-img-blocks" data-aos="fade-left">
+						<img src="{{ asset('assets/img/waw.jpg') }}" style=" float: right;">
+					</div>
+				</div>
+				
+			</div>
+				</div>
+	</section>
+<!-- How It Works Section - MOBILE RESPONSIVE -->
+<section class="how-it-works bg-lightgrey ptb-100-50">
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 offset-lg-2">
-                <div class="hero-content text-center">
-                    <!-- Trust Badge -->
-                    <div class="trust-badge" data-aos="fade-down">
-                        <img src="{{ asset('assets/img/BBB_A_Rating.png') }}" alt="BBB A+ Rating" height="60">
-                        <span class="badge-text">BBB A+ Rated • 15+ Years Experience</span>
-                    </div>
-                    
-                    <!-- Main Headline -->
-                    <h1 class="hero-title" data-aos="fade-up">
-                        Bring Your Filipina Fiancée to the U.S. 
-                        <span class="highlight">Faster & Easier</span>
-                    </h1>
-                    
-                    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
-                        Expert visa assistance with 99.2% approval rate. 
-                        We handle the paperwork, you focus on your future together.
-                    </p>
-                    
-                    <!-- Quick Service Selection -->
-                    <div class="service-selector" data-aos="fade-up" data-aos-delay="200">
-                        <p class="selector-label">What do you need help with?</p>
-                        <div class="service-buttons">
-                            <a href="{{ route('fiancee.visa') }}" class="service-btn">
-                                <i class="fas fa-heart"></i>
-                                <span>K-1 Fiancé(e) Visa</span>
-                                <small>Not married yet</small>
-                            </a>
-                            <a href="{{ route('spouse.visa') }}" class="service-btn">
-                                <i class="fas fa-ring"></i>
-                                <span>CR-1 Spouse Visa</span>
-                                <small>Already married</small>
-                            </a>
-                            <a href="{{ route('adjustment.visa') }}" class="service-btn">
-                                <i class="fas fa-id-card"></i>
-                                <span>Green Card</span>
-                                <small>Already in US</small>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <!-- Main CTA -->
-                    <div class="hero-cta" data-aos="fade-up" data-aos-delay="300">
-                        <a href="{{ route('register') }}" class="btn btn-primary-gradient btn-lg">
-                            Start Your Application Now
-                            <i class="fas fa-arrow-right ms-2"></i>
-                        </a>
-                        <div class="or-divider">or</div>
-                        <a href="tel:702-426-4503" class="btn btn-call btn-lg">
-                            <i class="fas fa-phone-alt"></i> 
-                            Call 702-426-4503
-                        </a>
-                    </div>
-                    
-                    <!-- Quick Stats -->
-                    <div class="hero-stats" data-aos="fade-up" data-aos-delay="400">
-                        <div class="stat">
-                            <strong>5,000+</strong>
-                            <span>Happy Couples</span>
-                        </div>
-                        <div class="stat">
-                            <strong>99.2%</strong>
-                            <span>Approval Rate</span>
-                        </div>
-                        <div class="stat">
-                            <strong>9-12</strong>
-                            <span>Months Average</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-lg-10 offset-lg-1 section-title text-center">
+                <h3 data-aos="fade-up">
+                    {{ __('message.howItWorks') }}
+                </h3>
             </div>
         </div>
-    </div>
-    
-    <!-- Scroll Indicator -->
-    <div class="scroll-indicator">
-        <i class="fas fa-chevron-down"></i>
-    </div>
-</section>
-
-<!-- Quick Comparison Section -->
-<section class="comparison-section ptb-60">
-    <div class="container">
         <div class="row">
-            <div class="col-lg-10 offset-lg-1">
-                <div class="comparison-card" data-aos="fade-up">
-                    <h2 class="section-title-modern text-center mb-4">
-                        Not Sure Which Visa You Need?
-                    </h2>
-                    
-                    <div class="comparison-grid">
-                        <div class="comparison-item">
-                            <div class="comparison-icon k1">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <h3>K-1 Fiancé(e) Visa</h3>
-                            <ul class="feature-list">
-                                <li><i class="fas fa-check"></i> Fastest option (9-12 months)</li>
-                                <li><i class="fas fa-check"></i> Get married in the US</li>
-                                <li><i class="fas fa-check"></i> 90 days to marry after arrival</li>
-                                <li><i class="fas fa-check"></i> Less documentation required</li>
-                            </ul>
-                            <a href="{{ route('fiancee.visa') }}" class="btn btn-outline-primary">
-                                Learn More <i class="fas fa-arrow-right ms-2"></i>
-                            </a>
-                        </div>
-                        
-                        <div class="vs-divider">
-                            <span>VS</span>
-                        </div>
-                        
-                        <div class="comparison-item">
-                            <div class="comparison-icon cr1">
-                                <i class="fas fa-ring"></i>
-                            </div>
-                            <h3>CR-1 Spouse Visa</h3>
-                            <ul class="feature-list">
-                                <li><i class="fas fa-check"></i> Already married</li>
-                                <li><i class="fas fa-check"></i> Green card on arrival</li>
-                                <li><i class="fas fa-check"></i> Can work immediately</li>
-                                <li><i class="fas fa-check"></i> Takes 12-18 months</li>
-                            </ul>
-                            <a href="{{ route('spouse.visa') }}" class="btn btn-outline-primary">
-                                Learn More <i class="fas fa-arrow-right ms-2"></i>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <div class="text-center mt-4">
-                        <p class="help-text">
-                            Still confused? 
-                            <a href="tel:702-426-4503" class="text-primary fw-bold">
-                                Call us for free consultation
-                            </a>
-                        </p>
-                    </div>
+            <div class="col-12">
+                <!-- Responsive video wrapper -->
+                <div class="video-wrapper" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+                    <video 
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                        preload="yes" 
+                        controls 
+                        playsinline 
+                        autoplay 
+                        muted 
+                        loop>
+                        <source src="/assets/img/ffv.mp4" type="video/mp4">
+                    </video>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
-<!-- Process Overview -->
-<section class="process-overview bg-light ptb-80">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 offset-lg-2 text-center mb-5">
-                <h2 class="section-title-modern" data-aos="fade-up">
-                    Simple 3-Phase Process
-                </h2>
-                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
-                    We guide you through every step, from petition to arrival
-                </p>
-            </div>
-        </div>
-        
-        <div class="row">
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="process-card">
-                    <div class="process-number">1</div>
-                    <div class="process-icon">
-                        <img src="{{ asset('assets/img/icons/icon-1.png') }}" alt="USCIS Phase">
-                    </div>
-                    <h3>USCIS Phase</h3>
-                    <p>We prepare and file your petition with perfect accuracy</p>
-                    <div class="process-timeline">3-6 months</div>
-                </div>
-            </div>
-            
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="process-card">
-                    <div class="process-number">2</div>
-                    <div class="process-icon">
-                        <img src="{{ asset('assets/img/icons/icon-2.png') }}" alt="NVC Phase">
-                    </div>
-                    <h3>NVC Phase</h3>
-                    <p>Document processing and background checks</p>
-                    <div class="process-timeline">2-4 months</div>
-                </div>
-            </div>
-            
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
-                <div class="process-card">
-                    <div class="process-number">3</div>
-                    <div class="process-icon">
-                        <img src="{{ asset('assets/img/icons/icon-3.png') }}" alt="Embassy Phase">
-                    </div>
-                    <h3>Embassy Phase</h3>
-                    <p>Interview preparation and visa issuance</p>
-                    <div class="process-timeline">2-3 months</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="text-center mt-5" data-aos="fade-up" data-aos-delay="500">
-            <a href="{{ route('register') }}" class="btn btn-primary-gradient btn-lg">
-                Start Your Journey Today
-            </a>
-        </div>
+	<!--- How It Works End--->
+	<!--- Get Started End--->
+	@if (!Auth::check())
+		@include('web.component.get-started')
+	@endif	
+	<!--- Get Started End--->
+	<!--- Content Section Start--->
+	<section class="ptb-100-60 content-section">
+		<div class="container">
+			<div class="row d-flex align-items-center">
+				<div class="col-md-6">
+					<div class="img-block"  data-aos="fade-left">
+						<img class="img-fluid" src="{{ asset('assets/img/aboutimg2.png') }}" alt="content-image">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="txt-block pc-30"  data-aos="fade-right">
+						<div class="cbox-3 mb-10">
+							<img class="img-65" src="{{ asset('assets/img/icons/icon-1.png') }}" alt="service-icon" />
+							<div class="cbox-3-txt">
+								<h5>{{ __('message.uscisPhase') }}</h5>
+								<p>{{ __('message.uscisPeragraph') }}</p>
+							</div>
+						</div>
+						<div class="cbox-3 mb-10">
+							<img class="img-65" src="{{ asset('assets/img/icons/icon-2.png') }}" alt="service-icon" />
+							<div class="cbox-3-txt">
+								<h5>{{ __('message.nvcPhase') }}</h5>
+								<p>{{ __('message.nvcPeragraph') }}</p>
+							</div>
+						</div>
+						<div class="cbox-3">
+							<img class="img-65" src="{{ asset('assets/img/icons/icon-3.png') }}" alt="service-icon" />
+							<div class="cbox-3-txt">
+								<h5>{{ __('message.embassyPhase') }}</h5>
+								<p>{{ __('message.embassyPeragraph') }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!--- Content Section End--->
+	<!--- Testimonials Start--->
+	<section class="ptb-50 testimonials test">
+		<div class="testimonials-inner">
+			<div class="container">
+				<div class="row d-flex align-items-center">
+					<div class="col-lg-5">
+						<div class="txt-block pc-30" >
+							<div class="section-title">
+								<span class="subheading primary-color">{{ __('message.testimonials') }}</span>
+								<h3>{{ __('message.clientFeedbackHeading') }}</h3>
+							</div>
+							<a href="{{ route('testimonial') }}" class="btn btn-tra-grey mt-20 lh-25">
+								{{ __('message.clientFeedbackLink') }}
+							</a>
+						</div>
+					</div>
+					<div class="col-lg-7 reviews-grid">
+						<div class="masonry-wrap grid-loaded reviews-3-holder"  data-aos="fade-up">
+							<div class="review-2 mt-40" >
+								<div class="review-txt">
+									<div class="author-data clearfix">
+										<div class="testimonial-avatar">
+											<img src="{{ asset('assets/img/image-1.png') }}">
+										</div>
+										<div class="review-author">
+											<h5>David</h5>
+											<div class="rating">
+												{{-- <i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star-half"></i> --}}
+											</div>
+										</div>
+									</div>
+									<p>I’m so glad I found your service. Filipina Fiancee Visa was extremely helpful, and I am very grateful to you. You made the whole process painless.</p>
+								</div>
+							</div>
+							<div class="review-2 " >
+								<div class="review-txt">
+									<div class="author-data clearfix">
+										<div class="testimonial-avatar">
+											<img src="{{ asset('assets/img/image-2.png') }}">
+										</div>
+										<div class="review-author">
+											<h5>Farah</h5>
+											<div class="rating">
+												{{-- <i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star-half"></i> --}}
+											</div>
+										</div>
+									</div>
+									<p>I received my visa today and I want to thank you for all your help and assistance. I could not have done this without you, and I recommend you to everyone.
+									</p>
+								</div>
+							</div>
+							<div class="review-2 ">
+								<div class="review-txt">
+									<div class="author-data clearfix">
+										<div class="testimonial-avatar">
+											<img src="{{ asset('assets/img/image-3.png') }}">
+										</div>
+										<div class="review-author">
+											<h5>Lovely</h5>
+											<div class="rating">
+												{{-- <i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star-half"></i> --}}
+											</div>
+										</div>
+									</div>
+									<p>You did a great job for assisting us! Your representative was very knowledgeable and took the time to answer all our questions. We received excellent service!
+									</p>
+								</div>
+							</div>
+							<div class="review-2 ">
+								<div class="review-txt">
+									<div class="author-data clearfix">
+										<div class="testimonial-avatar">
+											<img src="{{ asset('assets/img/image-4.png') }}">
+										</div>
+										<div class="review-author">
+											<h5>Lester</h5>
+											<div class="rating">
+												{{-- <i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star"></i>
+												<i class="fas fa-star-half"></i> --}}
+											</div>
+										</div>
+									</div>
+									<p>Thank you so much!!! My fiancee had her interview and was quickly approved because she was very well prepared thanks to you. Any time I had a question, you guys were there with an answer.
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!--- Testimonials End--->
+	<!--- FAQ Start--->
+	<section class="ptb-60-100 contactnow_sec">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-10 offset-lg-1 section-title text-center">
+					<h3>{{ __('message.freeConsultation') }}</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-12">
+					<img class="contactnow_img" src="{{ asset('assets/img/contactnow_img.png') }}" alt=""/>
+					<div class="contactnow_no text-center">
+						<h5><a href="tel:702-426-4503">702-426-4503</a></h5>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!--- FAQ End--->
+	<!--- Pricing Start--->
+	<section class="ptb-100-60 pricing-packages" >
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-10 offset-lg-1 section-title text-center">
+					<h3>{{ __('message.ourPackages') }}</h3>
+				</div>
+			</div>
+			<div class="row d-flex align-items-center">
+				<div class="col-md-4">
+					<div class="pricing-table" >
+						<div class="pricing-plan">
+							<h5 class="primary-color">Fiancee Visa (K1)</h5>
+							<sup>$</sup>
+							<span class="price">800</span>
+							<!--p class="p-md">+ Gov. Fees</p--><a href="javascript:void(0)" class="p-md" data-bs-toggle="modal" data-bs-target="#exampleModal">+ Gov. Fees</a>
+						</div>
+						<ul class="features">
+							<li><i class="fas fa-stop-circle"></i> Full Support Start To Finish</li>
+							<li><i class="fas fa-stop-circle"></i> Unlimited Phone Support</li>
+							<li><i class="fas fa-stop-circle"></i> Unlimited Email Support</li>
+							<li><i class="fas fa-stop-circle"></i> Prepare All Government Forms</li>
+							<li><i class="fas fa-stop-circle"></i> Online Petition Tracking</li>
+							<li><i class="fas fa-stop-circle"></i> Children Are Free</li>
+						</ul>
+						<a href="{{ route('fiancee.visa') }}" class="btn btn-tra-grey">Learn More</a>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="pricing-table highlight">
+						<div class="pricing-plan">
+							<h5 class="primary-color">Adjustment of Status</h5>
+							<sup>$</sup>
+							<span class="price">800</span>
+									<a href="javascript:void(0)" class="p-md" data-bs-toggle="modal" data-bs-target="#secModalsec">+ Gov. Fees</a>
+						</div>
+						<ul class="features">
+							<li><i class="fas fa-stop-circle"></i> Full Support Start to Finish</li>
+							<li><i class="fas fa-stop-circle"></i> Unlimited Phone Support</li>
+							<li><i class="fas fa-stop-circle"></i> Unlimited Email Support</li>
+							<li><i class="fas fa-stop-circle"></i> Prepare All Government Forms</li>
+							<li><i class="fas fa-stop-circle"></i> Green Card Interview Support</li>
+						</ul>
+						<a href="{{ route('adjustment.visa') }}" class="btn btn-tra-primary">Learn More</a>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="pricing-table">
+						<div class="pricing-plan">
+							<h5 class="primary-color">Spouse Visa (CR1)</h5>
+							<sup>$</sup>
+							<span class="price">800</span>
+						<a href="javascript:void(0)" class="p-md" data-bs-toggle="modal" data-bs-target="#secModal">+ Gov. Fees</a>
+						</div>
+						<ul class="features">
+							<li><i class="fas fa-stop-circle"></i> Full Support Start to Finish</li>
+							<li><i class="fas fa-stop-circle"></i> Unlimited Phone Support</li>
+							<li><i class="fas fa-stop-circle"></i> Unlimited Email Support</li>
+							<li><i class="fas fa-stop-circle"></i> Prepare All Government Forms</li>
+							<li><i class="fas fa-stop-circle"></i> Online Petition Tracking</li>
+						</ul>
+						<a href="{{ route('spouse.visa') }}" class="btn btn-tra-grey">Learn More</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">FIANCEE VISA (K1)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+       <div class="cbox-3-txt mb-2">
+								<h5>Fees for a Fiancee Visa</h5>
+								<ul><li><i class="fas fa-stop-circle"></i> $800 Service Fee to Filipina Fiancée Visa (Paid upfront to start your petition)</li></ul>
+							</div>
+							 <div class="cbox-3-txt mb-2">
+								<h5>Government Fees:</h5>
+								<ul><li><i class="fas fa-stop-circle"></i> $675 USCIS Filing Fee (Paid when petition is filed)</li>
+								<li><i class="fas fa-stop-circle"></i> $495 Medical Examination Fee (Due later in the process)</li>
+								<li><i class="fas fa-stop-circle"></i> $265 U.S. Embassy Visa Fee (Due before the interview)</li>
+								<li><i class="fas fa-stop-circle"></i> $2,235 Total Fees</li>
+								</ul>
+							</div>
+							<div class="cbox-3-txt mb-2">
+								<h5>Extra Fees Per Child to be Included</h5>
+								<h5>Government Fees:</h5>
+								<ul><li><i class="fas fa-stop-circle"></i> $200 Service Fee to Filipina Fiancée Visa</li>
+								<li><i class="fas fa-stop-circle"></i> $240 Child Medical Exam</li>
+								<li><i class="fas fa-stop-circle"></i> $265 Embassy Visa Fee</li>
+								<li><i class="fas fa-stop-circle"></i> $705 Total Fees Per Child</li>
+								</ul>
+							</div>
+							
+      </div>
+     
     </div>
-</section>
-
-<!-- Video Section -->
-<section class="video-section ptb-60">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-10 offset-lg-1">
-                <div class="video-container" data-aos="zoom-in">
-                    <h2 class="section-title-modern text-center mb-4">
-                        See How We Make It Simple
-                    </h2>
-                    <div class="video-wrapper">
-                        <video 
-                            controls 
-                            playsinline 
-                            poster="{{ asset('assets/img/video-poster.jpg') }}"
-                            preload="metadata">
-                            <source src="/assets/img/ffv.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                        <button class="play-button" aria-label="Play video">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+  </div>
+</div>
+<div class="modal fade" id="secModalsec" tabindex="-1" aria-labelledby="secModalLabelSec" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Adjustment of Status</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+       <div class="cbox-3-txt mb-2">
+								<h5>Fees for an Adjustment of Status</h5>
+								<ul><li><i class="fas fa-stop-circle"></i> $800 – Filipina Fiancée Visa Service Fee (Paid upfront)</li></ul>
+							</div>
+							 <div class="cbox-3-txt mb-2">
+								<h5>Government Fees:</h5>
+								<ul><li><i class="fas fa-stop-circle"></i>$1,440 – U.S. Government Filing Fee (Paid at the time of filing)</li>
+								<li><i class="fas fa-stop-circle"></i>  Total Cost: $2,240</li>
+								
+								</ul>
+							</div>
+							<div class="cbox-3-txt mb-2">
+								<h5>Fees for Children Filing with Parent</h5>
+								
+								<ul><li><i class="fas fa-stop-circle"></i> $300 – Filipina Fiancée Visa Service Fee (Paid upfront)</li>
+								<li><i class="fas fa-stop-circle"></i> Government fees vary based on age and circumstances (Paid at the time of filing)</li>
+							
+								</ul>
+							</div>
+							<!-- <div class="cbox-3-txt mb-2">	<h5>Government Fees:</h5>
+								<ul><li><i class="fas fa-stop-circle"></i>$1,225 Filing fee for Children 14 or over (Due at time of filing)</li>
+								<li><i class="fas fa-stop-circle"></i>$1,425 Total of All Fees</li>
+								<li><i class="fas fa-stop-circle"></i>$750 Filing fee for Children under 14 years of age filing with the application of at least one parent</li>
+								
+								</ul>
+							</div> -->
+	                   <!-- <div class="cbox-3-txt mb-2">
+								<h5>Fees for Children NOT Filing with Parent</h5>
+								
+								<ul><li><i class="fas fa-stop-circle"></i>$700 Fee to Filipina Fiancée Visa</li>
+							
+								</ul>
+							</div> -->
+							<!-- <div class="cbox-3-txt mb-2">
+								<h5>Government Fees:</h5>
+								<ul><li><i class="fas fa-stop-circle"></i>$1,140 Filing fee for Children under 14 years of age not filing with at least one parent</li>
+								<li><i class="fas fa-stop-circle"></i>$1,840 Total of All Fees</li>
+								
+								</ul>	</div> -->
+							</div>
+							
+      </div>
+     
     </div>
-</section>
-
-<!-- Testimonials Section -->
-<section class="testimonials-modern ptb-80 bg-light">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 offset-lg-2 text-center mb-5">
-                <h2 class="section-title-modern" data-aos="fade-up">
-                    5,000+ Happy Couples
-                </h2>
-                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
-                    Real stories from couples we've helped unite
-                </p>
-            </div>
-        </div>
-        
-        <div class="testimonials-carousel" data-aos="fade-up" data-aos-delay="200">
-            <div class="row">
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="testimonial-card">
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "They made the whole process painless. I'm so grateful for their help!"
-                        </p>
-                        <div class="testimonial-author">
-                            <img src="{{ asset('assets/img/image-1.png') }}" alt="David">
-                            <div>
-                                <strong>David</strong>
-                                <span>K-1 Visa Success</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="testimonial-card">
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "I received my visa today! I couldn't have done this without you."
-                        </p>
-                        <div class="testimonial-author">
-                            <img src="{{ asset('assets/img/image-2.png') }}" alt="Farah">
-                            <div>
-                                <strong>Farah</strong>
-                                <span>Now in the USA</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="testimonial-card">
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "Excellent service! Very knowledgeable and answered all our questions."
-                        </p>
-                        <div class="testimonial-author">
-                            <img src="{{ asset('assets/img/image-3.png') }}" alt="Lovely">
-                            <div>
-                                <strong>Lovely</strong>
-                                <span>CR-1 Approved</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="testimonial-card">
-                        <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "My fiancee was approved quickly! You guys were always there to help."
-                        </p>
-                        <div class="testimonial-author">
-                            <img src="{{ asset('assets/img/image-4.png') }}" alt="Lester">
-                            <div>
-                                <strong>Lester</strong>
-                                <span>Happy Client</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="text-center mt-4">
-            <a href="{{ route('testimonial') }}" class="btn btn-outline-primary">
-                Read More Success Stories <i class="fas fa-arrow-right ms-2"></i>
-            </a>
-        </div>
+  </div>
+<div class="modal fade" id="secModal" tabindex="-1" aria-labelledby="secModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Spouse Visa (CR1)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+       <div class="cbox-3-txt mb-2">
+								<h5>Fees for a Spouse Visa</h5>
+								<ul><li><i class="fas fa-stop-circle"></i> $800 Total Fee to Filipina Fiancée Visa (Paid to get Started)</li></ul>
+							</div>
+							 <div class="cbox-3-txt mb-2">
+								<h5>Government Fees:</h5>
+								<ul><li><i class="fas fa-stop-circle"></i> $675 Filing Fee to United States Government (Due at Filing) (Can be paid by Credit Card)</li>
+								<li><i class="fas fa-stop-circle"></i> $445 National Visa Center Fees (Due Much Later)</li>
+								<li><i class="fas fa-stop-circle"></i> $495 Adult Medical Exam Fee (Due Much Later)</li>
+								<li><i class="fas fa-stop-circle"></i> $220 Immigrant Fee to US Immigration Service for Green Card (Due After the Embassy Interview)</li>
+								<li><i class="fas fa-stop-circle"></i> $2,635 Total All Fees</li>
+								</ul>
+							</div>
+							<div class="cbox-3-txt mb-2">
+								<h5>Fees for Children (Per Child)</h5>
+								
+								<ul><li><i class="fas fa-stop-circle"></i> $300 Fee to Filipina Fiancée Visa (Per Child) (Paid to get Started)</li>
+							
+								</ul>
+							</div>
+							<div class="cbox-3-txt mb-2">
+								<h5>Government Fees:</h5>
+								<ul><li><i class="fas fa-stop-circle"></i>$675 Filing Fee to United States Government (Due at Filing) (Can be paid by Credit Card)</li>
+								<li><i class="fas fa-stop-circle"></i>$445 National Visa Center Fees (Due Much Later)</li>
+								<li><i class="fas fa-stop-circle"></i>$240 Child Medical Exam fee (14 years and younger) (Due Much Later)</li>
+								<li><i class="fas fa-stop-circle"></i>$220 Immigrant Fee to US Immigration Service for Green Card (Due After the Embassy Interview)</li>
+								<li><i class="fas fa-stop-circle"></i> $1,880 Total All Fees</li>
+								</ul>
+								<p>Children must have been under 18 years of age as of the date you were married to qualify.</p>
+							</div></div>
+							
+      </div>
+     
     </div>
-</section>
-
-<!-- FAQ Section -->
-<section class="faq-section ptb-60">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 offset-lg-2">
-                <h2 class="section-title-modern text-center mb-5" data-aos="fade-up">
-                    Frequently Asked Questions
-                </h2>
-                
-                <div class="faq-accordion" data-aos="fade-up" data-aos-delay="100">
-                    <div class="accordion" id="faqAccordion">
-                        <div class="accordion-item">
-                            <h3 class="accordion-header" id="faq1">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" 
-                                        data-bs-target="#collapse1" aria-expanded="true">
-                                    How long does the K-1 visa process take?
-                                </button>
-                            </h3>
-                            <div id="collapse1" class="accordion-collapse collapse show" 
-                                 data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    The K-1 visa process typically takes 9-12 months from start to finish. 
-                                    This includes USCIS processing (3-6 months), NVC processing (2-4 months), 
-                                    and embassy interview scheduling (2-3 months).
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="accordion-item">
-                            <h3 class="accordion-header" id="faq2">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                                        data-bs-target="#collapse2" aria-expanded="false">
-                                    What's the difference between K-1 and CR-1 visa?
-                                </button>
-                            </h3>
-                            <div id="collapse2" class="accordion-collapse collapse" 
-                                 data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    K-1 is for engaged couples (marry in US within 90 days), while CR-1 is for 
-                                    already married couples. K-1 is faster but requires adjustment of status after 
-                                    marriage. CR-1 takes longer but arrives with green card.
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="accordion-item">
-                            <h3 class="accordion-header" id="faq3">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                                        data-bs-target="#collapse3" aria-expanded="false">
-                                    What are the income requirements?
-                                </button>
-                            </h3>
-                            <div id="collapse3" class="accordion-collapse collapse" 
-                                 data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    You must meet 125% of the Federal Poverty Guidelines for your household size. 
-                                    For 2024, this is $24,650 for a household of 2. We help you understand and 
-                                    meet these requirements.
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="accordion-item">
-                            <h3 class="accordion-header" id="faq4">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                                        data-bs-target="#collapse4" aria-expanded="false">
-                                    Do you offer a money-back guarantee?
-                                </button>
-                            </h3>
-                            <div id="collapse4" class="accordion-collapse collapse" 
-                                 data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    Yes! If your petition is denied by USCIS, we offer a 100% refund of our 
-                                    service fees. Government fees are non-refundable. Our 99.2% approval rate 
-                                    speaks to our expertise.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-4">
-                    <a href="{{ route('resource') }}#faqs" class="btn btn-outline-primary">
-                        View All FAQs <i class="fas fa-arrow-right ms-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Pricing Section -->
-<section class="pricing-modern ptb-80 bg-light">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 offset-lg-2 text-center mb-5">
-                <h2 class="section-title-modern" data-aos="fade-up">
-                    Transparent, Affordable Pricing
-                </h2>
-                <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
-                    No hidden fees. Payment plans available.
-                </p>
-            </div>
-        </div>
-        
-        <div class="row justify-content-center">
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3>K-1 Fiancé(e) Visa</h3>
-                        <div class="price">
-                            <sup>$</sup>800
-                            <span>/service fee</span>
-                        </div>
-                        <p class="price-note">+ Government fees</p>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Full support start to finish</li>
-                        <li><i class="fas fa-check"></i> Unlimited phone support</li>
-                        <li><i class="fas fa-check"></i> All forms prepared</li>
-                        <li><i class="fas fa-check"></i> Online tracking</li>
-                        <li><i class="fas fa-check"></i> Children included free</li>
-                    </ul>
-                    <a href="{{ route('fiancee.visa') }}" class="btn btn-primary-gradient btn-block">
-                        Get Started
-                    </a>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="pricing-card featured">
-                    <div class="badge-popular">Most Popular</div>
-                    <div class="pricing-header">
-                        <h3>Adjustment of Status</h3>
-                        <div class="price">
-                            <sup>$</sup>800
-                            <span>/service fee</span>
-                        </div>
-                        <p class="price-note">+ Government fees</p>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Green card application</li>
-                        <li><i class="fas fa-check"></i> Work permit included</li>
-                        <li><i class="fas fa-check"></i> Travel document</li>
-                        <li><i class="fas fa-check"></i> Interview preparation</li>
-                        <li><i class="fas fa-check"></i> Social Security assistance</li>
-                    </ul>
-                    <a href="{{ route('adjustment.visa') }}" class="btn btn-primary-gradient btn-block">
-                        Get Started
-                    </a>
-                </div>
-            </div>
-            
-            <div class="col-lg-4 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
-                <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3>CR-1 Spouse Visa</h3>
-                        <div class="price">
-                            <sup>$</sup>800
-                            <span>/service fee</span>
-                        </div>
-                        <p class="price-note">+ Government fees</p>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> For married couples</li>
-                        <li><i class="fas fa-check"></i> Green card on arrival</li>
-                        <li><i class="fas fa-check"></i> All forms prepared</li>
-                        <li><i class="fas fa-check"></i> Document assistance</li>
-                        <li><i class="fas fa-check"></i> Online tracking</li>
-                    </ul>
-                    <a href="{{ route('spouse.visa') }}" class="btn btn-primary-gradient btn-block">
-                        Get Started
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Final CTA Section -->
-<section class="final-cta ptb-80">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 offset-lg-2 text-center">
-                <div class="cta-content" data-aos="zoom-in">
-                    <h2 class="cta-title">
-                        Ready to Start Your Journey?
-                    </h2>
-                    <p class="cta-subtitle">
-                        Join 5,000+ couples who trusted us with their visa process
-                    </p>
-                    
-                    <div class="cta-buttons">
-                        <a href="{{ route('register') }}" class="btn btn-primary-gradient btn-lg">
-                            Start Free Consultation
-                        </a>
-                        <a href="tel:702-426-4503" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-phone-alt"></i> 
-                            702-426-4503
-                        </a>
-                    </div>
-                    
-                    <div class="guarantee-badge mt-4">
-                        <img src="{{ asset('assets/img/guarantee2.png') }}" alt="Money Back Guarantee" height="80">
-                        <p class="guarantee-text">
-                            100% Money-Back Guarantee if denied
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-@endsection
-
-@section('customScript')
-<script>
-// Initialize AOS animations
-AOS.init({
-    duration: 800,
-    once: true,
-    offset: 100
-});
-
-// Video player functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const video = document.querySelector('video');
-    const playButton = document.querySelector('.play-button');
-    
-    if (video && playButton) {
-        playButton.addEventListener('click', function() {
-            if (video.paused) {
-                video.play();
-                playButton.style.display = 'none';
-            }
-        });
-        
-        video.addEventListener('play', function() {
-            playButton.style.display = 'none';
-        });
-        
-        video.addEventListener('pause', function() {
-            playButton.style.display = 'flex';
-        });
-    }
-});
-
-// Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// Scroll indicator animation
-const scrollIndicator = document.querySelector('.scroll-indicator');
-if (scrollIndicator) {
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 100) {
-            scrollIndicator.style.opacity = '0';
-        } else {
-            scrollIndicator.style.opacity = '1';
-        }
-    });
-}
-</script>
+  </div>
+</div>
 @endsection
