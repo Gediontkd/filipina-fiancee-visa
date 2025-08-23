@@ -9,7 +9,7 @@
                         <img src="{{ asset('assets/img/logo-new.jpg') }}" alt="Filipina Fiancee Visa" class="footer-logo mb-3">
                         <p class="footer-desc">
                             Your trusted partner in bringing Filipino couples together in the USA. 
-                            15+ years of experience with 99.2% approval rate.
+                            20+ years of experience with 99.2% approval rate.
                         </p>
                         <div class="footer-contact">
                             <div class="contact-item">
@@ -209,7 +209,6 @@
 
 .footer-logo {
     height: 40px;
-    filter: brightness(0) invert(1);
 }
 
 .footer-desc {

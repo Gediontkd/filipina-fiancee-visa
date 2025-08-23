@@ -178,11 +178,11 @@
 
 <style>
 /* Modern Navigation Styles */
-#myHeader {
+/* #myHeader {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-}
+} */
 
 #myHeader.scrolled {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -206,6 +206,7 @@
     padding: 0.5rem 0;
     min-width: 280px;
     animation: slideDown 0.3s ease;
+    z-index: 1050;
 }
 
 @keyframes slideDown {
@@ -259,7 +260,7 @@
 
 /* Nav Links */
 .navbar-nav .nav-link {
-    color: white !important;
+    color: #333 !important; /* Changed from white to dark */
     font-weight: 500;
     padding: 0.75rem 1rem;
     border-radius: 25px;
@@ -268,16 +269,17 @@
 }
 
 .navbar-nav .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05); /* Changed to dark overlay */
     transform: translateY(-2px);
 }
 
 /* Phone Button Styling */
 .btn-call-desktop {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.05); /* Changed for white header */
     border-radius: 25px;
     padding: 0.5rem 1rem !important;
     margin-right: 1rem;
+    color: #333; /* Add dark text color */
 }
 
 .btn-call-desktop:hover {
@@ -297,8 +299,16 @@
 .btn-outline-light {
     border-radius: 25px;
     padding: 0.5rem 1.25rem;
-    border-width: 2px;
+    border: 2px solid #667eea; /* Changed to purple border */
+    color: #667eea !important; /* Changed to purple text */
     font-weight: 500;
+    background: transparent;
+}
+
+.btn-outline-light:hover {
+    background: #667eea;
+    color: white !important;
+    border-color: #667eea;
 }
 
 .btn-get-started {
@@ -307,6 +317,7 @@
     border-radius: 25px;
     padding: 0.5rem 1.5rem;
     font-weight: 600;
+    color: white !important; /* Ensure white text */
     box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
     transition: all 0.3s ease;
 }
@@ -382,17 +393,5 @@ window.addEventListener('scroll', function() {
     } else {
         header.classList.remove('scrolled');
     }
-});
-
-// Smooth dropdown animations
-document.querySelectorAll('.dropdown').forEach(dropdown => {
-    dropdown.addEventListener('show.bs.dropdown', function () {
-        this.querySelector('.dropdown-menu').style.display = 'block';
-        this.querySelector('.dropdown-menu').classList.add('show');
-    });
-    
-    dropdown.addEventListener('hide.bs.dropdown', function () {
-        this.querySelector('.dropdown-menu').classList.remove('show');
-    });
 });
 </script>

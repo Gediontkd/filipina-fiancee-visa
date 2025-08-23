@@ -32,7 +32,7 @@ return [
     'whyChooseUsPoint1' => 'We are experts with the Philippines',
     'whyChooseUsPoint2' => 'We prepare all the forms…all you do is sign them',
     'whyChooseUsPoint3' => 'We stay with you from beginning to end',
-    'whyChooseUsPoint4' => 'A long history of success: 15+ years',
+    'whyChooseUsPoint4' => 'A long history of success: 20+ years',
     'whyChooseUsPoint5' => 'We have helped thousands of couples',
     'whyChooseUsPoint6' => 'We have a 99.8% Success Rate',
     'whyChooseUsPoint7' => 'Analysis of all your financial information',
