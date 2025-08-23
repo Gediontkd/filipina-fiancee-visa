@@ -10,13 +10,12 @@
                     <!-- Trust Badge -->
                     <div class="trust-badge" data-aos="fade-down">
                         <img src="{{ asset('assets/img/BBB_A_Rating.png') }}" alt="BBB A+ Rating" height="60">
-                        <span class="badge-text">BBB A+ Rated • 15+ Years Experience</span>
+                        <span class="badge-text">BBB A+ Rated • 20+ Years Experience</span>
                     </div>
                     
                     <!-- Main Headline -->
                     <h1 class="hero-title" data-aos="fade-up">
-                        Bring Your Filipina Fiancée to the U.S. 
-                        <span class="highlight">Faster & Easier</span>
+                        Bringing couples together for over 20 years.
                     </h1>
                     
                     <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
@@ -545,14 +544,14 @@
                         <a href="{{ route('register') }}" class="btn btn-primary-gradient btn-lg">
                             Start Free Consultation
                         </a>
-                        <a href="tel:702-426-4503" class="btn btn-outline-light btn-lg">
+                        <a href="tel:702-426-4503" class="btn btn-call btn-lg">
                             <i class="fas fa-phone-alt"></i> 
                             702-426-4503
                         </a>
                     </div>
                     
                     <div class="guarantee-badge mt-4">
-                        <img src="{{ asset('assets/img/guarantee-badge.png') }}" alt="Money Back Guarantee" height="80">
+                        <img src="{{ asset('assets/img/Guarantee.png') }}" alt="Money Back Guarantee" height="80">
                         <p class="guarantee-text">
                             100% Money-Back Guarantee if denied
                         </p>
