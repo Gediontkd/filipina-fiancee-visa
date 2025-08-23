@@ -18,8 +18,7 @@
 							<h3>About Filipina Fiancee Visa</h3>
 						</div>
 						<p>We are Filipina Fiancée Visa, and we are located in Las Vegas, Nevada, USA. We are a Christian company,
-and our business is guided by Christian principles. Filipina Fiancée Visa was started back in 2007 and
-specializes in assisting U.S. Citizens with bringing their Filipina fiancées and spouses to the United States.
+and our business is guided by Christian principles. Filipina Fiancée Visa was started back in 2002 and specializes in assisting U.S. Citizens with bringing their Filipina fiancées and spouses to the United States.
 Filipina Fiancée Visa has helped thousands of couples through their immigration journeys. 
 </p>
 						

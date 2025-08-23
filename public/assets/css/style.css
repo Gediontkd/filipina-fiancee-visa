@@ -80,7 +80,7 @@ header#myHeader.sticky {
 }
 
 .navbar-toggler span.navbar-bar-icon {
-    color: #3a3a3a;
+    color: #3a3a3a; /* Keep it dark for white background */
     font-size: 22px;
 }
 
@@ -3442,8 +3442,9 @@ p.jumbotron strong
 }
 
 .btn-outline-light:hover {
-    background: white;
-    color: var(--primary-color);
+    background: #667eea;
+    color: white !important;
+    border-color: #667eea;
 }
 
 .guarantee-badge {
