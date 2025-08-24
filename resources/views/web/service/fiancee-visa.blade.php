@@ -95,7 +95,7 @@
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p> A long history of success: 15+ years</p>
+                            <p> A long history of success: 20+ years</p>
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
@@ -248,7 +248,7 @@
                         <div class="pricing-plan">
                             <h5 class="primary-color">FIANCEE VISA (K1)</h5>
                             <sup>$</sup>
-                            <span class="price">800</span>
+                            <span class="price">850</span>
                             <a href="javascript:void(0)" class="p-md" data-bs-toggle="modal"
                                 data-bs-target="#exampleModal">+ Gov. Fees</a>
                         </div>
@@ -264,7 +264,7 @@
                         {!! Form::hidden('user_id', Auth::id()) !!}
                         {!! Form::hidden('application_id', 1) !!}
                         {!! Form::hidden('route', 'fianceSponsorApplication') !!}
-                        {!! Form::hidden('price', 600) !!}
+                        {!! Form::hidden('price', 800) !!}
                         {{ Form::submit('Get Started', ['class' => 'btn btn-tra-primary']) }}
                         {{ Form::close() }}
                     </div>
@@ -283,7 +283,7 @@
                     <div class="cbox-3-txt mb-2">
                         <h5>Fees for a Fiancee Visa</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $800 Service Fee to Filipina Fiancée Visa (Paid upfront to start your petition)</li>
+                            <li><i class="fas fa-stop-circle"></i> $850 Service Fee to Filipina Fiancée Visa (Paid upfront to start your petition)</li>
                         </ul>
                     </div>
                     <div class="cbox-3-txt mb-2">
@@ -293,7 +293,7 @@
                             <li><i class="fas fa-stop-circle"></i> $495 Medical Examination Fee (Due later in the process)
                             </li>
                             <li><i class="fas fa-stop-circle"></i> $265 U.S. Embassy Visa Fee (Due before the interview)</li>
-                            <li><i class="fas fa-stop-circle"></i> $2,235 Total Fees</li>
+                            <li><i class="fas fa-stop-circle"></i> $2,285 Total Fees</li>
                         </ul>
                     </div>
                     <div class="cbox-3-txt mb-2">
