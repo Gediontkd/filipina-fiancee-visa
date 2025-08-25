@@ -459,7 +459,7 @@
                     <div class="pricing-header">
                         <h3>K-1 Fiancé(e) Visa</h3>
                         <div class="price">
-                            <sup>$</sup>800
+                            <sup>$</sup>850
                             <span>/service fee</span>
                         </div>
                         <p class="price-note">+ Government fees</p>
@@ -506,7 +506,7 @@
                     <div class="pricing-header">
                         <h3>CR-1 Spouse Visa</h3>
                         <div class="price">
-                            <sup>$</sup>800
+                            <sup>$</sup>750
                             <span>/service fee</span>
                         </div>
                         <p class="price-note">+ Government fees</p>
