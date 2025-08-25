@@ -1,4 +1,4 @@
-<!-- Updated Header with Modern Navigation -->
+<!-- Complete Navigation Header -->
 <div id="loader-wrapper">
     <div id="loader">
         <span class="cssload-loader">
@@ -7,7 +7,7 @@
     </div>
 </div>
 
-<!-- Header Start -->
+<!-- Safe Navigation with Existing Routes Only -->
 <header id="myHeader">
     <nav class="navbar navbar-expand-md navbar-dark py-0 header_px20">
         <div class="container-fluid">
@@ -34,18 +34,19 @@
                         </a>
                     </li>
                     
-                    <!-- Our Services Dropdown -->
+                    <!-- Our Services Dropdown - SAFE ROUTES -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" 
                            data-bs-toggle="dropdown" aria-expanded="false">
                             {{ __('message.ourServices') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="servicesDropdown">
+                            <!-- Existing Routes -->
                             <li>
                                 <a class="dropdown-item" href="{{ route('fiancee.visa') }}">
                                     <i class="fas fa-heart"></i>
                                     <div>
-                                        <strong>Fiancé(e) Visa (K-1)</strong>
+                                        <strong>K-1 Fiancé(e) Visa</strong>
                                         <small>Bring your fiancé(e) to the US</small>
                                     </div>
                                 </a>
@@ -54,7 +55,7 @@
                                 <a class="dropdown-item" href="{{ route('spouse.visa') }}">
                                     <i class="fas fa-ring"></i>
                                     <div>
-                                        <strong>Spouse Visa (CR-1/IR-1)</strong>
+                                        <strong>CR-1/IR-1 Spouse Visa</strong>
                                         <small>For married couples</small>
                                     </div>
                                 </a>
@@ -63,8 +64,46 @@
                                 <a class="dropdown-item" href="{{ route('adjustment.visa') }}">
                                     <i class="fas fa-id-card"></i>
                                     <div>
-                                        <strong>Adjustment of Status</strong>
+                                        <strong>Adjustment of Status (AOS)</strong>
                                         <small>Get your Green Card</small>
+                                    </div>
+                                </a>
+                            </li>
+                            
+                            <!-- Coming Soon Services - using contactUs route -->
+                            <li>
+                                <a class="dropdown-item" href="{{ route('contactUs') }}?service=roc">
+                                    <i class="fas fa-file-contract"></i>
+                                    <div>
+                                        <strong>Removal of Conditions (ROC)</strong>
+                                        <small>Remove conditions from Green Card</small>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('contactUs') }}?service=ir5">
+                                    <i class="fas fa-users"></i>
+                                    <div>
+                                        <strong>IR5 Parent Visa</strong>
+                                        <small>Petition for parents</small>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('contactUs') }}?service=child">
+                                    <i class="fas fa-baby"></i>
+                                    <div>
+                                        <strong>Petition a Child</strong>
+                                        <small>Bring your child to the US</small>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('contactUs') }}?service=naturalization">
+                                    <i class="fas fa-flag-usa"></i>
+                                    <div>
+                                        <strong>Naturalization</strong>
+                                        <small>Become a US citizen</small>
                                     </div>
                                 </a>
                             </li>
@@ -178,17 +217,16 @@
 
 <style>
 /* Modern Navigation Styles */
-/* #myHeader {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+#myHeader {
+    background: #ffffff;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-} */
+}
 
 #myHeader.scrolled {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Logo adjustments */
 .navbar-brand img {
     height: 35px;
     transition: transform 0.3s ease;
@@ -198,7 +236,6 @@
     transform: scale(1.05);
 }
 
-/* Modern Dropdown Styling */
 .dropdown-menu-modern {
     border: none;
     border-radius: 12px;
@@ -258,32 +295,25 @@
     margin-top: 2px;
 }
 
-/* Nav Links */
 .navbar-nav .nav-link {
-    color: #333 !important; /* Changed from white to dark */
+    color: #333 !important;
     font-weight: 500;
     padding: 0.75rem 1rem;
     border-radius: 25px;
     transition: all 0.3s ease;
-    position: relative;
 }
 
 .navbar-nav .nav-link:hover {
-    background: rgba(0, 0, 0, 0.05); /* Changed to dark overlay */
+    background: rgba(0, 0, 0, 0.05);
     transform: translateY(-2px);
 }
 
-/* Phone Button Styling */
 .btn-call-desktop {
-    background: rgba(0, 0, 0, 0.05); /* Changed for white header */
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 25px;
     padding: 0.5rem 1rem !important;
     margin-right: 1rem;
-    color: #333; /* Add dark text color */
-}
-
-.btn-call-desktop:hover {
-    background: rgba(255, 255, 255, 0.3);
+    color: #333;
 }
 
 .btn-call-mobile {
@@ -295,12 +325,11 @@
     margin-right: 10px;
 }
 
-/* Auth Buttons */
 .btn-outline-light {
     border-radius: 25px;
     padding: 0.5rem 1.25rem;
-    border: 2px solid #667eea; /* Changed to purple border */
-    color: #667eea !important; /* Changed to purple text */
+    border: 2px solid #667eea;
+    color: #667eea !important;
     font-weight: 500;
     background: transparent;
 }
@@ -317,7 +346,7 @@
     border-radius: 25px;
     padding: 0.5rem 1.5rem;
     font-weight: 600;
-    color: white !important; /* Ensure white text */
+    color: white !important;
     box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
     transition: all 0.3s ease;
 }
@@ -327,7 +356,6 @@
     box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
 }
 
-/* User Avatar */
 .user-avatar {
     width: 32px;
     height: 32px;
@@ -349,7 +377,6 @@
     padding: 0.3rem 1rem !important;
 }
 
-/* Mobile Responsive */
 @media (max-width: 767px) {
     .dropdown-menu-modern {
         min-width: 100%;
@@ -370,12 +397,10 @@
     }
 }
 
-/* Smooth Scrolling */
 html {
     scroll-behavior: smooth;
 }
 
-/* Accessibility Focus States */
 .nav-link:focus,
 .dropdown-item:focus,
 .btn:focus {
@@ -385,7 +410,6 @@ html {
 </style>
 
 <script>
-// Add scroll effect to header
 window.addEventListener('scroll', function() {
     const header = document.getElementById('myHeader');
     if (window.scrollY > 50) {

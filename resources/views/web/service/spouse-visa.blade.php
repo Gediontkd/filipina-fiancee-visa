@@ -208,7 +208,7 @@
       <div class="modal-body">
        <div class="cbox-3-txt mb-2">
 								<h5>Fees for a Spouse Visa</h5>
-								<ul><li><i class="fas fa-stop-circle"></i> $800 Total Fee to Filipina Fiancée Visa (Paid to get Started)</li></ul>
+								<ul><li><i class="fas fa-stop-circle"></i> $750 Total Fee to Filipina Fiancée Visa (Paid to get Started)</li></ul>
 							</div>
 							 <div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
