@@ -229,6 +229,8 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
+
+
 #myHeader.scrolled {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
@@ -418,7 +420,7 @@
 }
 
 .btn-get-started {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     border-radius: 25px;
     padding: 0.5rem 1.5rem;
