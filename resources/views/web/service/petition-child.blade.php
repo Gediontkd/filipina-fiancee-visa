@@ -1,0 +1,311 @@
+@extends('web.layout.master')
+@section('content')
+    @include('web.component.bread-crumb', [
+        'title' => 'Petition a Child',
+        'previousPageLink' => route('service'),
+        'previousPageTitle' => 'Services',
+    ])
+    
+    <section class="about-us ptb-115">
+        <div class="container">
+            <div class="row d-flex align-items-center">
+                <div class="col-md-6">
+                    <div class="about-img-block aos-init" data-aos="fade-left">
+                        <img src="{{ asset('assets/img/aboutimg5.jpg') }}" alt="Child Petition">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="about-content aos-init" data-aos="fade-right">
+                        <div class="section-title">
+                            <h3>What Is a Child Petition?</h3>
+                        </div>
+                        <p>U.S. citizens and lawful permanent residents can petition for certain children to immigrate to the United States. The process and waiting times depend on your status (citizen vs. permanent resident), the child's age, marital status, and relationship to you.</p>
+                        <p>There are several visa categories for children, including immediate relative categories (no waiting period) for U.S. citizens and preference categories for permanent residents (with waiting periods).</p>
+                        
+                        <h5>Types of Child Petitions</h5>
+                        <p><strong>For U.S. Citizens:</strong></p>
+                        <ul>
+                            <li><strong>IR2:</strong> Unmarried children under 21 (no waiting period)</li>
+                            <li><strong>F1:</strong> Unmarried children over 21 (waiting period applies)</li>
+                            <li><strong>F3:</strong> Married children of any age (waiting period applies)</li>
+                        </ul>
+                        
+                        <p><strong>For Permanent Residents:</strong></p>
+                        <ul>
+                            <li><strong>F2A:</strong> Unmarried children under 21 (shorter waiting period)</li>
+                            <li><strong>F2B:</strong> Unmarried children over 21 (longer waiting period)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-us ptb-115 bg-lightgrey">
+        <div class="container">
+            <div class="row d-flex align-items-center">
+                <div class="col-md-6">
+                    <div class="about-content mb-mob-50 aos-init" data-aos="fade-right">
+                        <div class="section-title">
+                            <h3>Eligibility Requirements</h3>
+                        </div>
+                        
+                        <h5>Who Qualifies as a "Child"?</h5>
+                        <p>Under U.S. immigration law, a "child" must be:</p>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-check"></i></div>
+                            <p>Your biological child, stepchild, or legally adopted child</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-check"></i></div>
+                            <p>Unmarried (for IR2, F2A categories)</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-check"></i></div>
+                            <p>Under 21 years old (for immediate relative categories)</p>
+                        </div>
+                        
+                        <h5>Special Considerations</h5>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-info-circle"></i></div>
+                            <p><strong>Age Protection:</strong> Child Status Protection Act (CSPA) may protect children from "aging out"</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-info-circle"></i></div>
+                            <p><strong>Stepchildren:</strong> Must show parent married child's parent before child's 18th birthday</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-info-circle"></i></div>
+                            <p><strong>Adopted Children:</strong> Must be legally adopted before age 16 (or 18 with sibling)</p>
+                        </div>
+                        
+                        <h5>Financial Requirements</h5>
+                        <p>The petitioner must demonstrate ability to financially support the child at 125% of federal poverty guidelines through Form I-864 Affidavit of Support.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="about-img-block aos-init" data-aos="fade-left">
+                        <img src="{{ asset('assets/img/aboutimg6.jpg') }}" alt="Child Visa Requirements">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {{-- Get Started Section --}}
+    @if (!Auth::check())
+        @include('web.component.get-started')
+    @endif
+
+    <section class="about-us ptb-115">
+        <div class="container">
+            <div class="row d-flex align-items-center">
+                <div class="col-md-6">
+                    <div class="about-img-block aos-init" data-aos="fade-left">
+                        <img src="{{ asset('assets/img/aboutimg1.jpg') }}" alt="Why Choose Us">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="about-content aos-init" data-aos="fade-right">
+                        <div class="section-title">
+                            <h3>Why Choose Us for Child Petitions?</h3>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                            <p>Expert guidance on complex age and relationship requirements</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                            <p>CSPA (Child Status Protection Act) analysis and strategy</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                            <p>Complete Form I-130 preparation and filing</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                            <p>Priority date tracking and case monitoring</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                            <p>Affidavit of Support (I-864) preparation</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                            <p>National Visa Center processing support</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                            <p>Embassy interview preparation</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                            <p>Document collection and evidence preparation</p>
+                        </div>
+                        <div class="box-list">
+                            <div class="box-list-icon">
+                                <i class="fas fa-genderless"></i>
+                            </div>
+                            <p>
+                                <a class="guarantee_btn" href="{{ route('guarantee') }}">Money-back guarantee if denied</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ptb-100 faq bg-lightgrey">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 offset-lg-1 section-title text-center">
+                    <h3>Frequently Asked Questions</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="questions-holder">
+                        <div class="question">
+                            <h5>What is the Child Status Protection Act (CSPA)?</h5>
+                            <p>CSPA helps protect children from "aging out" of eligibility due to processing delays. It allows certain children to subtract processing time from their age for eligibility purposes. The rules are complex and vary by visa category.</p>
+                        </div>
+                        <div class="question">
+                            <h5>How long do child petitions take?</h5>
+                            <p>Processing times vary significantly by category. IR2 (immediate relative) cases have no waiting period beyond processing time (12-18 months). Preference categories (F1, F2A, F2B, F3) have additional waiting periods that can range from 2-20+ years depending on the category and country.</p>
+                        </div>
+                        <div class="question">
+                            <h5>Can I petition for my stepchild?</h5>
+                            <p>Yes, but you must have married the child's parent before the child's 18th birthday. The stepparent-stepchild relationship must have been established while the child was under 18.</p>
+                        </div>
+                        <div class="question">
+                            <h5>What if my child gets married after I file the petition?</h5>
+                            <p>If your child marries after you file but before they immigrate, it may change their eligibility category or make them ineligible, depending on your status and the original category. Each case requires individual analysis.</p>
+                        </div>
+                        <div class="question">
+                            <h5>Can I petition for my adopted child?</h5>
+                            <p>Yes, but the adoption must be completed before the child's 16th birthday (or 18th if adopted with a sibling). You must also meet physical and legal custody requirements for at least 2 years.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12">
+                    <div class="more-questions text-center">
+                        <h5>
+                            Still have a question?
+                            <a href="{{ route('contactUs') }}">
+                                Ask your question here
+                            </a>
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="ptb-100-60 pricing-packages spouse_package_div">
+        <div class="container">
+            <div class="row d-flex align-items-center justify-content-center">
+                <div class="col-md-5 section-title">
+                    <h3>Our Child Petition Package</h3>
+                    <div class="box-list">
+                        <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                        <p>Eligibility assessment and category determination</p>
+                    </div>
+                    <div class="box-list">
+                        <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                        <p>CSPA analysis and age protection strategy</p>
+                    </div>
+                    <div class="box-list">
+                        <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                        <p>Form I-130 preparation and filing</p>
+                    </div>
+                    <div class="box-list">
+                        <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                        <p>Priority date tracking and monitoring</p>
+                    </div>
+                    <div class="box-list">
+                        <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                        <p>Affidavit of Support (I-864) preparation</p>
+                    </div>
+                    <div class="box-list">
+                        <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                        <p>NVC processing and document submission</p>
+                    </div>
+                    <div class="box-list">
+                        <div class="box-list-icon">
+                            <i class="fas fa-genderless"></i>
+                        </div>
+                        <p>
+                            <a class="guarantee_btn" href="{{ route('guarantee') }}">Money-back guarantee if denied</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="pricing-table highlight">
+                        <div class="pricing-plan">
+                            <h5 class="primary-color">CHILD PETITION</h5>
+                            <sup>$</sup>
+                            <span class="price">750</span>
+                            <a href="javascript:void(0)" class="p-md" data-bs-toggle="modal"
+                                data-bs-target="#childModal">+ Gov. Fees</a>
+                        </div>
+                        <ul class="features">
+                            <li><i class="fas fa-stop-circle"></i> Eligibility & Category Analysis</li>
+                            <li><i class="fas fa-stop-circle"></i> CSPA Age Protection Review</li>
+                            <li><i class="fas fa-stop-circle"></i> Form I-130 Preparation</li>
+                            <li><i class="fas fa-stop-circle"></i> Priority Date Monitoring</li>
+                            <li><i class="fas fa-stop-circle"></i> NVC Processing Support</li>
+                            <li><i class="fas fa-stop-circle"></i> Embassy Interview Prep</li>
+                        </ul>
+                        <div class="pricing-actions">
+                            <a href="{{ route('contactUs') }}?service=child" class="btn btn-tra-primary mb-2">Get Started</a>
+                            <a href="{{ route('contactUs') }}?service=child&type=review" class="btn btn-outline-primary">Request a Review</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Child Petition Pricing Modal -->
+    <div class="modal fade" id="childModal" tabindex="-1" aria-labelledby="childModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="childModalLabel">Child Petition Package Pricing</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="cbox-3-txt mb-2">
+                        <h5>Our Service Fee</h5>
+                        <ul>
+                            <li><i class="fas fa-stop-circle"></i> $750 Service Fee to Filipina Fiancée Visa (per child)</li>
+                        </ul>
+                    </div>
+                    <div class="cbox-3-txt mb-2">
+                        <h5>Government Fees:</h5>
+                        <ul>
+                            <li><i class="fas fa-stop-circle"></i> $675 USCIS Filing Fee (Form I-130)</li>
+                            <li><i class="fas fa-stop-circle"></i> $445 National Visa Center Processing Fee*</li>
+                            <li><i class="fas fa-stop-circle"></i> $495 Medical Examination Fee*</li>
+                            <li><i class="fas fa-stop-circle"></i> $220 USCIS Immigrant Fee (after approval)*</li>
+                            <li><i class="fas fa-stop-circle"></i> $2,585 Total Fees (when visa becomes available)</li>
+                        </ul>
+                        <p><small>*These fees are only due when the visa becomes available (immediate relatives) or the priority date becomes current (preference categories).</small></p>
+                    </div>
+                    <div class="cbox-3-txt mb-2">
+                        <h5>Processing Times by Category:</h5>
+                        <ul>
+                            <li><i class="fas fa-clock"></i> <strong>IR2 (USC, under 21):</strong> 12-18 months (no waiting period)</li>
+                            <li><i class="fas fa-clock"></i> <strong>F2A (LPR, under 21):</strong> 2-3 years current wait</li>
+                            <li><i class="fas fa-clock"></i> <strong>F1 (USC, over 21):</strong> 7-8 years current wait</li>
+                            <li><i class="fas fa-clock"></i> <strong>F2B (LPR, over 21):</strong> 8-10 years current wait</li>
+                            <li><i class="fas fa-clock"></i> <strong>F3 (USC, married):</strong> 12-15 years current wait</li>
+                        </ul>
+                        <p><small>Wait times vary by country and change monthly. We provide current updates throughout your case.</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection

@@ -7,24 +7,24 @@
     </div>
 </div>
 
-<!-- Safe Navigation with Existing Routes Only -->
+<!-- Updated Navigation with Two-Column Services Dropdown -->
 <header id="myHeader">
     <nav class="navbar navbar-expand-md navbar-dark py-0 header_px20">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ route('home') }}">
                 <img src="{{ asset('assets/img/logo-new.jpg') }}" alt="Filipina Fiancee Visa Logo" />
             </a>
-            
+           
             <!-- Mobile Click-to-Call Button -->
             <a href="tel:702-426-4503" class="btn btn-call-mobile d-md-none">
                 <i class="fas fa-phone"></i> Call Now
             </a>
-            
+           
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-bar-icon"><i class="fas fa-bars"></i></span>
             </button>
-            
+           
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <!-- Click-to-Call Desktop -->
@@ -33,93 +33,100 @@
                             <i class="fas fa-phone-alt"></i> 702-426-4503
                         </a>
                     </li>
-                    
-                    <!-- Our Services Dropdown - SAFE ROUTES -->
+                   
+                    <!-- Our Services Dropdown - TWO COLUMN LAYOUT -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button" 
+                        <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
                             {{ __('message.ourServices') }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="servicesDropdown">
-                            <!-- Existing Routes -->
-                            <li>
-                                <a class="dropdown-item" href="{{ route('fiancee.visa') }}">
-                                    <i class="fas fa-heart"></i>
-                                    <div>
-                                        <strong>K-1 Fiancé(e) Visa</strong>
-                                        <small>Bring your fiancé(e) to the US</small>
+                        <div class="dropdown-menu dropdown-menu-modern dropdown-menu-two-column" aria-labelledby="servicesDropdown">
+                            <div class="dropdown-grid">
+                                <!-- Left Column - Primary Services -->
+                                <div class="dropdown-column">
+                                    <div class="column-header">
+                                        <h6>Primary Services</h6>
                                     </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('spouse.visa') }}">
-                                    <i class="fas fa-ring"></i>
-                                    <div>
-                                        <strong>CR-1/IR-1 Spouse Visa</strong>
-                                        <small>For married couples</small>
+                                    <a class="dropdown-item" href="{{ route('fiancee.visa') }}">
+                                        <i class="fas fa-heart"></i>
+                                        <div>
+                                            <strong>K-1 Fiancé(e) Visa</strong>
+                                            <small>Bring your fiancé(e) to the US</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('spouse.visa') }}">
+                                        <i class="fas fa-ring"></i>
+                                        <div>
+                                            <strong>CR-1/IR-1 Spouse Visa</strong>
+                                            <small>For married couples</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('adjustment.visa') }}">
+                                        <i class="fas fa-id-card"></i>
+                                        <div>
+                                            <strong>Adjustment of Status</strong>
+                                            <small>Get your Green Card</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('removal.conditions') }}">
+                                        <i class="fas fa-file-contract"></i>
+                                        <div>
+                                            <strong>Removal of Conditions</strong>
+                                            <small>Remove Green Card conditions</small>
+                                        </div>
+                                    </a>
+                                </div>
+                                
+                                <!-- Right Column - Additional Services -->
+                                <div class="dropdown-column">
+                                    <div class="column-header">
+                                        <h6>Additional Services</h6>
                                     </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('adjustment.visa') }}">
-                                    <i class="fas fa-id-card"></i>
-                                    <div>
-                                        <strong>Adjustment of Status (AOS)</strong>
-                                        <small>Get your Green Card</small>
-                                    </div>
-                                </a>
-                            </li>
+                                    <a class="dropdown-item" href="{{ route('ir5.parent.visa') }}">
+                                        <i class="fas fa-users"></i>
+                                        <div>
+                                            <strong>IR5 Parent Visa</strong>
+                                            <small>Petition for parents</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('petition.child') }}">
+                                        <i class="fas fa-baby"></i>
+                                        <div>
+                                            <strong>Petition a Child</strong>
+                                            <small>Bring your child to the US</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('naturalization') }}">
+                                        <i class="fas fa-flag-usa"></i>
+                                        <div>
+                                            <strong>Naturalization</strong>
+                                            <small>Become a US citizen</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('combined.cr1.aos') }}">
+                                        <i class="fas fa-handshake"></i>
+                                        <div>
+                                            <strong>Special Combined</strong>
+                                            <small>"Marry-on-tourist-visa"</small>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
                             
-                            <!-- Coming Soon Services - using contactUs route -->
-                            <li>
-                                <a class="dropdown-item" href="{{ route('contactUs') }}?service=roc">
-                                    <i class="fas fa-file-contract"></i>
-                                    <div>
-                                        <strong>Removal of Conditions (ROC)</strong>
-                                        <small>Remove conditions from Green Card</small>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('contactUs') }}?service=ir5">
-                                    <i class="fas fa-users"></i>
-                                    <div>
-                                        <strong>IR5 Parent Visa</strong>
-                                        <small>Petition for parents</small>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('contactUs') }}?service=child">
-                                    <i class="fas fa-baby"></i>
-                                    <div>
-                                        <strong>Petition a Child</strong>
-                                        <small>Bring your child to the US</small>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('contactUs') }}?service=naturalization">
-                                    <i class="fas fa-flag-usa"></i>
-                                    <div>
-                                        <strong>Naturalization</strong>
-                                        <small>Become a US citizen</small>
-                                    </div>
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('service') }}">
+                            <!-- Full Width Bottom Section -->
+                            <div class="dropdown-footer">
+                                <hr class="dropdown-divider">
+                                <a class="dropdown-item dropdown-item-full" href="{{ route('service') }}">
                                     <i class="fas fa-th-list"></i>
-                                    <strong>View All Services</strong>
+                                    <strong>View All Services & Pricing</strong>
                                 </a>
-                            </li>
-                        </ul>
+                            </div>
+                        </div>
                     </li>
-                    
+                   
                     <!-- Resources Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" 
+                        <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
                             {{ __('message.resource') }}
                         </a>
@@ -146,29 +153,29 @@
                             </li>
                         </ul>
                     </li>
-                    
+                   
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('about-us') }}">
                             {{ __('message.aboutUs') }}
                         </a>
                     </li>
-                    
+                   
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('testimonial') }}">
                             {{ __('message.testimonials') }}
                         </a>
                     </li>
-                    
+                   
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('contactUs') }}">
                             {{ __('message.contactUs') }}
                         </a>
                     </li>
-                    
+                   
                     <!-- Auth Section -->
                     @if (Auth::user())
                         <li class="nav-item dropdown user-dropdown">
-                            <a class="nav-link dropdown-toggle user-menu" href="#" id="userDropdown" 
+                            <a class="nav-link dropdown-toggle user-menu" href="#" id="userDropdown"
                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <div class="user-avatar">
                                     {{ substr(Auth::user()->name, 0, 1) }}
@@ -222,49 +229,110 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
-
 #myHeader.scrolled {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
-
 .navbar-brand img {
     height: 35px;
     transition: transform 0.3s ease;
 }
-
 .navbar-brand:hover img {
     transform: scale(1.05);
 }
 
+/* Enhanced Dropdown Styles */
 .dropdown-menu-modern {
     border: none;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    padding: 0.5rem 0;
-    min-width: 280px;
-    animation: slideDown 0.3s ease;
+    border-radius: 15px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+    padding: 0;
+    animation: slideDownSmooth 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1050;
+    overflow: hidden;
 }
 
-@keyframes slideDown {
+/* Two-Column Services Dropdown */
+.dropdown-menu-two-column {
+    min-width: 580px;
+    max-width: 580px;
+}
+
+.dropdown-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+}
+
+.dropdown-column {
+    padding: 1rem;
+    min-height: 280px;
+}
+
+.dropdown-column:first-child {
+    border-right: 1px solid #e9ecef;
+}
+
+.column-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #667eea;
+}
+
+.column-header h6 {
+    color: #667eea;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.dropdown-footer {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 0.75rem 1rem;
+}
+
+.dropdown-item-full {
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    border-radius: 8px;
+    margin: 0;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.dropdown-item-full:hover {
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.dropdown-item-full i {
+    color: white !important;
+}
+
+/* Smooth Animation */
+@keyframes slideDownSmooth {
     from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(-20px) scale(0.95);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
 .dropdown-item {
-    padding: 0.75rem 1.25rem;
+    padding: 0.75rem;
     display: flex;
     align-items: center;
     gap: 12px;
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    margin: 4px 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 10px;
+    margin: 4px 0;
+    text-decoration: none;
 }
 
 .dropdown-item i {
@@ -272,11 +340,18 @@
     color: #667eea;
     width: 24px;
     text-align: center;
+    transition: all 0.3s ease;
 }
 
 .dropdown-item:hover {
     background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-    transform: translateX(5px);
+    transform: translateX(8px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+.dropdown-item:hover i {
+    color: #667eea;
+    transform: scale(1.1);
 }
 
 .dropdown-item div {
@@ -287,6 +362,7 @@
 .dropdown-item strong {
     color: #333;
     font-size: 0.95rem;
+    font-weight: 600;
 }
 
 .dropdown-item small {
@@ -295,6 +371,7 @@
     margin-top: 2px;
 }
 
+/* Navigation Link Styles */
 .navbar-nav .nav-link {
     color: #333 !important;
     font-weight: 500;
@@ -377,23 +454,55 @@
     padding: 0.3rem 1rem !important;
 }
 
+/* Mobile Responsive */
+@media (max-width: 991px) {
+    .dropdown-menu-two-column {
+        min-width: 100%;
+        max-width: none;
+    }
+    
+    .dropdown-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .dropdown-column:first-child {
+        border-right: none;
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 1rem;
+    }
+    
+    .dropdown-column {
+        min-height: auto;
+        padding: 1rem;
+    }
+}
+
 @media (max-width: 767px) {
     .dropdown-menu-modern {
         min-width: 100%;
         margin-top: 10px;
     }
-    
+   
     .navbar-nav {
         padding: 1rem 0;
     }
-    
+   
     .navbar-nav .nav-item {
         margin: 0.25rem 0;
     }
-    
+   
     .btn-get-started {
         width: 100%;
         margin-top: 1rem;
+    }
+    
+    .dropdown-item {
+        padding: 1rem;
+    }
+    
+    .dropdown-item:hover {
+        transform: none;
     }
 }
 
@@ -417,5 +526,11 @@ window.addEventListener('scroll', function() {
     } else {
         header.classList.remove('scrolled');
     }
+});
+
+// Optional: Add hover effects for desktop only via CSS (no JS interference)
+document.addEventListener('DOMContentLoaded', function() {
+    // Let Bootstrap handle all dropdown functionality
+    // This ensures mobile click-to-open works properly
 });
 </script>

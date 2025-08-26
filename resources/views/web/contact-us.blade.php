@@ -55,9 +55,8 @@
 							</div>
 							<div class="contact-details">
 								<h5>Business Hours</h5>
-								<p>Monday - Friday: 9:00 AM - 5:00 PM PST<br>
-								Saturday: 10:00 AM - 2:00 PM PST<br>
-								Sunday: Closed</p>
+								<p>Mon–Fri: 9:00 AM – 5:00 PM PT<br>
+								Sat–Sun: Closed<br>
 							</div>
 						</div>
 						

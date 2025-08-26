@@ -18,7 +18,7 @@
                             </div>
                             <div class="contact-item">
                                 <i class="fas fa-clock"></i>
-                                <span>Mon-Fri: 8AM-5PM PST</span>
+                                <span>Mon–Fri: 9:00 AM – 5:00 PM PT, Sat–Sun: Closed</span>
                             </div>
                             <div class="contact-item">
                                 <i class="fas fa-map-marker-alt"></i>
