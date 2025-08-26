@@ -439,7 +439,7 @@
     </div>
 </section>
 
-<!-- Pricing Section -->
+<!-- Pricing Section with Working Modals -->
 <section class="pricing-modern ptb-80 bg-light">
     <div class="container">
         <div class="row">
@@ -462,7 +462,7 @@
                             <sup>$</sup>850
                             <span>/service fee</span>
                         </div>
-                        <p class="price-note">+ Government fees</p>
+                        <a href="javascript:void(0)" class="price-note" data-bs-toggle="modal" data-bs-target="#k1Modal">+ Government fees</a>
                     </div>
                     <ul class="pricing-features">
                         <li><i class="fas fa-check"></i> Full support start to finish</li>
@@ -486,7 +486,7 @@
                             <sup>$</sup>800
                             <span>/service fee</span>
                         </div>
-                        <p class="price-note">+ Government fees</p>
+                        <a href="javascript:void(0)" class="price-note" data-bs-toggle="modal" data-bs-target="#aosModal">+ Government fees</a>
                     </div>
                     <ul class="pricing-features">
                         <li><i class="fas fa-check"></i> Green card application</li>
@@ -509,7 +509,7 @@
                             <sup>$</sup>750
                             <span>/service fee</span>
                         </div>
-                        <p class="price-note">+ Government fees</p>
+                        <a href="javascript:void(0)" class="price-note" data-bs-toggle="modal" data-bs-target="#cr1Modal">+ Government fees</a>
                     </div>
                     <ul class="pricing-features">
                         <li><i class="fas fa-check"></i> For married couples</li>
@@ -526,6 +526,235 @@
         </div>
     </div>
 </section>
+
+<!-- Pricing Modals -->
+
+<!-- K-1 Fiancee Visa Modal -->
+<div class="modal fade" id="k1Modal" tabindex="-1" aria-labelledby="k1ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="k1ModalLabel">K-1 Fiancé(e) Visa Pricing</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="cbox-3-txt mb-2">
+                    <h5>Our Service Fee</h5>
+                    <ul>
+                        <li><i class="fas fa-stop-circle"></i> $850 Service Fee to Filipina Fiancée Visa (Paid upfront to start your petition)</li>
+                    </ul>
+                </div>
+                <div class="cbox-3-txt mb-2">
+                    <h5>Government Fees:</h5>
+                    <ul>
+                        <li><i class="fas fa-stop-circle"></i> $675 USCIS Filing Fee (Paid when petition is filed)</li>
+                        <li><i class="fas fa-stop-circle"></i> $495 Medical Examination Fee (Due later in the process)</li>
+                        <li><i class="fas fa-stop-circle"></i> $265 U.S. Embassy Visa Fee (Due before the interview)</li>
+                        <li><i class="fas fa-stop-circle"></i> $2,285 Total All Fees</li>
+                    </ul>
+                </div>
+                <div class="cbox-3-txt mb-2">
+                    <h5>Extra Fees Per Child to be Included</h5>
+                    <ul>
+                        <li><i class="fas fa-stop-circle"></i> $200 Service Fee to Filipina Fiancée Visa (per child)</li>
+                        <li><i class="fas fa-stop-circle"></i> $240 Child Medical Exam</li>
+                        <li><i class="fas fa-stop-circle"></i> $265 Embassy Visa Fee</li>
+                        <li><i class="fas fa-stop-circle"></i> $705 Total Fees Per Child</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Adjustment of Status Modal -->
+<div class="modal fade" id="aosModal" tabindex="-1" aria-labelledby="aosModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="aosModalLabel">Adjustment of Status Pricing</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="cbox-3-txt mb-2">
+                    <h5>Our Service Fee</h5>
+                    <ul>
+                        <li><i class="fas fa-stop-circle"></i> $800 Service Fee to Filipina Fiancée Visa</li>
+                    </ul>
+                </div>
+                <div class="cbox-3-txt mb-2">
+                    <h5>Government Fees:</h5>
+                    <ul>
+                        <li><i class="fas fa-stop-circle"></i> $1,440 I-485 Filing Fee (Adjustment of Status)</li>
+                        <li><i class="fas fa-stop-circle"></i> $410 I-765 Filing Fee (Work Authorization)</li>
+                        <li><i class="fas fa-stop-circle"></i> $630 I-131 Filing Fee (Travel Document)</li>
+                        <li><i class="fas fa-stop-circle"></i> $85 Biometrics Fee</li>
+                        <li><i class="fas fa-stop-circle"></i> $220 USCIS Immigrant Fee (after approval)</li>
+                        <li><i class="fas fa-stop-circle"></i> $3,585 Total All Fees</li>
+                    </ul>
+                </div>
+                <div class="cbox-3-txt mb-2">
+                    <h5>What's Included:</h5>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Form I-485 (Adjustment of Status)</li>
+                        <li><i class="fas fa-check"></i> Form I-765 (Work Authorization)</li>
+                        <li><i class="fas fa-check"></i> Form I-131 (Travel Document)</li>
+                        <li><i class="fas fa-check"></i> Form I-864 (Affidavit of Support)</li>
+                        <li><i class="fas fa-check"></i> Interview preparation</li>
+                        <li><i class="fas fa-check"></i> Document review and organization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CR-1 Spouse Visa Modal -->
+<div class="modal fade" id="cr1Modal" tabindex="-1" aria-labelledby="cr1ModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cr1ModalLabel">CR-1 Spouse Visa Pricing</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="cbox-3-txt mb-2">
+                    <h5>Our Service Fee</h5>
+                    <ul>
+                        <li><i class="fas fa-stop-circle"></i> $750 Service Fee to Filipina Fiancée Visa (Paid to get Started)</li>
+                    </ul>
+                </div>
+                <div class="cbox-3-txt mb-2">
+                    <h5>Government Fees:</h5>
+                    <ul>
+                        <li><i class="fas fa-stop-circle"></i> $675 Filing Fee to United States Government (Due at Filing)</li>
+                        <li><i class="fas fa-stop-circle"></i> $445 National Visa Center Fees (Due Much Later)</li>
+                        <li><i class="fas fa-stop-circle"></i> $495 Adult Medical Exam Fee (Due Much Later)</li>
+                        <li><i class="fas fa-stop-circle"></i> $220 Immigrant Fee to US Government for Green Card (Due After Embassy Interview)</li>
+                        <li><i class="fas fa-stop-circle"></i> $2,585 Total All Fees</li>
+                    </ul>
+                </div>
+                <div class="cbox-3-txt mb-2">
+                    <h5>Fees for Children (Per Child)</h5>
+                    <ul>
+                        <li><i class="fas fa-stop-circle"></i> $300 Service Fee to Filipina Fiancée Visa (Per Child)</li>
+                        <li><i class="fas fa-stop-circle"></i> $675 Filing Fee to United States Government</li>
+                        <li><i class="fas fa-stop-circle"></i> $445 National Visa Center Fees</li>
+                        <li><i class="fas fa-stop-circle"></i> $240 Child Medical Exam fee (14 years and younger)</li>
+                        <li><i class="fas fa-stop-circle"></i> $220 Immigrant Fee to US Government for Green Card</li>
+                        <li><i class="fas fa-stop-circle"></i> $1,880 Total Fees Per Child</li>
+                    </ul>
+                    <p><small>Children must have been under 18 years of age as of the date you were married to qualify.</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Enhanced Pricing Card Styles */
+.price-note {
+    color: #667eea !important;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.price-note:hover {
+    color: #764ba2 !important;
+    text-decoration: underline;
+}
+
+/* Modal Enhancements */
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    border-bottom: none;
+}
+
+.modal-header .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+}
+
+.modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.cbox-3-txt h5 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f1f3f4;
+}
+
+.cbox-3-txt ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
+.cbox-3-txt li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.cbox-3-txt li:last-child {
+    border-bottom: none;
+}
+
+.cbox-3-txt i {
+    color: #667eea;
+    font-size: 0.9rem;
+}
+
+/* Pricing Card Featured Badge */
+.badge-popular {
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.pricing-card.featured {
+    border: 2px solid #667eea;
+    transform: scale(1.05);
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+}
+
+@media (max-width: 767px) {
+    .pricing-card.featured {
+        transform: none;
+    }
+}
+</style>
 
 <!-- Final CTA Section -->
 <section class="final-cta ptb-80">
