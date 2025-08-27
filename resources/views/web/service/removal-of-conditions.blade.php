@@ -19,11 +19,11 @@
                         <div class="section-title">
                             <h3>What Is Removal of Conditions (ROC)?</h3>
                         </div>
-                        <p>If you received your green card based on a marriage that was less than 2 years old at the time you became a permanent resident, you received a conditional green card. To remove the conditions on your residence, you must file Form I-751 within the 90-day period before your conditional green card expires.</p>
+                        <p>If you received your green card based on a marriage that was less than 2 years old at the time you became a permanent resident, you received a conditional green card. To remove the conditions on your residence, you must file Form within the 90-day period before your conditional green card expires.</p>
                         <p>The ROC process is crucial for maintaining your permanent resident status. Failure to file on time can result in the termination of your conditional permanent resident status and removal proceedings.</p>
                         
                         <h5>When Should You File for ROC?</h5>
-                        <p>You must file Form I-751 within the 90-day period immediately before your conditional green card expires. The expiration date is printed on your card. Filing too early or too late can cause complications.</p>
+                        <p>You must file Form within the 90-day period immediately before your conditional green card expires. The expiration date is printed on your card. Filing too early or too late can cause complications.</p>
                         
                         <h5>How Long Does ROC Take?</h5>
                         <p>Currently, ROC processing times range from 12-24 months. During this period, your conditional green card is automatically extended, and you maintain your legal status.</p>
@@ -174,10 +174,10 @@
         <div class="container">
             <div class="row d-flex align-items-center justify-content-center">
                 <div class="col-md-5 section-title">
-                    <h3>Our ROC Package</h3>
+                    <h3>Our ROC Package includes</h3>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Complete Form I-751 preparation</p>
+                        <p>Full preparation and assembly of your ROC petition</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
@@ -213,21 +213,26 @@
                         <div class="pricing-plan">
                             <h5 class="primary-color">ROC PACKAGE</h5>
                             <sup>$</sup>
-                            <span class="price">950</span>
+                            <span class="price">600</span>
                             <a href="javascript:void(0)" class="p-md" data-bs-toggle="modal"
                                 data-bs-target="#rocModal">+ Gov. Fees</a>
                         </div>
                         <ul class="features">
-                            <li><i class="fas fa-stop-circle"></i> Form I-751 Preparation</li>
+                            <li><i class="fas fa-stop-circle"></i> Form Preparation</li>
                             <li><i class="fas fa-stop-circle"></i> Evidence Package Assembly</li>
                             <li><i class="fas fa-stop-circle"></i> Document Review & Analysis</li>
                             <li><i class="fas fa-stop-circle"></i> Filing Strategy Consultation</li>
                             <li><i class="fas fa-stop-circle"></i> Case Monitoring & Updates</li>
                             <li><i class="fas fa-stop-circle"></i> Interview Prep (if needed)</li>
                         </ul>
+                        {{ Form::open(['url' => route('payment'), 'method' => 'GET']) }}
+							{!! Form::hidden('user_id', Auth::id()) !!}
+							{!! Form::hidden('application_id', 3) !!}
+							{!! Form::hidden('route', 'spouseVisaApplication') !!}
+							{!! Form::hidden('price', 650) !!}
+							{{ Form::submit('Get Started', ['class' => 'btn btn-tra-primary']) }}
+					    {{ Form::close() }}
                         <div class="pricing-actions">
-                            <a href="{{ route('contactUs') }}?service=roc" class="btn btn-tra-primary mb-2">Get Started</a>
-                            <a href="{{ route('contactUs') }}?service=roc&type=review" class="btn btn-outline-primary">Request a Review</a>
                         </div>
                     </div>
                 </div>
@@ -247,13 +252,13 @@
                     <div class="cbox-3-txt mb-2">
                         <h5>Our Service Fee</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $950 Service Fee to Filipina Fiancée Visa</li>
+                            <li><i class="fas fa-stop-circle"></i> $600 Service Fee to Filipina Fiancée Visa</li>
                         </ul>
                     </div>
                     <div class="cbox-3-txt mb-2">
                         <h5>Government Fees:</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $760 USCIS Filing Fee for Form I-751</li>
+                            <li><i class="fas fa-stop-circle"></i> $760 USCIS Filing Fee for Form</li>
                             <li><i class="fas fa-stop-circle"></i> $85 Biometrics Fee (if required)</li>
                             <li><i class="fas fa-stop-circle"></i> $1,795 Total Fees (including service)</li>
                         </ul>

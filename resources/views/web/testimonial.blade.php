@@ -20,7 +20,7 @@
 							<span>Happy Couples</span>
 						</div>
 						<div class="stat-badge">
-							<strong>99.2%</strong>
+							<strong>99%</strong>
 							<span>Success Rate</span>
 						</div>
 						<div class="stat-badge">

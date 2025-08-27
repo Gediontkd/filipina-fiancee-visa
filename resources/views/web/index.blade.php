@@ -19,7 +19,7 @@
                     </h1>
                     
                     <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
-                        Expert visa assistance with 99.2% approval rate. 
+                        Expert visa assistance with 99% approval rate. 
                         We handle the paperwork, you focus on your future together.
                     </p>
                     
@@ -65,7 +65,7 @@
                             <span>Happy Couples</span>
                         </div>
                         <div class="stat">
-                            <strong>99.2%</strong>
+                            <strong>99%</strong>
                             <span>Approval Rate</span>
                         </div>
                         <div class="stat">
@@ -85,7 +85,7 @@
 </section>
 
 <!-- Quick Comparison Section -->
-<section class="comparison-section ptb-60">
+<section id="k1-vs-cr1" class="comparison-section ptb-60">
     <div class="container">
         <div class="row">
             <div class="col-lg-10 offset-lg-1">
@@ -421,7 +421,7 @@
                                  data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
                                     Yes! If your petition is denied by USCIS, we offer a 100% refund of our 
-                                    service fees. Government fees are non-refundable. Our 99.2% approval rate 
+                                    service fees. Government fees are non-refundable. Our 99% approval rate 
                                     speaks to our expertise.
                                 </div>
                             </div>

@@ -9,7 +9,7 @@
                         <img src="{{ asset('assets/img/logo-new.jpg') }}" alt="Filipina Fiancee Visa" class="footer-logo mb-3">
                         <p class="footer-desc">
                             Your trusted partner in bringing Filipino couples together in the USA. 
-                            20+ years of experience with 99.2% approval rate.
+                            20+ years of experience with 99% approval rate.
                         </p>
                         <div class="footer-contact">
                             <div class="contact-item">
@@ -178,6 +178,34 @@
         <i class="fas fa-chevron-up"></i>
     </a>
 </footer>
+
+<!-- JSON-LD structured data for search engines -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Filipina Fiancee Visa",
+  "image": "https://yourwebsite.com/assets/img/logo-new.jpg",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Las Vegas, NV 89149",
+    "addressLocality": "Las Vegas",
+    "addressRegion": "NV",
+    "postalCode": "89149",
+    "addressCountry": "US"
+  },
+  "telephone": "+1-702-426-4503",
+  "openingHours": [
+    "Mo-Fr 09:00-17:00",
+    "Sa-Su Closed"
+  ],
+  "url": "https://yourwebsite.com",
+  "sameAs": [
+    "https://www.facebook.com/FilipinaFianceeVisa/"
+  ]
+}
+</script>
+
 
 <style>
 /* Modern Footer Styles */
