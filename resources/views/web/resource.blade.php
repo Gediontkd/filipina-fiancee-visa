@@ -253,7 +253,7 @@
 									<div class="stat-label">Successful Cases</div>
 								</div>
 								<div class="stat-item">
-									<div class="stat-number">99.2%</div>
+									<div class="stat-number">99%</div>
 									<div class="stat-label">Approval Rate</div>
 								</div>
 								<div class="stat-item">

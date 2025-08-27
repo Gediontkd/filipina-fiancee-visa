@@ -250,9 +250,14 @@
                             <li><i class="fas fa-stop-circle"></i> Embassy Interview Prep</li>
                             <li><i class="fas fa-stop-circle"></i> Case Tracking & Updates</li>
                         </ul>
+                        {{ Form::open(['url' => route('payment'), 'method' => 'GET']) }}
+							{!! Form::hidden('user_id', Auth::id()) !!}
+							{!! Form::hidden('application_id', 3) !!}
+							{!! Form::hidden('route', 'spouseVisaApplication') !!}
+							{!! Form::hidden('price', 650) !!}
+							{{ Form::submit('Get Started', ['class' => 'btn btn-tra-primary']) }}
+					    {{ Form::close() }}
                         <div class="pricing-actions">
-                            <a href="{{ route('contactUs') }}?service=ir5" class="btn btn-tra-primary mb-2">Get Started</a>
-                            <a href="{{ route('contactUs') }}?service=ir5&type=review" class="btn btn-outline-primary">Request a Review</a>
                         </div>
                     </div>
                 </div>

@@ -52,23 +52,23 @@
 				<div class="col-lg-4 col-md-6 col-sm-12 service-main">
 					<div class="service-block">
 						<div class="inner-box">
-							<figure class="image-box"><a href="{{ route('adjustment.visa') }}"><img src="{{ asset('assets/img/service2.jpg') }}" alt=""></a></figure>
+							<figure class="image-box"><a href="{{ route('adjustment.visa') }}"><img src="{{ asset('assets/img/service11.jpg') }}" alt=""></a></figure>
 							<div class="lower-content">
 								<div class="box">
 									<div class="icon-box">
-										<img src="{{ asset('assets/img/icons/service-icon-2.png') }}">
+										<img src="{{ asset('assets/img/icons/service-icon-3.png') }}">
 									</div>
 									<h3>
-										<a href="{{ route('adjustment.visa') }}">Special Combined CR1 + AOS Package</a>
+										<a href="{{ route('combined.cr1.aos') }}">Special Combined CR1 + AOS Package</a>
 									</h3>
-									<p>After your fiancée enters the United States, and you get married, you have 90 days to file their Adjustment of Status or their immigration status will change to unlawful.</p>
+									<p>A streamlined option for married couples that combines the CR1 spousal visa with Adjustment of Status, helping your spouse transition smoothly to permanent residency in the United States.</p>
 								</div>
-								<div class="link"><a href="{{ route('adjustment.visa') }}">Read More<i class="fa fa-long-arrow-alt-right ms-2"></i></a></div>
+								<div class="link"><a href="{{ route('combined.cr1.aos') }}">Read More<i class="fa fa-long-arrow-alt-right ms-2"></i></a></div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-4 col-md-6 col-sm-12 service-main">
+				<!-- <div class="col-lg-4 col-md-6 col-sm-12 service-main">
 					<div class="service-block">
 						<div class="inner-box">
 							<figure class="image-box"><a href="{{ route('adjustment.visa') }}"><img src="{{ asset('assets/img/service2.jpg') }}" alt=""></a></figure>
@@ -86,7 +86,7 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> -->
 				<div class="col-lg-4 col-md-6 col-sm-12 service-main">
 					<div class="service-block">
 						<div class="inner-box">

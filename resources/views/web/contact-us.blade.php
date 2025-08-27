@@ -181,7 +181,7 @@
 							<div class="stat-label">Happy Couples</div>
 						</div>
 						<div class="stat-item">
-							<div class="stat-number">99.2%</div>
+							<div class="stat-number">99%</div>
 							<div class="stat-label">Approval Rate</div>
 						</div>
 						<div class="stat-item">

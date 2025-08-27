@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-lg-10 offset-lg-1 section-title text-center">
                     <h3>Our Immigration Services</h3>
-                    <p>Comprehensive immigration solutions with 20+ years of experience and a 99.2% approval rate</p>
+                    <p>Comprehensive immigration solutions with 20+ years of experience and a 99% approval rate</p>
                 </div>
             </div>
             <div class="row">
@@ -108,7 +108,7 @@
                                     <h3>
                                         <a href="{{ route('removal.conditions') }}">REMOVAL OF CONDITIONS (ROC)</a>
                                     </h3>
-                                    <p>Remove the conditions on your permanent resident status obtained through marriage. File Form I-751 within 90 days before your conditional green card expires.</p>
+                                    <p>Remove the conditions on your permanent resident status obtained through marriage. File Form within 90 days before your conditional green card expires.</p>
                                 </div>
                                 <div class="link">
                                     <a href="{{ route('removal.conditions') }}">Learn More<i class="fa fa-long-arrow-alt-right ms-2"></i></a>

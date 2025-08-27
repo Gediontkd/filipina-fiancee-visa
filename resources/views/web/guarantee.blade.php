@@ -40,7 +40,7 @@
 						</p>
 						<div class="confidence-stats">
 							<div class="stat-item">
-								<div class="stat-number">99.2%</div>
+								<div class="stat-number">9.9%</div>
 								<div class="stat-label">Success Rate</div>
 							</div>
 							<div class="stat-item">
