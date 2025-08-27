@@ -177,7 +177,7 @@
 						<div class="pricing-plan">
 							<h5 class="primary-color">SPOUSE VISA (CR1)</h5>
 							<sup>$</sup>
-							<span class="price">800</span>
+							<span class="price">750</span>
 								<a href="javascript:void(0)" class="p-md" data-bs-toggle="modal" data-bs-target="#secModal">+ Gov. Fees</a>
 						</div>
 						<ul class="features">
@@ -212,11 +212,11 @@
 							</div>
 							 <div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
-								<ul><li><i class="fas fa-stop-circle"></i> $675 Filing Fee to United States Government (Due at Filing) (Can be paid by Credit Card)</li>
-								<li><i class="fas fa-stop-circle"></i> $445 National Visa Center Fees (Due Much Later)</li>
-								<li><i class="fas fa-stop-circle"></i> $495 Adult Medical Exam Fee (Due Much Later)</li>
-								<li><i class="fas fa-stop-circle"></i> $220 Immigrant Fee to US Government for Green Card (Due After Embassy Interview)</li>
-								<li><i class="fas fa-stop-circle"></i> $2,635 Total All Fees</li>
+								<ul><li><i class="fas fa-stop-circle"></i> USCIS I-130 (online): $625</li>
+								<li><i class="fas fa-stop-circle"></i> NVC fees (AOS + IV): $445</li>
+								<li><i class="fas fa-stop-circle"></i> USCIS Immigrant Fee: $235</li>
+								<li><i class="fas fa-stop-circle"></i> Medical exam (PH): $500</li>
+								<li><i class="fas fa-stop-circle"></i> Grand Total: $2,555</li>
 								</ul>
 							</div>
 							<div class="cbox-3-txt mb-2">
