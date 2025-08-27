@@ -164,8 +164,11 @@
 							</div>
 							 <div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
-								<ul><li><i class="fas fa-stop-circle"></i>$1,440 – U.S. Government Filing Fee (Paid at the time of filing)</li>
-								<li><i class="fas fa-stop-circle"></i>  Total Cost: $2,240</li>
+								<ul>
+                                 <li><i class="fas fa-stop-circle"></i>USCIS I-485: $1,440</li>
+                                 <li><i class="fas fa-stop-circle"></i>USCIS I-765 (work permit): $260</li>
+                                 <li><i class="fas fa-stop-circle"></i>USCIS I-131 (travel) optional: $630</li>
+								 <li><i class="fas fa-stop-circle"></i> Total Cost: $2,500</li>
 								
 								</ul>
 							</div>
