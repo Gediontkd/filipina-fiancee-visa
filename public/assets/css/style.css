@@ -1,3 +1,4 @@
+public/assets/css/style.css
 @import "https://use.fontawesome.com/releases/v5.7.2/css/all.css";
 @import "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900";
 @import "https://fonts.googleapis.com/css?family=Noto+Sans+TC:300,400,500,700,900";
@@ -32,11 +33,11 @@ h6 {
 }
 
 /**Header Css Start**/
-header#myHeader li.nav-item:last-child a.nav-link {
+/* header#myHeader li.nav-item:last-child a.nav-link {
     padding-right: 0px
-}
+} */
 
-header#myHeader {
+/* header#myHeader {
     width: 100%;
     background-color: #fff;
     transition: all .5s ease-in-out;
@@ -45,7 +46,7 @@ header#myHeader {
     padding: 20px 0;
     box-shadow: 0 2px 3px rgba(96, 96, 96, 0.10);
 
-}
+} */
 
 .container-s {
     max-width: 840px;
@@ -53,11 +54,11 @@ header#myHeader {
     position: relative;
 }
 
-header#myHeader .navbar-brand img {
+/* header#myHeader .navbar-brand img {
     height: 100px;
-}
+} */
 
-header#myHeader li.nav-item a.nav-link {
+/* header#myHeader li.nav-item a.nav-link {
     font-size: .925rem;
     font-family: 'Noto Sans TC', sans-serif;
     font-weight: 500;
@@ -65,24 +66,24 @@ header#myHeader li.nav-item a.nav-link {
     padding: 9px 15px;
     border-radius: 6px;
     color: #3a3a3a;
-}
+} */
 
-header#myHeader li.nav-item a.nav-link:hover,
+/* header#myHeader li.nav-item a.nav-link:hover,
 header#myHeader li.nav-item a.nav-link:focus,
 header#myHeader li.nav-item.active a.nav-link {
     color: #3a3a3a;
     background-color: rgba(190, 190, 190, .15);
-}
+} */
 
-header#myHeader.sticky {
+/* header#myHeader.sticky {
     padding: 12px 0;
     position: fixed;
-}
+} */
 
-.navbar-toggler span.navbar-bar-icon {
-    color: #3a3a3a; /* Keep it dark for white background */
+/* .navbar-toggler span.navbar-bar-icon {
+    color: #3a3a3a;
     font-size: 22px;
-}
+} */
 
 select.selectpicker {
     appearance: none;
@@ -2194,10 +2195,10 @@ footer.footer .bottom-footer .copyright_detail {
     margin: 10px 0px 0px;
 }
 
-header .navbar.header_px20 {
+/* header .navbar.header_px20 {
     padding-left: 20px;
     padding-right: 20px;
-}
+} */
 
 .testimonial_div .testimonial_main {
     display: flex;
@@ -2429,17 +2430,17 @@ div#secModal {
     text-decoration: none;
 }
 
-header#myHeader li.nav-item.phone_nav a {
+/* header#myHeader li.nav-item.phone_nav a {
     color: #0038A9;
     background-color: transparent;
-}
+} */
 
-header#myHeader li.nav-item.phone_nav a:hover,
+/* header#myHeader li.nav-item.phone_nav a:hover,
 header#myHeader li.nav-item.phone_nav a:focus,
 header#myHeader li.nav-item.phone_nav a:active {
     color: #012775;
     background-color: transparent;
-}
+} */
 
 .resource-detail p.font_20 {
     font-size: 20px;
