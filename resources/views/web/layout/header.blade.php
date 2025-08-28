@@ -22,7 +22,7 @@
            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-bar-icon"><i class="fas fa-bars"></i></span>
+                <span class="navbar-toggler-icon"></span>
             </button>
            
             <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -549,6 +549,25 @@ header .navbar.header_px20 {
 .btn-outline-light span {
     position: relative;
     z-index: 1;
+}
+
+/* Fix invisible mobile toggle button */
+.navbar-toggler {
+    border: 1px solid #333 !important;
+    background: rgba(51, 51, 51, 0.1) !important;
+    border-radius: 8px !important;
+    padding: 6px 8px !important;
+}
+
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+    width: 20px !important;
+    height: 20px !important;
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.5) !important;
 }
 
 .btn-outline-light:hover::before {
