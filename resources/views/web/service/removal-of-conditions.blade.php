@@ -11,7 +11,7 @@
             <div class="row d-flex align-items-center">
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/aboutimg2.jpg') }}" alt="ROC Process">
+                        <img src="{{ asset('assets/img/Removal-of-Conditions.jpg') }}" alt="ROC Process">
                     </div>
                 </div>
                 <div class="col-md-6">
