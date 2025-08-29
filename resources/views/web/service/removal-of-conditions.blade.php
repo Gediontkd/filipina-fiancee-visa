@@ -65,7 +65,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/aboutimg7.jpg') }}" alt="ROC Requirements">
+                        <img src="{{ asset('assets/img/Permanet-Resident-Card.jpg') }}" alt="ROC Requirements">
                     </div>
                 </div>
             </div>
