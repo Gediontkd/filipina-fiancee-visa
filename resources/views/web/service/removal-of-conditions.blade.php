@@ -82,7 +82,7 @@
             <div class="row d-flex align-items-center">
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/aboutimg1.jpg') }}" alt="Why Choose Us">
+                        <img src="{{ asset('assets/img/Why_Choose_Us_.jpg') }}" alt="Why Choose Us">
                     </div>
                 </div>
                 <div class="col-md-6">
