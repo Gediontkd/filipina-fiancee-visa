@@ -94,7 +94,7 @@
                     </div>
                     <div class="question">
                         <h5>How long does it take to get an Employment Authorization card?</h5>
-                        <p>5-7 months is the nationwide average.</p>
+                        <p>2-6 months is the average.</p>
                     </div>
                 </div>
             </div>
@@ -102,7 +102,7 @@
                 <div class="questions-holder pc-30">
                     <div class="question">
                         <h5>How long does it take to get an Advance Parole (Travel Permit)?</h5>
-                        <p>5-7 months is the nationwide average.</p>
+                        <p>2-6 months is the average.</p>
                     </div>
                     <div class="question">
                         <h5>How long do you use the Employment Authorization card and Advance Parole (Travel Permit)?</h5>
