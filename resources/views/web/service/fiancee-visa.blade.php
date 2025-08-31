@@ -126,7 +126,7 @@
                                     <i class="fas fa-file-signature"></i>
                                 </div>
                                 <div class="feature-content">
-                                    <h6>Complete Form Preparation</h6>
+                                    <h6>Complete Package preparation</h6>
                                     <p>We prepare all forms - you just sign them</p>
                                 </div>
                             </div>

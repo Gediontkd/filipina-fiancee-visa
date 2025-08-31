@@ -308,7 +308,7 @@
                         <ul>
                             <li><i class="fas fa-check"></i> Initial legal consultation and case analysis</li>
                             <li><i class="fas fa-check"></i> Intent documentation strategy</li>
-                            <li><i class="fas fa-check"></i> All required form preparation and filing</li>
+                            <li><i class="fas fa-check"></i> All required Package preparation and filing</li>
                             <li><i class="fas fa-check"></i> Marriage evidence compilation</li>
                             <li><i class="fas fa-check"></i> Financial support documentation</li>
                             <li><i class="fas fa-check"></i> Interview preparation and support</li>
