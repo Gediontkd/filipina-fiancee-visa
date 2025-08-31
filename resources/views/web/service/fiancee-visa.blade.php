@@ -31,7 +31,7 @@
                             </div>
                             <div class="highlight-content">
                                 <h6>Processing Time</h6>
-                                <p class="mb-0">Currently, it is taking about <strong>9-12 months</strong> to get a fiancee visa from the date of filing.</p>
+                                <p class="mb-0">Currently, it is taking about <strong>8-12 months</strong> to get a fiancee visa from the date of filing.</p>
                             </div>
                         </div>
                     </div>

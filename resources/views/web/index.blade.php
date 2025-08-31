@@ -240,7 +240,7 @@
         <div class="row">
             <div class="col-lg-8 offset-lg-2 text-center mb-5">
                 <h2 class="section-title-modern" data-aos="fade-up">
-                    5,000+ Happy Couples
+                    Thousands <br> of Couples United.
                 </h2>
                 <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
                     Real stories from couples we've helped unite
