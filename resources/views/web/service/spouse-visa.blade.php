@@ -10,7 +10,7 @@
 			<div class="row d-flex align-items-center">
 				<div class="col-md-6">
 					<div class="about-img-block aos-init" data-aos="fade-left">
-						<img src="{{ asset('assets/img/aboutimg6.jpg') }}">
+						<img src="{{ asset('assets/img/Nice_Couple.jpg') }}">
 					</div>
 				</div>
 				<div class="col-md-6">
