@@ -82,7 +82,7 @@
             <div class="row d-flex align-items-center">
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/Why_Choose_Us_.jpg') }}" alt="Why Choose Us">
+                        <img src="{{ asset('assets/img/Why_Choose_Us_02.jpg') }}" alt="Why Choose Us">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -218,7 +218,7 @@
                                 data-bs-target="#rocModal">+ Gov. Fees</a>
                         </div>
                         <ul class="features">
-                            <li><i class="fas fa-stop-circle"></i> Form Preparation</li>
+                            <li><i class="fas fa-stop-circle"></i> Package Preparation</li>
                             <li><i class="fas fa-stop-circle"></i> Evidence Package Assembly</li>
                             <li><i class="fas fa-stop-circle"></i> Document Review & Analysis</li>
                             <li><i class="fas fa-stop-circle"></i> Filing Strategy Consultation</li>
@@ -258,7 +258,7 @@
                     <div class="cbox-3-txt mb-2">
                         <h5>Government Fees:</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $760 USCIS Filing Fee for Form</li>
+                            <li><i class="fas fa-stop-circle"></i> $760 USCIS Filing Fee for Package</li>
                             <li><i class="fas fa-stop-circle"></i> $85 Biometrics Fee (if required)</li>
                             <li><i class="fas fa-stop-circle"></i> $1,795 Total Fees (including service)</li>
                         </ul>
