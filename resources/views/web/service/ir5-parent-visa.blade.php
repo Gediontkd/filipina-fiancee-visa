@@ -11,7 +11,7 @@
             <div class="row d-flex align-items-center">
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/aboutimg3.jpg') }}" alt="IR5 Parent Visa">
+                        <img src="{{ asset('assets/img/Perfect-Parents-Family.jpg') }}" alt="IR5 Parent Visa">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -95,7 +95,7 @@
             <div class="row d-flex align-items-center">
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/aboutimg1.jpg') }}" alt="Why Choose Us">
+                        <img src="{{ asset('assets/img/Why-Choose-Us-ir5.jpg') }}" alt="Why Choose Us">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -109,15 +109,15 @@
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Complete Form I-130 preparation and filing</p>
+                            <p>Expert preparation of your Parent Petition Package</p>
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Affidavit of Support (Form I-864) preparation</p>
+                            <p>Affidavit of Support preparation and guidance</p>
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Document collection and organization guidance</p>
+                            <p>Document review and organization guidance</p>
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
@@ -202,11 +202,11 @@
                     <h3>Our IR5 Parent Visa Package</h3>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Complete Form I-130 preparation and filing</p>
+                        <p>Complete Parent Visa Package Preparation</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Form I-864 Affidavit of Support preparation</p>
+                        <p>Affidavit of Support review and preparation</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
@@ -222,7 +222,7 @@
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Medical examination coordination</p>
+                        <p>Medical examination guidance and support</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon">
@@ -243,9 +243,9 @@
                                 data-bs-target="#ir5Modal">+ Gov. Fees</a>
                         </div>
                         <ul class="features">
-                            <li><i class="fas fa-stop-circle"></i> Form I-130 Preparation & Filing</li>
-                            <li><i class="fas fa-stop-circle"></i> Affidavit of Support (I-864)</li>
-                            <li><i class="fas fa-stop-circle"></i> Document Package Assembly</li>
+                            <li><i class="fas fa-stop-circle"></i> Parent Visa Package Prep</li>
+                            <li><i class="fas fa-stop-circle"></i> Affidavit of Support Prep</li>
+                            <li><i class="fas fa-stop-circle"></i> Document Review and Guidance</li>
                             <li><i class="fas fa-stop-circle"></i> NVC Processing Support</li>
                             <li><i class="fas fa-stop-circle"></i> Embassy Interview Prep</li>
                             <li><i class="fas fa-stop-circle"></i> Case Tracking & Updates</li>
@@ -287,6 +287,7 @@
                             <li><i class="fas fa-stop-circle"></i> $445 National Visa Center Processing Fee</li>
                             <li><i class="fas fa-stop-circle"></i> $495 Medical Examination Fee</li>
                             <li><i class="fas fa-stop-circle"></i> $220 USCIS Immigrant Fee (after approval)</li>
+                            <li><i class="fas fa-stop-circle"></i> Total Government Fees: $1,835 Per Parent</li>
                             <li><i class="fas fa-stop-circle"></i> $2,635 Total Fees Per Parent</li>
                         </ul>
                     </div>
@@ -294,8 +295,8 @@
                         <h5>For Both Parents:</h5>
                         <ul>
                             <li><i class="fas fa-stop-circle"></i> $1,600 Total Service Fee (both parents)</li>
-                            <li><i class="fas fa-stop-circle"></i> $3,470 Total Government Fees (both parents)</li>
-                            <li><i class="fas fa-stop-circle"></i> $5,070 Grand Total for Both Parents</li>
+                            <li><i class="fas fa-stop-circle"></i> $3,670 Total Government Fees (both parents)</li>
+                            <li><i class="fas fa-stop-circle"></i> $5,270 Grand Total for Both Parents</li>
                         </ul>
                     </div>
                     <div class="cbox-3-txt">
