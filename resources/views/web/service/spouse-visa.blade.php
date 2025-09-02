@@ -68,7 +68,7 @@
 	</section>
 	{{-- Get Started Section --}}
 	@if (!Auth::check())
-		@include('web.component.get-started')
+		@include('web.component.cr1-button')
 	@endif
 	<section class="about-us ptb-115">
 		<div class="container">
