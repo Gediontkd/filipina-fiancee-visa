@@ -41,15 +41,15 @@
 				</div>					
 				<div class="col-md-12 mb-3">
 					<h5 class="mb-3">Required Annual Income (For Fiancee Visa)</h5>
-					<p class="lh-175">$18,310, if 2 Persons in Family or Household</p>
-					<p class="lh-175">$23,030, if 3 Persons in Family or Household</p>
-					<p class="lh-175">$27,750, if 4 Persons in Family or Household</p>
-					<p class="lh-175">For each additional person add $4,720</p>
+					<p class="lh-175">$21,150, if 2 Persons in Family or Household</p>
+					<p class="lh-175">$26,650, if 3 Persons in Family or Household</p>
+					<p class="lh-175">$32,150, if 4 Persons in Family or Household</p>
+					<p class="lh-175">For each additional person add $5,500</p>
 					<h5 class="mb-3">Required Annual Income (For Spouse Visa or Green Card)</h5>
-					<p class="lh-175">$22,887, if 2 Persons in Family or Household</p>
-					<p class="lh-175">$28,787, if 3 Persons in Family or Household</p>
-					<p class="lh-175">$34,687, if 4 Persons in Family or Household</p>
-					<p class="lh-175">For each additional person add $5,900</p>
+					<p class="lh-175">$26,437,, if 2 Persons in Family or Household</p>
+					<p class="lh-175">$33,312, if 3 Persons in Family or Household</p>
+					<p class="lh-175">$40,187, if 4 Persons in Family or Household</p>
+					<p class="lh-175">For each additional person add $6,875</p>
 					<p class="lh-175">The Financial eligibility thresholds are lower for active military, and higher for residents of Alaska or  Hawaii.</p>
 				</div>
 				<div class="col-md-12 mb-3">
@@ -70,10 +70,22 @@
 						<h2>Cash Asset Equivalents</h2>
 					</div>
 					<p class="lh-175">$5 in cash assets = $1 annual income</p>
-					<p class="lh-175">For example, a Fiancee Visa sponsor, with NO income, and no dependents (so has a household of 2 persons) would need to have $91,550 in cash assets to quality for a Fiancee Visa.</p>
-					<p class="lh-175">5 x $18,310 = $91,550</p>
-					<p class="lh-175">Alternatively, a combination of income and assets will work. For example, if the sponsor's retirement income is $10,000 per year, then he should have at least $41,550 cash assets to qualify.</p>
-					<p class="lh-175">$18,310 - $10,000 = $8,310 x 5 = $ 41,550 cash assets needed.</p>
+					<p class="lh-175">For example, a Fiancée Visa sponsor, with NO income, and no dependents (so has a household of 2 persons) would need to have $105,750 in cash assets to qualify for a Fiancée Visa.</p>
+					<p class="lh-175">5 × $21,150 = $105,750</p>
+					<p class="lh-175">Alternatively, a combination of income and assets will work. For example, if the sponsor’s retirement income is $10,000 per year, then he should have at least $55,750 in cash assets to qualify.</p>
+					<p class="lh-175">$21,150 − $10,000 = $11,150 × 5 = $55,750 cash assets needed</p>
+					<p class="lh-175">Additional examples (Fiancée Visa – 100% guideline):</p>
+					<p class="lh-175">A 3-person household with no income would need $133,250 in cash assets.</p>
+					<p class="lh-175">5 × $26,650 = $133,250</p>
+					<p class="lh-175">A 4-person household with $20,000 income would need $60,750 in cash assets.</p>
+					<p class="lh-175">($32,150 − $20,000) × 5 = $60,750</p>
+					<p class="lh-175">Additional examples (Spouse Visa / Green Card – 125% guideline):</p>
+					<p class="lh-175">A 2-person household with no income would need $132,185 in cash assets.</p>
+					<p class="lh-175">5 × $26,437 = $132,185</p>
+					<p class="lh-175">A 4-person household with $20,000 income would need $100,935 in cash assets.</p>
+					<p class="lh-175">($40,187 − $20,000) × 5 = $100,935</p>
+
+
 				</div>
 				<div class="col-md-12 mb-3">
 					<div class="heading mb-3">

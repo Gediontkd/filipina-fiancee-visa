@@ -83,7 +83,7 @@
 						<div class="section-title">
 							<h3>How Long does it Take to get a Spouse visa?</h3>
 						</div>
-						<p>The average time is approximately 12-18 months to get a Spouse Visa approved from the date of filing. The U.S. citizen should not arrange to take their spouse back to the United States immediately following the marriage. No travel arrangements should be finalized until a visa has been issued.</p>				
+						<p>The current average time to obtain a Spouse Visa is approximately 18–24 months from the date of filing. In some cases, it may take even longer depending on USCIS backlogs and the U.S. embassy’s workload. The U.S. citizen should not plan to bring their spouse to the United States immediately following the marriage. Travel arrangements should only be made after the visa has been officially approved and issued.</p>				
 					</div>
 				</div>
 			</div>
@@ -181,11 +181,11 @@
 								<a href="javascript:void(0)" class="p-md" data-bs-toggle="modal" data-bs-target="#secModal">+ Gov. Fees</a>
 						</div>
 						<ul class="features">
-							<li><i class="fas fa-stop-circle"></i> Full Support Start to Finish</li>
-							<li><i class="fas fa-stop-circle"></i> Unlimited Phone Support</li>
-							<li><i class="fas fa-stop-circle"></i> Unlimited Email Support</li>
-							<li><i class="fas fa-stop-circle"></i> Prepare All Government Forms</li>
-							<li><i class="fas fa-stop-circle"></i> Online Petition Tracking</li>
+							<li><i class="fas fa-stop-circle"></i> Spouse Visa Package Prep</li>
+							<li><i class="fas fa-stop-circle"></i> Evidence Guidance & Review</li>
+							<li><i class="fas fa-stop-circle"></i> Document Review & Analysis</li>
+							<li><i class="fas fa-stop-circle"></i> NVC Processing Support</li>
+							<li><i class="fas fa-stop-circle"></i> Interview Prep</li>
 						</ul>
 						{{ Form::open(['url' => route('payment'), 'method' => 'GET']) }}
 							{!! Form::hidden('user_id', Auth::id()) !!}
@@ -212,11 +212,13 @@
 							</div>
 							 <div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
-								<ul><li><i class="fas fa-stop-circle"></i> USCIS I-130 (online): $625</li>
+								<ul><li><i class="fas fa-stop-circle"></i> USCIS Filing Fee: $675 (By Mail) / $625 (Online)</li>
 								<li><i class="fas fa-stop-circle"></i> NVC fees (AOS + IV): $445</li>
-								<li><i class="fas fa-stop-circle"></i> USCIS Immigrant Fee: $235</li>
-								<li><i class="fas fa-stop-circle"></i> Medical exam (PH): $500</li>
-								<li><i class="fas fa-stop-circle"></i> Grand Total: $2,555</li>
+								<li><i class="fas fa-stop-circle"></i> USCIS Immigrant Fee: $235 (Due After Visa is Issued)</li>
+								<li><i class="fas fa-stop-circle"></i> Medical exam: $500</li>
+								<li><i class="fas fa-stop-circle"></i> Total Gov Fees: $2,355 (By Mail) / $2,305 (Online)</li>
+								<li><i class="fas fa-stop-circle"></i> Grand Total: $3,105 (By Mail) / $3,055 (Online)</li>
+
 								</ul>
 							</div>
 							<div class="cbox-3-txt mb-2">
@@ -228,11 +230,11 @@
 							</div>
 							<div class="cbox-3-txt mb-2">
 								<h5>Government Fees:</h5>
-								<ul><li><i class="fas fa-stop-circle"></i>$675 Filing Fee to United States Government (Due at Filing) (Can be paid by Credit Card)</li>
-								<li><i class="fas fa-stop-circle"></i>$445 National Visa Center Fees (Due Much Later)</li>
-								<li><i class="fas fa-stop-circle"></i>$240 Child Medical Exam fee (14 years and younger) (Due Much Later)</li>
-								<li><i class="fas fa-stop-circle"></i> $220 Immigrant Fee to US Government for Green Card (Due After Embassy Interview)</li>
-								<li><i class="fas fa-stop-circle"></i> $1,880 Total All Fees</li>
+								<ul><li><i class="fas fa-stop-circle"></i>USCIS Filing Fee: $675 (By Mail) / $625 (Online)</li>
+								<li><i class="fas fa-stop-circle"></i>NVC Fees (AOS + IV): $445</li>
+								<li><i class="fas fa-stop-circle"></i>Child Medical Exam: $240</li>
+								<li><i class="fas fa-stop-circle"></i>USCIS Immigrant Fee: $235 (Due After Visa is Issued)</li>
+								<li><i class="fas fa-stop-circle"></i>Total Gov Fees: $1,595 (By Mail) / $1,545 (Online)</li>
 								</ul>
 								<p>Children must have been under 18 years of age as of the date you were married to qualify.</p>
 							</div></div>

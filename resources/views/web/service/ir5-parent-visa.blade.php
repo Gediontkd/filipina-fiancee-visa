@@ -283,12 +283,12 @@
                     <div class="cbox-3-txt mb-2">
                         <h5>Government Fees (Per Parent):</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $675 USCIS Filing Fee (Form I-130)</li>
-                            <li><i class="fas fa-stop-circle"></i> $445 National Visa Center Processing Fee</li>
-                            <li><i class="fas fa-stop-circle"></i> $495 Medical Examination Fee</li>
-                            <li><i class="fas fa-stop-circle"></i> $220 USCIS Immigrant Fee (after approval)</li>
-                            <li><i class="fas fa-stop-circle"></i> Total Government Fees: $1,835 Per Parent</li>
-                            <li><i class="fas fa-stop-circle"></i> $2,635 Total Fees Per Parent</li>
+                            <li><i class="fas fa-stop-circle"></i> USCIS Filing Fee: $675 (By Mail) / $625 (Online)</li>
+                            <li><i class="fas fa-stop-circle"></i> NVC Fees: $445</li>
+                            <li><i class="fas fa-stop-circle"></i> USCIS Immigrant Fee: $220 (Due After Visa is Issued)</li>
+                            <li><i class="fas fa-stop-circle"></i> Medical Exam: $495</li>
+                            <li><i class="fas fa-stop-circle"></i> Total Gov Fees: $1,835 (By Mail) / $1,785 (Online)</li>
+                            <li><i class="fas fa-stop-circle"></i> Grand Total: $2,635 (By Mail) / $2,585 (Online)</li>
                         </ul>
                     </div>
                     <div class="cbox-3-txt mb-2">
