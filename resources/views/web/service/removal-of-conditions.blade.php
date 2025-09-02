@@ -74,7 +74,7 @@
 
     {{-- Get Started Section --}}
     @if (!Auth::check())
-        @include('web.component.get-started')
+        @include('web.component.roc-button')
     @endif
 
     <section class="about-us ptb-115">

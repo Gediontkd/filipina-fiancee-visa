@@ -96,7 +96,7 @@ guidelines by filing Form I-864, Affidavit of Support.</p>
 
     {{-- Get Started Section --}}
     @if (!Auth::check())
-        @include('web.component.get-started')
+        @include('web.component.child-button')
     @endif
 
     <section class="about-us ptb-115">

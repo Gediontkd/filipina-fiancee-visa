@@ -72,7 +72,7 @@
 </section>
 {{-- Get Started Section --}}
 @if (!Auth::check())
-@include('web.component.get-started')
+@include('web.component.aos-button')
 @endif
 <section class="ptb-60-100 faq">
     <div class="container">

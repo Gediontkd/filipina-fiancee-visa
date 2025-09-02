@@ -87,7 +87,7 @@
 
     {{-- Get Started Section --}}
     @if (!Auth::check())
-        @include('web.component.get-started')
+        @include('web.component.ir5-button')
     @endif
 
     <section class="about-us ptb-115">
