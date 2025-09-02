@@ -19,8 +19,17 @@
                         <div class="section-title">
                             <h3>What Is a Child Petition?</h3>
                         </div>
-                        <p>U.S. citizens and lawful permanent residents can petition for certain children to immigrate to the United States. The process and waiting times depend on your status (citizen vs. permanent resident), the child's age, marital status, and relationship to you.</p>
-                        <p>There are several visa categories for children, including immediate relative categories (no waiting period) for U.S. citizens and preference categories for permanent residents (with waiting periods).</p>
+                        <p>A Child Petition is the process that allows U.S. citizens and lawful permanent residents 
+(green card holders) to bring their children to live in the United States. The type of petition 
+and waiting time depend on:</p>
+<ul>
+                            <li><strong></strong> Your immigration status (U.S. citizen or permanent resident)</li>
+                            <li><strong></strong> Your child’s age</li>
+                            <li><strong></strong> Whether your child is married or unmarried</li>
+                        </ul>
+                        <p>For U.S. citizens, certain categories are considered immediate relatives and have no 
+waiting period beyond standard processing. For permanent residents, petitions fall under 
+family preference categories, which often involve waiting periods. </p>
                         
                         <h5>Types of Child Petitions</h5>
                         <p><strong>For U.S. Citizens:</strong></p>
@@ -51,36 +60,29 @@
                         </div>
                         
                         <h5>Who Qualifies as a "Child"?</h5>
-                        <p>Under U.S. immigration law, a "child" must be:</p>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-check"></i></div>
-                            <p>Your biological child, stepchild, or legally adopted child</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-check"></i></div>
-                            <p>Unmarried (for IR2, F2A categories)</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-check"></i></div>
-                            <p>Under 21 years old (for immediate relative categories)</p>
-                        </div>
-                        
+                        <p>To qualify as a “child” under U.S. immigration law, your child must be:</p>
+                        <ul>
+                            <li><strong></strong> Your biological child, stepchild, or legally adopted child</li>
+                            <li><strong></strong> Unmarried (for IR2, F2A categories)</li>
+                            <li><strong></strong> Under 21 years old (for immediate relative categories)</li>
+
+                        </ul>
                         <h5>Special Considerations</h5>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-info-circle"></i></div>
-                            <p><strong>Age Protection:</strong> Child Status Protection Act (CSPA) may protect children from "aging out"</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-info-circle"></i></div>
-                            <p><strong>Stepchildren:</strong> Must show parent married child's parent before child's 18th birthday</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-info-circle"></i></div>
-                            <p><strong>Adopted Children:</strong> Must be legally adopted before age 16 (or 18 with sibling)</p>
-                        </div>
+                         <ul>
+                            <li><strong>Age Protection (CSPA):</strong> The Child Status Protection Act can sometimes “freeze” a 
+child’s age to prevent them from aging out due to processing delays.</li>
+                
+                            <li><strong>Stepchildren:</strong> You must have married the child’s biological parent before the child’s 
+18th birthday. </li>
+
+                            <li><strong>Adopted Children:</strong>  Adoption must be finalized before the child’s 16th birthday (or 
+18th if adopted with a sibling).</li>
+
+                        </ul>
                         
                         <h5>Financial Requirements</h5>
-                        <p>The petitioner must demonstrate ability to financially support the child at 125% of federal poverty guidelines through Form I-864 Affidavit of Support.</p>
+                        <p>You must show that you can financially support your child at 125% of the federal poverty 
+guidelines by filing Form I-864, Affidavit of Support.</p>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -112,35 +114,23 @@
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Expert guidance on complex age and relationship requirements</p>
+                            <p>Petitioning for your child can feel overwhelming, but you don’t have to do it alone. At 
+Filipina Fiancée Visa Service, we: </p>
                         </div>
+                        <ul>
+                            <li><strong></strong> Guide you step-by-step through the petition process</li>
+                            <li><strong></strong> Ensure all forms and supporting evidence are correctly prepared</li>
+                            <li><strong></strong> Help you avoid costly mistakes and delays</li>
+                            <li><strong></strong> Keep your case on track with regular updates</li>
+                            <li><strong></strong> Provide support until your child is safely with you in the United States</li>
+                            <li><strong></strong> Understand the complexities of immigration law</li>
+                            <li><strong></strong> Understand the complexities of immigration law</li>
+                            
+                        </ul>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>CSPA (Child Status Protection Act) analysis and strategy</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Complete Form I-130 preparation and filing</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Priority date tracking and case monitoring</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Affidavit of Support (I-864) preparation</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>National Visa Center processing support</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Embassy interview preparation</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Document collection and evidence preparation</p>
+                            <p>Your family’s future is our priority. We’ve helped thousands of families reunite, and we’ll do 
+the same for you. </p>
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon">
@@ -168,23 +158,35 @@
                     <div class="questions-holder">
                         <div class="question">
                             <h5>What is the Child Status Protection Act (CSPA)?</h5>
-                            <p>CSPA helps protect children from "aging out" of eligibility due to processing delays. It allows certain children to subtract processing time from their age for eligibility purposes. The rules are complex and vary by visa category.</p>
+                            <p>The CSPA helps protect children from losing eligibility if they turn 21 while waiting for their 
+case to be processed. It allows certain children to subtract processing delays from their 
+age for immigration purposes.</p>
                         </div>
                         <div class="question">
                             <h5>How long do child petitions take?</h5>
-                            <p>Processing times vary significantly by category. IR2 (immediate relative) cases have no waiting period beyond processing time (12-18 months). Preference categories (F1, F2A, F2B, F3) have additional waiting periods that can range from 2-20+ years depending on the category and country.</p>
+                            <p>Processing times vary:</p>
+                            <ul>
+                                <li><strong></strong> IR2 cases (unmarried children under 21 of U.S. citizens) have no waiting period 
+beyond standard processing, usually 12–18 months.</li>
+                                <li><strong></strong> Preference categories (F1, F2A, F2B, F3) can involve waiting periods that range from 
+several years to over 20 years, depending on category and country.</li>
+                            </ul>
                         </div>
                         <div class="question">
                             <h5>Can I petition for my stepchild?</h5>
-                            <p>Yes, but you must have married the child's parent before the child's 18th birthday. The stepparent-stepchild relationship must have been established while the child was under 18.</p>
+                            <p> Yes, but you must have married the child’s parent before the child turned 18.</p>
                         </div>
                         <div class="question">
                             <h5>What if my child gets married after I file the petition?</h5>
-                            <p>If your child marries after you file but before they immigrate, it may change their eligibility category or make them ineligible, depending on your status and the original category. Each case requires individual analysis.</p>
+                            <p>If your child marries before immigrating, their eligibility may change. For example, a petition 
+f
+ iled for an unmarried child may convert to a married child category, which often has longer 
+waiting times. In some cases, the petition may no longer qualify</p>
                         </div>
                         <div class="question">
                             <h5>Can I petition for my adopted child?</h5>
-                            <p>Yes, but the adoption must be completed before the child's 16th birthday (or 18th if adopted with a sibling). You must also meet physical and legal custody requirements for at least 2 years.</p>
+                            <p>Yes, as long as the adoption was completed before the child’s 16th birthday (or 18th if with 
+a sibling). You must also have had legal and physical custody for at least two years.</p>
                         </div>
                     </div>
                 </div>
