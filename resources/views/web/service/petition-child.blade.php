@@ -11,7 +11,7 @@
             <div class="row d-flex align-items-center">
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/aboutimg5.jpg') }}" alt="Child Petition">
+                        <img src="{{ asset('assets/img/Mother-and-Child.jpg') }}" alt="Child Petition">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -85,7 +85,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/aboutimg6.jpg') }}" alt="Child Visa Requirements">
+                        <img src="{{ asset('assets/img/EligibilityRequirementsNewPic.jpg') }}" alt="Child Visa Requirements">
                     </div>
                 </div>
             </div>
@@ -284,17 +284,18 @@
                     <div class="cbox-3-txt mb-2">
                         <h5>Our Service Fee</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $750 Service Fee to Filipina Fiancée Visa (per child)</li>
+                            <li><i class="fas fa-stop-circle"></i> $750 Total Fee to Filipina Fiancée Visa (Paid to get Started)</li>
                         </ul>
                     </div>
                     <div class="cbox-3-txt mb-2">
                         <h5>Government Fees:</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $675 USCIS Filing Fee (Form I-130)</li>
-                            <li><i class="fas fa-stop-circle"></i> $445 National Visa Center Processing Fee*</li>
-                            <li><i class="fas fa-stop-circle"></i> $495 Medical Examination Fee*</li>
-                            <li><i class="fas fa-stop-circle"></i> $220 USCIS Immigrant Fee (after approval)*</li>
-                            <li><i class="fas fa-stop-circle"></i> $2,585 Total Fees (when visa becomes available)</li>
+                            <li><i class="fas fa-stop-circle"></i> USCIS Filing Fee: $675 (By Mail) / $625 (Online)</li>
+                            <li><i class="fas fa-stop-circle"></i> NVC Fees (AOS + IV): $445</li>
+                            <li><i class="fas fa-stop-circle"></i> USCIS Immigrant Fee: $235 (Due After Visa is Issued)</li>
+                            <li><i class="fas fa-stop-circle"></i> Medical Exam: $500</li>
+                            <li><i class="fas fa-stop-circle"></i> Total Gov Fees: $1,855 (By Mail) / $1,805 (Online)</li>
+                            <li><i class="fas fa-stop-circle"></i> Grand Total: $2,605 (By Mail) / $2,555 (Online)</li>
                         </ul>
                         <p><small>*These fees are only due when the visa becomes available (immediate relatives) or the priority date becomes current (preference categories).</small></p>
                     </div>

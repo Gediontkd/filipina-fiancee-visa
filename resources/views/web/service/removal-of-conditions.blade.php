@@ -177,15 +177,15 @@
                     <h3>Our ROC Package includes</h3>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Full preparation and assembly of your ROC petition</p>
+                        <p>Complete ROC Package preparation</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Evidence package compilation and review</p>
+                        <p>Evidence guidance and review</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Supporting documentation guidance</p>
+                        <p>Supporting documentation review</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
@@ -219,7 +219,7 @@
                         </div>
                         <ul class="features">
                             <li><i class="fas fa-stop-circle"></i> Package Preparation</li>
-                            <li><i class="fas fa-stop-circle"></i> Evidence Package Assembly</li>
+                            <li><i class="fas fa-stop-circle"></i> Evidence Guidance & Review</li>
                             <li><i class="fas fa-stop-circle"></i> Document Review & Analysis</li>
                             <li><i class="fas fa-stop-circle"></i> Filing Strategy Consultation</li>
                             <li><i class="fas fa-stop-circle"></i> Case Monitoring & Updates</li>
@@ -252,15 +252,16 @@
                     <div class="cbox-3-txt mb-2">
                         <h5>Our Service Fee</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $600 Service Fee to Filipina Fiancée Visa</li>
+                            <li><i class="fas fa-stop-circle"></i> $600 Total Fee to Filipina Fiancée Visa (Paid to get Started)</li>
                         </ul>
                     </div>
                     <div class="cbox-3-txt mb-2">
                         <h5>Government Fees:</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $760 USCIS Filing Fee for Package</li>
-                            <li><i class="fas fa-stop-circle"></i> $85 Biometrics Fee (if required)</li>
-                            <li><i class="fas fa-stop-circle"></i> $1,795 Total Fees (including service)</li>
+                            <li><i class="fas fa-stop-circle"></i> USCIS Filing Fee: $750 (By Mail) / $700 (Online)</li>
+                            <li><i class="fas fa-stop-circle"></i> Total Gov Fees: $750 (By Mail) / $700 (Online)</li>
+                            <!-- <li><i class="fas fa-stop-circle"></i> $85 Biometrics Fee (if required)</li> -->
+                            <li><i class="fas fa-stop-circle"></i> Grand Total: $1,350 (By Mail) / $1,300 (Online)</li>
                         </ul>
                     </div>
                     <div class="cbox-3-txt mb-2">
