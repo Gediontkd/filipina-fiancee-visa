@@ -724,7 +724,7 @@ span.subheading {
 
 .testimonials .testimonials-inner {
     width: 100%;
-    background: url(../img/reviews-3.jpg) no-repeat fixed center center;
+    background: url(../img/Flag-Image.jpg) no-repeat fixed center center;
     background-size: cover;
     position: relative;
     z-index: 1;
@@ -732,7 +732,7 @@ span.subheading {
 
 .pricing-packages {
     width: 100%;
-    background: url(../img/reviews-3.jpg) no-repeat fixed center center;
+    background: url(../img/Flag-Image.jpg) no-repeat fixed center center;
     background-size: cover;
     position: relative;
     z-index: 1;
@@ -1414,7 +1414,7 @@ span.subheading {
 /**Services Css End**/
 /**About Us Css Start**/
 .aboutus2.about-us {
-    background: url(../img/reviews-3.jpg) no-repeat center center;
+    background: url(../img/Flag-Image.jpg) no-repeat center center;
     background-size: cover;
 }
 
