@@ -1,7 +1,7 @@
 @extends('web.layout.master')
 @section('content')
     @include('web.component.bread-crumb', [
-        'title' => 'Petition a Child',
+        'title' => 'Because no parent should have to wait to be with their child.',
         'previousPageLink' => route('service'),
         'previousPageTitle' => 'Services',
     ])
@@ -17,11 +17,9 @@
                 <div class="col-md-6">
                     <div class="about-content aos-init" data-aos="fade-right">
                         <div class="section-title">
-                            <h3>What Is a Child Petition?</h3>
+                            <h3>Bring Your Child Home - Understanding the Child Petition Process</h3>
                         </div>
-                        <p>A Child Petition is the process that allows U.S. citizens and lawful permanent residents 
-(green card holders) to bring their children to live in the United States. The type of petition 
-and waiting time depend on:</p>
+                        <p>Reuniting with your child is your top priority, and we know how overwhelming the immigration process can feel. That’s why we’re here to guide you. A Child Petition is the process that allows U.S. citizens and lawful permanent residents (green card holders) to bring their children to live in the United States.</p>
 <ul>
                             <li><strong></strong> Your immigration status (U.S. citizen or permanent resident)</li>
                             <li><strong></strong> Your child’s age</li>
@@ -104,33 +102,34 @@ guidelines by filing Form I-864, Affidavit of Support.</p>
             <div class="row d-flex align-items-center">
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/aboutimg1.jpg') }}" alt="Why Choose Us">
+                        <img src="{{ asset('assets/img/Mother-Child.jpg') }}" alt="Why Choose Us">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="about-content aos-init" data-aos="fade-right">
                         <div class="section-title">
-                            <h3>Why Choose Us for Child Petitions?</h3>
+                            <h3>Why Families Choose Us for Child Petitions?</h3>
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Petitioning for your child can feel overwhelming, but you don’t have to do it alone. At 
-Filipina Fiancée Visa Service, we: </p>
+                            <p>Nothing matters more than being together with your child. We understand the stress and uncertainty that come with immigration, and our mission is to make the process simple, clear, and successful — so you can focus on your family, not the paperwork. </p>
                         </div>
                         <ul>
-                            <li><strong></strong> Guide you step-by-step through the petition process</li>
-                            <li><strong></strong> Ensure all forms and supporting evidence are correctly prepared</li>
-                            <li><strong></strong> Help you avoid costly mistakes and delays</li>
-                            <li><strong></strong> Keep your case on track with regular updates</li>
-                            <li><strong></strong> Provide support until your child is safely with you in the United States</li>
-                            <li><strong></strong> Understand the complexities of immigration law</li>
-                            <li><strong></strong> Understand the complexities of immigration law</li>
+                            <li><strong></strong> Extensive experience with Child Petitions</li>
+                            <li><strong></strong> Expert preparation of your Child Petition Package</li>
+                            <li><strong></strong> Affidavit of Support preparation and guidance</li>
+                            <li><strong></strong> Document review and organization guidance</li>
+                            <li><strong></strong> National Visa Center (NVC) processing support</li>
+                            <li><strong></strong> Embassy interview preparation</li>
+                            <li><strong></strong> Medical examination guidance</li>
+                            <li><strong></strong> Case tracking from start to finish</li>
+                            <li><strong></strong> Money-back guarantee if denied</li>
+                            <li><strong></strong> Medical examination guidance</li>
                             
                         </ul>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Your family’s future is our priority. We’ve helped thousands of families reunite, and we’ll do 
-the same for you. </p>
+                            <p>Your child’s future with you in the United States is our top priority. We’ve helped thousands of families reunite, and we’ll do the same for you.</p>
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon">
@@ -138,8 +137,18 @@ the same for you. </p>
                             </div>
                             <p>
                                 <a class="guarantee_btn" href="{{ route('guarantee') }}">Money-back guarantee if denied</a>
-                            </p>
+                            </p> 
                         </div>
+                        <div class="col-lg-12">
+                    <div class=" text-center">
+                        <h5>
+                            Still have a question?
+                            <a href="{{ route('contactUs') }}">
+                                Ask your question here
+                            </a>
+                        </h5>
+                    </div>
+                </div>
                     </div>
                 </div>
             </div>
