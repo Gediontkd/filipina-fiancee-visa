@@ -135,20 +135,7 @@ guidelines by filing Form I-864, Affidavit of Support.</p>
                             <div class="box-list-icon">
                                 <i class="fas fa-genderless"></i>
                             </div>
-                            <p>
-                                <a class="guarantee_btn" href="{{ route('guarantee') }}">Money-back guarantee if denied</a>
-                            </p> 
                         </div>
-                        <div class="col-lg-12">
-                    <div class=" text-center">
-                        <h5>
-                            Still have a question?
-                            <a href="{{ route('contactUs') }}">
-                                Ask your question here
-                            </a>
-                        </h5>
-                    </div>
-                </div>
                     </div>
                 </div>
             </div>
@@ -220,27 +207,31 @@ a sibling). You must also have had legal and physical custody for at least two y
                     <h3>Our Child Petition Package</h3>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Eligibility assessment and category determination</p>
+                        <p>Complete Child Petition Package Preparation</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>CSPA analysis and age protection strategy</p>
+                        <p>Affidavit of Support preparation and guidance</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Form I-130 preparation and filing</p>
+                        <p>Document review and organization guidance</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Priority date tracking and monitoring</p>
+                        <p>NVC processing support and guidance</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Affidavit of Support (I-864) preparation</p>
+                        <p>Embassy interview preparation</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>NVC processing and document submission</p>
+                        <p>Medical examination guidance and support</p>
+                    </div>
+                    <div class="box-list">
+                        <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                        <p>Online case tracking</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon">
@@ -261,12 +252,14 @@ a sibling). You must also have had legal and physical custody for at least two y
                                 data-bs-target="#childModal">+ Gov. Fees</a>
                         </div>
                         <ul class="features">
-                            <li><i class="fas fa-stop-circle"></i> Eligibility & Category Analysis</li>
-                            <li><i class="fas fa-stop-circle"></i> CSPA Age Protection Review</li>
-                            <li><i class="fas fa-stop-circle"></i> Form I-130 Preparation</li>
+                            <li><i class="fas fa-stop-circle"></i> Child Petition Package Prep</li>
+                            <li><i class="fas fa-stop-circle"></i> Affidavit of Support Prep</li>
+                            <li><i class="fas fa-stop-circle"></i> Document Review & Guidance</li>
                             <li><i class="fas fa-stop-circle"></i> Priority Date Monitoring</li>
                             <li><i class="fas fa-stop-circle"></i> NVC Processing Support</li>
+                            <li><i class="fas fa-stop-circle"></i> Medical exam guidance & support</li>
                             <li><i class="fas fa-stop-circle"></i> Embassy Interview Prep</li>
+
                         </ul>
                         {{ Form::open(['url' => route('payment'), 'method' => 'GET']) }}
 							{!! Form::hidden('user_id', Auth::id()) !!}
