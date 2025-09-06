@@ -220,7 +220,7 @@
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Form N-400 preparation and filing</p>
+                        <p>Package preparation and filing</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
@@ -258,7 +258,7 @@
                         </div>
                         <ul class="features">
                             <li><i class="fas fa-stop-circle"></i> Eligibility Assessment</li>
-                            <li><i class="fas fa-stop-circle"></i> Form N-400 Preparation</li>
+                            <li><i class="fas fa-stop-circle"></i> Package Preparation</li>
                             <li><i class="fas fa-stop-circle"></i> Document Package Assembly</li>
                             <li><i class="fas fa-stop-circle"></i> Civics Test Prep Materials</li>
                             <li><i class="fas fa-stop-circle"></i> English Test Preparation</li>
