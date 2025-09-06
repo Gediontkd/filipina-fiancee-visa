@@ -45,4 +45,40 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relationships
+    |--------------------------------------------------------------------------
+    */
+
+    public function userSubmittedApplications()
+    {
+        return $this->hasMany(UserSubmittedApplication::class);
+    }
+
+    public function fianceVisaSteps()
+    {
+        return $this->hasMany(FianceVisaStep::class);
+    }
+
+    public function spouseVisaSteps()
+    {
+        return $this->hasMany(SpouseVisaStep::class);
+    }
+
+    public function adjustmentVisaSteps()
+    {
+        return $this->hasMany(AdjustmentVisaStep::class);
+    }
+
+    public function fianceAlien()
+    {
+        return $this->hasOne(FianceAlien::class);
+    }
+
+    public function fianceAlienChildren()
+    {
+        return $this->hasOne(FianceAlienChildren::class);
+    }
 }
