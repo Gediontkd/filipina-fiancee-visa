@@ -80,7 +80,7 @@ child’s age to prevent them from aging out due to processing delays.</li>
                         
                         <h5>Financial Requirements</h5>
                         <p>You must show that you can financially support your child at 125% of the federal poverty 
-guidelines by filing Form I-864, Affidavit of Support.</p>
+guidelines by filing the Affidavit of Support.</p>
                     </div>
                 </div>
                 <div class="col-md-6">

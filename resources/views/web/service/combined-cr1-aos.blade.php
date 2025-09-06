@@ -41,32 +41,8 @@
                 <div class="col-md-6">
                     <div class="about-content mb-mob-50 aos-init" data-aos="fade-right">
                         <div class="section-title">
-                            <h3>Process Overview & Requirements</h3>
+                            <h3>Key Requirements</h3>
                         </div>
-                        
-                        <h5>Step-by-Step Process:</h5>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-heart"></i></div>
-                            <p><strong>Step 1:</strong> Legal marriage in the United States</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-file-alt"></i></div>
-                            <p><strong>Step 2:</strong> File Form I-130 (Immigrant Petition for Alien Relative)</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-id-card"></i></div>
-                            <p><strong>Step 3:</strong> Simultaneously file Form I-485 (Adjustment of Status)</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-briefcase"></i></div>
-                            <p><strong>Step 4:</strong> File Form I-765 (Work Authorization - Optional)</p>
-                        </div>
-                        <div class="box-list">
-                            <div class="box-list-icon"><i class="fas fa-plane"></i></div>
-                            <p><strong>Step 5:</strong> File Form I-131 (Travel Document - Optional)</p>
-                        </div>
-                        
-                        <h5>Key Requirements:</h5>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-check"></i></div>
                             <p>Foreign partner must be in valid legal status when married</p>
@@ -81,7 +57,7 @@
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-check"></i></div>
-                            <p>Financial support documentation (I-864)</p>
+                            <p>Financial support documentation</p>
                         </div>
                     </div>
                 </div>
@@ -182,11 +158,11 @@
                         </div>
                         <div class="question">
                             <h5>Can my spouse work while the case is pending?</h5>
-                            <p>Yes, we include the I-765 work authorization application in our package. This typically allows your spouse to work within 3-5 months of filing the adjustment application.</p>
+                            <p>Yes, we include the work authorization application in our package. This typically allows your spouse to work within 3-5 months of filing the adjustment application.</p>
                         </div>
                         <div class="question">
                             <h5>Can my spouse travel while the case is pending?</h5>
-                            <p>With advance parole (I-131), which we include in the package, your spouse can travel internationally and return to the U.S. However, travel should be carefully planned and we provide guidance on the risks and requirements.</p>
+                            <p>With advance parole, which we include in the package, your spouse can travel internationally and return to the U.S. However, travel should be carefully planned and we provide guidance on the risks and requirements.</p>
                         </div>
                     </div>
                 </div>
@@ -219,19 +195,23 @@
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Form I-130 and I-485 preparation and filing</p>
+                        <p>Petition and residency application preparation</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Work authorization (I-765) application</p>
+                        <p>Work authorization application</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Travel document (I-131) application</p>
+                        <p>Travel document application</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                        <p>Affidavit of Support (I-864) preparation</p>
+                        <p>Financial support preparation</p>
+                    </div>
+                    <div class="box-list">
+                        <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
+                        <p>Interview preparation</p>
                     </div>
                     <div class="box-list">
                         <div class="box-list-icon">
@@ -253,10 +233,10 @@
                         </div>
                         <ul class="features">
                             <li><i class="fas fa-stop-circle"></i> Legal Strategy & Analysis</li>
-                            <li><i class="fas fa-stop-circle"></i> I-130 & I-485 Preparation</li>
-                            <li><i class="fas fa-stop-circle"></i> Work Authorization (I-765)</li>
-                            <li><i class="fas fa-stop-circle"></i> Travel Document (I-131)</li>
-                            <li><i class="fas fa-stop-circle"></i> Affidavit of Support (I-864)</li>
+                            <li><i class="fas fa-stop-circle"></i> Package Preparation</li>
+                            <li><i class="fas fa-stop-circle"></i> Work Authorization Application</li>
+                            <li><i class="fas fa-stop-circle"></i> Travel Document Application</li>
+                            <li><i class="fas fa-stop-circle"></i> Affidavit of Support</li>
                             <li><i class="fas fa-stop-circle"></i> Interview Preparation</li>
                         </ul>
                         {{ Form::open(['url' => route('payment'), 'method' => 'GET']) }}
@@ -293,12 +273,12 @@
                     <div class="cbox-3-txt mb-2">
                         <h5>Government Fees:</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $675 I-130 Filing Fee (Immigrant Petition)</li>
-                            <li><i class="fas fa-stop-circle"></i> $1,440 I-485 Filing Fee (Adjustment of Status)</li>
-                            <li><i class="fas fa-stop-circle"></i> $410 I-765 Filing Fee (Work Authorization)</li>
-                            <li><i class="fas fa-stop-circle"></i> $630 I-131 Filing Fee (Travel Document)</li>
+                            <li><i class="fas fa-stop-circle"></i> $675 – Petition for a family member</li>
+                            <li><i class="fas fa-stop-circle"></i> $1,440 – Residency application</li>
+                            <li><i class="fas fa-stop-circle"></i> $410 – Work authorization application</li>
+                            <li><i class="fas fa-stop-circle"></i> $630 – Travel document application</li>
                             <li><i class="fas fa-stop-circle"></i> $85 Biometrics Fee</li>
-                            <li><i class="fas fa-stop-circle"></i> $220 USCIS Immigrant Fee (after approval)</li>
+                            <li><i class="fas fa-stop-circle"></i> $220 – Immigrant fee (after approval)</li>
                             <li><i class="fas fa-stop-circle"></i> $4,660 Total Government Fees</li>
                             <li><i class="fas fa-calculator"></i> <strong>$5,860 Grand Total</strong></li>
                         </ul>

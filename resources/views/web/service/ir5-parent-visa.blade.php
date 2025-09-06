@@ -161,7 +161,7 @@
                     <div class="questions-holder">
                         <div class="question">
                             <h5>Can I petition for both parents at the same time?</h5>
-                            <p>Yes, you can file separate Form I-130 petitions for each parent simultaneously. Each parent needs their own petition, but the process can be done concurrently.</p>
+                            <p>Yes, you can file separate Form petitions for each parent simultaneously. Each parent needs their own petition, but the process can be done concurrently.</p>
                         </div>
                         <div class="question">
                             <h5>What if my parents are divorced?</h5>

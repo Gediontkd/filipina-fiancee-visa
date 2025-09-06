@@ -489,11 +489,11 @@
                         <a href="javascript:void(0)" class="price-note" data-bs-toggle="modal" data-bs-target="#aosModal">+ Government fees</a>
                     </div>
                     <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Green card application</li>
-                        <li><i class="fas fa-check"></i> Work permit included</li>
-                        <li><i class="fas fa-check"></i> Travel document</li>
-                        <li><i class="fas fa-check"></i> Interview preparation</li>
-                        <li><i class="fas fa-check"></i> Social Security assistance</li>
+                        <li><i class="fas fa-check"></i> Full Support Start to Finish</li>
+                        <li><i class="fas fa-check"></i> Unlimited Phone Support</li>
+                        <li><i class="fas fa-check"></i> Unlimited Email Support</li>
+                        <li><i class="fas fa-check"></i> Prepare All Government Forms</li>
+                        <li><i class="fas fa-check"></i> Green Card Interview Support</li>
                     </ul>
                     <a href="{{ route('adjustment.visa') }}" class="btn btn-primary-gradient btn-block">
                         Get Started
@@ -585,23 +585,17 @@
                 <div class="cbox-3-txt mb-2">
                     <h5>Government Fees:</h5>
                     <ul>
-                        <li><i class="fas fa-stop-circle"></i> $1,440 I-485 Filing Fee (Adjustment of Status)</li>
-                        <li><i class="fas fa-stop-circle"></i> $410 I-765 Filing Fee (Work Authorization)</li>
-                        <li><i class="fas fa-stop-circle"></i> $630 I-131 Filing Fee (Travel Document)</li>
-                        <li><i class="fas fa-stop-circle"></i> $85 Biometrics Fee</li>
-                        <li><i class="fas fa-stop-circle"></i> $220 USCIS Immigrant Fee (after approval)</li>
-                        <li><i class="fas fa-stop-circle"></i> $3,585 Total All Fees</li>
+                        <li><i class="fas fa-stop-circle"></i> Application for residency: $1,440</li>
+                        <li><i class="fas fa-stop-circle"></i> work permit: $260</li>
+                        <li><i class="fas fa-stop-circle"></i> Travel permit (optional): $630</li>
+                        <li><i class="fas fa-stop-circle"></i> Total Cost: $2,500</li>
                     </ul>
                 </div>
                 <div class="cbox-3-txt mb-2">
-                    <h5>What's Included:</h5>
+                    <h5>Fees for Children Filing with Parent</h5>
                     <ul>
-                        <li><i class="fas fa-check"></i> Form I-485 (Adjustment of Status)</li>
-                        <li><i class="fas fa-check"></i> Form I-765 (Work Authorization)</li>
-                        <li><i class="fas fa-check"></i> Form I-131 (Travel Document)</li>
-                        <li><i class="fas fa-check"></i> Form I-864 (Affidavit of Support)</li>
-                        <li><i class="fas fa-check"></i> Interview preparation</li>
-                        <li><i class="fas fa-check"></i> Document review and organization</li>
+                        <li><i class="fas fa-check"></i> $300 – Filipina Fiancée Visa Service Fee (Paid upfront)</li>
+                        <li><i class="fas fa-check"></i> Government fees vary based on age and circumstances (Paid at the time of filing)</li>
                     </ul>
                 </div>
             </div>
