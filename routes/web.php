@@ -14,6 +14,10 @@ use App\Http\Controllers\StripeController;
 use App\Http\Controllers\FianceVisa\SponsorController;
 use App\Http\Controllers\FianceVisa\AlienController;
 use App\Http\Controllers\FianceVisa\AlienChildrenController;
+use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\ApplicationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -179,6 +183,46 @@ Route::group(['middleware' => ['application']], function() {
     Route::get('/adjustment-of-status', [AdjustmentOfStatusController::class, 'index'])->name('adjustment.visa');
     Route::get('/spouse-visa', [SpouseVisaApplicationController::class, 'spouseVisa'])->name('spouse.visa');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
+    
+    // Admin Guest Routes (not logged in)
+    Route::middleware('admin.guest')->group(function() {
+        Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+        Route::post('/login', [AuthController::class, 'login']);
+    });
+
+    // Admin Authenticated Routes
+    Route::middleware('admin')->group(function() {
+        Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        
+        // Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/', [DashboardController::class, 'index']); // Redirect admin/ to dashboard
+
+        // User Management
+        Route::resource('users', AdminUserController::class)->only([
+            'index', 'show', 'edit', 'update', 'destroy'
+        ]);
+
+        // Application Management
+        Route::controller(ApplicationController::class)->group(function() {
+            Route::get('/applications', 'index')->name('applications.index');
+            Route::get('/applications/{application}', 'show')->name('applications.show');
+            Route::patch('/applications/{application}/status', 'updateStatus')->name('applications.update-status');
+            Route::get('/applications/export', 'export')->name('applications.export');
+        });
+    });
+});
+
+// Add this route configuration to handle admin redirects
+Route::redirect('/admin', '/admin/dashboard');
 
 // Static Pages
 Route::get('/about-us', function () {

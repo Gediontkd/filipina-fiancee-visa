@@ -1,6 +1,5 @@
 <?php
 // database/seeders/AdminUserSeeder.php
-// Run: php artisan make:seeder AdminUserSeeder
 
 namespace Database\Seeders;
 
@@ -15,7 +14,7 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create default admin user
+        // Create super admin user
         Admin::updateOrCreate(
             ['email' => 'admin@filipinafianceevisa.com'],
             [
@@ -28,12 +27,12 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
-        // Create additional admin if needed
+        // Create additional admin with different email
         Admin::updateOrCreate(
-            ['email' => 'admin@filipinafianceevisa.com'],
+            ['email' => 'support@filipinafianceevisa.com'],
             [
                 'name' => 'Admin User',
-                'email' => 'admin@filipinafianceevisa.com',
+                'email' => 'support@filipinafianceevisa.com',
                 'password' => Hash::make('Admin123'),
                 'role' => 'admin',
                 'is_active' => true,
@@ -43,7 +42,7 @@ class AdminUserSeeder extends Seeder
 
         $this->command->info('Admin users created successfully!');
         $this->command->info('Login credentials:');
-        $this->command->info('Email: admin@filipinafianceevisa.com | Password: Admin123');
-        $this->command->info('Email: admin@filipinafianceevisa.com | Password: Admin123');
+        $this->command->info('Super Admin - Email: admin@filipinafianceevisa.com | Password: Admin123');
+        $this->command->info('Admin - Email: support@filipinafianceevisa.com | Password: Admin123');
     }
 }
