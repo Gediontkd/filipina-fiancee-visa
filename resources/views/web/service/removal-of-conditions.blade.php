@@ -144,7 +144,7 @@
                         </div>
                         <div class="question">
                             <h5>Can I travel while my ROC is pending?</h5>
-                            <p>Yes, your expired conditional green card combined with the I-797 receipt notice serves as evidence of your continued permanent resident status for travel purposes.</p>
+                            <p>Yes, your expired conditional green card combined with the receipt notice serves as evidence of your continued permanent resident status for travel purposes.</p>
                         </div>
                         <div class="question">
                             <h5>What if my ROC is denied?</h5>
