@@ -58,10 +58,6 @@ class AlienController extends Controller
 
     public function index(Request $request)
     {
-        $checkPayment = User::where('id', Auth::id())->pluck('application_route')->first();
-        if (!isset($checkPayment)) {
-            return redirect()->route('payment.index');
-        }
 
         if (!UserFianceVisaType::where('user_id', Auth::id())->where('type', 'alien')->exists()) {
             UserFianceVisaType::create([
