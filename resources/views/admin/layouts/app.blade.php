@@ -55,6 +55,19 @@
                     <i class="fas fa-file-alt mr-3"></i>
                     Applications
                 </a>
+
+                <a href="{{ route('admin.monitoring.index') }}" class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.monitoring.*') ? 'active' : '' }}">
+                    <i class="fas fa-search mr-3"></i>
+                    Change Monitoring
+                    @php
+                        $unreadCount = \App\Models\MonitoringChange::unread()->count();
+                    @endphp
+                    @if($unreadCount > 0)
+                        <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                            {{ $unreadCount }}
+                        </span>
+                    @endif
+                </a>
             </nav>
             
             <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-700">

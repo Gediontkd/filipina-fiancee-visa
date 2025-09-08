@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Http\Controllers\Admin\MonitoringController;
 
 class Kernel extends ConsoleKernel
 {
@@ -15,7 +16,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Run monitoring checks every 6 hours
+        $schedule->call(function () {
+            app(MonitoringController::class)->checkUscisChanges();
+            app(MonitoringController::class)->checkMedicalFees();
+        })->everySixHours();
     }
 
     /**

@@ -191,6 +191,15 @@ Route::group(['middleware' => ['application']], function() {
 */
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
+
+     // Monitoring routes
+    Route::controller(MonitoringController::class)->group(function() {
+        Route::get('/monitoring', 'index')->name('monitoring.index');
+        Route::post('/monitoring/check-uscis', 'checkUscisChanges')->name('monitoring.check-uscis');
+        Route::post('/monitoring/check-medical', 'checkMedicalFees')->name('monitoring.check-medical');
+        Route::post('/monitoring/changes/{change}/mark-read', 'markAsRead')->name('monitoring.mark-read');
+        Route::get('/monitoring/mark-all-read', 'markAllAsRead')->name('monitoring.mark-all-read');
+    });
     
     // Admin Guest Routes (not logged in)
     Route::middleware('admin.guest')->group(function() {
