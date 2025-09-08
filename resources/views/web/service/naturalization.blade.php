@@ -11,7 +11,7 @@
             <div class="row d-flex align-items-center">
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/aboutimg1.jpg') }}" alt="U.S. Naturalization">
+                        <img src="{{ asset('assets/img/flag-3.jpg') }}" alt="U.S. Naturalization">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -92,7 +92,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/aboutimg22.jpg') }}" alt="Citizenship Requirements">
+                        <img src="{{ asset('assets/img/flag-2.jpg') }}" alt="Citizenship Requirements">
                     </div>
                 </div>
             </div>
@@ -109,7 +109,7 @@
             <div class="row d-flex align-items-center">
                 <div class="col-md-6">
                     <div class="about-img-block aos-init" data-aos="fade-left">
-                        <img src="{{ asset('assets/img/service11.jpg') }}" alt="Why Choose Us">
+                        <img src="{{ asset('assets/img/flag-1.jpg') }}" alt="Why Choose Us">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -123,7 +123,7 @@
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
-                            <p>Complete Form N-400 preparation</p>
+                            <p>Complete Package Preparation</p>
                         </div>
                         <div class="box-list">
                             <div class="box-list-icon"><i class="fas fa-genderless"></i></div>
@@ -297,7 +297,7 @@
                     <div class="cbox-3-txt mb-2">
                         <h5>Government Fees:</h5>
                         <ul>
-                            <li><i class="fas fa-stop-circle"></i> $760 USCIS Filing Fee (Form N-400)</li>
+                            <li><i class="fas fa-stop-circle"></i> $760 USCIS Filing Fee</li>
                             <li><i class="fas fa-stop-circle"></i> $85 Biometrics Fee</li>
                             <li><i class="fas fa-stop-circle"></i> $1,695 Total Fees</li>
                         </ul>
@@ -306,7 +306,7 @@
                         <h5>What's Included:</h5>
                         <ul>
                             <li><i class="fas fa-check"></i> Complete eligibility assessment</li>
-                            <li><i class="fas fa-check"></i> Form N-400 preparation and review</li>
+                            <li><i class="fas fa-check"></i> Package preparation and review</li>
                             <li><i class="fas fa-check"></i> Document collection checklist</li>
                             <li><i class="fas fa-check"></i> Civics test study materials (100 questions)</li>
                             <li><i class="fas fa-check"></i> English test preparation resources</li>
