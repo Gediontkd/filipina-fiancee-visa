@@ -20,6 +20,8 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ApplicationController;
 use App\Http\Controllers\Admin\MonitoringController;
 
+use App\Http\Controllers\ImmigrationNewsController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -230,6 +232,20 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
         });
     });
 });
+
+// Immigration News Routes
+Route::group(['prefix' => 'immigration-news', 'as' => 'immigration-news.'], function() {
+    Route::get('/', [ImmigrationNewsController::class, 'index'])->name('index');
+    Route::get('/search', [ImmigrationNewsController::class, 'search'])->name('search');
+    Route::get('/{slug}', [ImmigrationNewsController::class, 'show'])->name('show');
+});
+
+// Alternative: If you prefer a simpler structure without grouping
+/*
+Route::get('/immigration-news', [ImmigrationNewsController::class, 'index'])->name('immigration-news.index');
+Route::get('/immigration-news/search', [ImmigrationNewsController::class, 'search'])->name('immigration-news.search');
+Route::get('/immigration-news/{slug}', [ImmigrationNewsController::class, 'show'])->name('immigration-news.show');
+*/
 
 // Add this route configuration to handle admin redirects
 Route::redirect('/admin', '/admin/dashboard');

@@ -7,7 +7,7 @@
     </div>
 </div>
 
-<!-- Updated Navigation with Two-Column Services Dropdown -->
+<!-- Updated Navigation with Immigration News -->
 <header id="myHeader">
     <nav class="navbar navbar-expand-md navbar-dark py-0 header_px20">
         <div class="container-fluid">
@@ -124,13 +124,19 @@
                         </div>
                     </li>
                    
-                    <!-- Resources Dropdown -->
+                    <!-- Resources Dropdown - UPDATED WITH IMMIGRATION NEWS -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
                             {{ __('message.resource') }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="resourcesDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('immigration-news.index') }}">
+                                    <i class="fas fa-newspaper"></i> Immigration News
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item" href="{{ route('resource') }}#faqs">
                                     <i class="fas fa-question-circle"></i> FAQs
@@ -457,6 +463,21 @@ header .navbar.header_px20 {
     line-height: 1.3;
 }
 
+/* Special styling for Immigration News item */
+.dropdown-item[href*="immigration-news"] i {
+    color: #28a745;
+}
+
+.dropdown-item[href*="immigration-news"]:hover i {
+    color: #28a745;
+    animation: newsAlert 0.6s ease-in-out;
+}
+
+@keyframes newsAlert {
+    0%, 100% { transform: scale(1.15) rotate(0deg); }
+    50% { transform: scale(1.25) rotate(-5deg); }
+}
+
 /* Navigation Link Styles Enhanced */
 .navbar-nav .nav-link {
     color: #333 !important;
@@ -558,7 +579,6 @@ header .navbar.header_px20 {
     border-radius: 8px !important;
     padding: 6px 8px !important;
 }
-
 
 .navbar-toggler-icon {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
