@@ -1,5 +1,5 @@
 <?php
-// app/Http/Controllers/Admin/ApplicationController.php
+// app/Http/Controllers/Admin/ApplicationController.php (Enhanced Version)
 
 namespace App\Http\Controllers\Admin;
 
@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\VisaApplication;
 use App\Models\UserSubmittedApplication;
+use App\Models\ApplicationDocument;
+use App\Models\Message;
 use Illuminate\Http\Request;
 
 class ApplicationController extends Controller
@@ -73,7 +75,7 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Show application details
+     * Show application details with complete user data
      */
     public function show(UserSubmittedApplication $application)
     {
@@ -81,12 +83,52 @@ class ApplicationController extends Controller
             $application->load(['user', 'visaApplication', 'reviewer']);
             
             // Get related application data
-            $application_data = $this->getApplicationData($application);
+            $applicationData = $this->getCompleteApplicationData($application);
+            
+            // Get related documents
+            $documents = ApplicationDocument::where('application_id', $application->id)
+                ->with('reviewer')
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-            return view('admin.applications.show', compact('application', 'application_data'));
+            // Get message count
+            $messageCount = Message::where('application_id', $application->id)->count();
+            $unreadMessageCount = Message::where('application_id', $application->id)
+                ->where('sender_type', 'user')
+                ->unread()
+                ->count();
+
+            return view('admin.applications.show', compact(
+                'application', 
+                'applicationData', 
+                'documents',
+                'messageCount',
+                'unreadMessageCount'
+            ));
 
         } catch (\Exception $e) {
             return back()->with('error', 'Unable to load application details: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show detailed form data for PDF generation
+     */
+    public function showFormData(UserSubmittedApplication $application)
+    {
+        try {
+            $application->load(['user', 'visaApplication']);
+            
+            // Get complete application data
+            $applicationData = $this->getCompleteApplicationData($application);
+            
+            return view('admin.applications.form-data', compact(
+                'application',
+                'applicationData'
+            ));
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Unable to load form data: ' . $e->getMessage());
         }
     }
 
@@ -116,9 +158,9 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Get related application data
+     * Get complete application data for PDF generation
      */
-    private function getApplicationData(UserSubmittedApplication $application)
+    private function getCompleteApplicationData(UserSubmittedApplication $application)
     {
         $user = $application->user;
         $data = [];
@@ -128,17 +170,17 @@ class ApplicationController extends Controller
             switch (strtolower($user->chosen_application)) {
                 case 'fiance':
                 case 'fiancee':
-                    $data['sponsor'] = $user->fianceVisaSteps ?? null;
-                    $data['alien'] = $user->fianceAlien ?? null;
-                    $data['children'] = $user->fianceAlienChildren ?? null;
+                    $data['sponsor'] = $this->getFianceSponsorData($user);
+                    $data['alien'] = $this->getFianceAlienData($user);
+                    $data['children'] = $this->getFianceAlienChildrenData($user);
                     break;
                 
                 case 'spouse':
-                    $data['spouse_data'] = $user->spouseVisaSteps ?? null;
+                    $data['spouse_data'] = $this->getSpouseVisaData($user);
                     break;
                 
                 case 'adjustment':
-                    $data['adjustment_data'] = $user->adjustmentVisaSteps ?? null;
+                    $data['adjustment_data'] = $this->getAdjustmentOfStatusData($user);
                     break;
             }
         }
@@ -147,12 +189,83 @@ class ApplicationController extends Controller
     }
 
     /**
+     * Get fiance sponsor form data
+     */
+    private function getFianceSponsorData(User $user)
+    {
+        $sponsorSteps = $user->fianceVisaSteps;
+        $compiledData = [];
+
+        foreach ($sponsorSteps as $step) {
+            $stepData = json_decode($step->step_data, true);
+            if ($stepData) {
+                $compiledData[$step->step_name] = $stepData;
+            }
+        }
+
+        return $compiledData;
+    }
+
+    /**
+     * Get fiance alien form data
+     */
+    private function getFianceAlienData(User $user)
+    {
+        $alien = $user->fianceAlien;
+        return $alien ? json_decode($alien->data, true) : null;
+    }
+
+    /**
+     * Get fiance alien children data
+     */
+    private function getFianceAlienChildrenData(User $user)
+    {
+        $children = $user->fianceAlienChildren;
+        return $children ? json_decode($children->data, true) : null;
+    }
+
+    /**
+     * Get spouse visa form data
+     */
+    private function getSpouseVisaData(User $user)
+    {
+        $spouseSteps = $user->spouseVisaSteps;
+        $compiledData = [];
+
+        foreach ($spouseSteps as $step) {
+            $stepData = json_decode($step->step_data, true);
+            if ($stepData) {
+                $compiledData[$step->step_name] = $stepData;
+            }
+        }
+
+        return $compiledData;
+    }
+
+    /**
+     * Get adjustment of status form data
+     */
+    private function getAdjustmentOfStatusData(User $user)
+    {
+        $adjustmentSteps = $user->adjustmentVisaSteps;
+        $compiledData = [];
+
+        foreach ($adjustmentSteps as $step) {
+            $stepData = json_decode($step->step_data, true);
+            if ($stepData) {
+                $compiledData[$step->step_name] = $stepData;
+            }
+        }
+
+        return $compiledData;
+    }
+
+    /**
      * Export applications
      */
     public function export(Request $request)
     {
         try {
-            // This would implement CSV/Excel export functionality
             $applications = UserSubmittedApplication::with(['user', 'visaApplication'])->get();
             
             $filename = 'applications_' . now()->format('Y-m-d_H-i-s') . '.csv';

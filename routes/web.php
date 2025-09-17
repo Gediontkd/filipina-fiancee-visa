@@ -1,4 +1,6 @@
 <?php
+// routes/web.php (Updated with new routes)
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ContactUsController;
@@ -8,7 +10,7 @@ use App\Http\Controllers\DropBoxController;
 use App\Http\Controllers\FianceVisaApplicationController;
 use App\Http\Controllers\AdjustmentOfStatusController;
 use App\Http\Controllers\SpouseVisaApplicationController;
-use App\Http\Controllers\ServiceController; // New controller for service pages
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\FianceVisa\SponsorController;
@@ -19,18 +21,15 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\ApplicationController;
 use App\Http\Controllers\Admin\MonitoringController;
-
+use App\Http\Controllers\Admin\MessageController as AdminMessageController;
+use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ImmigrationNewsController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
 Route::get('/change-lang', [LocalizationController::class, 'changeLang'])->name('change.lang');
@@ -73,6 +72,24 @@ Route::group(['middleware' => ['auth', 'application']], function() {
 
     Route::get('/payment', [StripeController::class, 'index'])->name('payment.index');    
     Route::post('/payment', [StripeController::class, 'store'])->name('payment');    
+
+    // Messaging Routes for Users
+    Route::group(['prefix' => 'messages', 'as' => 'messages.'], function() {
+        Route::get('/', [MessageController::class, 'index'])->name('index');
+        Route::get('/compose', [MessageController::class, 'compose'])->name('compose');
+        Route::post('/send', [MessageController::class, 'store'])->name('store');
+        Route::get('/conversation/{applicationId}', [MessageController::class, 'conversation'])->name('conversation');
+        Route::post('/{message}/reply', [MessageController::class, 'reply'])->name('reply');
+        Route::post('/{message}/mark-read', [MessageController::class, 'markAsRead'])->name('mark-read');
+        Route::get('/unread-count', [MessageController::class, 'getUnreadCount'])->name('unread-count');
+        Route::get('/{message}/attachment/{index}', [MessageController::class, 'downloadAttachment'])->name('download-attachment');
+    });
+    // Application Submission Routes
+    Route::group(['controller' => \App\Http\Controllers\ApplicationSubmissionController::class], function() {
+        Route::get('/application/review', 'showSubmissionPage')->name('application.review');
+        Route::post('/application/submit', 'submitApplication')->name('application.submit');
+        Route::get('/application/status', 'checkSubmissionStatus')->name('application.status');
+    });
 
     // Fiance visa step for Sponsor, Alien and Alien Children
     Route::middleware([fianceVisa::class])->group(function(){
@@ -195,7 +212,7 @@ Route::group(['middleware' => ['application']], function() {
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
 
-     // Monitoring routes
+    // Monitoring routes
     Route::controller(MonitoringController::class)->group(function() {
         Route::get('/monitoring', 'index')->name('monitoring.index');
         Route::post('/monitoring/check-uscis', 'checkUscisChanges')->name('monitoring.check-uscis');
@@ -227,8 +244,32 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
         Route::controller(ApplicationController::class)->group(function() {
             Route::get('/applications', 'index')->name('applications.index');
             Route::get('/applications/{application}', 'show')->name('applications.show');
+            Route::get('/applications/{application}/form-data', 'showFormData')->name('applications.form-data');
             Route::patch('/applications/{application}/status', 'updateStatus')->name('applications.update-status');
             Route::get('/applications/export', 'export')->name('applications.export');
+        });
+
+        // Message Management
+        Route::group(['prefix' => 'messages', 'as' => 'messages.', 'controller' => AdminMessageController::class], function() {
+            Route::get('/', 'index')->name('index');
+            Route::get('/conversation/{userId}/{applicationId}', 'conversation')->name('conversation');
+            Route::post('/send', 'store')->name('store');
+            Route::post('/{message}/reply', 'reply')->name('reply');
+            Route::post('/{message}/mark-read', 'markAsRead')->name('mark-read');
+            Route::get('/mark-all-read', 'markAllAsRead')->name('mark-all-read');
+            Route::get('/unread-count', 'getUnreadCount')->name('unread-count');
+            Route::get('/{message}/attachment/{index}', 'downloadAttachment')->name('download-attachment');
+            Route::delete('/{message}', 'destroy')->name('destroy');
+        });
+
+        // Document Management
+        Route::group(['prefix' => 'documents', 'as' => 'documents.', 'controller' => AdminDocumentController::class], function() {
+            Route::get('/', 'index')->name('index');
+            Route::get('/application/{application}', 'applicationDocuments')->name('application');
+            Route::post('/upload', 'store')->name('store');
+            Route::patch('/{document}/review', 'review')->name('review');
+            Route::get('/{document}/download', 'download')->name('download');
+            Route::delete('/{document}', 'destroy')->name('destroy');
         });
     });
 });
@@ -239,13 +280,6 @@ Route::group(['prefix' => 'immigration-news', 'as' => 'immigration-news.'], func
     Route::get('/search', [ImmigrationNewsController::class, 'search'])->name('search');
     Route::get('/{slug}', [ImmigrationNewsController::class, 'show'])->name('show');
 });
-
-// Alternative: If you prefer a simpler structure without grouping
-/*
-Route::get('/immigration-news', [ImmigrationNewsController::class, 'index'])->name('immigration-news.index');
-Route::get('/immigration-news/search', [ImmigrationNewsController::class, 'search'])->name('immigration-news.search');
-Route::get('/immigration-news/{slug}', [ImmigrationNewsController::class, 'show'])->name('immigration-news.show');
-*/
 
 // Add this route configuration to handle admin redirects
 Route::redirect('/admin', '/admin/dashboard');

@@ -1,3 +1,4 @@
+{{-- resources/views/web/component/profile-sidebar.blade.php --}}
 <nav class="dashboard-nav my-10 mb-md-0">
     <div class="top-main-bf">
         <div class="userinfo">
@@ -11,6 +12,20 @@
         <li class="sideitem {{ Request::segment(1) == 'drop-box' ? 'active' : '' }}">
             <a href="{{ route('drop-box.index') }}">
                 <i class="fab fa-dropbox"></i><span>Dropbox</span>            
+            </a>
+        </li>
+        <li class="sideitem {{ Request::segment(1) == 'messages' ? 'active' : '' }}">
+            <a href="{{ route('messages.index') }}">
+                <i class="fa fa-comments"></i><span>Messages</span>
+                @php
+                    $unreadCount = \App\Models\Message::where('user_id', Auth::id())
+                        ->where('sender_type', 'admin')
+                        ->whereNull('read_at')
+                        ->count();
+                @endphp
+                @if($unreadCount > 0)
+                    <span class="badge badge-danger">{{ $unreadCount }}</span>
+                @endif
             </a>
         </li>
         <li class="sideitem {{ Request::segment(1) == 'mail' ? 'active' : '' }}">
