@@ -1,4 +1,4 @@
-{{-- resources/views/admin/applications/show.blade.php --}}
+{{-- resources/views/admin/applications/show.blade.php (Enhanced) --}}
 @extends('admin.layouts.app')
 
 @section('title', 'Application Details')
@@ -17,10 +17,97 @@
         </div>
         
         <div class="flex space-x-3">
+            <a href="{{ route('admin.applications.form-data', $application) }}" 
+               class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
+                <i class="fas fa-file-alt mr-2"></i>View Form Data
+            </a>
+            
+            <a href="{{ route('admin.messages.conversation', [$application->user_id, $application->id]) }}" 
+               class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors">
+                <i class="fas fa-comments mr-2"></i>Messages
+                @if($unreadMessageCount > 0)
+                    <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                        {{ $unreadMessageCount }}
+                    </span>
+                @endif
+            </a>
+            
             <button onclick="showStatusModal({{ $application->id }}, '{{ $application->status }}', '{{ addslashes($application->admin_notes ?? '') }}')" 
                     class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
                 <i class="fas fa-edit mr-2"></i>Update Status
             </button>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Messages -->
+        <div class="bg-white p-4 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-comments text-purple-600"></i>
+                    </div>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-500">Messages</p>
+                    <p class="text-lg font-bold text-gray-900">{{ $messageCount }}</p>
+                    @if($unreadMessageCount > 0)
+                        <p class="text-xs text-red-600">{{ $unreadMessageCount }} unread</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="bg-white p-4 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-file-pdf text-green-600"></i>
+                    </div>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-500">Documents</p>
+                    <p class="text-lg font-bold text-gray-900">{{ $documents->count() }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Application Progress -->
+        <div class="bg-white p-4 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-chart-line text-blue-600"></i>
+                    </div>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-500">Progress</p>
+                    <p class="text-lg font-bold text-gray-900">
+                        @if($applicationData)
+                            Complete
+                        @else
+                            Pending
+                        @endif
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Last Activity -->
+        <div class="bg-white p-4 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-clock text-orange-600"></i>
+                    </div>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-500">Last Activity</p>
+                    <p class="text-sm font-bold text-gray-900">{{ $application->updated_at->diffForHumans() }}</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -98,17 +185,93 @@
                 @endif
             </div>
 
-            <!-- Related Data -->
-            @if($application_data)
+            <!-- Form Data Section -->
+            @if($applicationData)
                 <div class="bg-white rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Related Application Data</h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Submitted Form Data</h3>
+                        <a href="{{ route('admin.applications.form-data', $application) }}" 
+                           class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-external-link-alt mr-2"></i>View Detailed Data
+                        </a>
+                    </div>
                     
-                    <div class="bg-gray-50 rounded-lg p-4">
-                        <p class="text-gray-600 text-sm mb-2">Application form data is available for this user.</p>
-                        <p class="text-gray-500 text-xs">
-                            This includes form submissions, step completions, and other application-specific information 
-                            based on their chosen visa type ({{ $application->user->chosen_application }}).
-                        </p>
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                            <div>
+                                <p class="text-green-800 font-medium">Form data is available</p>
+                                <p class="text-green-700 text-sm">
+                                    Complete application form data has been submitted and is ready for PDF generation.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex space-x-3">
+                        <a href="{{ route('admin.applications.form-data', $application) }}" 
+                           class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors">
+                            <i class="fas fa-file-alt mr-2"></i>View Form Data
+                        </a>
+                        
+                        <button class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors">
+                            <i class="fas fa-file-pdf mr-2"></i>Generate PDF
+                        </button>
+                    </div>
+                </div>
+            @else
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Form Data Status</h3>
+                    
+                    <div class="bg-yellow-50 rounded-lg p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 mr-3"></i>
+                            <div>
+                                <p class="text-yellow-800 font-medium">No form data available</p>
+                                <p class="text-yellow-700 text-sm">
+                                    The user has not completed the application form steps yet.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Documents Section -->
+            @if($documents->count() > 0)
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="px-6 py-4 border-b">
+                        <h3 class="text-lg font-semibold text-gray-900">Application Documents</h3>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        @foreach($documents as $document)
+                            <div class="p-6">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="{{ $document->type_icon }} text-gray-400"></i>
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900">{{ $document->original_filename }}</h4>
+                                            <p class="text-sm text-gray-500">
+                                                {{ $document->form_name }} | {{ $document->formatted_file_size }}
+                                                | {{ $document->created_at->format('M j, Y g:i A') }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $document->status_color }}">
+                                            {{ ucfirst(str_replace('_', ' ', $document->status)) }}
+                                        </span>
+                                        <a href="{{ $document->file_url }}" target="_blank" 
+                                           class="text-blue-600 hover:text-blue-800">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                @if($document->description)
+                                    <p class="mt-2 text-sm text-gray-600">{{ $document->description }}</p>
+                                @endif
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             @endif
@@ -148,6 +311,32 @@
                 @endif
             </div>
 
+            <!-- Messages Summary -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Messages</h3>
+                
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-600">Total Messages:</span>
+                        <span class="text-sm font-medium">{{ $messageCount }}</span>
+                    </div>
+                    
+                    @if($unreadMessageCount > 0)
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Unread:</span>
+                            <span class="text-sm font-medium text-red-600">{{ $unreadMessageCount }}</span>
+                        </div>
+                    @endif
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{{ route('admin.messages.conversation', [$application->user_id, $application->id]) }}" 
+                       class="block w-full text-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
+                        <i class="fas fa-comments mr-2"></i>View Conversation
+                    </a>
+                </div>
+            </div>
+
             <!-- Timeline -->
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Timeline</h3>
@@ -182,6 +371,18 @@
                     <a href="{{ route('admin.users.show', $application->user) }}" 
                        class="block w-full text-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
                         <i class="fas fa-user mr-2"></i>View User Profile
+                    </a>
+                    
+                    @if($applicationData)
+                        <a href="{{ route('admin.applications.form-data', $application) }}" 
+                           class="block w-full text-center px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors">
+                            <i class="fas fa-file-alt mr-2"></i>View Form Data
+                        </a>
+                    @endif
+                    
+                    <a href="{{ route('admin.messages.conversation', [$application->user_id, $application->id]) }}" 
+                       class="block w-full text-center px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg transition-colors">
+                        <i class="fas fa-comments mr-2"></i>View Messages
                     </a>
                     
                     <button onclick="showStatusModal({{ $application->id }}, '{{ $application->status }}', '{{ addslashes($application->admin_notes ?? '') }}')" 
