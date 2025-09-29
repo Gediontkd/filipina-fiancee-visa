@@ -1,323 +1,227 @@
 <?php
-// app/Http/Controllers/Admin/ApplicationController.php (Enhanced Version)
+// app/Http/Controllers/Admin/ApplicationController.php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\VisaApplication;
 use App\Models\UserSubmittedApplication;
+use App\Models\FianceVisaSubmittedStep;
+use App\Models\SpouseVisaSubmittedStep;
+use App\Models\AdjustmentVisaSubmittedStep;
 use App\Models\ApplicationDocument;
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ApplicationController extends Controller
 {
-    /**
-     * Display applications list
-     */
     public function index(Request $request)
     {
-        try {
-            $query = UserSubmittedApplication::with(['user', 'visaApplication', 'reviewer']);
+        $query = UserSubmittedApplication::with(['user', 'visaApplication', 'reviewer'])
+            ->latest();
 
-            // Search by user name or email
-            if ($request->filled('search')) {
-                $search = $request->search;
-                $query->whereHas('user', function($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%")
-                      ->orWhere('email', 'LIKE', "%{$search}%");
-                });
-            }
-
-            // Filter by visa application type
-            if ($request->filled('application_type')) {
-                $query->whereHas('visaApplication', function($q) use ($request) {
-                    $q->where('name', 'LIKE', "%{$request->application_type}%");
-                });
-            }
-
-            // Filter by status
-            if ($request->filled('status')) {
-                $query->where('status', $request->status);
-            }
-
-            // Filter by submission date
-            if ($request->filled('date_from')) {
-                $query->whereDate('created_at', '>=', $request->date_from);
-            }
-            if ($request->filled('date_to')) {
-                $query->whereDate('created_at', '<=', $request->date_to);
-            }
-
-            $applications = $query->orderBy('created_at', 'desc')
-                ->paginate(15)
-                ->appends($request->all());
-
-            // Get filter options
-            $visa_applications = VisaApplication::select('name')
-                ->distinct()
-                ->pluck('name');
-            
-            $statuses = UserSubmittedApplication::select('status')
-                ->distinct()
-                ->pluck('status');
-
-            return view('admin.applications.index', compact(
-                'applications', 
-                'visa_applications', 
-                'statuses'
-            ));
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Unable to load applications: ' . $e->getMessage());
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            });
         }
+
+        if ($request->filled('application_type')) {
+            $query->whereHas('visaApplication', function($q) use ($request) {
+                $q->where('name', 'LIKE', "%{$request->application_type}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $applications = $query->paginate(15);
+
+        $statuses = ['pending', 'under_review', 'approved', 'rejected'];
+        $visa_applications = UserSubmittedApplication::with('visaApplication')
+            ->get()
+            ->pluck('visaApplication.name')
+            ->unique()
+            ->filter()
+            ->values();
+
+        return view('admin.applications.index', compact('applications', 'statuses', 'visa_applications'));
     }
 
-    /**
-     * Show application details with complete user data
-     */
     public function show(UserSubmittedApplication $application)
     {
-        try {
-            $application->load(['user', 'visaApplication', 'reviewer']);
-            
-            // Get related application data
-            $applicationData = $this->getCompleteApplicationData($application);
-            
-            // Get related documents
-            $documents = ApplicationDocument::where('application_id', $application->id)
-                ->with('reviewer')
-                ->orderBy('created_at', 'desc')
-                ->get();
+        $application->load(['user', 'visaApplication', 'reviewer']);
+        
+        $documents = ApplicationDocument::where('application_id', $application->id)->latest()->get();
+        $messageCount = Message::where('application_id', $application->id)->count();
+        $unreadMessageCount = Message::where('application_id', $application->id)
+            ->where('is_read', false)
+            ->where('sender_type', 'user')
+            ->count();
 
-            // Get message count
-            $messageCount = Message::where('application_id', $application->id)->count();
-            $unreadMessageCount = Message::where('application_id', $application->id)
-                ->where('sender_type', 'user')
-                ->unread()
-                ->count();
+        $applicationData = $this->getApplicationData($application);
 
-            return view('admin.applications.show', compact(
-                'application', 
-                'applicationData', 
-                'documents',
-                'messageCount',
-                'unreadMessageCount'
-            ));
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Unable to load application details: ' . $e->getMessage());
-        }
+        return view('admin.applications.show', compact(
+            'application',
+            'documents',
+            'messageCount',
+            'unreadMessageCount',
+            'applicationData'
+        ));
     }
 
-    /**
-     * Show detailed form data for PDF generation
-     */
     public function showFormData(UserSubmittedApplication $application)
     {
-        try {
-            $application->load(['user', 'visaApplication']);
-            
-            // Get complete application data
-            $applicationData = $this->getCompleteApplicationData($application);
-            
-            return view('admin.applications.form-data', compact(
-                'application',
-                'applicationData'
-            ));
+        $application->load(['user', 'visaApplication']);
+        $applicationData = $this->getApplicationData($application);
 
-        } catch (\Exception $e) {
-            return back()->with('error', 'Unable to load form data: ' . $e->getMessage());
-        }
+        return view('admin.applications.form-data', compact('application', 'applicationData'));
     }
 
-    /**
-     * Update application status
-     */
-    public function updateStatus(Request $request, UserSubmittedApplication $application)
+    protected function getApplicationData(UserSubmittedApplication $application): ?array
     {
-        try {
-            $request->validate([
-                'status' => 'required|in:pending,under_review,approved,rejected',
-                'admin_notes' => 'nullable|string|max:1000',
-            ]);
+        $visaType = $application->visaApplication->name ?? '';
 
-            $application->update([
-                'status' => $request->status,
-                'admin_notes' => $request->admin_notes,
-                'reviewed_at' => now(),
-                'reviewed_by' => auth()->guard('admin')->id(),
-            ]);
-
-            return back()->with('success', 'Application status updated successfully.');
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Unable to update status: ' . $e->getMessage());
+        if (stripos($visaType, 'Fiance') !== false || stripos($visaType, 'K-1') !== false) {
+            return $this->getFianceVisaData($application);
+        } elseif (stripos($visaType, 'Spouse') !== false) {
+            return $this->getSpouseVisaData($application);
+        } elseif (stripos($visaType, 'Adjustment') !== false) {
+            return $this->getAdjustmentData($application);
         }
+
+        return null;
     }
 
-    /**
-     * Get complete application data for PDF generation
-     */
-    private function getCompleteApplicationData(UserSubmittedApplication $application)
+    protected function getFianceVisaData(UserSubmittedApplication $application): array
     {
-        $user = $application->user;
-        $data = [];
+        $data = ['sponsor' => [], 'alien' => [], 'children' => []];
 
-        // Get step data based on user's chosen application
-        if ($user->chosen_application) {
-            switch (strtolower($user->chosen_application)) {
-                case 'fiance':
-                case 'fiancee':
-                    $data['sponsor'] = $this->getFianceSponsorData($user);
-                    $data['alien'] = $this->getFianceAlienData($user);
-                    $data['children'] = $this->getFianceAlienChildrenData($user);
-                    break;
-                
-                case 'spouse':
-                    $data['spouse_data'] = $this->getSpouseVisaData($user);
-                    break;
-                
-                case 'adjustment':
-                    $data['adjustment_data'] = $this->getAdjustmentOfStatusData($user);
-                    break;
-            }
+        $sponsorSteps = FianceVisaSubmittedStep::where('user_id', $application->user_id)
+            ->where('submitted_app_id', $application->id)
+            ->where('type', 'sponsor')
+            ->get();
+
+        foreach ($sponsorSteps as $step) {
+            $data['sponsor'][$step->step] = $step->detail;
+        }
+
+        $alienSteps = FianceVisaSubmittedStep::where('user_id', $application->user_id)
+            ->where('submitted_app_id', $application->id)
+            ->where('type', 'alien')
+            ->get();
+
+        foreach ($alienSteps as $step) {
+            $data['alien'][$step->step] = $step->detail;
+        }
+
+        $childrenSteps = FianceVisaSubmittedStep::where('user_id', $application->user_id)
+            ->where('submitted_app_id', $application->id)
+            ->where('type', 'alien-children')
+            ->get();
+
+        foreach ($childrenSteps as $step) {
+            $data['children'][$step->step] = $step->detail;
         }
 
         return $data;
     }
 
-    /**
-     * Get fiance sponsor form data
-     */
-    private function getFianceSponsorData(User $user)
+    protected function getSpouseVisaData(UserSubmittedApplication $application): array
     {
-        $sponsorSteps = $user->fianceVisaSteps;
-        $compiledData = [];
+        $data = ['spouse_data' => []];
 
-        foreach ($sponsorSteps as $step) {
-            $stepData = json_decode($step->step_data, true);
-            if ($stepData) {
-                $compiledData[$step->step_name] = $stepData;
-            }
+        $steps = SpouseVisaSubmittedStep::where('user_id', $application->user_id)
+            ->where('submitted_app_id', $application->id)
+            ->get();
+
+        foreach ($steps as $step) {
+            $data['spouse_data'][$step->step] = $step->detail;
         }
 
-        return $compiledData;
+        return $data;
     }
 
-    /**
-     * Get fiance alien form data
-     */
-    private function getFianceAlienData(User $user)
+    protected function getAdjustmentData(UserSubmittedApplication $application): array
     {
-        $alien = $user->fianceAlien;
-        return $alien ? json_decode($alien->data, true) : null;
-    }
+        $data = ['adjustment_data' => []];
 
-    /**
-     * Get fiance alien children data
-     */
-    private function getFianceAlienChildrenData(User $user)
-    {
-        $children = $user->fianceAlienChildren;
-        return $children ? json_decode($children->data, true) : null;
-    }
+        $steps = AdjustmentVisaSubmittedStep::where('user_id', $application->user_id)
+            ->where('submitted_app_id', $application->id)
+            ->get();
 
-    /**
-     * Get spouse visa form data
-     */
-    private function getSpouseVisaData(User $user)
-    {
-        $spouseSteps = $user->spouseVisaSteps;
-        $compiledData = [];
-
-        foreach ($spouseSteps as $step) {
-            $stepData = json_decode($step->step_data, true);
-            if ($stepData) {
-                $compiledData[$step->step_name] = $stepData;
-            }
+        foreach ($steps as $step) {
+            $data['adjustment_data'][$step->step] = $step->detail;
         }
 
-        return $compiledData;
+        return $data;
     }
 
-    /**
-     * Get adjustment of status form data
-     */
-    private function getAdjustmentOfStatusData(User $user)
+    public function updateStatus(Request $request, UserSubmittedApplication $application)
     {
-        $adjustmentSteps = $user->adjustmentVisaSteps;
-        $compiledData = [];
+        $request->validate([
+            'status' => 'required|in:pending,under_review,approved,rejected',
+            'admin_notes' => 'nullable|string|max:1000',
+        ]);
 
-        foreach ($adjustmentSteps as $step) {
-            $stepData = json_decode($step->step_data, true);
-            if ($stepData) {
-                $compiledData[$step->step_name] = $stepData;
-            }
-        }
+        $application->update([
+            'status' => $request->status,
+            'admin_notes' => $request->admin_notes,
+            'reviewed_at' => now(),
+            'reviewed_by' => Auth::id(),
+        ]);
 
-        return $compiledData;
+        return redirect()->back()->with('success', 'Application status updated successfully.');
     }
 
-    /**
-     * Export applications
-     */
     public function export(Request $request)
     {
-        try {
-            $applications = UserSubmittedApplication::with(['user', 'visaApplication'])->get();
-            
-            $filename = 'applications_' . now()->format('Y-m-d_H-i-s') . '.csv';
-            
-            $headers = [
-                'Content-type' => 'text/csv',
-                'Content-Disposition' => "attachment; filename={$filename}",
-                'Pragma' => 'no-cache',
-                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-                'Expires' => '0'
-            ];
+        $query = UserSubmittedApplication::with(['user', 'visaApplication']);
 
-            $callback = function() use ($applications) {
-                $file = fopen('php://output', 'w');
-                
-                // CSV headers
-                fputcsv($file, [
-                    'ID',
-                    'User Name', 
-                    'User Email',
-                    'Application Type',
-                    'Status',
-                    'Transaction ID',
-                    'Submitted Date',
-                    'Admin Notes',
-                    'Reviewed At',
-                    'Reviewed By'
-                ]);
-
-                // CSV data
-                foreach ($applications as $app) {
-                    fputcsv($file, [
-                        $app->id,
-                        $app->user->name,
-                        $app->user->email,
-                        $app->visaApplication->name ?? 'N/A',
-                        ucfirst($app->status),
-                        $app->transaction_id,
-                        $app->created_at->format('Y-m-d H:i:s'),
-                        $app->admin_notes,
-                        $app->reviewed_at ? $app->reviewed_at->format('Y-m-d H:i:s') : '',
-                        $app->reviewer->name ?? ''
-                    ]);
-                }
-
-                fclose($file);
-            };
-
-            return response()->stream($callback, 200, $headers);
-            
-        } catch (\Exception $e) {
-            return back()->with('error', 'Unable to export applications: ' . $e->getMessage());
+        // Apply filters
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            });
         }
+
+        $applications = $query->get();
+
+        $filename = 'applications_' . now()->format('Y-m-d_His') . '.csv';
+        $handle = fopen('php://output', 'w');
+        
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        fputcsv($handle, ['ID', 'User Name', 'User Email', 'Application Type', 'Transaction ID', 'Status', 'Submitted Date', 'Last Updated']);
+
+        foreach ($applications as $app) {
+            fputcsv($handle, [
+                $app->id,
+                $app->user->name,
+                $app->user->email,
+                $app->visaApplication->name ?? 'N/A',
+                $app->transaction_id,
+                ucfirst(str_replace('_', ' ', $app->status)),
+                $app->created_at->format('Y-m-d H:i:s'),
+                $app->updated_at->format('Y-m-d H:i:s')
+            ]);
+        }
+
+        fclose($handle);
+        exit;
     }
 }
