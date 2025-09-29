@@ -1,5 +1,5 @@
 <?php
-// routes/web.php (Updated with new routes)
+// routes/web.php (Updated with payment middleware removed)
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\MessageController as AdminMessageController;
 use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ImmigrationNewsController;
+use App\Http\Controllers\PdfGenerationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,9 +68,17 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::get('/delete-payment-card/{id}', 'deletePaymentCard')->name('deletePaymentCard');
         Route::get('/mail', 'mails')->name('mails');
         Route::post('/send-mail', 'sendMail')->name('sendMail');
-        Route::post('/delete-mail', 'deleteMail')->name('deleteMail');
+        Route::post('/delete-mail', 'deleteMail')->name('deleteMail'); 
     });
 
+     // PDF Generation for Users
+        Route::get('/generate-pdf', [PdfGenerationController::class, 'generateUserPdf'])
+            ->name('user.generate-pdf');
+        
+        Route::get('/check-pdf-status', [PdfGenerationController::class, 'checkPdfStatus'])
+            ->name('user.check-pdf-status');
+
+    // Payment routes - you may want to comment these out or remove them entirely
     Route::get('/payment', [StripeController::class, 'index'])->name('payment.index');    
     Route::post('/payment', [StripeController::class, 'store'])->name('payment');    
 
@@ -84,6 +93,7 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::get('/unread-count', [MessageController::class, 'getUnreadCount'])->name('unread-count');
         Route::get('/{message}/attachment/{index}', [MessageController::class, 'downloadAttachment'])->name('download-attachment');
     });
+
     // Application Submission Routes
     Route::group(['controller' => \App\Http\Controllers\ApplicationSubmissionController::class], function() {
         Route::get('/application/review', 'showSubmissionPage')->name('application.review');
@@ -93,104 +103,104 @@ Route::group(['middleware' => ['auth', 'application']], function() {
 
     // Fiance visa step for Sponsor, Alien and Alien Children
     Route::middleware([fianceVisa::class])->group(function(){
+        // This group appears to be empty - you may want to add routes here or remove it
     });
 
-    Route::middleware(['payment.check'])->group(function() {
-        // Fiance visa step form routes
-        Route::controller(SponsorController::class)->prefix('fiance-sponsor')->group(function () {
-            Route::get('/application', 'index')->name('fianceSponsorApplication');
-            Route::post('/name', 'name')->name('fianceSponsorName');    
-            Route::post('/contact', 'contact')->name('fianceSponsorContact');    
-            Route::post('/placeOfBirth', 'placeOfBirth')->name('fianceSponsorPlaceOfBirth');    
-            Route::post('/status', 'status')->name('fianceSponsorStatus');    
-            Route::post('/maritalStatus', 'maritalStatus')->name('fianceSponsorMaritalStatus');    
-            Route::post('/otherFilings', 'otherFilings')->name('fianceSponsorOtherFilings');    
-            Route::post('/militaryAndConvictions', 'militaryAndConvictions')->name('fianceSponsorMilitaryAndConvictions');    
-            Route::post('/address', 'address')->name('fianceSponsorAddress');    
-            Route::post('/relationship', 'relationship')->name('fianceSponsorRelationship');    
-            Route::post('/employment', 'employment')->name('fianceSponsorEmployment');    
-            Route::post('/previous-and-continue', 'previousOrContinue')->name('sponsorPreviousOrContinue');
-            Route::get('/get-state', 'getState')->name('getState');
-            Route::get('/get-city', 'getCities')->name('getCities');
-        });
+    // REMOVED payment.check middleware - these routes are now directly accessible
+    // Fiance visa step form routes
+    Route::controller(SponsorController::class)->prefix('fiance-sponsor')->group(function () {
+        Route::get('/application', 'index')->name('fianceSponsorApplication');
+        Route::post('/name', 'name')->name('fianceSponsorName');    
+        Route::post('/contact', 'contact')->name('fianceSponsorContact');    
+        Route::post('/placeOfBirth', 'placeOfBirth')->name('fianceSponsorPlaceOfBirth');    
+        Route::post('/status', 'status')->name('fianceSponsorStatus');    
+        Route::post('/maritalStatus', 'maritalStatus')->name('fianceSponsorMaritalStatus');    
+        Route::post('/otherFilings', 'otherFilings')->name('fianceSponsorOtherFilings');    
+        Route::post('/militaryAndConvictions', 'militaryAndConvictions')->name('fianceSponsorMilitaryAndConvictions');    
+        Route::post('/address', 'address')->name('fianceSponsorAddress');    
+        Route::post('/relationship', 'relationship')->name('fianceSponsorRelationship');    
+        Route::post('/employment', 'employment')->name('fianceSponsorEmployment');    
+        Route::post('/previous-and-continue', 'previousOrContinue')->name('sponsorPreviousOrContinue');
+        Route::get('/get-state', 'getState')->name('getState');
+        Route::get('/get-city', 'getCities')->name('getCities');
+    });
 
-        Route::controller(AlienController::class)->prefix('fiance-alien')->group(function () {
-            Route::get('/application', 'index')->name('fianceAlienApplication');
-            Route::post('/name', 'name')->name('fianceAlienName');    
-            Route::post('/citizenship', 'citizenship')->name('fianceAlienCitizenship');        
-            Route::post('/embassy', 'embassy')->name('fianceAlienEmbassy');        
-            Route::post('/contact', 'contact')->name('fianceAlienContact');        
-            Route::post('/marital-status', 'maritalStatus')->name('fianceAlienMaritalStatus');        
-            Route::post('/parents', 'parents')->name('fianceAlienParents');        
-            Route::post('/visit-u-s', 'visitUS')->name('fianceAlienVisitUS');        
-            Route::post('/address', 'address')->name('fianceAlienAddress');        
-            Route::post('/employment', 'employment')->name('fianceAlienEmployment');        
-            Route::post('/school', 'school')->name('fianceAlienSchool');        
-            Route::post('/travel', 'travel')->name('fianceAlienTravel');        
-            Route::post('/military', 'military')->name('fianceAlienMilitary');        
-            Route::post('/activity', 'activity')->name('fianceAlienActivity');        
-            Route::post('/immigration', 'immigration')->name('fianceAlienImmigration');        
-            Route::post('/language', 'language')->name('fianceAlienLanguage');        
-            Route::post('/relative', 'relative')->name('fianceAlienRelative');        
-            Route::post('/question1', 'question1')->name('fianceAlienQuestion1');        
-            Route::post('/question2', 'question2')->name('fianceAlienQuestion2');        
-            Route::post('/question3', 'question3')->name('fianceAlienQuestion3');        
-            Route::post('/question4', 'question4')->name('fianceAlienQuestion4');        
-            Route::post('/question5', 'question5')->name('fianceAlienQuestion5');        
-            Route::post('/previous-and-continue', 'previousOrContinue')->name('fianceAlienPreOrCon');        
-        });
+    Route::controller(AlienController::class)->prefix('fiance-alien')->group(function () {
+        Route::get('/application', 'index')->name('fianceAlienApplication');
+        Route::post('/name', 'name')->name('fianceAlienName');    
+        Route::post('/citizenship', 'citizenship')->name('fianceAlienCitizenship');        
+        Route::post('/embassy', 'embassy')->name('fianceAlienEmbassy');        
+        Route::post('/contact', 'contact')->name('fianceAlienContact');        
+        Route::post('/marital-status', 'maritalStatus')->name('fianceAlienMaritalStatus');        
+        Route::post('/parents', 'parents')->name('fianceAlienParents');        
+        Route::post('/visit-u-s', 'visitUS')->name('fianceAlienVisitUS');        
+        Route::post('/address', 'address')->name('fianceAlienAddress');        
+        Route::post('/employment', 'employment')->name('fianceAlienEmployment');        
+        Route::post('/school', 'school')->name('fianceAlienSchool');        
+        Route::post('/travel', 'travel')->name('fianceAlienTravel');        
+        Route::post('/military', 'military')->name('fianceAlienMilitary');        
+        Route::post('/activity', 'activity')->name('fianceAlienActivity');        
+        Route::post('/immigration', 'immigration')->name('fianceAlienImmigration');        
+        Route::post('/language', 'language')->name('fianceAlienLanguage');        
+        Route::post('/relative', 'relative')->name('fianceAlienRelative');        
+        Route::post('/question1', 'question1')->name('fianceAlienQuestion1');        
+        Route::post('/question2', 'question2')->name('fianceAlienQuestion2');        
+        Route::post('/question3', 'question3')->name('fianceAlienQuestion3');        
+        Route::post('/question4', 'question4')->name('fianceAlienQuestion4');        
+        Route::post('/question5', 'question5')->name('fianceAlienQuestion5');        
+        Route::post('/previous-and-continue', 'previousOrContinue')->name('fianceAlienPreOrCon');        
+    });
 
-        Route::controller(AlienChildrenController::class)->prefix('fiance-alien-child')->group(function () {
-            Route::get('/application', 'index')->name('fianceAlienChildApplication');
-            Route::post('/child1', 'child1')->name('fianceAlienChild1');        
-            Route::post('/child2', 'child2')->name('fianceAlienChild2');        
-            Route::post('/child3', 'child3')->name('fianceAlienChild3');        
-            Route::post('/child4', 'child4')->name('fianceAlienChild4');        
-            Route::post('/child5', 'child5')->name('fianceAlienChild5');        
-            Route::post('/previous-and-continue', 'previousOrContinue')->name('fianceAlienChildPreOrCon');      
-        });
+    Route::controller(AlienChildrenController::class)->prefix('fiance-alien-child')->group(function () {
+        Route::get('/application', 'index')->name('fianceAlienChildApplication');
+        Route::post('/child1', 'child1')->name('fianceAlienChild1');        
+        Route::post('/child2', 'child2')->name('fianceAlienChild2');        
+        Route::post('/child3', 'child3')->name('fianceAlienChild3');        
+        Route::post('/child4', 'child4')->name('fianceAlienChild4');        
+        Route::post('/child5', 'child5')->name('fianceAlienChild5');        
+        Route::post('/previous-and-continue', 'previousOrContinue')->name('fianceAlienChildPreOrCon');      
+    });
 
-        // Spouse visa step form routes
-        Route::controller(SpouseVisaApplicationController::class)->prefix('spouse-visa')->group(function () {
-            Route::get('/application', 'index')->name('spouseVisaApplication');
-            Route::post('/name', 'name')->name('spouseName');
-            Route::post('/contact', 'contact')->name('spouseContact');
-            Route::post('/place-of-birth', 'placeOfBirth')->name('spousePlaceOfBirth');
-            Route::post('/status', 'status')->name('spouseStatus');
-            Route::post('/marital-status', 'maritalStatus')->name('spouseMaritalStatus');
-            Route::post('/other-filing', 'otherFiling')->name('spouseOtherFiling');
-            Route::post('/military-conviction', 'militaryConviction')->name('spouseMilitaryConviction');
-            Route::post('/address', 'address')->name('spouseAddress');
-            Route::post('/relationship', 'relationship')->name('spouseRelationship');
-            Route::post('/employment', 'employment')->name('spouseEmployment');
-            Route::post('/previous-and-continue', 'previousOrContinue')->name('spousePreviousOrContinue');
-        });
+    // Spouse visa step form routes
+    Route::controller(SpouseVisaApplicationController::class)->prefix('spouse-visa')->group(function () {
+        Route::get('/application', 'index')->name('spouseVisaApplication');
+        Route::post('/name', 'name')->name('spouseName');
+        Route::post('/contact', 'contact')->name('spouseContact');
+        Route::post('/place-of-birth', 'placeOfBirth')->name('spousePlaceOfBirth');
+        Route::post('/status', 'status')->name('spouseStatus');
+        Route::post('/marital-status', 'maritalStatus')->name('spouseMaritalStatus');
+        Route::post('/other-filing', 'otherFiling')->name('spouseOtherFiling');
+        Route::post('/military-conviction', 'militaryConviction')->name('spouseMilitaryConviction');
+        Route::post('/address', 'address')->name('spouseAddress');
+        Route::post('/relationship', 'relationship')->name('spouseRelationship');
+        Route::post('/employment', 'employment')->name('spouseEmployment');
+        Route::post('/previous-and-continue', 'previousOrContinue')->name('spousePreviousOrContinue');
+    });
 
-        // Adjustment of status visa step form routes
-        Route::controller(AdjustmentOfStatusController::class)->prefix('adjustment-of-status')->group(function () {
-            Route::get('/adjustment', 'show')->name('adjustment.show');
-            Route::get('/{type}', 'application')->name('adjustmentVisaApplication');
-            Route::post('/name', 'name')->name('adjustmentName');
-            Route::post('/place-of-birth', 'placeOfBirth')->name('adjustmentPlaceOfBirth');
-            Route::post('/visa-info', 'visaInfo')->name('adjustmentvisaInfo');
-            Route::post('/address', 'address')->name('adjustmentAddress');
-            Route::post('/civil-status', 'civilStatus')->name('adjustmentCivilStatus');
-            Route::post('/sponsor-part-1', 'sponsorPart1')->name('adjustmentSponsorPart1');
-            Route::post('/sponsor-part-2', 'sponsorPart2')->name('adjustmentSponsorPart2');
-            Route::post('/qus-part-1', 'qusPart1')->name('adjustmentQusPart1');
-            Route::post('/qus-part-2', 'qusPart2')->name('adjustmentQusPart2');
-            Route::post('/qus-part-3', 'qusPart3')->name('adjustmentQusPart3');
-            Route::post('/qus-part-4', 'qusPart4')->name('adjustmentQusPart4');
-            Route::post('/qus-part-5', 'qusPart5')->name('adjustmentQusPart5');
-            Route::post('/ead', 'ead')->name('adjustmentEad');
-            Route::post('/accommodation', 'accommodation')->name('adjustmentAccommodation');
-            Route::post('/interpreter', 'interpreter')->name('adjustmentInterpreter');
-            Route::post('/children', 'children')->name('adjustmentChildren');
-            Route::post('/affiliation', 'affiliation')->name('adjustmentAffiliation');
-            Route::post('/alien-parents', 'alienParents')->name('adjustmentAlienParents');
-            Route::post('/alien-employement', 'alienEmployement')->name('adjustmentAlienEmployement');
-            Route::post('/previous-and-continue', 'previousOrContinue')->name('adjustmentPreviousOrContinue');
-        });
+    // Adjustment of status visa step form routes
+    Route::controller(AdjustmentOfStatusController::class)->prefix('adjustment-of-status')->group(function () {
+        Route::get('/adjustment', 'show')->name('adjustment.show');
+        Route::get('/{type}', 'application')->name('adjustmentVisaApplication');
+        Route::post('/name', 'name')->name('adjustmentName');
+        Route::post('/place-of-birth', 'placeOfBirth')->name('adjustmentPlaceOfBirth');
+        Route::post('/visa-info', 'visaInfo')->name('adjustmentvisaInfo');
+        Route::post('/address', 'address')->name('adjustmentAddress');
+        Route::post('/civil-status', 'civilStatus')->name('adjustmentCivilStatus');
+        Route::post('/sponsor-part-1', 'sponsorPart1')->name('adjustmentSponsorPart1');
+        Route::post('/sponsor-part-2', 'sponsorPart2')->name('adjustmentSponsorPart2');
+        Route::post('/qus-part-1', 'qusPart1')->name('adjustmentQusPart1');
+        Route::post('/qus-part-2', 'qusPart2')->name('adjustmentQusPart2');
+        Route::post('/qus-part-3', 'qusPart3')->name('adjustmentQusPart3');
+        Route::post('/qus-part-4', 'qusPart4')->name('adjustmentQusPart4');
+        Route::post('/qus-part-5', 'qusPart5')->name('adjustmentQusPart5');
+        Route::post('/ead', 'ead')->name('adjustmentEad');
+        Route::post('/accommodation', 'accommodation')->name('adjustmentAccommodation');
+        Route::post('/interpreter', 'interpreter')->name('adjustmentInterpreter');
+        Route::post('/children', 'children')->name('adjustmentChildren');
+        Route::post('/affiliation', 'affiliation')->name('adjustmentAffiliation');
+        Route::post('/alien-parents', 'alienParents')->name('adjustmentAlienParents');
+        Route::post('/alien-employement', 'alienEmployement')->name('adjustmentAlienEmployement');
+        Route::post('/previous-and-continue', 'previousOrContinue')->name('adjustmentPreviousOrContinue');
     });
 
     Route::resource('drop-box', DropBoxController::class);
@@ -220,6 +230,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
         Route::post('/monitoring/changes/{change}/mark-read', 'markAsRead')->name('monitoring.mark-read');
         Route::get('/monitoring/mark-all-read', 'markAllAsRead')->name('monitoring.mark-all-read');
     });
+
+    // PDF Generation for Admin
+    Route::get('/applications/{application}/generate-pdf', 
+        [PdfGenerationController::class, 'generateAdminPdf'])
+        ->name('applications.generate-pdf');
+    
+    Route::get('/check-pdf-status', [PdfGenerationController::class, 'checkPdfStatus'])
+        ->name('check-pdf-status');
     
     // Admin Guest Routes (not logged in)
     Route::middleware('admin.guest')->group(function() {
