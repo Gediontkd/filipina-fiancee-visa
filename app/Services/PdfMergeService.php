@@ -17,9 +17,27 @@ class PdfMergeService
     {
         $this->pdfDirectory = resource_path('views/pdf');
         
-        // Ghostscript path for Windows
-        $this->gsPath = 'C:\\Program Files\\gs\\gs10.06.0\\bin\\gswin64c.exe';
-    }
+            // Auto-detect Ghostscript path based on OS
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                // Windows
+                $this->gsPath = 'C:\\Program Files\\gs\\gs10.06.0\\bin\\gswin64c.exe';
+            } else {
+                // Linux/Unix - check common locations
+                $possiblePaths = [
+                    '/usr/local/bin/gs',
+                    '/usr/bin/gs',
+                    '/snap/bin/gs',
+                    'gs'
+                ];
+                
+                foreach ($possiblePaths as $path) {
+                    if ($path === 'gs' || file_exists($path)) {
+                        $this->gsPath = $path;
+                        break;
+                    }
+                }
+            }
+        }
 
     public function getPdfFiles(): array
     {
