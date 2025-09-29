@@ -62,10 +62,15 @@
                                 </ul>
                             </div>
 
-                            <div class="d-flex gap-3">
+                           <div class="d-flex gap-3 flex-wrap">
+                                <button onclick="generateUserPdf()" id="user-pdf-btn" class="btn btn-danger">
+                                    <i class="fa fa-file-pdf me-2"></i>Generate PDF Package
+                                </button>
+                                
                                 <a href="{{ route('messages.compose') }}" class="btn btn-primary">
                                     <i class="fa fa-comments me-2"></i>Send Message to Support
                                 </a>
+                                
                                 <a href="{{ route('messages.index') }}" class="btn btn-outline-primary">
                                     <i class="fa fa-envelope me-2"></i>View Messages
                                 </a>
@@ -90,13 +95,34 @@
                            <div class="col-md-8">
                                <h6>Progress</h6>
                                <div class="progress my-4">
-                                  <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ $sponsorTotal }}%" aria-valuenow="{{ $sponsorTotal }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar progress-bar-striped bg-success" 
+                                    role="progressbar" 
+                                    style="width: {{ $sponsorTotal }}%" 
+                                    aria-valuenow="{{ $sponsorTotal }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                    {{ $sponsorTotal }}%
+                                </div>
                                 </div>
                                 <div class="progress my-4" style="margin-top: 42px !important;">
-                                  <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ $alienTotal }}%" aria-valuenow="{{ $alienTotal }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar progress-bar-striped bg-success" 
+                                    role="progressbar" 
+                                    style="width: {{ $alienTotal }}%" 
+                                    aria-valuenow="{{ $alienTotal }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                    {{ $alienTotal }}%
+                                </div>
                                 </div>
                                 <div class="progress my-4" style="margin-top: 42px !important;">
-                                  <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ $alienChildrenTotal }}%" aria-valuenow="{{ $alienChildrenTotal }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar progress-bar-striped bg-success" 
+                                    role="progressbar" 
+                                    style="width: {{ $alienChildrenTotal }}%" 
+                                    aria-valuenow="{{ $alienChildrenTotal }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                    {{ $alienChildrenTotal }}%
+                                </div>
                                 </div>
                            </div>
                        </div>
@@ -109,9 +135,29 @@
                         <h2 class="card-title text-center">Overall Progress</h2>
                     </div>
                     <div class="card-body p-3">
-                       <div class="progress">
-                          <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ $overAll }}%" aria-valuenow="{{ $overAll }}" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
+                       <div class="progress" style="height: 30px;">
+                            <div class="progress-bar progress-bar-striped bg-success" 
+                                role="progressbar" 
+                                style="width: {{ $overAll }}%" 
+                                aria-valuenow="{{ $overAll }}" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100">
+                                <strong>{{ $overAll }}%</strong>
+                            </div>
+                            </div>
+
+                            @if($hasSubmission)
+                                <!-- PDF Generation Option for Submitted Applications -->
+                                <div class="mt-4">
+                                    <div class="alert alert-info">
+                                        <h6><i class="fa fa-file-pdf me-2"></i>Download Complete Application Package</h6>
+                                        <p class="mb-3">You can download a complete PDF package of your application forms.</p>
+                                        <button onclick="generateUserPdf()" id="user-pdf-btn-2" class="btn btn-danger">
+                                            <i class="fa fa-file-pdf me-2"></i>Generate PDF Package
+                                        </button>
+                                    </div>
+                                </div>
+                            @endif
                         
                         @if($overAll >= 100 && !$hasSubmission)
                             <!-- Ready to Submit -->
@@ -149,9 +195,59 @@
 
 @section('customScript')
 <script type="text/javascript">
+    // PDF Generation for User
+    function generateUserPdf() {
+        const btns = document.querySelectorAll('[id^="user-pdf-btn"]');
+        
+        // Disable all PDF buttons and show loading
+        btns.forEach(btn => {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>Generating PDF...';
+        });
+        
+        // Show loading notification
+        showNotification('Generating your PDF package. This may take a moment...', 'info');
+        
+        // Navigate to PDF generation route
+        window.location.href = '{{ route("user.generate-pdf") }}';
+        
+        // Re-enable buttons after delay
+        setTimeout(() => {
+            btns.forEach(btn => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-file-pdf me-2"></i>Generate PDF Package';
+            });
+        }, 5000);
+    }
+
+    // Notification function
+    function showNotification(message, type) {
+        const bgColors = {
+            'success': 'bg-success',
+            'error': 'bg-danger',
+            'info': 'bg-info',
+            'warning': 'bg-warning'
+        };
+        
+        const notification = document.createElement('div');
+        notification.className = `alert ${bgColors[type] || 'bg-info'} text-white position-fixed top-0 end-0 m-3`;
+        notification.style.zIndex = '9999';
+        notification.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="fa fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    }
+
     // Auto-refresh submission status if needed
     @if(!$hasSubmission && $overAll >= 100)
-        // Check if user just completed submission elsewhere
         setInterval(function() {
             fetch('{{ route("application.status") }}')
                 .then(response => response.json())
@@ -161,7 +257,24 @@
                     }
                 })
                 .catch(error => console.log('Status check failed'));
-        }, 30000); // Check every 30 seconds
+        }, 30000);
+    @endif
+
+    // Check PDF availability on page load
+    @if($hasSubmission)
+        fetch('{{ route("user.check-pdf-status") }}')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.available || data.count === 0) {
+                    const pdfBtns = document.querySelectorAll('[id^="user-pdf-btn"]');
+                    pdfBtns.forEach(btn => {
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fa fa-exclamation-triangle me-2"></i>No PDFs Available';
+                        btn.title = 'PDF files are not yet ready for your application';
+                    });
+                }
+            })
+            .catch(error => console.log('PDF status check failed'));
     @endif
 </script>
 @endsection
