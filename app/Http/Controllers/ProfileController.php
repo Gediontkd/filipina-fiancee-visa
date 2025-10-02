@@ -159,30 +159,18 @@ class ProfileController extends Controller
     }
 
     public function chooseApplication(Request $request)
-    {
-        DB::beginTransaction();
+{
+    DB::beginTransaction();
 
-        try {
-            
-            User::where('id', Auth::id())->update(['chosen_application' => $request->chosen_application]);
-            switch ($request->chosen_application) {
-                case 'fiancee':
-                    $route = 'fiancee.visa';
-                break;
-                case 'spouse':
-                    $route = 'spouse.visa';
-                break;
-                case 'adjustment':
-                    $route = 'adjustment.visa';
-                break;                
-            }            
+    try {
+        User::where('id', Auth::id())->update(['chosen_application' => $request->chosen_application]);
+        
+        DB::commit();
+        return redirect()->route('user.page', ['page' => 'progress']);
 
-			DB::commit();
-            return redirect()->route($route);
-
-		} catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', $e->getMessage());
-        }       
-    }
+    } catch (\Exception $e) {
+        DB::rollback();
+        return redirect()->back()->with('error', $e->getMessage());
+    }       
+}
 }

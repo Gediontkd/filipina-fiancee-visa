@@ -71,6 +71,10 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::post('/delete-mail', 'deleteMail')->name('deleteMail'); 
     });
 
+     Route::get('/fiancee-visa', [FianceVisaApplicationController::class, 'index'])->name('fiancee.visa');
+     Route::get('/adjustment-of-status', [AdjustmentOfStatusController::class, 'index'])->name('adjustment.visa');
+     Route::get('/spouse-visa', [SpouseVisaApplicationController::class, 'spouseVisa'])->name('spouse.visa');
+
      // PDF Generation for Users
         Route::get('/generate-pdf', [PdfGenerationController::class, 'generateUserPdf'])
             ->name('user.generate-pdf');
@@ -209,9 +213,7 @@ Route::group(['middleware' => ['auth', 'application']], function() {
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::group(['middleware' => ['application']], function() {
-    Route::get('/fiancee-visa', [FianceVisaApplicationController::class, 'index'])->name('fiancee.visa');
-    Route::get('/adjustment-of-status', [AdjustmentOfStatusController::class, 'index'])->name('adjustment.visa');
-    Route::get('/spouse-visa', [SpouseVisaApplicationController::class, 'spouseVisa'])->name('spouse.visa');
+   
 });
 
 /*
