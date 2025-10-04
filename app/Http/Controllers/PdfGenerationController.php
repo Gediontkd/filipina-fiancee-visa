@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Controller for generating and merging PDF documents
+ * Controller for generating and merging PDF documents from user-specific folders
  */
 class PdfGenerationController extends Controller
 {
@@ -22,7 +22,7 @@ class PdfGenerationController extends Controller
     }
 
     /**
-     * Generate and download merged PDF for user
+     * Generate and download merged PDF for authenticated user
      * 
      * @return \Illuminate\Http\Response
      */
@@ -31,9 +31,17 @@ class PdfGenerationController extends Controller
         try {
             $user = Auth::user();
             
+            // Check if PDF generation is enabled
+            if (!$this->pdfService->isPdfGenerationEnabled()) {
+                return back()->with('error', 'PDF generation is currently disabled. Please contact support.');
+            }
+            
+            // Set user ID for the service
+            $this->pdfService->setUserId($user->id);
+            
             // Check if PDFs exist
             if (!$this->pdfService->hasPdfFiles()) {
-                return back()->with('error', 'No PDF files available for generation.');
+                return back()->with('error', 'No PDF files available for generation. PDFs will be available after admin review.');
             }
 
             // Merge PDFs
@@ -50,13 +58,16 @@ class PdfGenerationController extends Controller
                 'file_count' => $result['file_count']
             ]);
 
-            // Download file
-            return response()->download($result['path'], $result['filename'])->deleteFileAfterSend(true);
+            // Download file and delete after sending
+            return response()
+                ->download($result['path'], $result['filename'])
+                ->deleteFileAfterSend(true);
 
         } catch (\Exception $e) {
             Log::error('User PDF generation failed', [
                 'user_id' => Auth::id(),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return back()->with('error', 'Failed to generate PDF. Please try again or contact support.');
@@ -64,7 +75,7 @@ class PdfGenerationController extends Controller
     }
 
     /**
-     * Generate and download merged PDF for admin
+     * Generate and download merged PDF for admin viewing
      * 
      * @param UserSubmittedApplication $application
      * @return \Illuminate\Http\Response
@@ -72,9 +83,17 @@ class PdfGenerationController extends Controller
     public function generateAdminPdf(UserSubmittedApplication $application)
     {
         try {
+            // Check if PDF generation is enabled
+            if (!$this->pdfService->isPdfGenerationEnabled()) {
+                return back()->with('error', 'PDF generation is currently disabled.');
+            }
+
+            // Set user ID for the service
+            $this->pdfService->setUserId($application->user_id);
+            
             // Check if PDFs exist
             if (!$this->pdfService->hasPdfFiles()) {
-                return back()->with('error', 'No PDF files available for generation.');
+                return back()->with('error', 'No PDF files available for this application yet.');
             }
 
             // Merge PDFs with applicant name
@@ -93,14 +112,17 @@ class PdfGenerationController extends Controller
                 'file_count' => $result['file_count']
             ]);
 
-            // Download file
-            return response()->download($result['path'], $result['filename'])->deleteFileAfterSend(true);
+            // Download file and delete after sending
+            return response()
+                ->download($result['path'], $result['filename'])
+                ->deleteFileAfterSend(true);
 
         } catch (\Exception $e) {
             Log::error('Admin PDF generation failed', [
                 'admin_id' => Auth::id(),
                 'application_id' => $application->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return back()->with('error', 'Failed to generate PDF. Please try again.');
@@ -114,9 +136,22 @@ class PdfGenerationController extends Controller
      */
     public function checkPdfStatus()
     {
-        return response()->json([
-            'available' => $this->pdfService->hasPdfFiles(),
-            'count' => $this->pdfService->getPdfCount()
-        ]);
+        try {
+            $user = Auth::user();
+            $this->pdfService->setUserId($user->id);
+            
+            return response()->json([
+                'enabled' => $this->pdfService->isPdfGenerationEnabled(),
+                'available' => $this->pdfService->hasPdfFiles(),
+                'count' => $this->pdfService->getPdfCount()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'enabled' => false,
+                'available' => false,
+                'count' => 0,
+                'error' => 'Unable to check PDF status'
+            ]);
+        }
     }
 }
