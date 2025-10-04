@@ -1,5 +1,5 @@
 <?php
-// app/Http/Controllers/Admin/ApplicationController.php
+// app/Http/Controllers/Admin/ApplicationController.php (FIXED - Data Display)
 
 namespace App\Http\Controllers\Admin;
 
@@ -9,10 +9,8 @@ use App\Models\VisaApplication;
 use App\Services\ApplicationDataService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
-/**
- * Controller for managing visa applications in admin panel
- */
 class ApplicationController extends Controller
 {
     protected ApplicationDataService $dataService;
@@ -22,15 +20,11 @@ class ApplicationController extends Controller
         $this->dataService = $dataService;
     }
 
-    /**
-     * Display listing of all applications
-     */
     public function index(Request $request)
     {
         $query = UserSubmittedApplication::with(['user', 'visaApplication', 'reviewer'])
             ->orderBy('created_at', 'desc');
 
-        // Apply search filter
         if ($request->filled('search')) {
             $search = $request->search;
             $query->whereHas('user', function($q) use ($search) {
@@ -39,19 +33,16 @@ class ApplicationController extends Controller
             });
         }
 
-        // Apply application type filter
         if ($request->filled('application_type')) {
             $query->whereHas('visaApplication', function($q) use ($request) {
                 $q->where('name', $request->application_type);
             });
         }
 
-        // Apply status filter
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Apply date filters
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
@@ -61,24 +52,16 @@ class ApplicationController extends Controller
         }
 
         $applications = $query->paginate(20);
-
-        // Get unique visa application types for filter
         $visa_applications = VisaApplication::pluck('name')->unique();
-
-        // Get unique statuses
         $statuses = ['pending', 'under_review', 'approved', 'rejected'];
 
         return view('admin.applications.index', compact('applications', 'visa_applications', 'statuses'));
     }
 
-    /**
-     * Display specific application details
-     */
     public function show(UserSubmittedApplication $application)
     {
         $application->load(['user', 'visaApplication', 'reviewer']);
 
-        // Get unread message count for this application
         $unreadMessageCount = \App\Models\Message::where('application_id', $application->id)
             ->where('sender_type', 'user')
             ->where('is_read', false)
@@ -88,21 +71,29 @@ class ApplicationController extends Controller
     }
 
     /**
-     * Display application form data for PDF generation
+     * Display application form data - FIXED VERSION
      */
     public function showFormData(UserSubmittedApplication $application)
     {
         $application->load(['user', 'visaApplication']);
 
-        // Collect all application data using the service
-        $applicationData = $this->dataService->collectApplicationData($application);
+        // Collect data using the service
+        $collectedData = $this->dataService->collectApplicationData($application);
+        
+        // Extract only the form_data part for the view
+        $applicationData = $collectedData['form_data'] ?? [];
+
+        // Log for debugging
+        Log::info('Form Data Retrieved', [
+            'application_id' => $application->id,
+            'user_id' => $application->user_id,
+            'has_data' => !empty($applicationData),
+            'data_keys' => array_keys($applicationData)
+        ]);
 
         return view('admin.applications.form-data', compact('application', 'applicationData'));
     }
 
-    /**
-     * Update application status
-     */
     public function updateStatus(Request $request, UserSubmittedApplication $application)
     {
         $request->validate([
@@ -117,22 +108,15 @@ class ApplicationController extends Controller
             'reviewed_by' => Auth::id(),
         ]);
 
-        // You can add notification to user here
-        // event(new ApplicationStatusUpdated($application));
-
         return redirect()
             ->route('admin.applications.show', $application)
             ->with('success', 'Application status updated successfully.');
     }
 
-    /**
-     * Export applications to CSV
-     */
     public function export(Request $request)
     {
         $query = UserSubmittedApplication::with(['user', 'visaApplication']);
 
-        // Apply same filters as index
         if ($request->filled('search')) {
             $search = $request->search;
             $query->whereHas('user', function($q) use ($search) {
@@ -161,7 +145,6 @@ class ApplicationController extends Controller
 
         $applications = $query->get();
 
-        // Generate CSV
         $filename = 'applications_export_' . date('Y-m-d_His') . '.csv';
         $headers = [
             'Content-Type' => 'text/csv',
@@ -171,7 +154,6 @@ class ApplicationController extends Controller
         $callback = function() use ($applications) {
             $file = fopen('php://output', 'w');
             
-            // CSV Headers
             fputcsv($file, [
                 'ID',
                 'Transaction ID',
@@ -184,7 +166,6 @@ class ApplicationController extends Controller
                 'Reviewed By',
             ]);
 
-            // CSV Data
             foreach ($applications as $application) {
                 fputcsv($file, [
                     $application->id,

@@ -82,9 +82,11 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::get('/check-pdf-status', [PdfGenerationController::class, 'checkPdfStatus'])
             ->name('user.check-pdf-status');
 
-    // Payment routes - you may want to comment these out or remove them entirely
-    Route::get('/payment', [StripeController::class, 'index'])->name('payment.index');    
-    Route::post('/payment', [StripeController::class, 'store'])->name('payment');    
+    // Payment routes
+    Route::get('/payment', [StripeController::class, 'index'])->name('payment.index');
+    Route::post('/payment', [StripeController::class, 'store'])->name('payment');
+    Route::get('/payment/success', [StripeController::class, 'success'])->name('payment.success');
+    Route::get('/payment/cancel', [StripeController::class, 'cancel'])->name('payment.cancel'); 
 
     // Messaging Routes for Users
     Route::group(['prefix' => 'messages', 'as' => 'messages.'], function() {
@@ -237,6 +239,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
     Route::get('/applications/{application}/generate-pdf', 
         [PdfGenerationController::class, 'generateAdminPdf'])
         ->name('applications.generate-pdf');
+
+        // Inside the admin middleware group
+    Route::get('/admin/check-pdf-status', function(Request $request) {
+        $userId = $request->get('user_id');
+        $status = \App\Helpers\PdfControlHelper::checkPdfStatus($userId);
+        return response()->json($status);
+    })->name('admin.check-pdf-status');
     
     Route::get('/check-pdf-status', [PdfGenerationController::class, 'checkPdfStatus'])
         ->name('check-pdf-status');

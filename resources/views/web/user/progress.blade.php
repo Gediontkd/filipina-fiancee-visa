@@ -55,15 +55,12 @@
                                 <h6><i class="fa fa-info-circle me-2"></i>What's Next?</h6>
                                 <ul class="mb-0">
                                     <li>Our team will review your application within 2-3 business days</li>
-                                    <li>You will receive updates via email and in your dashboard</li>
+                                    <li>You will receive updates via email or message and in your dashboard</li>
                                     <li>You can now send messages to our support team for any questions</li>
                                 </ul>
                             </div>
 
                            <div class="d-flex gap-3 flex-wrap">
-                                <button onclick="generateUserPdf()" id="user-pdf-btn" class="btn btn-danger">
-                                    <i class="fa fa-file-pdf me-2"></i>Generate PDF Package
-                                </button>
                                 
                                 <a href="{{ route('messages.compose') }}" class="btn btn-primary">
                                     <i class="fa fa-comments me-2"></i>Send Message to Support
@@ -189,32 +186,68 @@
 
 @section('customScript')
 <script type="text/javascript">
-    // PDF Generation for User
+    // PDF Generation with Payment Check
     function generateUserPdf() {
         const btns = document.querySelectorAll('[id^="user-pdf-btn"]');
         
-        // Disable all PDF buttons and show loading
+        // Show checking state
         btns.forEach(btn => {
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>Generating PDF...';
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>Checking...';
         });
         
-        // Show loading notification
-        showNotification('Generating your PDF package. This may take a moment...', 'info');
-        
-        // Navigate to PDF generation route
-        window.location.href = '{{ route("user.generate-pdf") }}';
-        
-        // Re-enable buttons after delay
-        setTimeout(() => {
-            btns.forEach(btn => {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa fa-file-pdf me-2"></i>Generate PDF Package';
+        // Check payment AND PDF status
+        fetch('{{ route("user.check-pdf-status") }}')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Status:', data);
+                
+                // Check 1: Payment Required?
+                if (data.payment_required) {
+                    btns.forEach(btn => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa fa-file-pdf me-2"></i>Generate PDF Package';
+                    });
+                    
+                    // Show payment modal or redirect
+                    if (confirm('💳 Payment of $' + data.payment_amount.toFixed(2) + ' required to download PDF package.\n\nProceed to payment?')) {
+                        window.location.href = '{{ route("payment.index") }}';
+                    }
+                    return;
+                }
+                
+                // Check 2: PDFs Available?
+                if (!data.can_generate) {
+                    btns.forEach(btn => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa fa-file-pdf me-2"></i>Generate PDF Package';
+                    });
+                    alert('⚠️ ' + data.message);
+                    return;
+                }
+                
+                // All checks passed - Generate PDF
+                btns.forEach(btn => {
+                    btn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>Generating ' + data.pdf_count + ' PDF(s)...';
+                });
+                
+                showNotification('Found ' + data.pdf_count + ' PDF file(s). Generating package...', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = '{{ route("user.generate-pdf") }}';
+                }, 500);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                btns.forEach(btn => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa fa-file-pdf me-2"></i>Generate PDF Package';
+                });
+                alert('Error checking status. Please try again.');
             });
-        }, 5000);
     }
 
-    // Notification function
+    // Notification function (keep existing)
     function showNotification(message, type) {
         const bgColors = {
             'success': 'bg-success',
@@ -234,41 +267,7 @@
         `;
         
         document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.remove();
-        }, 5000);
+        setTimeout(() => notification.remove(), 5000);
     }
-
-    // Auto-refresh submission status if needed
-    @if(!$hasSubmission && $overAll >= 100)
-        setInterval(function() {
-            fetch('{{ route("application.status") }}')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.has_submission) {
-                        location.reload();
-                    }
-                })
-                .catch(error => console.log('Status check failed'));
-        }, 30000);
-    @endif
-
-    // Check PDF availability on page load
-    @if($hasSubmission)
-        fetch('{{ route("user.check-pdf-status") }}')
-            .then(response => response.json())
-            .then(data => {
-                if (!data.available || data.count === 0) {
-                    const pdfBtns = document.querySelectorAll('[id^="user-pdf-btn"]');
-                    pdfBtns.forEach(btn => {
-                        btn.disabled = true;
-                        btn.innerHTML = '<i class="fa fa-exclamation-triangle me-2"></i>No PDFs Available';
-                        btn.title = 'PDF files are not yet ready for your application';
-                    });
-                }
-            })
-            .catch(error => console.log('PDF status check failed'));
-    @endif
 </script>
 @endsection

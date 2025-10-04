@@ -1,17 +1,16 @@
 <?php
-// app/Http/Controllers/PdfGenerationController.php
+// app/Http/Controllers/PdfGenerationController.php (WITH PAYMENT VERIFICATION)
 
 namespace App\Http\Controllers;
 
 use App\Services\PdfMergeService;
+use App\Helpers\PdfControlHelper;
+use App\Helpers\PaymentHelper;
 use App\Models\UserSubmittedApplication;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-/**
- * Controller for generating and merging PDF documents from user-specific folders
- */
 class PdfGenerationController extends Controller
 {
     protected PdfMergeService $pdfService;
@@ -22,135 +21,155 @@ class PdfGenerationController extends Controller
     }
 
     /**
-     * Generate and download merged PDF for authenticated user
-     * 
-     * @return \Illuminate\Http\Response
+     * Generate PDF for USER (with payment check)
      */
     public function generateUserPdf()
     {
         try {
             $user = Auth::user();
             
-            // Check if PDF generation is enabled
-            if (!$this->pdfService->isPdfGenerationEnabled()) {
-                return back()->with('error', 'PDF generation is currently disabled. Please contact support.');
-            }
+            // CHECK 1: Payment Status
+            $paymentStatus = PaymentHelper::checkPaymentStatus($user->id);
             
-            // Set user ID for the service
-            $this->pdfService->setUserId($user->id);
-            
-            // Check if PDFs exist
-            if (!$this->pdfService->hasPdfFiles()) {
-                return back()->with('error', 'No PDF files available for generation. PDFs will be available after admin review.');
+            if (!$paymentStatus['has_paid']) {
+                Log::info('PDF download blocked - Payment required', [
+                    'user_id' => $user->id,
+                    'amount' => $paymentStatus['amount']
+                ]);
+
+                return redirect()->route('payment.index')
+                    ->with('error', 'Payment required to download PDF package.')
+                    ->with('payment_amount', $paymentStatus['amount'])
+                    ->with('application_id', $paymentStatus['application_id']);
             }
 
-            // Merge PDFs
+            // CHECK 2: PDF Files Available
+            if (!PdfControlHelper::canGeneratePdf($user->id)) {
+                $status = PdfControlHelper::checkPdfStatus($user->id);
+                return back()->with('error', $status['message']);
+            }
+
+            // All checks passed - Generate PDF
+            $this->pdfService->setUserId($user->id);
+            $pdfCount = $this->pdfService->getPdfCount();
+            
+            Log::info('User PDF Generation Started', [
+                'user_id' => $user->id,
+                'pdf_count' => $pdfCount,
+                'payment_verified' => true
+            ]);
+
             $result = $this->pdfService->mergePdfs($user->name);
 
             if (!$result['success']) {
                 return back()->with('error', $result['message']);
             }
 
-            // Log the generation
-            Log::info('User PDF generated', [
+            Log::info('User PDF Generated Successfully', [
                 'user_id' => $user->id,
                 'filename' => $result['filename'],
                 'file_count' => $result['file_count']
             ]);
 
-            // Download file and delete after sending
             return response()
                 ->download($result['path'], $result['filename'])
                 ->deleteFileAfterSend(true);
 
         } catch (\Exception $e) {
-            Log::error('User PDF generation failed', [
+            Log::error('User PDF Generation Failed', [
                 'user_id' => Auth::id(),
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'error' => $e->getMessage()
             ]);
 
-            return back()->with('error', 'Failed to generate PDF. Please try again or contact support.');
+            return back()->with('error', 'Failed to generate PDF. Please contact support.');
         }
     }
 
     /**
-     * Generate and download merged PDF for admin viewing
-     * 
-     * @param UserSubmittedApplication $application
-     * @return \Illuminate\Http\Response
+     * Generate PDF for ADMIN (no payment check)
      */
     public function generateAdminPdf(UserSubmittedApplication $application)
     {
         try {
-            // Check if PDF generation is enabled
-            if (!$this->pdfService->isPdfGenerationEnabled()) {
-                return back()->with('error', 'PDF generation is currently disabled.');
+            $userId = $application->user_id;
+
+            if (!PdfControlHelper::canGeneratePdf($userId)) {
+                $status = PdfControlHelper::checkPdfStatus($userId);
+                return back()->with('error', $status['message']);
             }
 
-            // Set user ID for the service
-            $this->pdfService->setUserId($application->user_id);
+            $this->pdfService->setUserId($userId);
+            $pdfCount = $this->pdfService->getPdfCount();
             
-            // Check if PDFs exist
-            if (!$this->pdfService->hasPdfFiles()) {
-                return back()->with('error', 'No PDF files available for this application yet.');
-            }
+            Log::info('Admin PDF Generation Started', [
+                'admin_id' => Auth::id(),
+                'application_id' => $application->id,
+                'user_id' => $userId,
+                'pdf_count' => $pdfCount
+            ]);
 
-            // Merge PDFs with applicant name
             $result = $this->pdfService->mergePdfs($application->user->name);
 
             if (!$result['success']) {
                 return back()->with('error', $result['message']);
             }
 
-            // Log the generation
-            Log::info('Admin PDF generated', [
+            Log::info('Admin PDF Generated Successfully', [
                 'admin_id' => Auth::id(),
                 'application_id' => $application->id,
-                'user_id' => $application->user_id,
                 'filename' => $result['filename'],
                 'file_count' => $result['file_count']
             ]);
 
-            // Download file and delete after sending
             return response()
                 ->download($result['path'], $result['filename'])
                 ->deleteFileAfterSend(true);
 
         } catch (\Exception $e) {
-            Log::error('Admin PDF generation failed', [
+            Log::error('Admin PDF Generation Failed', [
                 'admin_id' => Auth::id(),
                 'application_id' => $application->id,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'error' => $e->getMessage()
             ]);
 
-            return back()->with('error', 'Failed to generate PDF. Please try again.');
+            return back()->with('error', 'Failed to generate PDF.');
         }
     }
 
     /**
-     * Get PDF status (for AJAX checks)
-     * 
-     * @return \Illuminate\Http\JsonResponse
+     * Check PDF and Payment status for AJAX
      */
     public function checkPdfStatus()
     {
         try {
-            $user = Auth::user();
-            $this->pdfService->setUserId($user->id);
+            $userId = Auth::id();
             
-            return response()->json([
-                'enabled' => $this->pdfService->isPdfGenerationEnabled(),
-                'available' => $this->pdfService->hasPdfFiles(),
-                'count' => $this->pdfService->getPdfCount()
-            ]);
+            // Check payment first
+            $paymentStatus = PaymentHelper::checkPaymentStatus($userId);
+            
+            if (!$paymentStatus['has_paid']) {
+                return response()->json([
+                    'can_generate' => false,
+                    'payment_required' => true,
+                    'payment_amount' => $paymentStatus['amount'],
+                    'pdf_count' => 0,
+                    'message' => 'Payment of $' . number_format($paymentStatus['amount'], 2) . ' required to download PDF package.',
+                ]);
+            }
+
+            // Payment completed - check PDFs
+            $pdfStatus = PdfControlHelper::checkPdfStatus($userId);
+            $pdfStatus['payment_required'] = false;
+            $pdfStatus['has_paid'] = true;
+            
+            return response()->json($pdfStatus);
+            
         } catch (\Exception $e) {
             return response()->json([
-                'enabled' => false,
-                'available' => false,
-                'count' => 0,
-                'error' => 'Unable to check PDF status'
+                'can_generate' => false,
+                'payment_required' => false,
+                'pdf_count' => 0,
+                'message' => 'Error checking status'
             ]);
         }
     }

@@ -1,5 +1,5 @@
 <?php
-// app/Services/ApplicationDataService.php
+// app/Services/ApplicationDataService.php (SIMPLE - JUST GET THE DATA!)
 
 namespace App\Services;
 
@@ -10,17 +10,8 @@ use App\Models\SpouseVisaSubmittedStep;
 use App\Models\AdjustmentVisaSubmittedStep;
 use Illuminate\Support\Facades\Log;
 
-/**
- * Service for collecting and formatting application data
- */
 class ApplicationDataService
 {
-    /**
-     * Collect all application data for a user
-     *
-     * @param UserSubmittedApplication $application
-     * @return array
-     */
     public function collectApplicationData(UserSubmittedApplication $application): array
     {
         $user = $application->user;
@@ -42,28 +33,23 @@ class ApplicationDataService
             ],
         ];
 
-        // Collect data based on application type
+        // SIMPLE: Just get data by user_id and type
         if (stripos($applicationType, 'Fiance') !== false) {
-            $data['form_data'] = $this->collectFianceVisaData($application);
+            $data['form_data'] = $this->getFianceData($user->id);
         } elseif (stripos($applicationType, 'Spouse') !== false) {
-            $data['form_data'] = $this->collectSpouseVisaData($application);
+            $data['form_data'] = $this->getSpouseData($user->id);
         } elseif (stripos($applicationType, 'Adjustment') !== false) {
-            $data['form_data'] = $this->collectAdjustmentData($application);
+            $data['form_data'] = $this->getAdjustmentData($user->id);
         }
 
         return $data;
     }
 
-    /**
-     * Collect Fiance Visa application data
-     *
-     * @param UserSubmittedApplication $application
-     * @return array
-     */
-    private function collectFianceVisaData(UserSubmittedApplication $application): array
+    private function getFianceData($userId): array
     {
-        $steps = FianceVisaSubmittedStep::where('user_id', $application->user_id)
-            ->where('submitted_app_id', $application->id)
+        // SIMPLE: Get ALL records for this user
+        $steps = FianceVisaSubmittedStep::where('user_id', $userId)
+            ->orderBy('id', 'asc')
             ->get();
 
         $data = [
@@ -73,7 +59,7 @@ class ApplicationDataService
         ];
 
         foreach ($steps as $step) {
-            $detail = $step->detail;
+            $detail = $step->detail; // Already unserialized by model
             
             if ($step->type === 'sponsor') {
                 $data['sponsor'][$step->step] = $detail;
@@ -87,20 +73,13 @@ class ApplicationDataService
         return $data;
     }
 
-    /**
-     * Collect Spouse Visa application data
-     *
-     * @param UserSubmittedApplication $application
-     * @return array
-     */
-    private function collectSpouseVisaData(UserSubmittedApplication $application): array
+    private function getSpouseData($userId): array
     {
-        $steps = SpouseVisaSubmittedStep::where('user_id', $application->user_id)
-            ->where('submitted_app_id', $application->id)
+        $steps = SpouseVisaSubmittedStep::where('user_id', $userId)
+            ->orderBy('id', 'asc')
             ->get();
 
         $data = [];
-
         foreach ($steps as $step) {
             $data[$step->step] = $step->detail;
         }
@@ -108,20 +87,13 @@ class ApplicationDataService
         return $data;
     }
 
-    /**
-     * Collect Adjustment of Status application data
-     *
-     * @param UserSubmittedApplication $application
-     * @return array
-     */
-    private function collectAdjustmentData(UserSubmittedApplication $application): array
+    private function getAdjustmentData($userId): array
     {
-        $steps = AdjustmentVisaSubmittedStep::where('user_id', $application->user_id)
-            ->where('submitted_app_id', $application->id)
+        $steps = AdjustmentVisaSubmittedStep::where('user_id', $userId)
+            ->orderBy('id', 'asc')
             ->get();
 
         $data = [];
-
         foreach ($steps as $step) {
             $data[$step->step] = $step->detail;
         }
@@ -129,35 +101,19 @@ class ApplicationDataService
         return $data;
     }
 
-    /**
-     * Format data as JSON
-     *
-     * @param array $data
-     * @return string
-     */
     public function formatAsJson(array $data): string
     {
         return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 
-    /**
-     * Save JSON to temporary file
-     *
-     * @param string $jsonData
-     * @param string $filename
-     * @return string Path to file
-     */
     public function saveJsonFile(string $jsonData, string $filename): string
     {
         $tempPath = storage_path('app/temp');
-        
         if (!file_exists($tempPath)) {
             mkdir($tempPath, 0755, true);
         }
-
         $filePath = $tempPath . '/' . $filename;
         file_put_contents($filePath, $jsonData);
-
         return $filePath;
     }
 }

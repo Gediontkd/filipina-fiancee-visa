@@ -18,10 +18,10 @@
        
         <div class="flex space-x-3">
             <!-- Generate PDF Button -->
-            <button onclick="generatePdf()" id="pdf-btn"
+            <!-- <button onclick="generatePdf()" id="pdf-btn"
                     class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors">
                 <i class="fas fa-file-pdf mr-2"></i>Generate PDF
-            </button>
+            </button> -->
             
             <button onclick="window.print()"
                     class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
@@ -200,23 +200,53 @@
 @push('scripts')
 <script>
     // PDF Generation function
-    function generatePdf() {
-        const btn = document.getElementById('pdf-btn');
-        const originalContent = btn.innerHTML;
-        
-        // Disable button and show loading
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating PDF...';
-        
-        // Navigate to PDF generation route
-        window.location.href = '{{ route("admin.applications.generate-pdf", $application) }}';
-        
-        // Re-enable button after delay
-        setTimeout(() => {
+    // Replace the existing generatePdf() function with this:
+function generatePdf() {
+    const btn = document.getElementById('pdf-btn');
+    const originalContent = btn.innerHTML;
+    
+    // First, CHECK if PDFs are available for this user
+    const applicationId = {{ $application->id }};
+    const userId = {{ $application->user_id }};
+    
+    // Disable button temporarily
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Checking...';
+    
+    // Check PDF status via AJAX
+    fetch('/admin/check-pdf-status?user_id=' + userId)
+        .then(response => response.json())
+        .then(data => {
+            console.log('PDF Status:', data);
+            
+            if (!data.can_generate) {
+                // PDFs not ready
+                showNotification(data.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+                return;
+            }
+            
+            // PDFs are ready - proceed
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating PDF...';
+            showNotification('Generating ' + data.pdf_count + ' PDF file(s)...', 'info');
+            
+            // Redirect to generate
+            window.location.href = '{{ route("admin.applications.generate-pdf", $application) }}';
+            
+            // Re-enable after delay
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }, 3000);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error checking PDF status', 'error');
             btn.disabled = false;
             btn.innerHTML = originalContent;
-        }, 3000);
-    }
+        });
+}
 
     function copyToClipboard() {
         const content = document.getElementById('form-data-content');
