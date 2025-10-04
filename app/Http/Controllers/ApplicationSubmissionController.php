@@ -6,12 +6,24 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\VisaApplication;
 use App\Models\UserSubmittedApplication;
+use App\Services\ApplicationDataService;
+use App\Mail\ApplicationSubmittedMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 
 class ApplicationSubmissionController extends Controller
 {
+    protected ApplicationDataService $dataService;
+
+    public function __construct(ApplicationDataService $dataService)
+    {
+        $this->dataService = $dataService;
+    }
+
     /**
      * Show final submission page with review
      */
@@ -78,8 +90,8 @@ class ApplicationSubmissionController extends Controller
                 // Update existing submission
                 $existingSubmission->update([
                     'transaction_id' => $this->generateTransactionId(),
-                    'status' => 'pending', // Reset to pending for review
-                    'admin_notes' => null, // Clear previous admin notes
+                    'status' => 'pending',
+                    'admin_notes' => null,
                     'reviewed_at' => null,
                     'reviewed_by' => null,
                     'updated_at' => now(),
@@ -97,13 +109,58 @@ class ApplicationSubmissionController extends Controller
                 $message = 'Your application has been submitted successfully!';
             }
 
+            // Collect application data
+            $applicationData = $this->dataService->collectApplicationData($submission);
+            
+            // Format as JSON
+            $jsonData = $this->dataService->formatAsJson($applicationData);
+            
+            // Save JSON file
+            $filename = sprintf(
+                'application_%s_%s.json',
+                $submission->transaction_id,
+                date('Y-m-d_His')
+            );
+            $jsonFilePath = $this->dataService->saveJsonFile($jsonData, $filename);
+
+            // Send email with JSON attachment
+            $adminEmail = config('mail.admin_email', 'gediondaniel454@gmail.com');
+            
+            Mail::to($adminEmail)->send(
+                new ApplicationSubmittedMail(
+                    $applicationData,
+                    $jsonFilePath,
+                    $user->name,
+                    $visaApplication->name
+                )
+            );
+
+            // Clean up temporary file after sending
+            if (File::exists($jsonFilePath)) {
+                File::delete($jsonFilePath);
+            }
+
             DB::commit();
+
+            // Log successful submission
+            Log::info('Application submitted and emailed', [
+                'user_id' => $user->id,
+                'application_id' => $submission->id,
+                'transaction_id' => $submission->transaction_id,
+            ]);
 
             return redirect()->route('user.page', 'progress')
                 ->with('success', $message . ' Our team will review it and contact you soon.');
 
         } catch (\Exception $e) {
             DB::rollBack();
+            
+            Log::error('Application submission failed', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return back()->with('error', 'Failed to submit application: ' . $e->getMessage());
         }
     }

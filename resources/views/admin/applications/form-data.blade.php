@@ -57,10 +57,6 @@
                 <p>{{ $application->created_at->format('M j, Y') }}</p>
             </div>
             <div>
-                <span class="font-medium text-gray-500">Transaction ID:</span>
-                <p>{{ $application->transaction_id ?? 'N/A' }}</p>
-            </div>
-            <div>
                 <span class="font-medium text-gray-500">Status:</span>
                 <p>{{ ucfirst(str_replace('_', ' ', $application->status)) }}</p>
             </div>

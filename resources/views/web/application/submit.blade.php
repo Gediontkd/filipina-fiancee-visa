@@ -36,13 +36,6 @@
                                     <strong>Applicant:</strong> {{ $user->name }}<br>
                                     <strong>Email:</strong> {{ $user->email }}
                                 </div>
-                                <div class="col-md-6">
-                                    <strong>Completion Status:</strong> 
-                                    <span class="badge {{ $completionStatus['completion_percentage'] >= 100 ? 'bg-success' : ($completionStatus['completion_percentage'] >= 50 ? 'bg-warning' : 'bg-secondary') }}">
-                                        {{ $completionStatus['completion_percentage'] }}% Complete
-                                    </span><br>
-                                    <strong>Sections with Data:</strong> {{ $completionStatus['completed_sections'] }}/{{ $completionStatus['total_sections'] }}
-                                </div>
                             </div>
                         </div>
 
@@ -53,7 +46,6 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <strong>Previous Submission:</strong> {{ $existingSubmission->created_at->format('M j, Y') }}<br>
-                                        <strong>Transaction ID:</strong> {{ $existingSubmission->transaction_id }}<br>
                                         <strong>Current Status:</strong> 
                                         <span class="badge {{ 
                                             $existingSubmission->status === 'approved' ? 'bg-success' : 
@@ -80,31 +72,10 @@
                                     @if($user->chosen_application == 'fiance' || $user->chosen_application == 'fiancee')
                                         <div class="row">
                                             <div class="col-md-4">
-                                                <div class="text-center p-3 border rounded">
-                                                    <i class="fa fa-user text-primary fa-2x mb-2"></i>
-                                                    <h6>U.S. Sponsor</h6>
-                                                    <span class="badge {{ $completionStatus['sections']['sponsor'] ? 'bg-success' : 'bg-secondary' }}">
-                                                        {{ $completionStatus['sections']['sponsor'] ? 'Complete' : 'Not Started' }}
-                                                    </span>
-                                                </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <div class="text-center p-3 border rounded">
-                                                    <i class="fa fa-user-friends text-primary fa-2x mb-2"></i>
-                                                    <h6>Alien Information</h6>
-                                                    <span class="badge {{ $completionStatus['sections']['alien'] ? 'bg-success' : 'bg-secondary' }}">
-                                                        {{ $completionStatus['sections']['alien'] ? 'Complete' : 'Not Started' }}
-                                                    </span>
-                                                </div>
                                             </div>
                                             <div class="col-md-4">
-                                                <div class="text-center p-3 border rounded">
-                                                    <i class="fa fa-child text-primary fa-2x mb-2"></i>
-                                                    <h6>Children (if any)</h6>
-                                                    <span class="badge {{ $completionStatus['sections']['children'] ? 'bg-success' : 'bg-secondary' }}">
-                                                        {{ $completionStatus['sections']['children'] ? 'Complete' : 'Not Started' }}
-                                                    </span>
-                                                </div>
                                             </div>
                                         </div>
                                     @else
@@ -176,16 +147,13 @@
                                         <ul class="mb-0">
                                             @if($existingSubmission)
                                                 <li>Your application will be updated with current information</li>
-                                                <li>Status will be reset to "Pending" for re-review</li>
-                                                <li>You'll receive a new transaction ID</li>
+                                    
                                             @else
                                                 <li>Your application will be submitted for review</li>
-                                                <li>You'll receive a confirmation with transaction ID</li>
                                             @endif
                                             <li>Our team will review within 2-3 business days</li>
                                             <li>You can send messages to our support team</li>
                                             <li>You can continue adding information later</li>
-                                            <li>Updates will be sent via email and dashboard</li>
                                         </ul>
                                     </div>
                                 </div>
