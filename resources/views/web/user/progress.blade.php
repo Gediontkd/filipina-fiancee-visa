@@ -36,7 +36,6 @@
                                     <div class="col-md-6">
                                         <strong>Application Type:</strong> {{ $submission->visaApplication->name ?? 'N/A' }}<br>
                                         <strong>Submitted Date:</strong> {{ $submission->created_at->format('M j, Y') }}<br>
-                                        <strong>Transaction ID:</strong> {{ $submission->transaction_id }}
                                     </div>
                                     <div class="col-md-6">
                                         <strong>Current Status:</strong> 
@@ -58,7 +57,6 @@
                                     <li>Our team will review your application within 2-3 business days</li>
                                     <li>You will receive updates via email and in your dashboard</li>
                                     <li>You can now send messages to our support team for any questions</li>
-                                    <li>Keep checking your dashboard for status updates</li>
                                 </ul>
                             </div>
 
@@ -101,7 +99,6 @@
                                     aria-valuenow="{{ $sponsorTotal }}" 
                                     aria-valuemin="0" 
                                     aria-valuemax="100">
-                                    {{ $sponsorTotal }}%
                                 </div>
                                 </div>
                                 <div class="progress my-4" style="margin-top: 42px !important;">
@@ -111,7 +108,6 @@
                                     aria-valuenow="{{ $alienTotal }}" 
                                     aria-valuemin="0" 
                                     aria-valuemax="100">
-                                    {{ $alienTotal }}%
                                 </div>
                                 </div>
                                 <div class="progress my-4" style="margin-top: 42px !important;">
@@ -121,7 +117,6 @@
                                     aria-valuenow="{{ $alienChildrenTotal }}" 
                                     aria-valuemin="0" 
                                     aria-valuemax="100">
-                                    {{ $alienChildrenTotal }}%
                                 </div>
                                 </div>
                            </div>
@@ -142,7 +137,6 @@
                                 aria-valuenow="{{ $overAll }}" 
                                 aria-valuemin="0" 
                                 aria-valuemax="100">
-                                <strong>{{ $overAll }}%</strong>
                             </div>
                             </div>
 
