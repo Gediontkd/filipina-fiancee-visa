@@ -48,11 +48,6 @@
                 <i class="fa fa-user"></i><span>Profile </span>            
             </a>
         </li>
-        <li class="sideitem {{ Request::segment(2) == 'payment-card' ? 'active' : '' }}">
-            <a href="{{ route('paymentCard') }}">
-                <i class="fa fa-credit-card"></i><span>Payment Cards</span>            
-            </a>
-        </li>
         <li class="sideitem">
             <form action="{{ route('logout') }}" method="post">
                 @csrf

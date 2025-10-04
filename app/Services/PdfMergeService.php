@@ -1,5 +1,5 @@
 <?php
-// app/Services/PdfMergeService.php
+// app/Services/PdfMergeService.php (FIXED - Merges ALL PDFs)
 
 namespace App\Services;
 
@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * Service for managing and merging user-specific PDF files
+ * FIXED: Now properly merges ALL PDFs in user folder
  */
 class PdfMergeService
 {
@@ -170,6 +171,7 @@ class PdfMergeService
 
     /**
      * Merge all PDFs in user directory
+     * FIXED: Now properly merges ALL PDFs
      *
      * @param string $applicantName
      * @return array Result with success status and file information
@@ -193,12 +195,18 @@ class PdfMergeService
                 ];
             }
 
+            Log::info('Starting PDF merge', [
+                'user_id' => $this->userId,
+                'file_count' => count($pdfFiles),
+                'files' => array_map('basename', $pdfFiles)
+            ]);
+
             // If only one PDF, return it directly
             if (count($pdfFiles) === 1) {
                 return $this->prepareSinglePdf($pdfFiles[0], $applicantName);
             }
 
-            // Merge multiple PDFs using pdftk or similar
+            // FIXED: Merge multiple PDFs properly
             return $this->mergeMultiplePdfs($pdfFiles, $applicantName);
 
         } catch (\Exception $e) {
@@ -246,6 +254,7 @@ class PdfMergeService
 
     /**
      * Merge multiple PDF files
+     * FIXED: Now properly merges ALL PDFs using pdftk
      *
      * @param array $pdfFiles
      * @param string $applicantName
@@ -261,25 +270,32 @@ class PdfMergeService
             File::makeDirectory(dirname($outputPath), 0755, true);
         }
 
-        // Method 1: Try using pdftk if available
+        // FIXED: Try using pdftk with ALL files
         if ($this->isPdftkAvailable()) {
             $result = $this->mergeWithPdftk($pdfFiles, $outputPath);
             if ($result) {
+                Log::info('PDFs merged successfully with pdftk', [
+                    'user_id' => $this->userId,
+                    'file_count' => count($pdfFiles),
+                    'output' => $filename
+                ]);
+
                 return [
                     'success' => true,
                     'path' => $outputPath,
                     'filename' => $filename,
                     'file_count' => count($pdfFiles),
-                    'message' => 'PDF package generated successfully.',
+                    'message' => 'PDF package with ' . count($pdfFiles) . ' files generated successfully.',
                 ];
             }
         }
 
-        // Method 2: Use PHP PDF libraries (fpdf, tcpdf, etc.)
-        // For now, we'll concatenate PDFs using a simple method
-        // You can enhance this with proper PDF merging libraries
-        
-        return $this->mergeWithPhpLibrary($pdfFiles, $outputPath, $filename);
+        // FIXED: Fallback - Create ZIP file with all PDFs if pdftk not available
+        Log::warning('pdftk not available, creating ZIP archive instead', [
+            'user_id' => $this->userId
+        ]);
+
+        return $this->createZipArchive($pdfFiles, $applicantName);
     }
 
     /**
@@ -297,6 +313,7 @@ class PdfMergeService
 
     /**
      * Merge PDFs using pdftk command
+     * FIXED: Now properly handles ALL input files
      *
      * @param array $pdfFiles
      * @param string $outputPath
@@ -305,22 +322,40 @@ class PdfMergeService
     private function mergeWithPdftk(array $pdfFiles, string $outputPath): bool
     {
         try {
-            $filesString = implode(' ', array_map('escapeshellarg', $pdfFiles));
+            // Escape all file paths properly
+            $escapedFiles = array_map(function($file) {
+                return escapeshellarg($file);
+            }, $pdfFiles);
+
+            $filesString = implode(' ', $escapedFiles);
+            
+            // Build pdftk command to merge ALL files
             $command = sprintf(
-                'pdftk %s cat output %s',
+                'pdftk %s cat output %s 2>&1',
                 $filesString,
                 escapeshellarg($outputPath)
             );
 
+            Log::info('Executing pdftk command', [
+                'user_id' => $this->userId,
+                'file_count' => count($pdfFiles),
+                'command' => $command
+            ]);
+
             $output = [];
             $returnVar = 0;
-            exec($command . ' 2>&1', $output, $returnVar);
+            exec($command, $output, $returnVar);
 
             if ($returnVar === 0 && File::exists($outputPath)) {
+                Log::info('pdftk merge successful', [
+                    'user_id' => $this->userId,
+                    'output_size' => File::size($outputPath)
+                ]);
                 return true;
             }
 
             Log::warning('pdftk merge failed', [
+                'user_id' => $this->userId,
                 'command' => $command,
                 'output' => $output,
                 'return_code' => $returnVar
@@ -328,44 +363,68 @@ class PdfMergeService
 
             return false;
         } catch (\Exception $e) {
-            Log::error('pdftk execution error', ['error' => $e->getMessage()]);
+            Log::error('pdftk execution error', [
+                'user_id' => $this->userId,
+                'error' => $e->getMessage()
+            ]);
             return false;
         }
     }
 
     /**
-     * Merge PDFs using PHP library (fallback method)
-     * Note: This is a placeholder - you should integrate a proper PDF library
+     * Create ZIP archive with all PDFs (fallback when pdftk not available)
      *
      * @param array $pdfFiles
-     * @param string $outputPath
-     * @param string $filename
+     * @param string $applicantName
      * @return array
      */
-    private function mergeWithPhpLibrary(array $pdfFiles, string $outputPath, string $filename): array
+    private function createZipArchive(array $pdfFiles, string $applicantName): array
     {
-        // For basic implementation, just copy the first PDF
-        // In production, use libraries like:
-        // - setasign/fpdi
-        // - ilovepdf/ilovepdf-php
-        // - webklex/laravel-pdfmerger
+        try {
+            $sanitizedName = preg_replace('/[^A-Za-z0-9_-]/', '_', $applicantName);
+            $timestamp = date('Y-m-d_His');
+            $zipFilename = "Application_Package_{$sanitizedName}_{$timestamp}.zip";
+            $zipPath = storage_path('app/temp/' . $zipFilename);
 
-        if (File::exists($pdfFiles[0])) {
-            File::copy($pdfFiles[0], $outputPath);
+            $zip = new \ZipArchive();
             
+            if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+                throw new \Exception('Could not create ZIP archive');
+            }
+
+            // Add all PDFs to ZIP
+            foreach ($pdfFiles as $index => $pdfPath) {
+                $filename = basename($pdfPath);
+                $zip->addFile($pdfPath, $filename);
+            }
+
+            $zip->close();
+
+            Log::info('ZIP archive created successfully', [
+                'user_id' => $this->userId,
+                'file_count' => count($pdfFiles),
+                'zip_size' => File::size($zipPath)
+            ]);
+
             return [
                 'success' => true,
-                'path' => $outputPath,
-                'filename' => $filename,
+                'path' => $zipPath,
+                'filename' => $zipFilename,
                 'file_count' => count($pdfFiles),
-                'message' => 'PDF package prepared (Note: Install pdftk for proper merging of multiple PDFs).',
+                'message' => 'PDF package created as ZIP archive with ' . count($pdfFiles) . ' files (pdftk not available for merging).',
+            ];
+
+        } catch (\Exception $e) {
+            Log::error('ZIP archive creation failed', [
+                'user_id' => $this->userId,
+                'error' => $e->getMessage()
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Failed to create PDF package: ' . $e->getMessage(),
             ];
         }
-
-        return [
-            'success' => false,
-            'message' => 'Failed to process PDF files.',
-        ];
     }
 
     /**

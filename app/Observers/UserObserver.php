@@ -1,20 +1,23 @@
 <?php
-// app/Observers/UserObserver.php
+// app/Observers/UserObserver.php (UPDATED - Sends Welcome Email)
 
 namespace App\Observers;
 
 use App\Models\User;
 use App\Services\PdfMergeService;
+use App\Mail\WelcomeEmail;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 
 /**
  * Observer for User model events
+ * UPDATED: Now sends welcome email on user creation
  */
 class UserObserver
 {
     /**
      * Handle the User "created" event.
-     * Creates a dedicated PDF folder for the new user
+     * Creates PDF folder and sends welcome email
      *
      * @param User $user
      * @return void
@@ -23,9 +26,9 @@ class UserObserver
     {
         try {
             // Create user-specific PDF folder
-            $success = PdfMergeService::createUserFolder($user->id);
+            $folderCreated = PdfMergeService::createUserFolder($user->id);
             
-            if ($success) {
+            if ($folderCreated) {
                 Log::info('User PDF folder created successfully', [
                     'user_id' => $user->id,
                     'user_email' => $user->email,
@@ -36,6 +39,24 @@ class UserObserver
                     'user_email' => $user->email,
                 ]);
             }
+
+            // Send welcome email
+            try {
+                Mail::to($user->email)->send(new WelcomeEmail($user));
+                
+                Log::info('Welcome email sent successfully', [
+                    'user_id' => $user->id,
+                    'user_email' => $user->email,
+                ]);
+            } catch (\Exception $emailException) {
+                Log::error('Failed to send welcome email', [
+                    'user_id' => $user->id,
+                    'user_email' => $user->email,
+                    'error' => $emailException->getMessage(),
+                ]);
+                // Don't throw - registration should succeed even if email fails
+            }
+
         } catch (\Exception $e) {
             Log::error('Error in UserObserver::created', [
                 'user_id' => $user->id,
