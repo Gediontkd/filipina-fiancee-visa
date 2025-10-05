@@ -1,5 +1,5 @@
 <?php
-// app/Http/Controllers/StripeController.php
+// app/Http/Controllers/StripeController.php (FIXED)
 
 namespace App\Http\Controllers;
 
@@ -18,17 +18,11 @@ class StripeController extends Controller
         Stripe::setApiKey(config('services.stripe.secret'));
     }
 
-    /**
-     * Show payment page
-     */
     public function index(Request $request)
     {
         $user = Auth::user();
-        
-        // Get payment status
         $paymentStatus = PaymentHelper::checkPaymentStatus($user->id);
         
-        // If already paid, redirect back
         if ($paymentStatus['has_paid']) {
             return redirect()->route('user.page', 'progress')
                 ->with('success', 'Payment already completed!');
@@ -43,15 +37,10 @@ class StripeController extends Controller
         ]);
     }
 
-    /**
-     * Create Stripe checkout session
-     */
     public function store(Request $request)
     {
         try {
             $user = Auth::user();
-            
-            // Get payment details
             $paymentStatus = PaymentHelper::checkPaymentStatus($user->id);
             
             if ($paymentStatus['has_paid']) {
@@ -63,7 +52,6 @@ class StripeController extends Controller
 
             $application = UserSubmittedApplication::find($paymentStatus['application_id']);
             
-            // Create Stripe Checkout Session
             $session = StripeSession::create([
                 'payment_method_types' => ['card'],
                 'line_items' => [[
@@ -73,18 +61,18 @@ class StripeController extends Controller
                             'name' => 'PDF Package - ' . $application->visaApplication->name,
                             'description' => 'Complete application package download',
                         ],
-                        'unit_amount' => $paymentStatus['amount'] * 100, // Convert to cents
+                        'unit_amount' => $paymentStatus['amount'] * 100,
                     ],
                     'quantity' => 1,
                 ]],
                 'mode' => 'payment',
-                'success_url' => route('payment.success', ['session_id' => '{CHECKOUT_SESSION_ID}']),
+                'success_url' => route('payment.success') . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('payment.cancel'),
-                'client_reference_id' => $application->id,
+                'client_reference_id' => (string)$application->id,
                 'customer_email' => $user->email,
                 'metadata' => [
-                    'user_id' => $user->id,
-                    'application_id' => $application->id,
+                    'user_id' => (string)$user->id,
+                    'application_id' => (string)$application->id,
                 ],
             ]);
 
@@ -97,6 +85,7 @@ class StripeController extends Controller
             Log::error('Stripe session creation failed', [
                 'user_id' => Auth::id(),
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return response()->json([
@@ -107,50 +96,72 @@ class StripeController extends Controller
     }
 
     /**
-     * Payment success callback
+     * Payment success callback - FIXED
      */
     public function success(Request $request)
     {
         try {
             $sessionId = $request->get('session_id');
             
+            Log::info('Payment success callback received', [
+                'session_id' => $sessionId,
+                'all_params' => $request->all()
+            ]);
+
             if (!$sessionId) {
+                Log::error('No session ID in payment success callback');
                 return redirect()->route('user.page', 'progress')
-                    ->with('error', 'Invalid payment session');
+                    ->with('error', 'Invalid payment session - no session ID');
             }
 
             // Retrieve session from Stripe
             $session = StripeSession::retrieve($sessionId);
             
+            Log::info('Stripe session retrieved', [
+                'session_id' => $sessionId,
+                'payment_status' => $session->payment_status,
+                'client_reference_id' => $session->client_reference_id
+            ]);
+
             if ($session->payment_status === 'paid') {
-                // Mark application as paid
                 $applicationId = $session->client_reference_id;
                 $paymentIntentId = $session->payment_intent;
                 $amount = $session->amount_total / 100;
 
-                PaymentHelper::markAsPaid($applicationId, $paymentIntentId, $amount);
+                Log::info('Marking application as paid', [
+                    'application_id' => $applicationId,
+                    'payment_intent_id' => $paymentIntentId,
+                    'amount' => $amount
+                ]);
 
-                return redirect()->route('user.page', 'progress')
-                    ->with('success', 'Payment successful! You can now download your PDF package.');
+                $result = PaymentHelper::markAsPaid($applicationId, $paymentIntentId, $amount);
+
+                if ($result) {
+                    return redirect()->route('user.page', 'progress')
+                        ->with('success', 'Payment successful! You can now download your PDF package.');
+                } else {
+                    Log::error('Failed to mark application as paid');
+                    return redirect()->route('user.page', 'progress')
+                        ->with('error', 'Payment received but database update failed. Please contact support.');
+                }
             }
 
+            Log::warning('Payment not completed', ['payment_status' => $session->payment_status]);
             return redirect()->route('payment.index')
-                ->with('error', 'Payment not completed');
+                ->with('error', 'Payment not completed. Status: ' . $session->payment_status);
 
         } catch (\Exception $e) {
             Log::error('Payment success handling failed', [
                 'session_id' => $request->get('session_id'),
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return redirect()->route('user.page', 'progress')
-                ->with('error', 'Payment verification failed');
+                ->with('error', 'Payment verification failed: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Payment cancelled
-     */
     public function cancel()
     {
         return redirect()->route('user.page', 'progress')

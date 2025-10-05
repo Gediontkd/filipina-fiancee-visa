@@ -16,7 +16,11 @@ class UserSubmittedApplication extends Model
         'status',
         'admin_notes',        // Add this for admin notes
         'reviewed_at',        // Add this for review timestamp
-        'reviewed_by',        // Add this for admin who reviewed
+        'reviewed_by',
+        'payment_completed',
+        'payment_intent_id',
+        'payment_amount',
+        'paid_at',
     ];
 
     protected $appends = ['application'];
