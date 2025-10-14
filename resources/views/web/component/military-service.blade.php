@@ -1,3 +1,4 @@
+ <!-- resources\views\web\component\military-service.blade.php -->
  <div class="row servedMilitaryForm">
     @if ($index != 1)
         <div class="pb-4">

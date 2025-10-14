@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\fiance-sponsor\children.blade.php -->
 <div class="row addChildernForm">
     @if ($index != 1)
         <div class="col-md-12 mb-4">

@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\affiliation.blade.php -->
 <div class="row addAffiliationForm">
     @if ($index != 1)
         <div class="col-md-12 mb-4">

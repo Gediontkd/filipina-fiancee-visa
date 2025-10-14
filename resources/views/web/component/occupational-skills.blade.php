@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\occupational-skills.blade.php -->
 <div class="row skillForm">
     <p>List all Occupational skills.</p>
     @if ($index != 1)

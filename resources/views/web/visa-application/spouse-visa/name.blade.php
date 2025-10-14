@@ -1,3 +1,4 @@
+<!-- resources\views\web\visa-application\spouse-visa\name.blade.php -->
 <div class="step-wizard">
     {{ Form::open(['url' => route('spouseName'), 'id' => 'spouseName']) }}
         <div class="form-card">

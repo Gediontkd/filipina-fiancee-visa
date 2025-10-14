@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\military-service.blade.php -->
 <div class="modal fade modal_popup_design" id="chooseApplicationModal" tabindex="-1" aria-labelledby="chooseApplicationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">

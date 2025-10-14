@@ -1,3 +1,4 @@
+<!-- resources\views\web\resource.blade.php -->
 @extends('web.layout.master')
 @section('content')
 	<section class="breadcrumb-main">

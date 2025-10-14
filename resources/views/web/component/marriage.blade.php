@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\marriage.blade.php -->
 <div class="priorSpouseForm">
     @if ($index != 1)
         <div class="col-md-12 mb-4">
