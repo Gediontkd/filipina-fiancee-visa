@@ -95,7 +95,7 @@
                             $i = '';
                         @endphp
                         @for ($i == 1; $i <= 5; $i++)
-                            @if (isset($step->detail["maiden_lname$i"]))
+                            @if (isset($step->detail["ps_maiden_lname$i"]))
                                 @include('web.component.prior-spouse', [
                                     'index' => $i,
                                     'data' => @$step->detail,
@@ -145,16 +145,16 @@
                 marital_status: {
                     required: true,
                 },
-                maiden_lname1: {
+                ps_maiden_lname1: {
                     required: true,
                 },
-                middle_name1: {
+                ps_middle_name1: {
                     required: true,
                 },
-                first_name1: {
+                ps_first_name1: {
                     required: true,
                 },
-                dob1: {
+                ps_dob1: {
                     required: true,
                 },
                 birth_city1: {
@@ -350,10 +350,10 @@
             },
             messages: {
                marital_status: "Please choose option!",
-               maiden_lname1: "Please enter name!",
-               middle_name1: "Please enter name!",
-               first_name1: "Please enter name!",
-               dob1: "Please enter date of birth!",
+               ps_maiden_lname1: "Please enter name!",
+               ps_middle_name1: "Please enter name!",
+               ps_first_name1: "Please enter name!",
+               ps_dob1: "Please enter date of birth!",
                birth_city1: "Please enter date of birth!",
                birth_province1: "Please enter birth province!",
                birth_country1: "Please enter birth country!",
