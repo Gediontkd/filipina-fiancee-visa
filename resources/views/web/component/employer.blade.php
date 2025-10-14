@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\employer.blade.php -->
 <div class="row emploperSec empSec{{ $index }}">
     <div class="col-md-6">
         <div class="heading mb-30">

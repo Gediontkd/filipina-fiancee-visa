@@ -1,3 +1,4 @@
+<!-- resources\views\web\contact-us.blade.php -->
 @extends('web.layout.master')
 @section('content')
 	{{ getLanguage() }}

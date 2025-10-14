@@ -1,3 +1,4 @@
+<!-- resources\views\web\visa-application\adjustment-of-status\place-of-birth.blade.php -->
 <div class="step-wizard">    
     {{ Form::open(['url' => route('adjustmentPlaceOfBirth'), 'id' => 'adjustmentPlaceOfBirth']) }}
         <div class="form-card">

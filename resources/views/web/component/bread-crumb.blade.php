@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\bread-crumb.blade.php -->
 <section class="breadcrumb-main">
     <div class="container">
 		<div class="row">

@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\ir5-button.blade.php -->
 <section class="get-started ptb-50">
 	<div class="container">
 		<div class="row">

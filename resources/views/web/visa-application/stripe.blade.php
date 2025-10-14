@@ -1,3 +1,4 @@
+<!-- resources\views\web\visa-application\stripe.blade.php -->
 @extends('web.layout.master')
 @section('content')
 <style type="text/css">

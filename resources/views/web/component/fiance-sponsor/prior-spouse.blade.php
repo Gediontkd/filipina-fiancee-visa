@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\fiance-sponsor\prior-spouse.blade.php -->
 <div class="priorSpouseForm">
     @if ($index != 1)
         <div class="col-md-6 mb-4">
@@ -20,11 +21,11 @@
             <div class="form-group">
                 {{ Form::label("middle_name$index", 'Middle Name') }}
                 <span class="required">*</span>
-                {{ Form::text("middle_name$index", @$step->detail["middleName$index"] ? 'N/A' : @$data["middle_name$index"], [
+                {{ Form::text("middle_name$index", @$step->detail["middle_name$index"] == 'N/A' ? 'N/A' : @$data["middle_name$index"], [
                     'class' => "form-control middleName$index",
                     'placeholder' => 'Enter name'
                 ]) }}
-                @include('web.component.does-not-apply', ['field' => "middleName$index", 'value' => @$step->detail["middleName$index"]])               
+                @include('web.component.does-not-apply', ['field' => "middleName$index", 'value' => @$step->detail["middle_name$index"] == 'N/A'])               
             </div>                            
         </div>
         <div class="col-md-4">
@@ -43,8 +44,8 @@
                 <span class="required">*</span>
                 {{ Form::text("dob$index", @$data["dob$index"], [
                     'class' => 'form-control dateOfBirth',
-                    'placeholder' => 'Enter Date of Birth',
-                    'readonly' => true
+                    'placeholder' => 'mm/dd/yyyy',
+                    'autocomplete' => 'off'
                 ]) }}                                        
             </div>                            
         </div>              
@@ -52,7 +53,11 @@
             <div class="form-group">
                 {{ Form::label("date_of_marriage$index", "Date of Marriage") }}
                 <span class="required">*</span>
-                {{ Form::text("date_of_marriage$index", @$data["date_of_marriage$index"], ['class' => 'form-control datePicker', 'placeholder' => 'Enter Date Of Marriage', 'readonly' => true]) }}                        
+                {{ Form::text("date_of_marriage$index", @$data["date_of_marriage$index"], [
+                    'class' => 'form-control datePicker', 
+                    'placeholder' => 'mm/dd/yyyy',
+                    'autocomplete' => 'off'
+                ]) }}                        
             </div>
         </div>
         <div class="col-md-12">
@@ -66,14 +71,18 @@
             <div class="form-group">
                 {{ Form::label("date_marriage_ended$index", "Date Marriage Ended (mm/dd/yyyy, must match divorce/annulment/death document)") }}
                 <span class="required">*</span>
-                {{ Form::text("date_marriage_ended$index", @$data["date_marriage_ended$index"], ['class' => 'form-control datePicker', 'placeholder' => 'Enter Date Marriage Ended', 'readonly' => true]) }}                      
+                {{ Form::text("date_marriage_ended$index", @$data["date_marriage_ended$index"], [
+                    'class' => 'form-control datePicker', 
+                    'placeholder' => 'mm/dd/yyyy',
+                    'autocomplete' => 'off'
+                ]) }}                      
             </div> 
         </div>  
         <div class="col-md-12">
             <div class="form-group">
                 {{ Form::label("where_marriage_ended$index", "City and State where marriage ended (city and country if not USA)") }}
                 <span class="required">*</span>
-                {{ Form::text("where_marriage_ended$index", @$data["where_marriage_ended$index"], ['class' => 'form-control datePicker', 'placeholder' => 'Enter Date Marriage Ended', 'readonly' => true]) }}                      
+                {{ Form::text("where_marriage_ended$index", @$data["where_marriage_ended$index"], ['class' => 'form-control', 'placeholder' => 'City and State where marriage ended']) }}                      
             </div> 
         </div>        
     </div>

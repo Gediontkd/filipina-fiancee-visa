@@ -1,3 +1,4 @@
+<!-- resources\views\web\visa-application\adjustment-of-status\questions-part-2.blade.php -->
 <div class="step-wizard">    
     {{ Form::open(['url' => route('adjustmentQusPart2'), 'id' => 'adjustmentQusPart2']) }}
         <div class="form-card">

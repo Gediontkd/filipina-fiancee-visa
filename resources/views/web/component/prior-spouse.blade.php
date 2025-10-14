@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\prior-spouse.blade.php -->
 @switch(Route::currentRouteName())
     @case('fianceVisaApplication')
         <div class="priorSpouseForm">
@@ -26,8 +27,8 @@
                             'class' => "form-control middleName$index",
                             'placeholder' => 'Enter name',
                         ]) }}
-                        {{ Form::label('does_not_apply', 'Does Not Apply') }}
-                        {{ Form::checkbox('does_not_apply', true, @$step->detail['does_not_apply'] == true ? true : '', [
+                        {{ Form::label("does_not_apply_middle$index", 'Does Not Apply') }}
+                        {{ Form::checkbox("does_not_apply_middle$index", true, @$data["middle_name$index"] == 'N/A' ? true : false, [
                             'class' => 'custom-control-input doesNotApply',
                             'data-field' => "middleName$index",
                         ]) }}
@@ -49,8 +50,8 @@
                         <span class="required">*</span>
                         {{ Form::text("dob$index", @$data["dob$index"], [
                             'class' => 'form-control dateOfBirth',
-                            'placeholder' => 'Enter Date of Birth',
-                            "readonly" => true
+                            'placeholder' => 'mm/dd/yyyy',
+                            'autocomplete' => 'off'
                         ]) }}
                     </div>
                 </div>
@@ -63,8 +64,8 @@
                                 'class' => "form-control birthCity$index",
                                 'placeholder' => 'Enter City of Birth',
                             ]) }}
-                            {{ Form::label('does_not_apply', 'Does Not Apply') }}
-                            {{ Form::checkbox('does_not_apply', true, @$step->detail['does_not_apply'] == true ? true : '', [
+                            {{ Form::label("does_not_apply_city$index", 'Does Not Apply') }}
+                            {{ Form::checkbox("does_not_apply_city$index", true, @$data["birth_city$index"] == 'N/A' ? true : false, [
                                 'class' => 'custom-control-input doesNotApply',
                                 'data-field' => "birthCity$index",
                             ]) }}
@@ -79,8 +80,8 @@
                             'class' => "form-control birthProvince$index",
                             'placeholder' => 'Enter Birth Province',
                         ]) }}
-                        {{ Form::label('does_not_apply', 'Does Not Apply') }}
-                        {{ Form::checkbox('does_not_apply', true, @$step->detail['does_not_apply'] == true ? true : '', [
+                        {{ Form::label("does_not_apply_province$index", 'Does Not Apply') }}
+                        {{ Form::checkbox("does_not_apply_province$index", true, @$data["birth_province$index"] == 'N/A' ? true : false, [
                             'class' => 'custom-control-input doesNotApply',
                             'data-field' => "birthProvince$index",
                         ]) }}
@@ -108,7 +109,11 @@
                     <div class="form-group">
                         {{ Form::label("date_of_marriage$index", 'Date of Marriage') }}
                         <span class="required">*</span>
-                        {{ Form::text("date_of_marriage$index", @$data["date_of_marriage$index"], ['class' => 'form-control datePicker', 'placeholder' => 'Enter Date Of Marriage', , "readonly" => true]) }}
+                        {{ Form::text("date_of_marriage$index", @$data["date_of_marriage$index"], [
+                            'class' => 'form-control datePicker', 
+                            'placeholder' => 'mm/dd/yyyy',
+                            'autocomplete' => 'off'
+                        ]) }}
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -135,7 +140,6 @@
                                 '' => 'Select',
                                 'Annulment' => 'Annulment',
                                 'Death' => 'Death',
-                                // 'Dissolution' => 'Dissolution',
                                 'Divorce' => 'Divorce',
                             ],
                             @$data["how_marriage_ended$index"],
@@ -149,7 +153,11 @@
                     <div class="form-group">
                         {{ Form::label("date_marriage_ended$index", 'Date Marriage Ended') }}
                         <span class="required">*</span>
-                        {{ Form::text("date_marriage_ended$index", @$data["date_marriage_ended$index"], ['class' => 'form-control datePicker', 'placeholder' => 'Enter Date Marriage Ended', 'readonly' => true]) }}
+                        {{ Form::text("date_marriage_ended$index", @$data["date_marriage_ended$index"], [
+                            'class' => 'form-control datePicker', 
+                            'placeholder' => 'mm/dd/yyyy',
+                            'autocomplete' => 'off'
+                        ]) }}
                     </div>
                 </div>
             </div>
@@ -183,8 +191,8 @@
                             'class' => "form-control middleName$index",
                             'placeholder' => 'Enter name',
                         ]) }}
-                        {{ Form::label('does_not_apply', 'Does Not Apply') }}
-                        {{ Form::checkbox('does_not_apply', true, @$step->detail['does_not_apply'] == true ? true : '', [
+                        {{ Form::label("does_not_apply_middle$index", 'Does Not Apply') }}
+                        {{ Form::checkbox("does_not_apply_middle$index", true, @$data["middle_name$index"] == 'N/A' ? true : false, [
                             'class' => 'custom-control-input doesNotApply',
                             'data-field' => "middleName$index",
                         ]) }}
@@ -206,8 +214,8 @@
                         <span class="required">*</span>
                         {{ Form::text("dob$index", @$data["dob$index"], [
                             'class' => 'form-control dateOfBirth',
-                            'placeholder' => 'Enter Date of Birth',
-                            'readonly' => true
+                            'placeholder' => 'mm/dd/yyyy',
+                            'autocomplete' => 'off'
                         ]) }}
                     </div>
                 </div>
@@ -219,8 +227,8 @@
                             'class' => "form-control birthCity$index",
                             'placeholder' => 'Enter City of Birth',
                         ]) }}
-                        {{ Form::label('does_not_apply', 'Does Not Apply') }}
-                        {{ Form::checkbox('does_not_apply', true, @$step->detail['does_not_apply'] == true ? true : '', [
+                        {{ Form::label("does_not_apply_city$index", 'Does Not Apply') }}
+                        {{ Form::checkbox("does_not_apply_city$index", true, @$data["birth_city$index"] == 'N/A' ? true : false, [
                             'class' => 'custom-control-input doesNotApply',
                             'data-field' => "birthCity$index",
                         ]) }}
@@ -244,7 +252,11 @@
                     <div class="form-group">
                         {{ Form::label("date_marriage_ended$index", 'Date Marriage Ended') }}
                         <span class="required">*</span>
-                        {{ Form::text("date_marriage_ended$index", @$data["date_marriage_ended$index"], ['class' => 'form-control datePicker', 'placeholder' => 'Enter Date Marriage Ended', 'readonly' => true]) }}
+                        {{ Form::text("date_marriage_ended$index", @$data["date_marriage_ended$index"], [
+                            'class' => 'form-control datePicker', 
+                            'placeholder' => 'mm/dd/yyyy',
+                            'autocomplete' => 'off'
+                        ]) }}
                     </div>
                 </div>
             </div>
@@ -278,8 +290,8 @@
                             'class' => "form-control middleName$index",
                             'placeholder' => 'Enter name',
                         ]) }}
-                        {{ Form::label('does_not_apply', 'Does Not Apply') }}
-                        {{ Form::checkbox('does_not_apply', true, @$step->detail['does_not_apply'] == true ? true : '', [
+                        {{ Form::label("does_not_apply_middle$index", 'Does Not Apply') }}
+                        {{ Form::checkbox("does_not_apply_middle$index", true, @$data["middle_name$index"] == 'N/A' ? true : false, [
                             'class' => 'custom-control-input doesNotApply',
                             'data-field' => "middleName$index",
                         ]) }}
@@ -301,8 +313,8 @@
                         <span class="required">*</span>
                         {{ Form::text("dob$index", @$data["dob$index"], [
                             'class' => 'form-control dateOfBirth',
-                            'placeholder' => 'Enter Date of Birth',
-                            'readonly' => true
+                            'placeholder' => 'mm/dd/yyyy',
+                            'autocomplete' => 'off'
                         ]) }}
                     </div>
                 </div>
@@ -310,7 +322,11 @@
                     <div class="form-group">
                         {{ Form::label("date_of_marriage$index", 'Date of Marriage') }}
                         <span class="required">*</span>
-                        {{ Form::text("date_of_marriage$index", @$data["date_of_marriage$index"], ['class' => 'form-control datePicker', 'placeholder' => 'Enter Date Of Marriage', 'readonly' => true]) }}
+                        {{ Form::text("date_of_marriage$index", @$data["date_of_marriage$index"], [
+                            'class' => 'form-control datePicker', 
+                            'placeholder' => 'mm/dd/yyyy',
+                            'autocomplete' => 'off'
+                        ]) }}
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -331,7 +347,11 @@
                     <div class="form-group">
                         {{ Form::label("date_marriage_ended$index", 'Date Marriage Ended') }}
                         <span class="required">*</span>
-                        {{ Form::text("date_marriage_ended$index", @$data["date_marriage_ended$index"], ['class' => 'form-control datePicker', 'placeholder' => 'Enter Date Marriage Ended', 'readonly' => true]) }}
+                        {{ Form::text("date_marriage_ended$index", @$data["date_marriage_ended$index"], [
+                            'class' => 'form-control datePicker', 
+                            'placeholder' => 'mm/dd/yyyy',
+                            'autocomplete' => 'off'
+                        ]) }}
                     </div>
                 </div>
             </div>

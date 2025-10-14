@@ -1,3 +1,4 @@
+<!-- resources\views\web\visa-application\adjustment-of-status\affiliations.blade.php -->
 <div class="step-wizard">    
     {{ Form::open(['url' => route('adjustmentAffiliation'), 'id' => 'adjustmentAffiliation']) }}
         <div class="form-card">
