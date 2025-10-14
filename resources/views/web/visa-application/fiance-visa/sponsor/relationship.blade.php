@@ -1,3 +1,4 @@
+<!-- resources\views\web\visa-application\fiance-visa\sponsor\relationship.blade.php -->
 <div class="step-wizard">
     {{ Form::open(['url' => route('fianceSponsorRelationship'), 'id' => 'fianceSponsorRelationship']) }}
         <div class="form-card">

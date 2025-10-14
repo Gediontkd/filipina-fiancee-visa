@@ -1,3 +1,4 @@
+<!-- resources\views\web\index.blade.php -->
 @extends('web.layout.master')
 @section('content')
 <!-- Hero Section with Strong CTA -->

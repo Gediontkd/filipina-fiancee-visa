@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\visited-place.blade.php -->
 <div class="row visitedUSForm">
     @if ($index != 1)
         <div class="col-md-12 mb-4">

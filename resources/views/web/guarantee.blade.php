@@ -1,3 +1,4 @@
+<!-- resources\views\web\guarantee.blade.php -->
 @extends('web.layout.master')
 @section('content')
 	<section class="breadcrumb-main">

@@ -1,3 +1,4 @@
+<!-- resources\views\web\visa-application\fiance-visa\alien\military.blade.php -->
 <div class="step-wizard">
     {{ Form::open(['url' => route('fianceAlienMilitary'), 'id' => 'fianceAlienMilitary']) }}
         <div class="form-card">

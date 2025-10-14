@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\states-and-foreign-countries.blade.php -->
 <div class="countryForm">
     @if ($index != 1)
         <div class="col-md-12 mb-4">

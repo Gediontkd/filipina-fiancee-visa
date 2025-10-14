@@ -1,4 +1,4 @@
-{{-- resources/views/web/component/profile-sidebar.blade.php --}}
+<!-- resources\views\web\component\profile-sidebar.blade.php -->
 <nav class="dashboard-nav my-10 mb-md-0">
     <div class="top-main-bf">
         <div class="userinfo">

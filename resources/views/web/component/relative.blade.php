@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\relative.blade.php -->
 <div class="row appendRelativeForm">
     @if ($index != 1)
         <div class="col-md-6 mb-3">

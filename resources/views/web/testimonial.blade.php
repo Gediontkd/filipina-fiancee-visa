@@ -1,3 +1,4 @@
+<!-- resources\views\web\testimonial.blade.php -->
 @extends('web.layout.master')
 @section('content')
 	@include('web.component.bread-crumb', [

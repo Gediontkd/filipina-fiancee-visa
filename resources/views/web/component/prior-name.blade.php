@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\prior-name.blade.php -->
 @if ($index == 1)
     <div class="form-group">
         <label>Were any of your name changes for reasons other than marriage or divorce, such as adoption or court

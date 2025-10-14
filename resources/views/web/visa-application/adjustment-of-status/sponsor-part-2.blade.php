@@ -1,3 +1,4 @@
+<!-- resources\views\web\visa-application\adjustment-of-status\sponsor-part-2.blade.php -->
 <div class="step-wizard">    
     {{ Form::open(['url' => route('adjustmentSponsorPart2'), 'id' => 'adjustmentSponsorPart2']) }}
         <div class="form-card">

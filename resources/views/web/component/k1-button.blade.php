@@ -1,3 +1,4 @@
+<!-- resources\views\web\component\k1-button.blade.php -->
 <section class="get-started ptb-50">
 	<div class="container">
 		<div class="row">
