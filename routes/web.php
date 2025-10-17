@@ -1,5 +1,5 @@
 <?php
-// routes/web.php (Updated with payment middleware removed)
+// routes/web.php (Updated - Visa info pages are now public)
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -29,11 +29,16 @@ use App\Http\Controllers\PdfGenerationController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Public Web Routes (No Authentication Required)
 |--------------------------------------------------------------------------
 */
 
 Route::get('/change-lang', [LocalizationController::class, 'changeLang'])->name('change.lang');
+
+// Public Visa Information Pages
+Route::get('/fiancee-visa', [FianceVisaApplicationController::class, 'index'])->name('fiancee.visa');
+Route::get('/adjustment-of-status', [AdjustmentOfStatusController::class, 'index'])->name('adjustment.visa');
+Route::get('/spouse-visa', [SpouseVisaApplicationController::class, 'spouseVisa'])->name('spouse.visa');
 
 Route::group(['prefix' => 'contact-us'], function() {
     Route::get('/', [ContactUsController::class, 'index'])->name('contactUs');
@@ -58,6 +63,45 @@ Route::group(['controller' => ServiceController::class], function() {
     Route::get('/combined-cr1-aos', 'combinedCr1Aos')->name('combined.cr1.aos');
 });
 
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Static Pages
+Route::get('/about-us', function () {
+    return view('web.about-us');
+})->name('about-us');
+
+Route::get('/service', function () {
+    if (Auth::check() && isset(Auth::user()->application_route)) {
+        return redirect()->route(Auth::user()->application_route);
+    }
+    return view('web.service.index');
+})->name('service');
+
+Route::get('/testimonial', function () {
+    return view('web.testimonial');
+})->name('testimonial');
+
+Route::get('/contact-us', function () {
+    return view('web.contact-us');
+})->name('contact-us');
+
+Route::get('/guarantee', function () {
+    return view('web.guarantee');
+})->name('guarantee');
+
+// Immigration News Routes (Public)
+Route::group(['prefix' => 'immigration-news', 'as' => 'immigration-news.'], function() {
+    Route::get('/', [ImmigrationNewsController::class, 'index'])->name('index');
+    Route::get('/search', [ImmigrationNewsController::class, 'search'])->name('search');
+    Route::get('/{slug}', [ImmigrationNewsController::class, 'show'])->name('show');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated User Routes (Login Required)
+|--------------------------------------------------------------------------
+*/
+
 Route::group(['middleware' => ['auth', 'application']], function() {
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/user/{page}', 'profile')->name('user.page');
@@ -71,16 +115,12 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::post('/delete-mail', 'deleteMail')->name('deleteMail'); 
     });
 
-     Route::get('/fiancee-visa', [FianceVisaApplicationController::class, 'index'])->name('fiancee.visa');
-     Route::get('/adjustment-of-status', [AdjustmentOfStatusController::class, 'index'])->name('adjustment.visa');
-     Route::get('/spouse-visa', [SpouseVisaApplicationController::class, 'spouseVisa'])->name('spouse.visa');
-
      // PDF Generation for Users
-        Route::get('/generate-pdf', [PdfGenerationController::class, 'generateUserPdf'])
-            ->name('user.generate-pdf');
-        
-        Route::get('/check-pdf-status', [PdfGenerationController::class, 'checkPdfStatus'])
-            ->name('user.check-pdf-status');
+    Route::get('/generate-pdf', [PdfGenerationController::class, 'generateUserPdf'])
+        ->name('user.generate-pdf');
+    
+    Route::get('/check-pdf-status', [PdfGenerationController::class, 'checkPdfStatus'])
+        ->name('user.check-pdf-status');
 
     // Payment routes
     Route::get('/payment', [StripeController::class, 'index'])->name('payment.index');
@@ -107,12 +147,6 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::get('/application/status', 'checkSubmissionStatus')->name('application.status');
     });
 
-    // Fiance visa step for Sponsor, Alien and Alien Children
-    Route::middleware([fianceVisa::class])->group(function(){
-        // This group appears to be empty - you may want to add routes here or remove it
-    });
-
-    // REMOVED payment.check middleware - these routes are now directly accessible
     // Fiance visa step form routes
     Route::controller(SponsorController::class)->prefix('fiance-sponsor')->group(function () {
         Route::get('/application', 'index')->name('fianceSponsorApplication');
@@ -212,12 +246,6 @@ Route::group(['middleware' => ['auth', 'application']], function() {
     Route::resource('drop-box', DropBoxController::class);
 });
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-
-Route::group(['middleware' => ['application']], function() {
-   
-});
-
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -240,13 +268,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
         [PdfGenerationController::class, 'generateAdminPdf'])
         ->name('applications.generate-pdf');
 
-        // Inside the admin middleware group
-    Route::get('/admin/check-pdf-status', function(Request $request) {
-        $userId = $request->get('user_id');
-        $status = \App\Helpers\PdfControlHelper::checkPdfStatus($userId);
-        return response()->json($status);
-    })->name('admin.check-pdf-status');
-    
     Route::get('/check-pdf-status', [PdfGenerationController::class, 'checkPdfStatus'])
         ->name('check-pdf-status');
     
@@ -303,38 +324,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
     });
 });
 
-// Immigration News Routes
-Route::group(['prefix' => 'immigration-news', 'as' => 'immigration-news.'], function() {
-    Route::get('/', [ImmigrationNewsController::class, 'index'])->name('index');
-    Route::get('/search', [ImmigrationNewsController::class, 'search'])->name('search');
-    Route::get('/{slug}', [ImmigrationNewsController::class, 'show'])->name('show');
-});
-
 // Add this route configuration to handle admin redirects
 Route::redirect('/admin', '/admin/dashboard');
-
-// Static Pages
-Route::get('/about-us', function () {
-    return view('web.about-us');
-})->name('about-us');
-
-Route::get('/service', function () {
-    if (Auth::check() && isset(Auth::user()->application_route)) {
-        return redirect()->route(Auth::user()->application_route);
-    }
-    return view('web.service.index');
-})->name('service');
-
-Route::get('/testimonial', function () {
-    return view('web.testimonial');
-})->name('testimonial');
-
-Route::get('/contact-us', function () {
-    return view('web.contact-us');
-})->name('contact-us');
-
-Route::get('/guarantee', function () {
-    return view('web.guarantee');
-})->name('guarantee');
 
 Auth::routes();
