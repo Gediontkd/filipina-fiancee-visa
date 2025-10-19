@@ -1,836 +1,353 @@
-<!-- resources\views\web\guarantee.blade.php -->
 @extends('web.layout.master')
 @section('content')
-	<section class="breadcrumb-main">
-		<div class="container">
-			<div class="row">
-				<div id="breadcrumb">
-					<div class="breadcrumb-txt">
-						<h3>Guarantee</h3>
-					</div>
-					<div class="row">
-						<div class="col">
-							<div class="breadcrumb-nav">
-								<nav aria-label="breadcrumb">
-									<ol class="breadcrumb">
-										<li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-										<li class="breadcrumb-item active" aria-current="page">Guarantee</li>
-									</ol>
-								</nav>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
+<section class="breadcrumb-main">
+    <div class="container">
+        <div class="row">
+            <div id="breadcrumb">
+                <div class="breadcrumb-txt">
+                    <h3>Money-Back Guarantee</h3>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="breadcrumb-nav">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Money-Back Guarantee</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-	<!-- Modern Guarantee Hero -->
-	<section class="guarantee-hero ptb-80">
-		<div class="container">
-			<div class="row align-items-center">
-				<div class="col-lg-6" data-aos="fade-right">
-					<div class="guarantee-content">
-						<div class="guarantee-badge">
-							<i class="fas fa-shield-check"></i>
-							<span>100% Money-Back Guarantee</span>
-						</div>
-						<h1 class="guarantee-title">Your Peace of Mind is Our Promise</h1>
-						<p class="guarantee-subtitle">
-							We're so confident in our expertise and success rate that we offer a complete money-back guarantee if your petition is denied by USCIS.
-						</p>
-						<div class="confidence-stats">
-							<div class="stat-item">
-								<div class="stat-number">9.9%</div>
-								<div class="stat-label">Success Rate</div>
-							</div>
-							<div class="stat-item">
-								<div class="stat-number">5,000+</div>
-								<div class="stat-label">Happy Couples</div>
-							</div>
-							<div class="stat-item">
-								<div class="stat-number">20+</div>
-								<div class="stat-label">Years Experience</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-6" data-aos="fade-left">
-					<div class="guarantee-visual">
-						<div class="guarantee-shield">
-							<img src="{{ asset('assets/img/guarantee2.png') }}" alt="Money Back Guarantee" class="img-fluid">
-							<div class="guarantee-overlay">
-								<div class="guarantee-checkmark">
-									<i class="fas fa-check"></i>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
+<section class="guarantee-page bg-lightgrey ptb-80">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="guarantee-card">
+                    <div class="guarantee-header text-center mb-5">
+                        <div class="guarantee-badge mb-4">
+                            <i class="fas fa-shield-check"></i>
+                            <span>100% Money-Back Guarantee</span>
+                        </div>
+                        <h1 class="mb-3">Our Money-Back Guarantee</h1>
+                        <p class="text-muted">Your trust means everything to us</p>
+                    </div>
 
-	<!-- Guarantee Details -->
-	<section class="guarantee-details bg-light ptb-80">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-8 offset-lg-2">
-					<div class="guarantee-card" data-aos="fade-up">
-						<div class="guarantee-header">
-							<h2>Guaranteed Approval Or Your Money Back</h2>
-							<p class="lead-text">
-								If your petition is denied by the U.S. Citizenship and Immigration Services (USCIS), 
-								Filipina Fiancee Visa will refund 100% of the fees paid to us for the petition that was denied.
-							</p>
-						</div>
+                    <div class="guarantee-content">
+                        <div class="intro-section mb-5">
+                            <p class="lead-text">At Filipina Fiancée Visa Service, your trust means everything to us. We stand behind the quality of our work and our <strong>20-plus years of experience</strong> preparing visa petitions for U.S.–Filipina/Filipino couples.</p>
+                        </div>
 
-						<div class="guarantee-conditions">
-							<h4>Guarantee Conditions:</h4>
-							<div class="conditions-grid">
-								<div class="condition-item" data-aos="fade-up" data-aos-delay="200">
-									<div class="condition-icon">
-										<i class="fas fa-calendar-alt"></i>
-									</div>
-									<div class="condition-content">
-										<h5>30-Day Window</h5>
-										<p>Refund requests must be submitted within <strong>30 days of the denial</strong> and must include a copy of the denial letter from USCIS that indicates the reason for denial.</p>
-									</div>
-								</div>
+                        <div class="guarantee-terms mb-5">
+                            <div class="term-item">
+                                <div class="term-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="term-content">
+                                    <h3 class="h5 mb-3">Our Commitment to You</h3>
+                                    <p>If your petition is <strong>denied as a direct result of a mistake that we made</strong> in preparing your paperwork, we will refund our full service fee. To qualify, you must provide us with a copy of the official denial letter so we can confirm the nature of the error.</p>
+                                </div>
+                            </div>
 
-								<div class="condition-item" data-aos="fade-up" data-aos-delay="300">
-									<div class="condition-icon">
-										<i class="fas fa-file-alt"></i>
-									</div>
-									<div class="condition-content">
-										<h5>Response Requirements</h5>
-										<p>Denial must not be because you failed to respond to an RFE or inquiry from USCIS by the deadline they gave you, or you did not send them what they asked for.</p>
-									</div>
-								</div>
+                            <div class="term-item">
+                                <div class="term-icon exclusion">
+                                    <i class="fas fa-times-circle"></i>
+                                </div>
+                                <div class="term-content">
+                                    <h3 class="h5 mb-3">What's Not Covered</h3>
+                                    <p>Our guarantee <strong>does not apply</strong> if incorrect information was provided to us by the client, and it does not cover government filing fees. We also cannot offer refunds for situations outside of our control — such as couples deciding to end their relationship or voluntarily terminating our service.</p>
+                                </div>
+                            </div>
 
-								<div class="condition-item" data-aos="fade-up" data-aos-delay="400">
-									<div class="condition-icon">
-										<i class="fas fa-credit-card"></i>
-									</div>
-									<div class="condition-content">
-										<h5>Refund Process</h5>
-										<p>All refunds are issued by credit card only to the original purchaser. Refunds will be processed within 14 days and may take an additional 7 days to credit to your card.</p>
-									</div>
-								</div>
+                            <div class="term-item">
+                                <div class="term-icon">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div class="term-content">
+                                    <h3 class="h5 mb-3">Our Promise</h3>
+                                    <p>This guarantee reflects our long-standing commitment to <strong>honesty, accuracy, and fairness</strong> in every case we handle.</p>
+                                </div>
+                            </div>
+                        </div>
 
-								<div class="condition-item" data-aos="fade-up" data-aos-delay="500">
-									<div class="condition-icon">
-										<i class="fas fa-university"></i>
-									</div>
-									<div class="condition-content">
-										<h5>Government Fees</h5>
-										<p>Fees paid to the government or any third party are not refundable through our guarantee program.</p>
-									</div>
-								</div>
+                        <div class="experience-highlight text-center mb-5">
+                            <div class="experience-badge">
+                                <div class="badge-number">20+</div>
+                                <div class="badge-text">Years of Experience</div>
+                            </div>
+                            <p class="mt-4">Thousands of successful petitions and countless happy couples reunited</p>
+                        </div>
 
-								<div class="condition-item" data-aos="fade-up" data-aos-delay="600">
-									<div class="condition-icon">
-										<i class="fas fa-heart-broken"></i>
-									</div>
-									<div class="condition-content">
-										<h5>Relationship Changes</h5>
-										<p>Our Money Back Guarantee does NOT apply to circumstances where the couple breaks up, has a change of heart, or decides not to proceed with an elective termination of services.</p>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
+                        <div class="contact-section text-center">
+                            <h3 class="h5 mb-3">Questions About Our Guarantee?</h3>
+                            <p class="mb-4">For any questions about this policy, please contact us:</p>
+                            <div class="contact-info mb-4">
+                                <p class="mb-2">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    <a href="mailto:support@filipinafianceevisa.com">support@filipinafianceevisa.com</a>
+                                </p>
+                                <p class="mb-2">
+                                    <i class="fas fa-phone me-2"></i>
+                                    <a href="tel:702-426-4503">702-426-4503</a>
+                                </p>
+                            </div>
+                            <a href="{{ route('contactUs') }}" class="btn btn-primary btn-lg">Contact Us</a>
+                        </div>
+                    </div>
 
-	<!-- Why We Can Offer This Guarantee -->
-	<section class="why-guarantee ptb-80">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-8 offset-lg-2 text-center mb-5">
-					<h3 class="section-title-modern" data-aos="fade-up">Why We Can Offer This Guarantee</h3>
-					<p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
-						Our confidence comes from over 20 years of expertise and an exceptional success rate
-					</p>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="200">
-					<div class="expertise-card">
-						<div class="expertise-icon">
-							<i class="fas fa-graduation-cap"></i>
-						</div>
-						<h4>Expert Knowledge</h4>
-						<p>Our team has deep understanding of USCIS requirements, common pitfalls, and best practices accumulated over two decades.</p>
-					</div>
-				</div>
-				<div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="300">
-					<div class="expertise-card">
-						<div class="expertise-icon">
-							<i class="fas fa-chart-line"></i>
-						</div>
-						<h4>Proven Process</h4>
-						<p>We've refined our application process through thousands of successful cases, ensuring accuracy and completeness every time.</p>
-					</div>
-				</div>
-				<div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="400">
-					<div class="expertise-card">
-						<div class="expertise-icon">
-							<i class="fas fa-microscope"></i>
-						</div>
-						<h4>Thorough Review</h4>
-						<p>Every application undergoes multiple quality checks and reviews before submission to minimize any chance of errors or omissions.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
+                    <div class="guarantee-footer mt-5 pt-4">
+                        <div class="alert alert-info" role="alert">
+                            <p class="mb-0"><strong>Important Notice:</strong> Filipina Fiancee Visa Service is a private company and is not affiliated with any government agency. We provide comprehensive support to help you obtain your visa and/or green card; however, our services do not include legal advice, legal representation, or any legal services. We are not a law firm and are not licensed to practice law.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-	<!-- Success Stories Related to Guarantee -->
-	<section class="guarantee-testimonials bg-light ptb-60">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-8 offset-lg-2 text-center mb-5">
-					<h3 class="section-title-modern" data-aos="fade-up">Success Stories</h3>
-					<p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
-						Hear from couples who trusted our guarantee and achieved their dreams
-					</p>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-lg-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-					<div class="guarantee-testimonial">
-						<div class="testimonial-content">
-							<p>"We were nervous about the process, but the money-back guarantee gave us confidence to proceed. Our K-1 visa was approved without any issues!"</p>
-						</div>
-						<div class="testimonial-author">
-							<img src="{{ asset('assets/img/testimonial-1.jpg') }}" alt="Success Story">
-							<div>
-								<strong>Alex & Camelia</strong>
-								<span>K-1 Visa Approved</span>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-					<div class="guarantee-testimonial">
-						<div class="testimonial-content">
-							<p>"The guarantee shows they really stand behind their work. That level of confidence convinced us they were the right choice. We're now happily married!"</p>
-						</div>
-						<div class="testimonial-author">
-							<img src="{{ asset('assets/img/testimonial-2.jpg') }}" alt="Success Story">
-							<div>
-								<strong>Jonathan & Sarah</strong>
-								<span>Now Married</span>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- FAQ Section -->
-	<section class="guarantee-faq ptb-80">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-8 offset-lg-2">
-					<h3 class="section-title-modern text-center mb-5" data-aos="fade-up">Frequently Asked Questions</h3>
-					<div class="faq-accordion" data-aos="fade-up" data-aos-delay="100">
-						<div class="accordion" id="guaranteeFAQ">
-							<div class="accordion-item">
-								<h3 class="accordion-header">
-									<button class="accordion-button" type="button" data-bs-toggle="collapse" 
-											data-bs-target="#faq1" aria-expanded="true">
-										How quickly do I get my refund if denied?
-									</button>
-								</h3>
-								<div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#guaranteeFAQ">
-									<div class="accordion-body">
-										Refunds are processed within 14 days of submitting your refund request with the denial letter. It may take an additional 7 days for the credit to appear on your card.
-									</div>
-								</div>
-							</div>
-							
-							<div class="accordion-item">
-								<h3 class="accordion-header">
-									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-											data-bs-target="#faq2" aria-expanded="false">
-										What if I don't respond to an RFE on time?
-									</button>
-								</h3>
-								<div id="faq2" class="accordion-collapse collapse" data-bs-parent="#guaranteeFAQ">
-									<div class="accordion-body">
-										If your petition is denied because you failed to respond to an RFE (Request for Evidence) by the deadline, our guarantee would not apply. We always notify clients immediately about RFEs and help prepare responses.
-									</div>
-								</div>
-							</div>
-							
-							<div class="accordion-item">
-								<h3 class="accordion-header">
-									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-											data-bs-target="#faq3" aria-expanded="false">
-										Are government fees included in the refund?
-									</button>
-								</h3>
-								<div id="faq3" class="accordion-collapse collapse" data-bs-parent="#guaranteeFAQ">
-									<div class="accordion-body">
-										No, government fees paid to USCIS and other third-party fees are not refundable under our guarantee. We only refund our service fees.
-									</div>
-								</div>
-							</div>
-							
-							<div class="accordion-item">
-								<h3 class="accordion-header">
-									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-											data-bs-target="#faq4" aria-expanded="false">
-										What documentation do I need for a refund?
-									</button>
-								</h3>
-								<div id="faq4" class="accordion-collapse collapse" data-bs-parent="#guaranteeFAQ">
-									<div class="accordion-body">
-										You need to provide a copy of the official denial letter from USCIS that clearly states the reason for denial. The refund request must be submitted within 30 days of receiving the denial.
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- CTA Section -->
-	<section class="guarantee-cta ptb-80">
-		<div class="container">
-			<div class="row">
-				<div class="col-lg-8 offset-lg-2 text-center">
-					<h3 class="cta-title" data-aos="zoom-in">Ready to Start With Complete Confidence?</h3>
-					<p class="cta-subtitle" data-aos="zoom-in" data-aos-delay="100">
-						With our money-back guarantee, you have nothing to lose and everything to gain. Let us help bring your loved one home.
-					</p>
-					<div class="cta-buttons" data-aos="zoom-in" data-aos-delay="200">
-						<a href="{{ route('register') }}" class="btn btn-primary-gradient btn-lg">
-							Start Your Application
-						</a>
-						<a href="tel:702-426-4503" class="btn btn-outline-light btn-lg ms-3">
-							<i class="fas fa-phone me-2"></i>
-							Call 702-426-4503
-						</a>
-					</div>
-					<div class="guarantee-footer-note" data-aos="fade-up" data-aos-delay="300">
-						<i class="fas fa-shield-check me-2"></i>
-						100% Money-Back Guarantee • No Questions Asked • 20+ Years Trusted
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-@endsection
+<!-- Call to Action Section -->
+<section class="ptb-80 bg-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-5 col-12 mb-3">
+                <p class="text-uppercase mb-3"><small>READY TO START?</small></p>
+                <div class="heading mb-3">
+                    <h2>Begin Your Journey With Confidence</h2>
+                </div>
+                <p class="mb-4">Our money-back guarantee gives you peace of mind. Let's reunite you with your loved one.</p>
+                <a href="{{ route('register') }}" class="btn btn-primary btn-lg">Start Your Application</a>
+            </div>
+            <div class="col-md-7 col-12 mb-3">
+                <div class="about-img-block">
+                    <img src="{{ asset('assets/img/filipina-fiancee-visa-banner.jpg') }}" alt="Start Your Application" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <style>
-/* Modern Guarantee Page Styles */
-.guarantee-hero {
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+.guarantee-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
 }
 
 .guarantee-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-    background: var(--success-gradient);
+    gap: 1rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
-    padding: 0.75rem 1.5rem;
+    padding: 1rem 2rem;
     border-radius: 50px;
     font-weight: 600;
-    margin-bottom: 2rem;
+    font-size: 1.1rem;
 }
 
 .guarantee-badge i {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
 }
 
-.guarantee-title {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
-}
-
-.guarantee-subtitle {
-    font-size: 1.25rem;
-    color: var(--text-light);
-    line-height: 1.6;
-    margin-bottom: 3rem;
-}
-
-.confidence-stats {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
-}
-
-.stat-item {
-    text-align: center;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-    border-top: 4px solid var(--primary-color);
-    min-width: 120px;
-}
-
-.stat-number {
+.guarantee-header h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
-}
-
-.stat-label {
-    color: var(--text-light);
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.guarantee-visual {
-    text-align: center;
-    position: relative;
-}
-
-.guarantee-shield {
-    position: relative;
-    display: inline-block;
-}
-
-.guarantee-shield img {
-    max-width: 400px;
-    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.15));
-}
-
-.guarantee-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.guarantee-shield:hover .guarantee-overlay {
-    opacity: 1;
-}
-
-.guarantee-checkmark {
-    width: 80px;
-    height: 80px;
-    background: var(--success-gradient);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 2rem;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-/* Guarantee Details */
-.guarantee-card {
-    background: white;
-    padding: 3rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-}
-
-.guarantee-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 2px solid #f8f9fa;
-}
-
-.guarantee-header h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin-bottom: 1rem;
+    color: #2d3748;
 }
 
 .lead-text {
     font-size: 1.2rem;
-    color: var(--text-light);
-    line-height: 1.7;
+    color: #4a5568;
+    line-height: 1.8;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f0fdf4 0%, #f8f9ff 100%);
+    border-radius: 15px;
+    border-left: 4px solid #10b981;
 }
 
-.guarantee-conditions h4 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.conditions-grid {
-    display: grid;
-    grid-template-columns: 1fr;
+.guarantee-terms {
+    display: flex;
+    flex-direction: column;
     gap: 2rem;
 }
 
-.condition-item {
+.term-item {
     display: flex;
-    align-items: flex-start;
     gap: 1.5rem;
+    align-items: flex-start;
     padding: 2rem;
     background: #f8f9fa;
     border-radius: 15px;
-    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s ease;
 }
 
-.condition-icon {
+.term-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.term-icon {
     width: 60px;
     height: 60px;
-    background: var(--primary-gradient);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     flex-shrink: 0;
 }
 
-.condition-content h5 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin-bottom: 0.75rem;
+.term-icon.exclusion {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
-.condition-content p {
-    color: var(--text-light);
-    line-height: 1.6;
-    margin: 0;
-}
-
-.condition-content strong {
-    color: var(--text-dark);
+.term-content h3 {
+    color: #2d3748;
     font-weight: 700;
 }
 
-/* Expertise Cards */
-.expertise-card {
-    background: white;
-    padding: 2.5rem 2rem;
-    border-radius: 20px;
-    text-align: center;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    height: 100%;
-    border-top: 4px solid var(--primary-color);
-}
-
-.expertise-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-}
-
-.expertise-icon {
-    width: 80px;
-    height: 80px;
-    background: var(--primary-gradient);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
-    color: white;
-    font-size: 2rem;
-}
-
-.expertise-card h4 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin-bottom: 1rem;
-}
-
-.expertise-card p {
-    color: var(--text-light);
-    line-height: 1.6;
-    margin: 0;
-}
-
-/* Guarantee Testimonials */
-.guarantee-testimonial {
-    background: white;
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-    height: 100%;
-    border-left: 4px solid var(--success-color);
-}
-
-.testimonial-content p {
-    font-size: 1.1rem;
-    color: var(--text-dark);
+.term-content p {
+    color: #4a5568;
     line-height: 1.7;
-    font-style: italic;
-    margin-bottom: 1.5rem;
+    margin: 0;
+    font-size: 1.05rem;
 }
 
-.testimonial-author {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding-top: 1.5rem;
-    border-top: 2px solid #f8f9fa;
+.experience-highlight {
+    padding: 2.5rem;
+    background: linear-gradient(135deg, #f0f4ff 0%, #f8f9ff 100%);
+    border-radius: 15px;
 }
 
-.testimonial-author img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--success-color);
-}
-
-.testimonial-author strong {
-    display: block;
-    font-weight: 700;
-    color: var(--text-dark);
-}
-
-.testimonial-author span {
-    color: var(--text-light);
-    font-size: 0.9rem;
-}
-
-/* FAQ Styles */
-.accordion-item {
-    border: none;
-    margin-bottom: 1rem;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-.accordion-button {
+.experience-badge {
+    display: inline-block;
+    padding: 2rem 3rem;
     background: white;
-    color: var(--text-dark);
-    font-weight: 600;
-    padding: 1.25rem;
-    border: none;
-    box-shadow: none;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
 }
 
-.accordion-button:not(.collapsed) {
-    background: linear-gradient(to right, #f0f4ff, #f8f9ff);
-    color: var(--primary-color);
-}
-
-.accordion-button:focus {
-    box-shadow: none;
-    border-color: transparent;
-}
-
-.accordion-body {
-    padding: 1.25rem;
-    color: var(--text-dark);
-    line-height: 1.8;
-}
-
-/* CTA Section */
-.guarantee-cta {
-    background: var(--primary-gradient);
-    position: relative;
-    overflow: hidden;
-}
-
-.guarantee-cta::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,138.7C672,128,768,128,864,144C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-    background-size: cover;
-}
-
-.cta-title {
-    font-size: 2.5rem;
+.badge-number {
+    font-size: 3.5rem;
     font-weight: 700;
-    color: white;
-    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 0.5rem;
 }
 
-.cta-subtitle {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 2rem;
-}
-
-.cta-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-}
-
-.btn-outline-light {
-    background: transparent;
-    color: white;
-    border: 2px solid white;
-    padding: 1rem 2rem;
-    border-radius: 50px;
+.badge-text {
+    font-size: 1.1rem;
+    color: #4a5568;
     font-weight: 600;
-    transition: all 0.3s ease;
 }
 
-.btn-outline-light:hover {
-    background: white;
-    color: var(--primary-color);
-    border-color: white;
+.experience-highlight p {
+    color: #4a5568;
+    font-size: 1.1rem;
+    margin: 0;
 }
 
-.guarantee-footer-note {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 1rem;
-    font-weight: 500;
+.contact-section {
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 15px;
 }
 
-/* Mobile Responsive */
-@media (max-width: 991px) {
-    .guarantee-title {
-        font-size: 2.5rem;
-    }
-    
-    .confidence-stats {
-        justify-content: center;
-    }
-    
-    .cta-title {
-        font-size: 2rem;
-    }
+.contact-section h3 {
+    color: #2d3748;
+    font-weight: 700;
 }
 
-@media (max-width: 767px) {
+.contact-section p {
+    color: #4a5568;
+    font-size: 1.05rem;
+}
+
+.contact-info a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.contact-info a:hover {
+    color: #764ba2;
+}
+
+@media (max-width: 768px) {
     .guarantee-card {
-        padding: 2rem;
+        padding: 2rem 1.5rem;
     }
     
-    .condition-item {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .guarantee-title {
+    .guarantee-header h1 {
         font-size: 2rem;
     }
     
-    .confidence-stats {
-        flex-direction: column;
-        align-items: center;
+    .guarantee-badge {
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
     }
     
-    .cta-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .cta-buttons .btn {
-        width: 100%;
-        max-width: 300px;
-    }
-    
-    .testimonial-author {
+    .term-item {
         flex-direction: column;
         text-align: center;
+        padding: 1.5rem;
+    }
+    
+    .term-icon {
+        margin: 0 auto;
+    }
+    
+    .lead-text {
+        font-size: 1.1rem;
+        padding: 1.5rem;
+    }
+    
+    .experience-badge {
+        padding: 1.5rem 2rem;
+    }
+    
+    .badge-number {
+        font-size: 2.5rem;
     }
 }
 
 @media (max-width: 576px) {
-    .guarantee-shield img {
-        max-width: 250px;
+    .guarantee-card {
+        padding: 1.5rem 1rem;
     }
     
-    .stat-item {
-        padding: 1rem;
+    .guarantee-header h1 {
+        font-size: 1.75rem;
     }
     
-    .condition-content h5 {
-        font-size: 1.1rem;
+    .guarantee-badge {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .term-item {
+        padding: 1.25rem;
+    }
+    
+    .term-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
     }
 }
 </style>
-
-@section('customScript')
-<script>
-// Initialize AOS animations
-AOS.init({
-    duration: 800,
-    once: true,
-    offset: 100
-});
-
-// Add smooth interactions
-document.addEventListener('DOMContentLoaded', function() {
-    // Animate stats on scroll
-    const observeStats = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const number = entry.target.querySelector('.stat-number');
-                const finalNumber = number.textContent;
-                const isPercentage = finalNumber.includes('%');
-                const numericValue = parseInt(finalNumber.replace(/[^\d]/g, ''));
-                
-                let current = 0;
-                const increment = numericValue / 50;
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= numericValue) {
-                        current = numericValue;
-                        clearInterval(timer);
-                    }
-                    
-                    if (isPercentage) {
-                        number.textContent = Math.floor(current) + '%';
-                    } else if (finalNumber.includes('+')) {
-                        number.textContent = Math.floor(current).toLocaleString() + '+';
-                    } else {
-                        number.textContent = Math.floor(current).toLocaleString();
-                    }
-                }, 20);
-            }
-        });
-    });
-    
-    document.querySelectorAll('.stat-item').forEach(stat => {
-        observeStats.observe(stat);
-    });
-    
-    // Add hover effects to condition items
-    document.querySelectorAll('.condition-item').forEach(item => {
-        item.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateX(10px)';
-            this.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.15)';
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateX(0)';
-            this.style.boxShadow = 'none';
-        });
-    });
-});
-</script>
 @endsection
