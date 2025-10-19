@@ -34,57 +34,135 @@
             </div>
             <div class="col-md-6 mb-3 align-self-center">
                 <div class="heading mb-3">
-                    <h2>Courtship in The Philippines</h2>
+                    <h2>Courtship in The Philippines – A Guide for American Men Dating Filipina Women</h2>
                 </div>
-                <p class="lh-175">The Philippines is a heavily traditional and romantic country and if you are looking to date a Filipino lady, knowing the way things are done in her homeland will go a long way to putting you in a good light. Courtship in the Philippines is a courtlier and gentlemanly affair, and many American men find they enjoy the experience in comparison to the less traditional ways of dating back home in the USA.</p>
+                <p class="lh-175">Dating a Filipina woman is a unique and meaningful experience, especially when you understand and respect the cultural traditions of the Philippines. Known for its romantic and conservative values, the Philippines embraces a courtship style that many American men find refreshing compared to modern Western dating norms. If you're interested in building a serious relationship with a Filipina, this guide will help you navigate her culture's expectations and customs during the dating and courtship process.</p>
             </div>
             <div class="col-md-12 mb-3">
                 <div class="heading mb-3">
-                    <h2>Discretion is The Key</h2>
+                    <h2>Understanding Filipino Dating Culture</h2>
                 </div>
-                <p class="lh-175">Traditionally, a male suitor will approach a Filipino lady whom he wishes to court in a discreet and friendly manner, so as not to appear aggressive or arrogant.  Simply approaching a woman in a bar, or on the street and asking her phone number, as may be done in the West, is considered completely unacceptable and even offensive and although many ladies understand that the American might not understand this and forgive him, this is not a good start to a relationship.</p>
+                <p class="lh-175">Filipino courtship is deeply rooted in tradition, family, and discretion. Making a positive impression starts with respecting these values. Unlike in the West, where approaching someone in public or asking for a phone number might be normal, this could be considered too forward or even offensive in the Philippines.</p>
             </div>
             <div class="col-md-12 mb-3">
                 <div class="heading mb-3">
-                    <h2>Teasing And “Pairing Off”</h2>
+                    <h2>Discretion Is Key</h2>
                 </div>
-                <p class="lh-175">Some ladies do conduct their courtship in the form of simple dates (with chaperones) similar to the manner used in previous decades in the West. However the traditional and more appreciated method of gaining the interest of a Filipino woman is through a practice known as “teasing” and “pairing off” (tuksuhan lang in Tagalog).</p>
-                <p class="lh-175">The “teasing” is conducted by friends and peers of a couple being matched and allows both sides to discover their compatibility without losing face through rejection, or seeming to be over eager and forward. The “teasing” stage is particularly valued by shy or inexperienced men as it allows them to progress carefully and gently without worrying that any mistakes will be exposed to the community at large.</p>
-                <p class="lh-175">During this testing and evaluation period either a Filipino lady will deny any feelings for the suitor and avoid him, giving him a clear message that he has been unsuccessful and allowing the man to back off without losing face, or she will encourage the courtship and the more formal stage of courting will begin. However, remember that a traditional Filipino lady is expected to be shy and secretive about her real feelings regarding a potential partner and it is important to be sure and take advice of her peers before breaking off the “teasing” stage too soon.</p>
+                <p class="lh-175">In traditional Filipino culture, a male suitor is expected to approach a woman respectfully and modestly. Being too aggressive or confident may be seen as arrogance. A discreet and friendly introduction is more appreciated and helps you stand out as a gentleman.</p>
             </div>
             <div class="col-md-12 mb-3">
                 <div class="heading mb-3">
-                    <h2>Building a Bridge</h2>
+                    <h2>Teasing and Pairing Off (Tuksuhan Lang)</h2>
                 </div>
-                <p class="lh-175">Some shy or inexperienced suitors (known as torpe in the Philippines) may employ the use of a “human bridge” or tulay to help the process along. This would be a close friend of both the man and the woman who would act as a go between and communication channel for the couple.  The “human bridge” is also sometimes used to ask formal permission from the lady’s family for the courtship to begin.</p>
+                <p class="lh-175">One unique aspect of Filipino dating culture is the "teasing stage," known locally as tuksuhan lang. This practice involves friends or family gently teasing two people they believe would make a good couple. It allows both the man and the woman to get to know each other without pressure and without the risk of public rejection.</p>
+                <p class="lh-175">This method is especially helpful for shy or inexperienced men, as it allows them to proceed with confidence while respecting the cultural importance of modesty and subtlety in courtship.</p>
             </div>
             <div class="col-md-12 mb-3">
                 <div class="heading mb-3">
-                    <h2>Formal Courtship</h2>
+                    <h2>Using a Tulay (Human Bridge)</h2>
                 </div>
-                <p class="lh-175">After a successful teasing stage the couple move forward into a more formal and recognized courtship.  The expected first step in this process is for the man to approach the lady’s family and formally request to engage their daughter in courtship. It is considered unacceptable to proceed into dating a girl without showing your face to her family, although in some cases the initial introductions can be performed through the tulay or “human bridge”.  At this meeting  (and any other time the man goes to the home) it is also important to bring gifts (pasalubong) for the family in order to be considered acceptable.</p>
-                <p class="lh-175">Once the agreement of the family has been gained formal courtship can begin. This a rather more gentle and discreet process than in the USA; rather than in western culture where it's not unusual to share a house mortgage within a very short time, women are rarely allowed to spend time alone with a potential suitor and courtship will proceed around quiet dates and visits to the family. After a number of dates, if all goes well the couple will be considered magkasintahan (formally girlfriend and boyfriend).</p>
-                <p class="lh-175">In the past, especially in rural areas a man would be expected to make a harana (serenade) at night and sing her songs of love and romance, however this is rarely performed these days.</p>
+                <p class="lh-175">If you're a shy suitor—or torpe, as it's called in the Philippines—you may benefit from the help of a tulay, or "human bridge." This trusted friend or relative serves as a go-between, helping to communicate intentions, ask for permission to court, and smooth the process for both parties. In some cases, the tulay may also help arrange the initial meeting with the woman's family.</p>
             </div>
             <div class="col-md-12 mb-3">
                 <div class="heading mb-3">
-                    <h2>Playing Hard To Get</h2>
+                    <h2>The Formal Courtship Stage</h2>
                 </div>
-                <p class="lh-175">Filipino women are traditionally expected to be pakipot (play hard to get) during the courtship ritual. This supports the idea that a Filipino girl should be mahinhin (modest, shy, and well-mannered with good upbringing) and does not show her admirer that she is interested immediately. This behavior is nothing to be concerned about and is seen as a test to ensure the sincerity of the man and his affection for the lady concerned. Do not expect instant results during courtship, indeed it is not unusual, unlike in the West, for dating to continue for years before a lady is prepared to accept a marriage proposal.</p>
+                <p class="lh-175">Once mutual interest is confirmed, formal courtship begins. Traditionally, the man is expected to approach the woman's family and ask for permission to court their daughter. This gesture shows respect and sincerity and is often done with the help of the tulay.</p>
+                <p class="lh-175">Bringing small gifts or pasalubong (tokens of appreciation) when visiting the family is also a vital gesture. During this stage, time is spent on quiet, respectful dates, often accompanied by family members. Public displays of affection are typically avoided, and the relationship grows slowly and thoughtfully.</p>
             </div>
             <div class="col-md-12 mb-3">
                 <div class="heading mb-3">
-                    <h2>Wedding Bells</h2>
+                    <h2>Playing Hard to Get: The Pakipot Tradition</h2>
                 </div>
-                <p class="lh-175">After varying periods of being mahinhin the couple may decide they wish to get married. The traditional method of asking for a lady’s hand in marriage is called pamamanhikan and is not unlike how we do things in the USA. This involves visiting the Filipino woman’s home and formally asking consent to marry her from her parents and/or family. This is also the period of time when traditionally, parents from both sides would start getting to know about each other. As with any visit to the family house, gifts should be presented in order to put you in good stead with the family.</p>
+                <p class="lh-175">In the Philippines, many women embrace the traditional role of being pakipot, or playing hard to get. This isn't meant to frustrate a suitor but to test his sincerity and commitment. A Filipina is expected to be mahinhin—modest, shy, and well-mannered—which adds to the charm and depth of the courtship. It's not uncommon for couples to date for an extended period before discussing marriage.</p>
             </div>
             <div class="col-md-12 mb-3">
                 <div class="heading mb-3">
-                    <h2>A Romantic And Affectionate Experience</h2>
+                    <h2>Pamamanhikan: The Marriage Proposal</h2>
                 </div>
-                <p class="lh-175">American men have described the process of courtship in the Philippines as a romantic and affectionate experience, not unlike how they imagine knights in armor to approach their love or how things used to be performed in the West.  The slower pace and more thoughtful approach is often seen as being more intimate than the rushed, all out in the open, contrast of how dating is sometimes performed in the USA today.  This gentle courtship frequently blossoms into relationships that are much more robust and long-lasting than their Western counterparts and by respecting the culture of your Filipino lady you will find yourself a dedicated, loving and affectionate wife, who was definitely worth every second you spent in courtship.</p>
+                <p class="lh-175">If the relationship grows strong, the couple may enter the next phase: pamamanhikan—the formal request for the woman's hand in marriage. Similar to Western customs, this involves the man visiting her family and seeking their blessing. It's also an opportunity for both families to begin building a relationship.</p>
+                <p class="lh-175">As with earlier visits, it's customary to bring gifts as a sign of goodwill. This stage solidifies the couple's intentions and prepares the path toward marriage.</p>
+            </div>
+            <div class="col-md-12 mb-3">
+                <div class="heading mb-3">
+                    <h2>A Timeless and Romantic Experience</h2>
+                </div>
+                <p class="lh-175">Many American men describe courting a Filipina as a romantic, respectful, and affectionate journey—reminiscent of old-fashioned values once common in the West. The slower pace and emphasis on family, tradition, and sincerity often lead to stronger, more enduring relationships.</p>
+                <p class="lh-175">By embracing Filipino courtship customs, you not only win the heart of a beautiful and devoted partner—you also gain the respect and support of her family and community.</p>
+            </div>
+            <div class="col-md-12 mb-3">
+                <div class="alert alert-info" role="alert">
+                    <p class="mb-0"><strong>Disclaimer:</strong> Filipina Fiancee Visa Service is a private company and is not affiliated with any government agency. We provide comprehensive support to help you obtain your visa and/or green card; however, our services do not include legal advice, legal representation, or any legal services. Filipina Fiancee Visa Service is not a law firm and is not licensed to practice law in any state. Neither the company nor its employees claim to possess specialized knowledge of immigration law or provide legal guidance of any kind.</p>
+                </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Services Section -->
+	<section class="ptb-80 bg-white">
+		<div class="container">
+			<div class="row">
+				<!-- Fiancee Visa -->
+				<div class="col-md-4 col-sm-6 mb-3">
+					<div class="text-center">
+						<div class="heading mb-3">
+							<h3>Fiancee Visa</h3>
+						</div>
+						<div class="about-img-block mb-3">
+							<img src="{{ asset('assets/img/Fiancee-Visa.jpg') }}" alt="Fiancee Visa" class="img-fluid">
+						</div>
+						<a href="{{ route('fiancee.visa') }}" class="btn btn-primary">Start Now</a>
+					</div>
+				</div>
+
+				<!-- Spouse & Marriage Visas -->
+				<div class="col-md-4 col-sm-6 mb-3">
+					<div class="text-center">
+						<div class="heading mb-3">
+							<h3>Spouse & Marriage Visas</h3>
+						</div>
+						<div class="about-img-block mb-3">
+							<img src="{{ asset('assets/img/tourist_visa.jpg') }}" alt="Spouse & Marriage Visas" class="img-fluid">
+						</div>
+						<a href="{{ route('spouse.visa') }}" class="btn btn-primary">Start Now</a>
+					</div>
+				</div>
+
+				<!-- Adjustment of Status -->
+				<div class="col-md-4 col-sm-6 mb-3">
+					<div class="text-center">
+						<div class="heading mb-3">
+							<h3>Adjustment of Status</h3>
+						</div>
+						<div class="about-img-block mb-3">
+							<img src="{{ asset('assets/img/flag-2.jpg') }}" alt="Adjustment of Status" class="img-fluid">
+						</div>
+						<a href="{{ route('adjustment.visa') }}" class="btn btn-primary">Start Now</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+    
+<!-- Call to Action Section -->
+	<section class="ptb-80 bg-lightgrey">
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-md-5 col-12 mb-3">
+					<p class="text-uppercase mb-3"><small>CALL US</small></p>
+					<div class="heading mb-3">
+						<h2>CALL FOR A FREE CONSULTATION</h2>
+					</div>
+					<a href="{{ route('contactUs') }}" class="btn btn-outline-dark">CONTACT US</a>
+				</div>
+				<div class="col-md-7 col-12 mb-3">
+					<div class="about-img-block">
+						<img src="{{ asset('assets/img/filipina-fiancee-visa-banner.jpg') }}" alt="Filipina Fiancee Visa" class="img-fluid">
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 @endsection
