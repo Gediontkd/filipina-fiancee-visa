@@ -1986,5 +1986,72 @@
 				</div>
 			</div>
 		</div>
-	</section>	
+	</section>
+	
+	<!-- Services Section -->
+	<section class="ptb-80 bg-white">
+		<div class="container">
+			<div class="row">
+				<!-- Fiancee Visa -->
+				<div class="col-md-4 col-sm-6 mb-3">
+					<div class="text-center">
+						<div class="heading mb-3">
+							<h3>Fiancee Visa</h3>
+						</div>
+						<div class="about-img-block mb-3">
+							<img src="{{ asset('assets/img/Fiancee-Visa.jpg') }}" alt="Fiancee Visa" class="img-fluid">
+						</div>
+						<a href="{{ route('fiancee.visa') }}" class="btn btn-primary">Start Now</a>
+					</div>
+				</div>
+
+				<!-- Spouse & Marriage Visas -->
+				<div class="col-md-4 col-sm-6 mb-3">
+					<div class="text-center">
+						<div class="heading mb-3">
+							<h3>Spouse & Marriage Visas</h3>
+						</div>
+						<div class="about-img-block mb-3">
+							<img src="{{ asset('assets/img/tourist_visa.jpg') }}" alt="Spouse & Marriage Visas" class="img-fluid">
+						</div>
+						<a href="{{ route('spouse.visa') }}" class="btn btn-primary">Start Now</a>
+					</div>
+				</div>
+
+				<!-- Adjustment of Status -->
+				<div class="col-md-4 col-sm-6 mb-3">
+					<div class="text-center">
+						<div class="heading mb-3">
+							<h3>Adjustment of Status</h3>
+						</div>
+						<div class="about-img-block mb-3">
+							<img src="{{ asset('assets/img/flag-2.jpg') }}" alt="Adjustment of Status" class="img-fluid">
+						</div>
+						<a href="{{ route('adjustment.visa') }}" class="btn btn-primary">Start Now</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+    
+<!-- Call to Action Section -->
+	<section class="ptb-80 bg-lightgrey">
+		<div class="container">
+			<div class="row align-items-center">
+				<div class="col-md-5 col-12 mb-3">
+					<p class="text-uppercase mb-3"><small>CALL US</small></p>
+					<div class="heading mb-3">
+						<h2>CALL FOR A FREE CONSULTATION</h2>
+					</div>
+					<a href="{{ route('contactUs') }}" class="btn btn-outline-dark">CONTACT US</a>
+				</div>
+				<div class="col-md-7 col-12 mb-3">
+					<div class="about-img-block">
+						<img src="{{ asset('assets/img/filipina-fiancee-visa-banner.jpg') }}" alt="Filipina Fiancee Visa" class="img-fluid">
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 @endsection
