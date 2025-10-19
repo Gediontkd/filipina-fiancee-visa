@@ -109,7 +109,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{ route('privacy-policy') }}">
                                     <i class="fas fa-chevron-right"></i> Privacy Policy
                                 </a>
                             </li>

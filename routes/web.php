@@ -85,7 +85,11 @@ Route::get('/contact-us', function () {
     return view('web.contact-us');
 })->name('contact-us');
 
-Route::get('/guarantee', function () {
+Route::get('/privacy-policy', function () {
+    return view('web.privacy-policy');
+})->name('privacy-policy');
+
+Route::get('/money-back-guarantee', function () {
     return view('web.guarantee');
 })->name('guarantee');
 
