@@ -7,11 +7,9 @@
     </div>
     <div class="col-md-6 d-flex justify-content-end removeEmpBtn{{ $index }}">
         @if ($index != 1 && $index <= 5)
-            {{-- <div class="col-md-2 mt-2 removeEmpBtn{{ $index }}"> --}}
             <button type="button" class="btn btn-primary btn-sm removeEmploperSection" data-sec="{{ $index }}">
                 <i class="fa fa-trash"></i>
             </button>
-            {{-- </div> --}}
         @endif
     </div>
     @if ($index != 1)
@@ -153,7 +151,7 @@
             {{ Form::label("occupation_specify$index", $occupationtitle) }}
             <span class="required">*</span>
             {{ Form::text("occupation_specify$index", @$data["occupation_specify$index"], [
-                'class' => 'form-control postalCode',
+                'class' => 'form-control',
                 'placeholder' => 'Please Enter Your Occupation (specify)',
             ]) }}
         </div>
@@ -163,7 +161,7 @@
             @$disBeganDate = !empty($data["employement_start_date$index"]) ? 'disableDatePicker' : '';
         @endphp
         <div class="form-group">
-            {{ Form::label("", 'Employement Start Date (mm/dd/yyyy)') }}
+            {{ Form::label("employement_start_date$index", 'Employment Start Date (mm/dd/yyyy)') }}
             <span class="required">*</span>
             {{ Form::text("employement_start_date$index", @$data["employement_start_date$index"], [
                 'class' => "form-control dateOfBirth beganDate$index $disBeganDate",
@@ -173,28 +171,32 @@
         </div>
     </div>
     <div class="col-md-6">
-        @php            
-            $disEndDate = !empty($data["employement_end_date$index"]) ? 'disableDatePicker' : '';
+        @php
+            // Check if present_date is checked or if end date has value
+            $isPresentChecked = @$data["present_date"] == date('m/d/Y') || @$data["present_date"] == 'Present';
+            $disEndDate = (!empty($data["employement_end_date$index"]) && !$isPresentChecked) ? 'disableDatePicker' : '';
+            $endDateValue = $isPresentChecked ? 'Present' : @$data["employement_end_date$index"];
         @endphp
         <div class="form-group">
-            {{ Form::label("", 'Employement End Date (mm/dd/yyyy)') }}
-            <span class="required">*</span>
-            {{ Form::text("employement_end_date$index", @$data["employement_end_date$index"], [
+            {{ Form::label("employement_end_date$index", 'Employment End Date (mm/dd/yyyy)') }}
+            @if($index != 1)
+                <span class="required">*</span>
+            @endif
+            {{ Form::text("employement_end_date$index", $endDateValue, [
                 'class' => "form-control dateOfBirth endDate employementEndDate$index $disEndDate",
                 'data-index' => "$index",
                 'placeholder' => 'Enter Date',
+                'disabled' => $isPresentChecked
             ]) }}
             @if ($index == 1)
-                <div class="form-group">
-                    {{ Form::label("present_date", 'Present?', ['class' => "employementEndDate $disEndDate"]) }}
-                    {{ Form::checkbox("present_date", date('m/d/Y'), @$data["present_date"] == 'N/A' || @$data["present_date"] != '' ? true : '', [
-                        'class' => "custom-control-input doesNotApply employementEndDate",
-                        'data-field' => "employementEndDate1",
-                        'data-index' => "1",
+                <div class="form-check mt-2">
+                    {{ Form::checkbox("present_date", date('m/d/Y'), $isPresentChecked, [
+                        'class' => "form-check-input",
+                        'id' => 'present_date_checkbox'
                     ]) }}
+                    {{ Form::label("present_date_checkbox", 'Present?', ['class' => "form-check-label"]) }}
                 </div>
             @endif
-            {{@$lastIndex}}
         </div>
     </div>    
     {{ Form::hidden("employer$index", $index) }}
