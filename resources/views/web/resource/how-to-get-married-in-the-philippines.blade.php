@@ -34,6 +34,15 @@
 						<h1>How to get married in the Philippines</h1>
 					</div>
 				</div>
+				<div class="col-md-12 mb-3">
+					<div class="alert alert-info">
+						<i class="fas fa-heart"></i> 
+						<strong>Related:</strong> Understanding 
+						<a href="{{ route('resource.page', 'courtship-in-the-philippines') }}" class="alert-link">
+							Courtship in the Philippines
+						</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</section>
