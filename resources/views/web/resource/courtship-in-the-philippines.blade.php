@@ -90,10 +90,6 @@
                 <p class="lh-175">Many American men describe courting a Filipina as a romantic, respectful, and affectionate journey—reminiscent of old-fashioned values once common in the West. The slower pace and emphasis on family, tradition, and sincerity often lead to stronger, more enduring relationships.</p>
                 <p class="lh-175">By embracing Filipino courtship customs, you not only win the heart of a beautiful and devoted partner—you also gain the respect and support of her family and community.</p>
             </div>
-            <div class="col-md-12 mb-3">
-                <div class="alert alert-info" role="alert">
-                    <p class="mb-0"><strong>Disclaimer:</strong> Filipina Fiancee Visa Service is a private company and is not affiliated with any government agency. We provide comprehensive support to help you obtain your visa and/or green card; however, our services do not include legal advice, legal representation, or any legal services. Filipina Fiancee Visa Service is not a law firm and is not licensed to practice law in any state. Neither the company nor its employees claim to possess specialized knowledge of immigration law or provide legal guidance of any kind.</p>
-                </div>
             </div>
         </div>
     </div>
