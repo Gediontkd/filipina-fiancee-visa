@@ -5,6 +5,7 @@ namespace App\Http\Services\Fiance;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Models\FianceSponsor;
 use App\Models\FianceVisaSubmittedStep;
@@ -20,15 +21,23 @@ class FianceSponsorService
         DB::beginTransaction();
 
         try {
+            // Get all request data
+            $requestData = $request->all();
+            
+            // If waiver_document_path exists, ensure it's included
+            if ($request->has('waiver_document_path')) {
+                $requestData['waiver_document_path'] = $request->waiver_document_path;
+            }
+
             $data = [
                 'user_id' => Auth::id(),
                 'submitted_app_id' => $request->submitted_app_id,
                 'step' => $request->name,
-                'detail' => serialize($request->all()),
+                'detail' => serialize($requestData),
                 'type' => $request->type,
             ];
 
-		    $step = FianceVisaSubmittedStep::updateOrCreate(['id' => $request->id], $data); 
+            $step = FianceVisaSubmittedStep::updateOrCreate(['id' => $request->id], $data); 
             
             $userId = Auth::id();
             $name = $request->name;
@@ -43,27 +52,33 @@ class FianceSponsorService
                 ]
             );
 
-            // if (!FianceSponsor::where('user_id', Auth::id())
-            //         ->where('name', $request->name)
-            //         ->exists()) {                
-            //     FianceSponsor::create([
-            //         'user_id' => Auth::id(),
-            //         'step_id' => $step->id,
-            //         'name' => $request->name,
-            //     ]);
-            // }
-
             $nextStepId = FianceSponsor::where('user_id', Auth::id())
                 ->where('name', $request->next)
                 ->pluck('step_id')
                 ->first();
 
-			DB::commit();
-		} catch (\Exception $e) {
-            $message['message'] = $e->getMessage();
+            DB::commit();
+            
+            // Log successful save for debugging
+            Log::info('Fiance sponsor step saved', [
+                'user_id' => Auth::id(),
+                'step' => $request->name,
+                'has_waiver' => $request->has('waiver_document_path')
+            ]);
+            
+        } catch (\Exception $e) {
             DB::rollback();
-            return response()->json($message, 200);
+            
+            Log::error('Error saving fiance sponsor step', [
+                'user_id' => Auth::id(),
+                'step' => $request->name ?? 'unknown',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            throw $e; // Re-throw to be caught by controller
         }
+        
         return $nextStepId;
     }
 
