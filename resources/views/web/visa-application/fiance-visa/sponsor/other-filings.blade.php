@@ -1,6 +1,6 @@
 <!-- resources\views\web\visa-application\fiance-visa\sponsor\other-filings.blade.php -->
 <div class="step-wizard">
-    {{ Form::open(['url' => route('fianceSponsorOtherFilings'), 'id' => 'fianceSponsorOtherFilings']) }}
+    {{ Form::open(['url' => route('fianceSponsorOtherFilings'), 'id' => 'fianceSponsorOtherFilings', 'files' => true]) }}
         <div class="form-card">
             <div class="row">
                 <div class="col-md-12">
@@ -8,6 +8,24 @@
                         <h2>Other Filings</h2>
                     </div>                    
                 </div>
+                
+                <!-- Info Box - Added per Duane's request -->
+                <div class="col-md-12 mb-4">
+                    <div class="alert alert-warning" role="alert">
+                        <h5 class="alert-heading"><strong>Important – Please Read Before Answering</strong></h5>
+                        <p class="mb-2">USCIS allows only <strong>two approved K-1 fiancé(e) petitions</strong> in a lifetime.</p>
+                        <p class="mb-3">If you are filing another K-1 petition within <strong>2 years</strong> of your previous one, a <strong>waiver</strong> is required.</p>
+                        <p class="mb-2"><strong>Please follow these guidelines:</strong></p>
+                        <ul class="mb-0">
+                            <li>If you have <strong>never filed a K-1 petition before</strong> → Select <strong>No</strong>.</li>
+                            <li>If you filed one K-1 petition <strong>more than 2 years ago</strong> → Select <strong>Yes</strong>, then choose <em>"Not applicable, beneficiary is my spouse or I am not a multiple filer."</em> (No waiver is required.)</li>
+                            <li>If you filed one K-1 petition <strong>less than 2 years ago</strong> → Select <strong>Yes</strong>, then choose <em>"I am a Multiple Filer, with No Permanent Restraining Orders or Convictions… requesting a General Waiver."</em></li>
+                            <li>If you filed <strong>two or more K-1 petitions</strong> in the past → You must select the waiver option that applies to your situation.</li>
+                        </ul>
+                        <p class="mt-3 mb-0"><small><em>If your previous filing was over 2 years ago and you have no restraining orders or criminal convictions, you are not a multiple filer, and no waiver is needed.</em></small></p>
+                    </div>
+                </div>
+
                 <div class="col-md-12">
                     <div class="form-group">
                         <label>Have you ever filed Form I-129F, Petition for Alien Fiancé(e) for any other person?</label>
@@ -32,29 +50,60 @@
                     <p>Please select the situation that applies to you:</p>
                     <label class="custom-control custom-radio mb-0 ">
                         {{ Form::radio('situation', 'situation1', @$step->detail['situation'] == 'situation1' ? true : '', [
-                            'class' => 'custom-control-input'
+                            'class' => 'custom-control-input situationRadio'
                         ]) }}
                         <span class="custom-control-label"></span> I am a Multiple Filer, with No Permanent Restraining Orders or Convictions for a Specified Offense and am requesting a General Waiver.
                     </label>
                     <label class="custom-control custom-radio mb-0 ">
                         {{ Form::radio('situation', 'situation2', @$step->detail['situation'] == 'situation2' ? true : '', [
-                            'class' => 'custom-control-input'
+                            'class' => 'custom-control-input situationRadio'
                         ]) }}
                         <span class="custom-control-label"></span> I am a Multiple Filer, with Prior Permanent Restraining Orders or Criminal Conviction for Specified Offense and am requesting an Extraordinary Circumstances Waiver.
                     </label>
                     <label class="custom-control custom-radio mb-0 ">
                         {{ Form::radio('situation', 'situation3', @$step->detail['situation'] == 'situation3' ? true : '', [
-                            'class' => 'custom-control-input'
+                            'class' => 'custom-control-input situationRadio'
                         ]) }}
                         <span class="custom-control-label"></span> I am a Multiple Filer, with Prior Permanent Restraining Order or Criminal Convictions for Specified Offense Resulting from Domestic Violence and am requesting a Mandatory Waiver.
                     </label>
                     <label class="custom-control custom-radio mb-0 ">
                         {{ Form::radio('situation', 'situation4', @$step->detail['situation'] == 'situation4' ? true : '', [
-                            'class' => 'custom-control-input'
+                            'class' => 'custom-control-input situationRadio'
                         ]) }}
-                        <span class="custom-control-label"></span> Not applicable, beneficiary is my spouse or I am not a multiple filer .
+                        <span class="custom-control-label"></span> Not applicable, beneficiary is my spouse or I am not a multiple filer.
                     </label>
                     <div class="situation"></div>
+                    
+                    <!-- Waiver Document Upload Section -->
+                    <div class="col-md-12 waiverUploadSec mt-4" style="display: {{ in_array(@$step->detail['situation'], ['situation1', 'situation2', 'situation3']) ? 'block' : 'none' }};">
+                        <div class="alert alert-info">
+                            <p class="mb-2"><strong>Waiver Documentation Required</strong></p>
+                            <p class="mb-0">Please upload your waiver explanation document (PDF or Word format). This document should detail the circumstances that support your waiver request.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="waiver_document">Upload Waiver Explanation Document</label>
+                            @if(!@$step->detail['waiver_document_path'])
+                                <span class="required">*</span>
+                            @endif
+                            {{ Form::file('waiver_document', [
+                                'class' => 'form-control',
+                                'accept' => '.pdf,.doc,.docx',
+                                'id' => 'waiver_document'
+                            ]) }}
+                            @if(@$step->detail['waiver_document_path'])
+                                <small class="form-text text-success mt-2 d-block">
+                                    <i class="fa fa-check-circle"></i> Current file: 
+                                    <a href="{{ asset('storage/' . @$step->detail['waiver_document_path']) }}" target="_blank" class="text-primary">
+                                        <i class="fa fa-file-pdf"></i> View Document
+                                    </a>
+                                    <br><em class="text-muted">Upload a new file to replace the existing one.</em>
+                                </small>
+                                {{ Form::hidden('existing_waiver_document', @$step->detail['waiver_document_path']) }}
+                            @endif
+                        </div>
+                        <div class="waiver_document"></div>
+                    </div>
+
                     <div class="mt-4">
                         <div class="row appendfiledPetition">  
                             @if (@$step->detail['i_129F'] == 'yes')                     
@@ -173,8 +222,23 @@
                 $('.i129FSec').show();
             } else {
                 $('.i129FSec').hide();
+                $('.waiverUploadSec').hide();
             }
         });
+
+        // Handle situation radio button changes
+        $(document).on('change', '.situationRadio', function(){
+            var selectedSituation = $(this).val();
+            
+            // Show waiver upload for situation1, situation2, situation3
+            if (selectedSituation === 'situation1' || selectedSituation === 'situation2' || selectedSituation === 'situation3') {
+                $('.waiverUploadSec').show();
+            } else {
+                // Hide waiver upload for situation4 (Not applicable)
+                $('.waiverUploadSec').hide();
+            }
+        });
+
         $(document).on('change', '.previousFiling', function(){
             if ($(this).val() == 'yes') {
                 $('.previousFilingSec').show();
@@ -182,6 +246,7 @@
                 $('.previousFilingSec').hide();
             }
         });
+
         $(document).on('change', '.approvedI129F', function(){
             if ($(this).val() == 'yes') {
                 $('.approvedI129FP').show();
@@ -191,6 +256,7 @@
                 $('.approvedI129FSec').show();
             }
         });
+
         $(document).on('change', '.previouslyFiled', function(){
             if ($(this).val() == 'yes') {
                 $('.previouslyFiledP').show();
@@ -233,6 +299,13 @@
                 },
                 situation: {
                     required: true,
+                },
+                waiver_document: {
+                    required: function() {
+                        var situation = $('input[name="situation"]:checked').val();
+                        return situation === 'situation1' || situation === 'situation2' || situation === 'situation3';
+                    },
+                    extension: "pdf|doc|docx"
                 },
                 alien_fname1: {
                     required: true,
@@ -319,13 +392,19 @@
             errorPlacement: function (error, element) {
                 if (element.attr("name") == "i_129F" || element.attr("name") == "situation" || element.attr("name") == "previous_filing" || element.attr("name") == "approved_i_129F" || element.attr("name") == "previously_filed") {
                     error.appendTo($("."+element.attr("name")));
+                } else if (element.attr("name") == "waiver_document") {
+                    error.appendTo($(".waiver_document"));
                 } else {
                     error.insertAfter(element);
                 }               
             },
             messages: {
                i_129F: "Please choose option!",                                                                   
-               situation: "Please choose option!",                                             
+               situation: "Please choose option!",
+               waiver_document: {
+                   required: "Please upload a waiver explanation document!",
+                   extension: "Only PDF, DOC, or DOCX files are allowed!"
+               },                                             
                alien_fname1: "Please enter name!",                                                              
                alien_mname1: "Please enter name!",                                                              
                alien_mlname1: "Please enter name!",                                                              
@@ -356,14 +435,18 @@
             },
             submitHandler: function(form) {
                 $('#fianceSponsorOtherFilingsBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
-                var serializedData = $(form).serialize();
+                
+                var formData = new FormData(form);
+                
                 $.ajax({
                     headers: {
                         'X-CSRF-Token': $('input[name="_token"]').val()
                     },
                     type: 'post',
                     url: "{{ route('fianceSponsorOtherFilings') }}",
-                    data: serializedData,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     dataType: 'json',
                     success: function(data) {               
                         if (data.status == true) {                                           
@@ -373,8 +456,13 @@
                         }
                         if (data.status == false) {
                             toastr.options.timeOut = 10000;
-                            toastr.error(data.message);                           
+                            toastr.error(data.message);
+                            $('#fianceSponsorOtherFilingsBtn').html('Save & Continue');                           
                         }
+                    },
+                    error: function() {
+                        $('#fianceSponsorOtherFilingsBtn').html('Save & Continue');
+                        toastr.error('An error occurred. Please try again.');
                     }
                 });
                return false;
@@ -384,13 +472,7 @@
         function filedPetitionHtml(index) {
             datePicker();
             getState(231);
-            // var removeBtn = '';
-            // if (index != 1) {
-            //     removeBtn = '<div class="col-md-6 mb-4"> <a class="btn btn-tra-grey removefiledPetition">- Remove #</a> </div>';
-            // }
             return `{!! addslashes(view('web.component.fiance-sponsor.filed-petition')->with(['index' => '${index}'])->render()) !!}`;
-
-            // return '<div class="row filedPetitionForm">'+removeBtn+'<div class="col-md-12"> <div class="form-group"> <label for="alien_fname'+index+'">Aliens First Name</label> <span class="required">*</span> <input class="form-control" placeholder="Enter Name" name="alien_fname'+index+'" type="text" id="alien_fname'+index+'"> </div> </div> <div class="col-md-12"> <div class="form-group"> <label for="alien_mname'+index+'">Aliens Middle Name</label> <span class="required">*</span> <input class="form-control" placeholder="Enter Name" name="alien_mname'+index+'" type="text" id="alien_mname'+index+'"> </div> </div> <div class="col-md-12"> <div class="form-group"> <label for="alien_mlname'+index+'">Aliens Maiden Last Name (family name)</label> <span class="required">*</span> <input class="form-control" placeholder="Enter Name" name="alien_mlname'+index+'" type="text" id="alien_mlname'+index+'"> </div> </div> <div class="col-md-12"> <div class="form-group"> <label for="alien_reg_no'+index+'">Alien Registration Number or A#. Do not include the "A" or #.</label> <span class="required">*</span> <input class="form-control" placeholder="Enter Number" name="alien_reg_no'+index+'" type="text" id="alien_reg_no'+index+'"> </div> </div> <div class="col-md-12"> <div class="form-group"> <label for="alien_city_filing'+index+'">City of Filing</label> <span class="required">*</span> <input class="form-control" placeholder="Enter Number" name="alien_city_filing'+index+'" type="text" id="alien_city_filing'+index+'"> </div> </div> <div class="col-md-12"> <div class="form-group"> <label for="us_State'+index+'">U.S. State (Select Does Not Apply if not USA)</label> <span class="required">*</span> <select class="form-control states" name="us_State'+index+'"><option value="">-Select Country-</option></select> </div> </div> <div class="col-md-12"> <div class="form-group"> <label for="date_of_filing'+index+'">Date of Filing (mm/dd/yyyy, okay to estimate)</label> <span class="required">*</span> <input class="form-control datePicker" placeholder="Enter Date" name="date_of_filing'+index+'" type="text" id="date_of_filing'+index+'"> </div> </div> <div class="col-md-12"> <div class="form-group"> <label for="results_of_App'+index+'">Results of Application</label> <span class="required">*</span> <select class="form-control" id="results_of_App'+index+'" name="results_of_App'+index+'"><option value="" selected="selected">Select</option><option value="Approved, divorced and still in USA.">Approved, divorced and still in USA.</option><option value="Approved, divorced left USA.">Approved, divorced left USA.</option><option value="Approved, divorced location unknown.">Approved, divorced location unknown.</option><option value="Approved but now deceased.">Approved but now deceased.</option><option value="Approved, never came to USA.">Approved, never came to USA.</option><option value="Approved, waiting for a Visa.">Approved, waiting for a Visa.</option><option value="Approved, still in USA.">Approved, still in USA.</option><option value="Approved, no longer in USA.">Approved, no longer in USA.</option><option value="Denied, still in USA.">Denied, still in USA.</option><option value="Denied, no longer in USA.">Denied, no longer in USA.</option><option value="Denied, never came to USA">Denied, never came to USA</option><option value="Denied, location unknown.">Denied, location unknown.</option><option value="Denied and now deceased.">Denied and now deceased.</option><option value="Withdrawn before approval.">Withdrawn before approval.</option><option value="Withdrawn due to death.">Withdrawn due to death.</option><option value="Status Unknown. Location Unknown.">Status Unknown. Location Unknown.</option></select> </div> </div> </div>'; 
         }
 
         function relativeHtml(index) {
