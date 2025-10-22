@@ -5,7 +5,7 @@
             <div class="row">                
                 <div class="col-md-12">
                     <div class="heading mb-30">
-                        <h2>Your Employment for the Past Five Years  (U.S. Citizen Sponsor)</h2>
+                        <h2>Your Employment for the Past Five Years (U.S. Citizen Sponsor)</h2>
                         <p>Enter "Unemployed" or "Retired" if appropriate. More space will be provided as needed to go back 5 years. You will need a source of income or adequate assets to be approved.</p>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                 </div>                                             
                <div class="col-md-6">
                     <div class="form-group">
-                        {{ Form::label('number_street', 'Number and street.  Example: 123 Main Street') }}
+                        {{ Form::label('number_street', 'Number and street. Example: 123 Main Street') }}
                         <span class="required">*</span>
                         {{ Form::text('number_street', @$step->detail['number_street'], [
                             'class' => 'form-control',
@@ -48,7 +48,7 @@
                             'Apartment' => 'Apartment',
                             'Suite' => 'Suite',
                             'Floor' => 'Floor',
-                            'Dose Not Apply' => 'Dose Not Apply'
+                            'Does Not Apply' => 'Does Not Apply'
                         ], @$step->detail['apartment_suite_or_floor'], [
                             'class' => 'form-control'
                         ]) }}
@@ -56,7 +56,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        {{ Form::label('apartment', 'Apartment, Suite or Floor Number.  Example: 43 or 532-B.  Do not add "Apt" or "#".') }}
+                        {{ Form::label('apartment', 'Apartment, Suite or Floor Number. Example: 43 or 532-B. Do not add "Apt" or "#".') }}
                         <span class="required">*</span>
                         {{ Form::text('apartment', @$step->detail['apartment'], [
                             'class' => 'form-control',
@@ -76,7 +76,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        {{ Form::label('country', "Country ") }}
+                        {{ Form::label('country', "Country") }}
                         <span class="required">*</span>
                         {{ Form::select('country', getAllCountry(), @$step->detail['country'], [
                             'class' => 'form-control countryId'
@@ -88,7 +88,8 @@
                         {{ Form::label('state', "U.S. State (Select Does Not Apply if not USA)") }}
                         <span class="required">*</span>
                         {{ Form::select('state', [], @$step->detail['state'], [
-                            'class' => 'form-control states'
+                            'class' => 'form-control states',
+                            'data-state' => @$step->detail['state']
                         ]) }}                        
                     </div>
                 </div>
@@ -100,11 +101,14 @@
                             'class' => 'form-control province',
                             'placeholder' => 'Enter Province'
                         ]) }}
-                        {{ Form::label('does_not_apply', "Does Not Apply") }}
-                        {{ Form::checkbox('does_not_apply', true, @$step->detail['does_not_apply'] == true ? true : '', [
-                            'class' => 'custom-control-input doesNotApply',
-                            'data-field' => "province"
-                        ]) }}
+                        <div class="form-check mt-2">
+                            {{ Form::checkbox('province_not_apply', true, @$step->detail['province_not_apply'] == true ? true : '', [
+                                'class' => 'form-check-input doesNotApply',
+                                'data-field' => "province",
+                                'id' => 'province_not_apply'
+                            ]) }}
+                            {{ Form::label('province_not_apply', "Does Not Apply", ['class' => 'form-check-label']) }}
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -115,11 +119,14 @@
                             'class' => 'form-control postalCode',
                             'placeholder' => 'Enter Postal Code'
                         ]) }}
-                        {{ Form::label('does_not_apply', "Does Not Apply") }}
-                        {{ Form::checkbox('does_not_apply', true, @$step->detail['does_not_apply'] == true ? true : '', [
-                            'class' => 'custom-control-input doesNotApply',
-                            'data-field' => "postalCode"
-                        ]) }}
+                        <div class="form-check mt-2">
+                            {{ Form::checkbox('postal_not_apply', true, @$step->detail['postal_not_apply'] == true ? true : '', [
+                                'class' => 'form-check-input doesNotApply',
+                                'data-field' => "postalCode",
+                                'id' => 'postal_not_apply'
+                            ]) }}
+                            {{ Form::label('postal_not_apply', "Does Not Apply", ['class' => 'form-check-label']) }}
+                        </div>
                     </div>
                 </div>
                <div class="col-md-6">
@@ -179,22 +186,22 @@
     <script type="text/javascript" src="{{asset('assets/js/date-range.js')}}"></script>
     <script type="text/javascript">                
         $(document).ready(function(){
-            // getState($('.countryId').val());
-            getState(231);
+            var state = $('.states').data('state');
+            getState(231, state);
         });
 
         $(document).on('change', '.countryId', function(){
-            // var countryId = $(this).val();
             getState(231);
         });
 
-        function getState(countryId)
+        function getState(countryId, state = '')
         {
             $.ajax({                
                 type: 'get',
                 url: "{{ route('getState') }}",
                 data: {
-                    countryId: countryId
+                    countryId: countryId,
+                    state: state
                 },
                 success: function(data) {
                     $('.states').html(data);                    
@@ -202,56 +209,52 @@
             });
         }
 
+        // Handle "Does Not Apply" checkboxes
+        $(document).on('change', '.doesNotApply', function() {
+            var field = $(this).data('field');
+            if ($(this).is(':checked')) {
+                $('.' + field).val('N/A');
+                $('.' + field).prop('disabled', true);
+            } else {
+                $('.' + field).val('');
+                $('.' + field).prop('disabled', false);
+            }
+        });
+
         $("#spouseEmployment").validate({
             rules: {
-                employer_name: {
-                    required: true,
+                employer_name: { required: true },
+                occupation: { required: true },
+                number_street: { required: true },
+                apartment_suite_or_floor: { required: true },
+                apartment: { required: true },
+                town_city: { required: true },
+                country: { required: true },
+                state: { required: true },
+                province: { 
+                    required: function() {
+                        return !$('#province_not_apply').is(':checked');
+                    }
                 },
-                occupation: {
-                    required: true,
+                postal_code: { 
+                    required: function() {
+                        return !$('#postal_not_apply').is(':checked');
+                    }
                 },
-                number_street: {
-                    required: true,
-                },
-                apartment_suite_or_floor: {
-                    required: true,
-                },
-                apartment: {
-                    required: true,
-                },
-                town_city: {
-                    required: true,
-                },
-                country: {
-                    required: true,
-                },
-                state: {
-                    required: true,
-                },
-                province: {
-                    required: true,
-                },
-                postal_code: {
-                    required: true,
-                },
-                job_category: {
-                    required: true,
-                },
-                date: {
-                    required: true,
-                },
+                job_category: { required: true },
+                date: { required: true },
             },            
             messages: {
                employer_name: "Please enter name!",                                            
                occupation: "Please enter occupation!",                                            
                number_street: "Please enter number and street!",                                       
-               apartment_suite_or_floor: "Please enter address!",                                       
-               apartment: "Please enter address!",                                            
+               apartment_suite_or_floor: "Please select an option!",                                       
+               apartment: "Please enter apartment/suite/floor number!",                                            
                town_city: "Please enter town or city!",                                            
                country: "Please choose country!",                                            
                state: "Please choose state!",                                            
-               province: "Please enter province!",                                            
-               postal_code: "Please enter postal code!",                                            
+               province: "Please enter province or check 'Does Not Apply'!",                                            
+               postal_code: "Please enter postal code or check 'Does Not Apply'!",                                            
                job_category: "Please choose job category!",                                            
                date: "Please enter date!",                                            
             },
@@ -273,9 +276,14 @@
                             $('.spouseVisaForm').html(data.data);                    
                         }
                         if (data.status == false) {
+                            $('#spouseEmploymentBtn').html('Save & Continue');
                             toastr.options.timeOut = 10000;
                             toastr.error(data.message);                           
                         }
+                    },
+                    error: function() {
+                        $('#spouseEmploymentBtn').html('Save & Continue');
+                        toastr.error('An error occurred. Please try again.');
                     }
                 });
                return false;
