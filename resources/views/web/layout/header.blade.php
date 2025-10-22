@@ -124,40 +124,99 @@
                         </div>
                     </li>
                    
-                    <!-- Resources Dropdown - UPDATED WITH IMMIGRATION NEWS -->
+                    <!-- Resources Dropdown - TWO COLUMN LAYOUT -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
                             {{ __('message.resource') }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="resourcesDropdown">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('immigration-news.index') }}">
-                                    <i class="fas fa-newspaper"></i> Immigration News
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('resource') }}#faqs">
-                                    <i class="fas fa-question-circle"></i> FAQs
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('resource') }}#guides">
-                                    <i class="fas fa-book"></i> Visa Guides
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('home') }}#k1-vs-cr1">
-                                    <i class="fas fa-balance-scale"></i> K-1 vs CR-1 Comparison
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('resource') }}#requirements">
-                                    <i class="fas fa-clipboard-list"></i> Requirements
-                                </a>
-                            </li>
-                        </ul>
+                        <div class="dropdown-menu dropdown-menu-modern dropdown-menu-two-column" aria-labelledby="resourcesDropdown">
+                            <div class="dropdown-grid">
+                                <!-- Left Column - Main Resources -->
+                                <div class="dropdown-column">
+                                    <div class="column-header">
+                                        <h6>Main Resources</h6>
+                                    </div>
+                                    <a class="dropdown-item" href="{{ route('immigration-news.index') }}">
+                                        <i class="fas fa-newspaper"></i>
+                                        <div>
+                                            <strong>Immigration News</strong>
+                                            <small>Latest updates & changes</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('resource') }}#faqs">
+                                        <i class="fas fa-question-circle"></i>
+                                        <div>
+                                            <strong>FAQs</strong>
+                                            <small>Frequently asked questions</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('resource') }}#guides">
+                                        <i class="fas fa-book"></i>
+                                        <div>
+                                            <strong>Visa Guides</strong>
+                                            <small>Step-by-step guides</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('home') }}#k1-vs-cr1">
+                                        <i class="fas fa-balance-scale"></i>
+                                        <div>
+                                            <strong>K-1 vs CR-1 Comparison</strong>
+                                            <small>Compare visa options</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('resource') }}#requirements">
+                                        <i class="fas fa-clipboard-list"></i>
+                                        <div>
+                                            <strong>Requirements</strong>
+                                            <small>Documents & eligibility</small>
+                                        </div>
+                                    </a>
+                                </div>
+                                
+                                <!-- Right Column - Additional Resources & Policies -->
+                                <div class="dropdown-column">
+                                    <div class="column-header">
+                                        <h6>Additional Resources</h6>
+                                    </div>
+                                    <a class="dropdown-item" href="{{ route('resource.page', 'courtship-in-the-philippines') }}">
+                                        <i class="fas fa-heart"></i>
+                                        <div>
+                                            <strong>Courtship in the Philippines</strong>
+                                            <small>Cultural insights</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('resource.page', 'list-of-islands-philippine') }}">
+                                        <i class="fas fa-island-tropical"></i>
+                                        <div>
+                                            <strong>List of Islands</strong>
+                                            <small>Philippine geography</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('resource.page', 'how-to-get-married-in-the-philippines') }}">
+                                        <i class="fas fa-rings-wedding"></i>
+                                        <div>
+                                            <strong>Getting Married</strong>
+                                            <small>Marriage in the Philippines</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('guarantee') }}">
+                                        <i class="fas fa-shield-check"></i>
+                                        <div>
+                                            <strong>Money-Back Guarantee</strong>
+                                            <small>Our commitment to you</small>
+                                        </div>
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('privacy-policy') }}">
+                                        <i class="fas fa-user-shield"></i>
+                                        <div>
+                                            <strong>Privacy Policy</strong>
+                                            <small>How we protect your data</small>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                    
                     <li class="nav-item">
