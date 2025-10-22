@@ -11,10 +11,10 @@
                 
                 <!-- Info Box - Added per Duane's request -->
                 <div class="col-md-12 mb-4">
-                    <div class="alert alert-warning" role="alert">
+                    <div class="alert" role="alert" style="background-color: #fff9e6; border-color: #ffe69c; color: #664d03;">
                         <h5 class="alert-heading"><strong>Important – Please Read Before Answering</strong></h5>
                         <p class="mb-2">USCIS allows only <strong>two approved K-1 fiancé(e) petitions</strong> in a lifetime.</p>
-                        <p class="mb-3">If you are filing another K-1 petition within <strong>2 years</strong> of your previous one, a <strong>waiver</strong> is required.</p>
+                        <p class="mb-3">If you are filing another K-1 petition within <strong>2 years</strong> of your previous one, <strong>a waiver is required</strong>.</p>
                         <p class="mb-2"><strong>Please follow these guidelines:</strong></p>
                         <ul class="mb-0">
                             <li>If you have <strong>never filed a K-1 petition before</strong> → Select <strong>No</strong>.</li>
@@ -28,7 +28,15 @@
 
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label>Have you ever filed Form I-129F, Petition for Alien Fiancé(e) for any other person?</label>
+                        <label>
+                            Have you ever filed Form I-129F, Petition for Alien Fiancé(e) for any other person?
+                            <span data-bs-toggle="tooltip" 
+                                  data-toggle="tooltip"
+                                  data-bs-placement="top"
+                                  data-placement="top" 
+                                  title="A 'multiple filer' is someone who has filed more than one K-1 petition in the past, or within 2 years of the previous one."
+                                  style="cursor: help; color: #0dcaf0; font-weight: bold; font-size: 18px; margin-left: 5px; display: inline-block;">ⓘ</span>
+                        </label>
                         <div class="radiogroup">
                             <label class="custom-control custom-radio mb-0 ">
                                 {{ Form::radio('i_129F', 'no', @$step->detail['i_129F'] == 'no' ? true : '', [
@@ -216,7 +224,30 @@
         ]) }}
     {{ Form::close() }}
     <script type="text/javascript" src="{{asset('assets/js/date-range.js')}}"></script>
-    <script type="text/javascript">  
+    <script type="text/javascript">
+        // Initialize Bootstrap tooltips
+        $(document).ready(function(){
+            // Initialize tooltips - works for both Bootstrap 4 and 5
+            if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                // Bootstrap 5
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            } else if (typeof $.fn.tooltip !== 'undefined') {
+                // Bootstrap 4 or 3
+                $('[data-toggle="tooltip"], [data-bs-toggle="tooltip"]').tooltip();
+            }
+
+            var state = $('.states').data('state');
+            getState(231, state);
+            
+            var appendPriorSpouse = $('.appendPriorSpouse > .priorSpouseForm').length;
+            if (appendPriorSpouse == 2) {
+                $('.addPriorSpouse').addClass('d-none');
+            }
+        });
+  
         $(document).on('change', '.i129F', function(){
             if ($(this).val() == 'yes') {
                 $('.i129FSec').show();
@@ -264,11 +295,6 @@
                 $('.previouslyFiledP').hide();
             }
         });
-        
-        $(document).ready(function(){
-            var state = $('.states').data('state');
-            getState(231, state);
-        });
       
         function getState(countryId, state='')
         {
@@ -284,13 +310,7 @@
                 }
             });
         }
-
-        $(document).ready(function(){
-            var appendPriorSpouse = $('.appendPriorSpouse > .priorSpouseForm').length;
-            if (appendPriorSpouse == 2) {
-                $('.addPriorSpouse').addClass('d-none');
-            }            
-        });            
+            
 
         $("#fianceSponsorOtherFilings").validate({
             rules: {
@@ -303,7 +323,9 @@
                 waiver_document: {
                     required: function() {
                         var situation = $('input[name="situation"]:checked').val();
-                        return situation === 'situation1' || situation === 'situation2' || situation === 'situation3';
+                        var hasExisting = $('input[name="existing_waiver_document"]').length > 0;
+                        // Only require if waiver situation selected AND no existing file
+                        return (situation === 'situation1' || situation === 'situation2' || situation === 'situation3') && !hasExisting;
                     },
                     extension: "pdf|doc|docx"
                 },
