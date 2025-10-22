@@ -80,10 +80,6 @@
                         </div>
                     </div>
 
-                    <div class="policy-footer mt-5 pt-4">
-                        <div class="alert alert-info" role="alert">
-                            <p class="mb-0"><strong>Important Notice:</strong> Filipina Fiancee Visa Service is a private company and is not affiliated with any government agency. We provide comprehensive support to help you obtain your visa and/or green card; however, our services do not include legal advice, legal representation, or any legal services. We are not a law firm and are not licensed to practice law.</p>
-                        </div>
                     </div>
                 </div>
             </div>
