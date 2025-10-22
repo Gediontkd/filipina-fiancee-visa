@@ -84,6 +84,15 @@
                 <p class="lh-175">As with earlier visits, it's customary to bring gifts as a sign of goodwill. This stage solidifies the couple's intentions and prepares the path toward marriage.</p>
             </div>
             <div class="col-md-12 mb-3">
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> 
+        <strong>Next Step:</strong> Learn about 
+        <a href="{{ route('resource.page', 'how-to-get-married-in-the-philippines') }}" class="alert-link">
+            How to Get Married in the Philippines
+        </a>
+    </div>
+</div>
+            <div class="col-md-12 mb-3">
                 <div class="heading mb-3">
                     <h2>A Timeless and Romantic Experience</h2>
                 </div>
