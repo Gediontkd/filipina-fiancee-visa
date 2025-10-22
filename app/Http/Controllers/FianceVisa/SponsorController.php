@@ -133,13 +133,83 @@ class SponsorController extends Controller
 
     public function otherFilings(Request $request, FianceSponsorService $fianceSponsor)
     {
-        $step = $fianceSponsor->create($request);
-        return response()->json([
-            'status' => true,
-            'data' => view('web.visa-application.fiance-visa.sponsor.military-and-convictions', [
-                'step' => $fianceSponsor->next($step)
-            ])->render(),
-        ]);
+        try {
+            // Validate the waiver document based on situation
+            $request->validate([
+                'i_129F' => 'required|in:yes,no',
+                'situation' => 'required_if:i_129F,yes|in:situation1,situation2,situation3,situation4',
+                'waiver_document' => [
+                    'nullable',
+                    'file',
+                    'mimes:pdf,doc,docx',
+                    'max:10240', // 10MB
+                    function ($attribute, $value, $fail) use ($request) {
+                        $situation = $request->input('situation');
+                        // Require waiver for specific situations if no existing file
+                        if (in_array($situation, ['situation1', 'situation2', 'situation3'])) {
+                            if (!$value && !$request->input('existing_waiver_document')) {
+                                $fail('A waiver document is required for the selected situation.');
+                            }
+                        }
+                    }
+                ]
+            ], [
+                'i_129F.required' => 'Please select whether you have filed Form I-129F before.',
+                'situation.required_if' => 'Please select the situation that applies to you.',
+                'waiver_document.file' => 'The waiver document must be a valid file.',
+                'waiver_document.mimes' => 'Only PDF, DOC, or DOCX files are allowed.',
+                'waiver_document.max' => 'The waiver document must not exceed 10MB.'
+            ]);
+
+            // Handle file upload if present
+            if ($request->hasFile('waiver_document')) {
+                $file = $request->file('waiver_document');
+                
+                // Generate unique filename
+                $filename = time() . '_' . preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $file->getClientOriginalName());
+                
+                // Store in public disk under waiver_documents folder
+                $path = $file->storeAs('waiver_documents', $filename, 'public');
+                
+                // Add the file path to request data
+                $request->merge(['waiver_document_path' => $path]);
+                
+                \Log::info('Waiver document uploaded', [
+                    'user_id' => Auth::id(),
+                    'filename' => $filename,
+                    'path' => $path
+                ]);
+            }
+
+            // Create/update the step with all form data
+            $step = $fianceSponsor->create($request);
+            
+            return response()->json([
+                'status' => true,
+                'data' => view('web.visa-application.fiance-visa.sponsor.military-and-convictions', [
+                    'step' => $fianceSponsor->next($step)
+                ])->render(),
+            ]);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation failed: ' . $e->validator->errors()->first(),
+                'errors' => $e->validator->errors()
+            ], 422);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error in otherFilings', [
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'status' => false,
+                'message' => 'An error occurred while saving the form. Please try again.'
+            ], 500);
+        }
     }
 
     public function militaryAndConvictions(Request $request, FianceSponsorService $fianceSponsor)
