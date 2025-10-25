@@ -240,12 +240,12 @@
                             <li><i class="fas fa-stop-circle"></i> Interview Preparation</li>
                         </ul>
                         {{ Form::open(['url' => route('payment'), 'method' => 'GET']) }}
-							{!! Form::hidden('user_id', Auth::id()) !!}
-							{!! Form::hidden('application_id', 3) !!}
-							{!! Form::hidden('route', 'spouseVisaApplication') !!}
-							{!! Form::hidden('price', 650) !!}
-							{{ Form::submit('Get Started', ['class' => 'btn btn-tra-primary']) }}
-					    {{ Form::close() }}
+                            {!! Form::hidden('user_id', Auth::id()) !!}
+                            {!! Form::hidden('application_id', 4) !!} {{-- FIXED: Was 3, now 4 --}}
+                            {!! Form::hidden('route', 'combinedCr1AosApplication') !!} {{-- FIXED: Was spouseVisaApplication --}}
+                            {!! Form::hidden('price', 1200) !!} {{-- FIXED: Was 650, now 1200 --}}
+                            {{ Form::submit('Get Started', ['class' => 'btn btn-tra-primary']) }}
+                        {{ Form::close() }}
                         <div class="pricing-actions">
                         </div>
                     </div>

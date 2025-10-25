@@ -263,24 +263,22 @@ function getAllVisaType()
 
 function applicationRoute()
 {
-	$chosenApp = App\Models\User::select('chosen_application', 'application_route')->where('id', Auth::id())->first();
-	if (isset($chosenApp->application_route)) {		
-		return redirect()->route($chosenApp->application_route);
-	} else {
-		switch ($chosenApp->chosen_application) {
-			case 'fiancee':
-				// $appRoute = 'fiancee.visa';
-				$appRoute = view('web.service.fiancee-visa');
-			break;
-			case 'adjustment':
-				// $appRoute = 'adjustment.visa';
-				$appRoute = view('web.service.adjustment-visa.index');
-			break;
-			case 'spouse':
-				// $appRoute = 'spouse.visa';
-				$appRoute = view('web.service.spouse-visa');     
-			break;			
-		}
-		return $appRoute;
-	}
+    $user = App\Models\User::select('chosen_application', 'application_route')
+        ->where('id', Auth::id())
+        ->first();
+    
+    // If application_route is set, use it
+    if (!empty($user->application_route)) {
+        return $user->application_route;
+    }
+    
+    // Fallback: determine route from chosen_application
+    $routeMap = [
+        'fiancee' => 'fianceSponsorApplication',
+        'spouse' => 'spouseVisaApplication',
+        'adjustment' => 'adjustment.show',
+        'combined' => 'combinedCr1AosApplication'
+    ];
+    
+    return $routeMap[$user->chosen_application] ?? null;
 }

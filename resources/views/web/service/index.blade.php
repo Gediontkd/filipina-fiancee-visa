@@ -1,3 +1,4 @@
+<!-- resources\views\web\service\index.blade.php -->
 @extends('web.layout.master')
 @section('content')
 	@include('web.component.bread-crumb', [

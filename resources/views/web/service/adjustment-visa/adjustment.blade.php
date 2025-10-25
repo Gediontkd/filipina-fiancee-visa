@@ -1,4 +1,4 @@
-	@extends('web.layout.master')
+@extends('web.layout.master')
 @section('content')
 	@include('web.component.bread-crumb', [
 		'title' => 'Adjustment Of Status',
