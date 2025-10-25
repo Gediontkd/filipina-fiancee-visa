@@ -100,6 +100,9 @@ Route::group(['prefix' => 'immigration-news', 'as' => 'immigration-news.'], func
     Route::get('/{slug}', [ImmigrationNewsController::class, 'show'])->name('show');
 });
 
+Route::get('/combined-cr1-aos', [CombinedCr1AosController::class, 'index'])
+    ->name('combined.cr1.aos');
+
 /*
 |--------------------------------------------------------------------------
 | Authenticated User Routes (Login Required)
@@ -246,6 +249,20 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::post('/alien-employement', 'alienEmployement')->name('adjustmentAlienEmployement');
         Route::post('/previous-and-continue', 'previousOrContinue')->name('adjustmentPreviousOrContinue');
     });
+
+    // Combined CR-1 + AOS Application Routes
+    Route::controller(CombinedCr1AosController::class)
+        ->prefix('combined-cr1-aos')
+        ->group(function () {
+            Route::get('/application', 'application')->name('combinedCr1AosApplication');
+            Route::post('/petitioner-name', 'petitionerName')->name('combinedPetitionerName');
+            Route::post('/previous-and-continue', 'previousOrContinue')->name('combinedPreviousOrContinue');
+            
+            // Add specific form step routes as needed
+            // Route::post('/name', 'name')->name('combinedName');
+            // Route::post('/address', 'address')->name('combinedAddress');
+            // etc...
+        });
 
     Route::resource('drop-box', DropBoxController::class);
 });
