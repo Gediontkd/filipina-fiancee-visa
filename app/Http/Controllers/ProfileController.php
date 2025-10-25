@@ -24,68 +24,69 @@ class ProfileController extends Controller
         return view('home');
     }
 
-    public function profile(Request $request, $page)
+    // app/Http/Controllers/ProfileController.php
+
+  public function profile(Request $request, $page)
     {
-        $steps = UserSubmittedApplication::select('application_id', 'created_at')
-            ->where('user_id', Auth::id())
+
+        $user = Auth::user();
+        
+        // Get submitted application
+        $submission = UserSubmittedApplication::where('user_id', Auth::id())
             ->where('status', 'pending')
-            ->first();       
-        // echo '<pre>';
-        // print_r($steps);
-        // die; 
-        $alienCount = FianceVisaSubmittedStep::AlienCount();
-        $sponsorCount = FianceVisaSubmittedStep::SponsorCount();
-        $alienChildrenCount = FianceVisaSubmittedStep::AlienChildrenCount();
-        $alienTotal = ($alienCount/21)*100;
-        $sponsorTotal = ($sponsorCount/10)*100;
-        $alienChildrenTotal = ($alienChildrenCount/5)*100;     
-        $overAll = FianceVisaSubmittedStep::OverAllCount();
-        $overAll = ($overAll/36)*100;    
-
-        // switch (1) {
-        //     case 1:
-        //         $alienCount = FianceVisaSubmittedStep::AlienCount();
-        //         $sponsorCount = FianceVisaSubmittedStep::SponsorCount();
-        //         $alienChildrenCount = FianceVisaSubmittedStep::AlienChildrenCount();
-        //         $alienTotal = ($alienCount/21)*100;
-        //         $sponsorTotal = ($sponsorCount/10)*100;
-        //         $alienChildrenTotal = ($alienChildrenCount/5)*100;     
-        //         $overAll = FianceVisaSubmittedStep::OverAllCount();
-        //         $overAll = ($overAll/36)*100;           
-        //     break; 
-        //     case 2:
-        //         $count = AdjustmentVisaSubmittedStep::where('user_id', Auth::id())
-        //             ->count();
-        //         $total = 10;
-        //     break;
-        //     case 3:
-        //         $count = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-        //             ->count();
-        //         $total = 5;
-        //     break;
-        //     default:
-        //         $count = 0;
-        //         $total = 0;
-        //     break;
-        // }
-      
-        // $sponsor = FianceVisaSubmittedStep::where('user_id', Auth::id())
-        //     ->where('type', 'sponsor')
-        //     ->count();
-        // $sponsor = ($sponsor/10)*100;
-        // $alien = FianceVisaSubmittedStep::where('user_id', Auth::id())
-        //     ->where('type', 'alien')
-        //     ->count();
-        // $alien = ($alien/17)*100;
-        // $alienChildren = FianceVisaSubmittedStep::where('user_id', Auth::id())
-        //     ->where('type', 'alien-children')
-        //     ->count();        
-        // $alienChildren = ($alienChildren/5)*100;  
-        // $overAll = FianceVisaSubmittedStep::where('user_id', Auth::id())
-        //     ->count();
-        // $overAll = ($overAll/32)*100; 
-
-        return view("web.user.$page", compact('steps', 'sponsorTotal', 'alienTotal', 'alienChildrenTotal', 'overAll'));
+            ->with('visaApplication')
+            ->first();
+        
+        // Initialize progress variables
+        $sponsorTotal = 0;
+        $alienTotal = 0;
+        $alienChildrenTotal = 0;
+        $overAll = 0;
+        
+        // Calculate progress based on application type
+        if ($submission) {
+            switch ($submission->application_id) {
+                case 1: // Fiancée Visa
+                    $alienCount = FianceVisaSubmittedStep::where('user_id', Auth::id())
+                        ->where('type', 'alien')->count();
+                    $sponsorCount = FianceVisaSubmittedStep::where('user_id', Auth::id())
+                        ->where('type', 'sponsor')->count();
+                    $alienChildrenCount = FianceVisaSubmittedStep::where('user_id', Auth::id())
+                        ->where('type', 'alien-children')->count();
+                    
+                    $alienTotal = ($alienCount / 21) * 100;
+                    $sponsorTotal = ($sponsorCount / 10) * 100;
+                    $alienChildrenTotal = ($alienChildrenCount / 5) * 100;     
+                    $overAll = (($alienCount + $sponsorCount + $alienChildrenCount) / 36) * 100;
+                    break;
+                    
+                case 2: // Adjustment of Status
+                    $count = AdjustmentVisaSubmittedStep::where('user_id', Auth::id())->count();
+                    $overAll = ($count / 17) * 100;  // Adjust based on total steps
+                    break;
+                    
+                case 3: // Spouse Visa
+                    $count = SpouseVisaSubmittedStep::where('user_id', Auth::id())->count();
+                    $overAll = ($count / 10) * 100;  // Adjust based on total steps
+                    break;
+                    
+                case 4: // Combined CR1 + AOS
+                    $count = CombinedCr1AosSubmittedStep::where('user_id', Auth::id())->count();
+                    $overAll = ($count / 20) * 100;  // Adjust based on total steps
+                    break;
+                    
+                default:
+                    $overAll = 0;
+            }
+        }
+        
+        return view("web.user.$page", compact(
+            'submission',
+            'sponsorTotal', 
+            'alienTotal', 
+            'alienChildrenTotal', 
+            'overAll'
+        ));
     }
 
     public function basicInformation(Request $request)
@@ -158,19 +159,71 @@ class ProfileController extends Controller
         }
     }
 
-    public function chooseApplication(Request $request)
+  public function chooseApplication(Request $request)
 {
     DB::beginTransaction();
 
     try {
-        User::where('id', Auth::id())->update(['chosen_application' => $request->chosen_application]);
+        // Map application types to their route names and IDs
+        $applicationMap = [
+            'fiancee' => [
+                'route' => 'fianceSponsorApplication',
+                'id' => 1,
+                'name' => 'Fiancée Visa (K-1)'
+            ],
+            'spouse' => [
+                'route' => 'spouseVisaApplication',
+                'id' => 3,
+                'name' => 'Spouse Visa (CR-1/IR-1)'
+            ],
+            'adjustment' => [
+                'route' => 'adjustment.show',  // Goes to selection page first
+                'id' => 2,
+                'name' => 'Adjustment of Status'
+            ],
+            'combined' => [
+                'route' => 'combinedCr1AosApplication',
+                'id' => 4,  // Add this ID to visa_applications table if needed
+                'name' => 'Combined CR-1 + AOS Package'
+            ]
+        ];
+
+        $chosen = $request->chosen_application;
+        
+        if (!isset($applicationMap[$chosen])) {
+            return redirect()->back()->with('error', 'Invalid application type selected');
+        }
+
+        $appData = $applicationMap[$chosen];
+
+        // Update user record
+        User::where('id', Auth::id())->update([
+            'chosen_application' => $chosen,
+            'application_route' => $appData['route']
+        ]);
+
+        // Create UserSubmittedApplication record if it doesn't exist
+        UserSubmittedApplication::firstOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'application_id' => $appData['id']
+            ],
+            [
+                'status' => 'pending',
+                'submitted_at' => null
+            ]
+        );
         
         DB::commit();
-        return redirect()->route('user.page', ['page' => 'progress']);
+        
+        // Redirect to the appropriate application form
+        return redirect()->route($appData['route'])
+            ->with('success', 'Application type selected. Please complete your application.');
 
     } catch (\Exception $e) {
         DB::rollback();
-        return redirect()->back()->with('error', $e->getMessage());
+        \Log::error('Choose application error: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'An error occurred. Please try again.');
     }       
 }
 }

@@ -189,11 +189,11 @@
 						</ul>
 						{{ Form::open(['url' => route('payment'), 'method' => 'GET']) }}
 							{!! Form::hidden('user_id', Auth::id()) !!}
-							{!! Form::hidden('application_id', 3) !!}
+							{!! Form::hidden('application_id', 3) !!} {{-- Correct: Spouse = 3 --}}
 							{!! Form::hidden('route', 'spouseVisaApplication') !!}
-							{!! Form::hidden('price', 650) !!}
+							{!! Form::hidden('price', 750) !!} {{-- Correct: $750 for Spouse --}}
 							{{ Form::submit('Get Started', ['class' => 'btn btn-tra-primary']) }}
-					    {{ Form::close() }}
+						{{ Form::close() }}
 					</div>
 				</div>
 			</div>

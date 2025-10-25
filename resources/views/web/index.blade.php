@@ -220,7 +220,7 @@
                         <video 
                             controls 
                             playsinline 
-                            poster="{{ asset('assets/img/video-poster.jpg') }}"
+                            poster="{{ asset('assets/img/facebook.jpg') }}"
                             preload="metadata">
                             <source src="/assets/img/ffv.mp4" type="video/mp4">
                             Your browser does not support the video tag.

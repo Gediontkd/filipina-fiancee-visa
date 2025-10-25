@@ -139,11 +139,11 @@
                         <li><i class="fas fa-stop-circle"></i> Green Card Interview Support</li>
                     </ul>
                     {{ Form::open(['url' => route('payment'), 'method' => 'GET']) }}
-                    {!! Form::hidden('user_id', Auth::id()) !!}
-                    {!! Form::hidden('application_id', 2) !!}
-                    {!! Form::hidden('route', 'adjustment.show') !!}
-                    {!! Form::hidden('price', 700) !!}
-                    {{ Form::submit('Get Started', ['class' => 'btn btn-tra-primary']) }}
+                        {!! Form::hidden('user_id', Auth::id()) !!}
+                        {!! Form::hidden('application_id', 2) !!} {{-- Correct: AOS = 2 --}}
+                        {!! Form::hidden('route', 'adjustment.show') !!}
+                        {!! Form::hidden('price', 800) !!} {{-- Correct: $800 for AOS --}}
+                        {{ Form::submit('Get Started', ['class' => 'btn btn-tra-primary']) }}
                     {{ Form::close() }}
                 </div>
             </div>

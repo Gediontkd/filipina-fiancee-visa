@@ -69,25 +69,52 @@ class AdjustmentOfStatusController extends Controller
         return view('web.service.adjustment-visa.show');        
     }
 
-    public function application(Request $request, $applicationType)
-    {        
-        $adjustmentSteps = AdjustmentStep::select('id', 'name', 'icon', 'slug')->get();
-        if (!AdjustmentType::where('submitted_app_id', $request->submitted_app_id)
-                ->exists()) {
-            $appType = AdjustmentType::create([
-                'user_id' => Auth::id(),
-                'name' => $applicationType,
-                'submitted_app_id' => $request->submitted_app_id,
-            ]);
-            $request['type'] = $appType->name;
+   public function application(Request $request, $applicationType)
+    {
+        // Validate application type
+        $validTypes = ['spouse', 'child', 'parent'];
+        if (!in_array($applicationType, $validTypes)) {
+            return redirect()->route('adjustment.show')
+                ->with('error', 'Invalid application type selected');
         }
+
+        $adjustmentSteps = AdjustmentStep::select('id', 'name', 'icon', 'slug')->get();
+        
+        // Get or create the adjustment type record
+        $adjustmentType = AdjustmentType::updateOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'submitted_app_id' => $request->submitted_app_id
+            ],
+            [
+                'name' => $applicationType
+            ]
+        );
+        
+        $request['type'] = $adjustmentType->name;
+        
         $form = AdjustmentVisaStep::where('user_id', Auth::id())
             ->orderBy('id', 'DESC')
             ->first();
+        
         $step = @$form->step;
         $name = 'name';
         $type = $request->type;
-        return view('web.visa-application.adjustment-of-status.index', compact('adjustmentSteps', 'step', 'name', 'type'));
+        
+        // Add friendly type name for display
+        $typeDisplay = [
+            'spouse' => 'Spouse (Married)',
+            'child' => 'Child (Under 21)',
+            'parent' => 'Parent'
+        ];
+        
+        return view('web.visa-application.adjustment-of-status.index', compact(
+            'adjustmentSteps', 
+            'step', 
+            'name', 
+            'type',
+            'typeDisplay'
+        ));
     }
 
     public function name(NameRequest $request, AdjustmentService $adjustmentService)
