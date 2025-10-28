@@ -204,13 +204,15 @@
         {!! Form::hidden('next', 'contact') !!}
         {{ Form::button('Back To Start', [
             'class' => 'btn btn-tra-grey spousePreviousOrContinue',
-            'data-form' => 'start',
-            'data-section' => 'sponsor'
+            'data-form' => 'name',
+            'data-section' => 'sponsor',
+            'type' => 'button'
         ]) }}
         {{ Form::button('Skip & Continue', [
             'class' => 'btn btn-tra-grey ms-2 spousePreviousOrContinue',
             'data-form' => 'contact',
-            'data-section' => 'sponsor'
+            'data-section' => 'sponsor',
+            'type' => 'button'
         ]) }}
         {{ Form::button('Save & Continue', [
             'class' => 'btn btn-tra-primary ms-2',

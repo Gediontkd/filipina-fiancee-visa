@@ -84,15 +84,21 @@
         {!! Form::hidden('next', 'military-convictions') !!}
         {{ Form::button('Back To Start', [
             'class' => 'btn btn-tra-grey spousePreviousOrContinue',
-            'data-form' => 'name'
+            'data-form' => 'name',
+            'data-section' => 'sponsor',
+            'type' => 'button'
         ]) }}
         {{ Form::button('Previous Step', [
             'class' => 'btn btn-tra-grey spousePreviousOrContinue',
-            'data-form' => 'marital-status'
+            'data-form' => 'marital-status',
+            'data-section' => 'sponsor',
+            'type' => 'button'
         ]) }}
         {{ Form::button('Skip & Continue', [
             'class' => 'btn btn-tra-grey ms-2 spousePreviousOrContinue',
-            'data-form' => 'military-convictions'
+            'data-form' => 'military-convictions',
+            'data-section' => 'sponsor',
+            'type' => 'button'
         ]) }}
         {{ Form::button('Save & Continue', [
             'class' => 'btn btn-tra-primary ms-2',
