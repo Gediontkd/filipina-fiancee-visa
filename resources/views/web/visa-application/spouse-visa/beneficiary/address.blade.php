@@ -285,30 +285,47 @@
                lived: "Please enter date",                                        
             },
             submitHandler: function(form) {
-                $('#spouseBeneficiaryAddressBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
-                $.ajax({
-                    headers: { 'X-CSRF-Token': $('input[name="_token"]').val() },
-                    type: 'post',
-                    url: "{{ route('spouseBeneficiaryAddress') }}",
-                    data: $(form).serialize(),
-                    dataType: 'json',
-                    success: function(data) {               
-                        if (data.status) {                                           
-                            $('.beneficiary-address').removeClass('active');
-                            $('.beneficiary-place-of-birth').addClass('active');
-                            $('.spouseVisaForm').html(data.data);                    
-                        } else {
-                            $('#spouseBeneficiaryAddressBtn').html('Save & Continue');
-                            toastr.error(data.message);                           
-                        }
-                    },
-                    error: function() {
-                        $('#spouseBeneficiaryAddressBtn').html('Save & Continue');
-                        toastr.error('An error occurred. Please try again.');
-                    }
-                });
-               return false;
+    $('#spouseBeneficiaryAddressBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>')
+        .prop('disabled', true);
+    
+    $.ajax({
+        headers: {
+            'X-CSRF-Token': $('input[name="_token"]').val()
+        },
+        type: 'post',
+        url: "{{ route('spouseBeneficiaryAddress') }}",
+        data: $(form).serialize(),
+        dataType: 'json',
+        success: function(data) {               
+            if (data.status) {                                           
+                $('.beneficiary-address').removeClass('active');
+                $('.beneficiary-place-of-birth').addClass('active');
+                $('.spouseVisaForm').html(data.data);
+                $('html, body').animate({
+                    scrollTop: $('.spouseVisaForm').offset().top - 100
+                }, 300);
+                toastr.success('Address information saved successfully');
+            } else {
+                toastr.error(data.message || 'Failed to save information');                           
             }
+        },
+        error: function(xhr) {
+            var errors = xhr.responseJSON?.errors;
+            if (errors) {
+                $.each(errors, function(field, messages) {
+                    toastr.error(messages[0]);
+                });
+            } else {
+                toastr.error(xhr.responseJSON?.message || 'An error occurred. Please try again.');
+            }
+        },
+        complete: function() {
+            $('#spouseBeneficiaryAddressBtn').html('Save & Continue')
+                .prop('disabled', false);
+        }
+    });
+    return false;
+}
         });
 
         function addAnotherCountry(index) {

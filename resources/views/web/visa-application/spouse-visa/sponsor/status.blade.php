@@ -350,30 +350,47 @@
                eye_color: "Please choose eye color!",               
             },
             submitHandler: function(form) {
-                $('#spouseStatusBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
-                var serializedData = $(form).serialize();
-                $.ajax({
-                    headers: {
-                        'X-CSRF-Token': $('input[name="_token"]').val()
-                    },
-                    type: 'post',
-                    url: "{{ route('spouseStatus') }}",
-                    data: serializedData,
-                    dataType: 'json',
-                    success: function(data) {               
-                        if (data.status == true) {                                           
-                            $('.status').removeClass('active');
-                            $('.marital-status').addClass('active');
-                            $('.spouseVisaForm').html(data.data);                    
-                        }
-                        if (data.status == false) {
-                            toastr.options.timeOut = 10000;
-                            toastr.error(data.message);
-                        }
-                    }
-                });
-               return false;
+    $('#spouseStatusBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>')
+        .prop('disabled', true);
+    
+    $.ajax({
+        headers: {
+            'X-CSRF-Token': $('input[name="_token"]').val()
+        },
+        type: 'post',
+        url: "{{ route('spouseStatus') }}",
+        data: $(form).serialize(),
+        dataType: 'json',
+        success: function(data) {               
+            if (data.status) {                                           
+                $('.sponsor-status').removeClass('active');
+                $('.sponsor-marital-status').addClass('active');
+                $('.spouseVisaForm').html(data.data);
+                $('html, body').animate({
+                    scrollTop: $('.spouseVisaForm').offset().top - 100
+                }, 300);
+                toastr.success('Status information saved successfully');
+            } else {
+                toastr.error(data.message || 'Failed to save information');
             }
+        },
+        error: function(xhr) {
+            var errors = xhr.responseJSON?.errors;
+            if (errors) {
+                $.each(errors, function(field, messages) {
+                    toastr.error(messages[0]);
+                });
+            } else {
+                toastr.error(xhr.responseJSON?.message || 'An error occurred. Please try again.');
+            }
+        },
+        complete: function() {
+            $('#spouseStatusBtn').html('Save & Continue')
+                .prop('disabled', false);
+        }
+    });
+    return false;
+}
         });
     </script>                    
 </div>
