@@ -174,7 +174,7 @@
         {!! Form::hidden('next', 'relationship') !!}
         {{ Form::button('Back To Start', [
             'class' => 'btn btn-tra-grey spousePreviousOrContinue',
-            'data-form' => 'start',
+            'data-form' => 'name',
             'data-section' => 'beneficiary'
         ]) }}
         {{ Form::button('Previous Step', [
