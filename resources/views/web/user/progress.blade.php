@@ -172,31 +172,81 @@
                                 @endif
                             </div>
                         </div>
-                    @elseif($applicationType == 3)
-                        <!-- Spouse Visa -->
-                        <div class="card mb-3">
-                            <div class="card-header p-3">
-                                <h2 class="card-title text-center">Section Progress - Spouse Visa (CR-1/IR-1)</h2>
-                            </div>
-                            <div class="card-body p-3">
-                                <a href="{{ route('spouseVisaApplication') }}" class="btn btn-primary">
-                                    <i class="fa fa-edit me-2"></i>Continue Application
-                                </a>
-                            </div>
+    @elseif($applicationType == 3)
+    <!-- Spouse Visa -->
+    <div class="card mb-3">
+        <div class="card-header p-3">
+            <h2 class="card-title text-center">Section Progress - Spouse Visa (CR-1/IR-1)</h2>
+        </div>
+        <div class="card-body p-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <h6>Section</h6>
+                    <a href="{{ route('spouseSponsorApplication') }}" class="btn btn-tra-grey my-2 w-100">
+                        Sponsor Section
+                    </a>
+                    <a href="{{ route('spouseBeneficiaryApplication') }}" class="btn btn-tra-grey my-2 w-100">
+                        Beneficiary Section
+                    </a>
+                    <a href="{{ route('spouseVisaApplication') }}" class="btn btn-tra-grey my-2 w-100">
+                        Marriage Info (Shared)
+                    </a>
+                </div>
+                <div class="col-md-8">
+                    <h6>Progress</h6>
+                    
+                    <!-- Sponsor Progress -->
+                    <div class="progress my-4">
+                        <div class="progress-bar progress-bar-striped bg-success" 
+                            role="progressbar" 
+                            style="width: {{ $spouseSponsorTotal ?? 0 }}%" 
+                            aria-valuenow="{{ $spouseSponsorTotal ?? 0 }}" 
+                            aria-valuemin="0" 
+                            aria-valuemax="100">
+                            {{ number_format($spouseSponsorTotal ?? 0, 0) }}%
                         </div>
-                    @elseif($applicationType == 4)
-                        <!-- Combined CR-1 + AOS -->
-                        <div class="card mb-3">
-                            <div class="card-header p-3">
-                                <h2 class="card-title text-center">Section Progress - Combined CR-1 + AOS</h2>
-                            </div>
-                            <div class="card-body p-3">
-                                <a href="{{ route('combinedCr1AosApplication') }}" class="btn btn-primary">
-                                    <i class="fa fa-edit me-2"></i>Continue Application
-                                </a>
-                            </div>
+                    </div>
+                    
+                    <!-- Beneficiary Progress -->
+                    <div class="progress my-4">
+                        <div class="progress-bar progress-bar-striped bg-success" 
+                            role="progressbar" 
+                            style="width: {{ $spouseBeneficiaryTotal ?? 0 }}%" 
+                            aria-valuenow="{{ $spouseBeneficiaryTotal ?? 0 }}" 
+                            aria-valuemin="0" 
+                            aria-valuemax="100">
+                            {{ number_format($spouseBeneficiaryTotal ?? 0, 0) }}%
                         </div>
-                    @endif
+                    </div>
+                    
+                    <!-- Shared/Relationship Progress -->
+                    <div class="progress my-4">
+                        <div class="progress-bar progress-bar-striped bg-success" 
+                            role="progressbar" 
+                            style="width: {{ $spouseRelationshipTotal ?? 0 }}%" 
+                            aria-valuenow="{{ $spouseRelationshipTotal ?? 0 }}" 
+                            aria-valuemin="0" 
+                            aria-valuemax="100">
+                            {{ number_format($spouseRelationshipTotal ?? 0, 0) }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@elseif($applicationType == 4)
+    <!-- Combined CR-1 + AOS -->
+    <div class="card mb-3">
+        <div class="card-header p-3">
+            <h2 class="card-title text-center">Section Progress - Combined CR-1 + AOS</h2>
+        </div>
+        <div class="card-body p-3">
+            <a href="{{ route('combinedCr1AosApplication') }}" class="btn btn-primary">
+                <i class="fa fa-edit me-2"></i>Continue Application
+            </a>
+        </div>
+    </div>
+@endif
 
                     <!-- Overall Progress -->
                     <div class="card mb-3">

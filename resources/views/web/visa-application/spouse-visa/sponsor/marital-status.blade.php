@@ -1,4 +1,4 @@
-<!-- resources\views\web\visa-application\spouse-visa\marital-status.blade.php -->
+<!-- resources\views\web\visa-application\spouse-visa\sponsor\marital-status.blade.php -->
 <div class="step-wizard">
     {{ Form::open(['url' => route('spouseMaritalStatus'), 'id' => 'spouseMaritalStatus']) }}
         <div class="form-card">

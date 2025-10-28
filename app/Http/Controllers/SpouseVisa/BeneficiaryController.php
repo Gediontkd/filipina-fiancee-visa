@@ -9,20 +9,18 @@ use App\Http\Requests\Spouse\ContactRequest;
 use App\Http\Requests\Spouse\PlaceOfBirthRequest;
 use App\Http\Requests\Spouse\StatusRequest;
 use App\Http\Requests\Spouse\MaritalStatusRequest;
-use App\Http\Requests\Spouse\OtherFilingRequest;
-use App\Http\Requests\Spouse\MilitaryConvictionRequest;
 use App\Http\Requests\Spouse\AddressRequest;
 use App\Http\Requests\Spouse\EmploymentRequest;
-use App\Http\Services\Spouse\SpouseSponsorService;
+use App\Http\Services\Spouse\SpouseBeneficiaryService;
 use App\Models\SpouseStep;
-use App\Models\SpouseSponsor;
+use App\Models\SpouseBeneficiary;
 use App\Models\UserSubmittedApplication;
 use App\Models\SpouseVisaSubmittedStep;
 use App\Models\UserSpouseVisaType;
 use App\Models\State;
 use Auth;
 
-class SponsorController extends Controller
+class BeneficiaryController extends Controller
 {
     public function __construct()
     {
@@ -38,145 +36,119 @@ class SponsorController extends Controller
 
     public function index(Request $request)
     {
-        // Track sponsor section progress
-        if (!UserSpouseVisaType::where('user_id', Auth::id())->where('type', 'sponsor')->exists()) {
+        // Track beneficiary section progress
+        if (!UserSpouseVisaType::where('user_id', Auth::id())->where('type', 'beneficiary')->exists()) {
             UserSpouseVisaType::create([
                 'user_id' => Auth::id(),
-                'type' => 'sponsor',
+                'type' => 'beneficiary',
                 'status' => 'in-progress'
             ]);
         }
 
         $spouseSteps = SpouseStep::select('id', 'name', 'icon', 'slug')
-            ->where('type', 'sponsor')
+            ->where('type', 'beneficiary')
             ->get();
             
-        $form = SpouseSponsor::where('user_id', Auth::id())
+        $form = SpouseBeneficiary::where('user_id', Auth::id())
             ->orderBy('id', 'DESC')
             ->first();
             
-        // Load existing data if any
+       // Load existing data if any
         $existingStep = @$form->step;
                 
         // Always show the name form as the first step
         $step = 'name';  // THIS IS THE KEY FIX!
-        $section = 'sponsor';
+        $section = 'beneficiary';
 
         return view('web.visa-application.spouse-visa.index', compact('spouseSteps', 'step', 'section', 'existingStep'));
     }
 
-    public function name(NameRequest $request, SpouseSponsorService $sponsorService)
+    public function name(NameRequest $request, SpouseBeneficiaryService $beneficiaryService)
     {
-        $step = $sponsorService->create($request);
+        $step = $beneficiaryService->create($request);
         return response()->json([
             'status' => true,
-            'section' => 'sponsor',
+            'section' => 'beneficiary',
             'nextForm' => 'contact',
-            'data' => view('web.visa-application.spouse-visa.sponsor.contact', [
-                'step' => $sponsorService->next($step)
+            'data' => view('web.visa-application.spouse-visa.beneficiary.contact', [
+                'step' => $beneficiaryService->next($step)
             ])->render(),
         ]);
     }
 
-    public function contact(ContactRequest $request, SpouseSponsorService $sponsorService)
+    public function contact(ContactRequest $request, SpouseBeneficiaryService $beneficiaryService)
     {
-        $step = $sponsorService->create($request);
+        $step = $beneficiaryService->create($request);
         return response()->json([
             'status' => true,
-            'section' => 'sponsor',
+            'section' => 'beneficiary',
             'nextForm' => 'address',
-            'data' => view('web.visa-application.spouse-visa.sponsor.address', [
-                'step' => $sponsorService->next($step)
+            'data' => view('web.visa-application.spouse-visa.beneficiary.address', [
+                'step' => $beneficiaryService->next($step)
             ])->render(),
         ]);
     }
 
-    public function address(AddressRequest $request, SpouseSponsorService $sponsorService)
+    public function address(AddressRequest $request, SpouseBeneficiaryService $beneficiaryService)
     {
-        $step = $sponsorService->create($request);
+        $step = $beneficiaryService->create($request);
         return response()->json([
             'status' => true,
-            'section' => 'sponsor',
+            'section' => 'beneficiary',
             'nextForm' => 'place-of-birth',
-            'data' => view('web.visa-application.spouse-visa.sponsor.place-of-birth', [
-                'step' => $sponsorService->next($step)
+            'data' => view('web.visa-application.spouse-visa.beneficiary.place-of-birth', [
+                'step' => $beneficiaryService->next($step)
             ])->render(),
         ]);
     }
 
-    public function placeOfBirth(PlaceOfBirthRequest $request, SpouseSponsorService $sponsorService)
+    public function placeOfBirth(PlaceOfBirthRequest $request, SpouseBeneficiaryService $beneficiaryService)
     {
-        $step = $sponsorService->create($request);
+        $step = $beneficiaryService->create($request);
         return response()->json([
             'status' => true,
-            'section' => 'sponsor',
+            'section' => 'beneficiary',
             'nextForm' => 'status',
-            'data' => view('web.visa-application.spouse-visa.sponsor.status', [
-                'step' => $sponsorService->next($step)
+            'data' => view('web.visa-application.spouse-visa.beneficiary.status', [
+                'step' => $beneficiaryService->next($step)
             ])->render(),
         ]);
     }
 
-    public function status(StatusRequest $request, SpouseSponsorService $sponsorService)
+    public function status(StatusRequest $request, SpouseBeneficiaryService $beneficiaryService)
     {
-        $step = $sponsorService->create($request);
+        $step = $beneficiaryService->create($request);
         return response()->json([
             'status' => true,
-            'section' => 'sponsor',
+            'section' => 'beneficiary',
             'nextForm' => 'marital-status',
-            'data' => view('web.visa-application.spouse-visa.sponsor.marital-status', [
-                'step' => $sponsorService->next($step)
+            'data' => view('web.visa-application.spouse-visa.beneficiary.marital-status', [
+                'step' => $beneficiaryService->next($step)
             ])->render(),
         ]);
     }
 
-    public function maritalStatus(MaritalStatusRequest $request, SpouseSponsorService $sponsorService)
+    public function maritalStatus(MaritalStatusRequest $request, SpouseBeneficiaryService $beneficiaryService)
     {
-        $step = $sponsorService->create($request);
+        $step = $beneficiaryService->create($request);
         return response()->json([
             'status' => true,
-            'section' => 'sponsor',
-            'nextForm' => 'other-filings',
-            'data' => view('web.visa-application.spouse-visa.sponsor.other-filings', [
-                'step' => $sponsorService->next($step)
-            ])->render(),
-        ]);
-    }
-
-    public function otherFiling(OtherFilingRequest $request, SpouseSponsorService $sponsorService)
-    {
-        $step = $sponsorService->create($request);
-        return response()->json([
-            'status' => true,
-            'section' => 'sponsor',
-            'nextForm' => 'military-convictions',
-            'data' => view('web.visa-application.spouse-visa.sponsor.military-convictions', [
-                'step' => $sponsorService->next($step)
-            ])->render(),
-        ]);
-    }
-
-    public function militaryConviction(MilitaryConvictionRequest $request, SpouseSponsorService $sponsorService)
-    {
-        $step = $sponsorService->create($request);
-        return response()->json([
-            'status' => true,
-            'section' => 'sponsor',
+            'section' => 'beneficiary',
             'nextForm' => 'employment',
-            'data' => view('web.visa-application.spouse-visa.sponsor.employment', [
-                'step' => $sponsorService->next($step)
+            'data' => view('web.visa-application.spouse-visa.beneficiary.employment', [
+                'step' => $beneficiaryService->next($step)
             ])->render(),
         ]);
     }
 
-    public function employment(EmploymentRequest $request, SpouseSponsorService $sponsorService)
+    public function employment(EmploymentRequest $request, SpouseBeneficiaryService $beneficiaryService)
     {
-        $step = $sponsorService->create($request);
+        $step = $beneficiaryService->create($request);
         
-        // Mark sponsor section as complete
-        if (SpouseSponsor::where('user_id', Auth::id())->count() == 9) {
+        // Mark beneficiary section as complete
+        if (SpouseBeneficiary::where('user_id', Auth::id())->count() == 7) {
             UserSpouseVisaType::where('user_id', Auth::id())
-                ->where('type', 'sponsor')
+                ->where('type', 'beneficiary')
                 ->where('status', 'in-progress')
                 ->update(['status' => 'completed']);
         }
@@ -191,14 +163,14 @@ class SponsorController extends Controller
         
         return response()->json([
             'status' => true,
-            'section' => 'sponsor',
-            'message' => 'Sponsor section completed! You can now proceed to the Beneficiary section.',
+            'section' => 'beneficiary',
+            'message' => 'Beneficiary section completed!',
         ]);
     }
 
     public function previousOrContinue(Request $request)
     {
-        $stepId = SpouseSponsor::where('user_id', Auth::id())
+        $stepId = SpouseBeneficiary::where('user_id', Auth::id())
             ->where('name', $request->form)
             ->pluck('step_id')
             ->first();
@@ -207,7 +179,7 @@ class SponsorController extends Controller
         
         return response()->json([
             'status' => true,
-            'step' => view('web.visa-application.spouse-visa.sponsor.' . $request->form, [
+            'step' => view('web.visa-application.spouse-visa.beneficiary.' . $request->form, [
                 'step' => $step
             ])->render()
         ]);

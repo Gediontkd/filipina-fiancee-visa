@@ -1,12 +1,12 @@
-<!-- resources\views\web\visa-application\spouse-visa\address.blade.php -->
+<!-- resources\views\web\visa-application\spouse-visa\beneficiary\address.blade.php -->
 <div class="step-wizard">
-    {{ Form::open(['url' => route('spouseAddress'), 'id' => 'spouseAddress']) }}
+    {{ Form::open(['url' => route('spouseBeneficiaryAddress'), 'id' => 'spouseBeneficiaryAddress']) }}
         <div class="form-card">
             <div class="row">                
                 <div class="col-md-12">
                     <div class="heading mb-30">
-                        <h2>Your (sponsor's) Current Physical Address.</h2>
-                        <p>Enter your physical address here. If your mailing address is different you will enter that on another page. Changing your address later, using a P.O. box or a non-USA address is complicated and may cause your petition to be delayed.</p>
+                        <h2>Beneficiary's Current Physical Address</h2>
+                        <p>Enter the beneficiary's physical address. If the mailing address is different, you will enter that on another page.</p>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -17,11 +17,14 @@
                             'class' => 'form-control inCareName',
                             'placeholder' => 'Enter Name'
                         ]) }}
-                        {{ Form::label('does_not_apply', "Does Not Apply") }}
-                        {{ Form::checkbox('does_not_apply', true, @$step->detail['does_not_apply'] == true ? true : '', [
-                            'class' => 'custom-control-input doesNotApply',
-                            'data-field' => "inCareName"
-                        ]) }}
+                        <div class="form-check mt-2">
+                            {{ Form::checkbox('in_care_name_na', true, @$step->detail['in_care_name_na'] == true, [
+                                'class' => 'form-check-input doesNotApply',
+                                'data-field' => "inCareName",
+                                'id' => 'in_care_name_na'
+                            ]) }}
+                            {{ Form::label('in_care_name_na', "Does Not Apply", ['class' => 'form-check-label']) }}
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -43,7 +46,7 @@
                             'Apartment' => 'Apartment',
                             'Suite' => 'Suite',
                             'Floor' => 'Floor',
-                            'Dose Not Apply' => 'Dose Not Apply'
+                            'Does Not Apply' => 'Does Not Apply'
                         ], @$step->detail['apartment_suite_or_floor'], [
                             'class' => 'form-control'
                         ]) }}
@@ -80,7 +83,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        {{ Form::label('state', "U.S. State") }}
+                        {{ Form::label('state', "State/Province") }}
                         <span class="required">*</span>
                         {{ Form::select('state', [], @$step->detail['state'], [
                             'class' => 'form-control states'
@@ -95,11 +98,14 @@
                             'class' => 'form-control province',
                             'placeholder' => 'Enter Province'
                         ]) }}
-                        {{ Form::label('does_not_apply', "Does Not Apply") }}
-                        {{ Form::checkbox('does_not_apply', true, @$step->detail['does_not_apply'] == true ? true : '', [
-                            'class' => 'custom-control-input doesNotApply',
-                            'data-field' => "province"
-                        ]) }}
+                        <div class="form-check mt-2">
+                            {{ Form::checkbox('province_na', true, @$step->detail['province_na'] == true, [
+                                'class' => 'form-check-input doesNotApply',
+                                'data-field' => "province",
+                                'id' => 'province_na'
+                            ]) }}
+                            {{ Form::label('province_na', "Does Not Apply", ['class' => 'form-check-label']) }}
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -110,16 +116,19 @@
                             'class' => 'form-control postalCode',
                             'placeholder' => 'Enter Postal Code'
                         ]) }}
-                        {{ Form::label('does_not_apply', "Does Not Apply") }}
-                        {{ Form::checkbox('does_not_apply', true, @$step->detail['does_not_apply'] == true ? true : '', [
-                            'class' => 'custom-control-input doesNotApply',
-                            'data-field' => "postalCode"
-                        ]) }}
+                        <div class="form-check mt-2">
+                            {{ Form::checkbox('postal_code_na', true, @$step->detail['postal_code_na'] == true, [
+                                'class' => 'form-check-input doesNotApply',
+                                'data-field' => "postalCode",
+                                'id' => 'postal_code_na'
+                            ]) }}
+                            {{ Form::label('postal_code_na', "Does Not Apply", ['class' => 'form-check-label']) }}
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        {{ Form::label('lived', 'I have lived at this address since (mm/dd/yyyy)') }}
+                        {{ Form::label('lived', 'Beneficiary has lived at this address since (mm/dd/yyyy)') }}
                         <span class="required">*</span>
                         {{ Form::text('lived', @$step->detail['lived'], [
                             'class' => 'form-control datePicker',
@@ -128,7 +137,7 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <h4>Provide all U.S. states and foreign countries in which you have resided since your 18th birthday</h4>
+                    <h4>Provide all countries where the beneficiary has resided since their 18th birthday</h4>
                     <div class="appendCountry">
                         @if (empty($step->detail["country1"]))
                             @include('web.component.country', [
@@ -157,28 +166,57 @@
             </div>            
         </div>
         {!! Form::hidden('id', @$step->id) !!}
+        {!! Form::hidden('section', 'beneficiary') !!}
         {!! Form::hidden('name', 'address') !!}
-        {!! Form::hidden('next', 'relationship') !!}
+        {!! Form::hidden('next', 'place-of-birth') !!}
         {{ Form::button('Back To Start', [
             'class' => 'btn btn-tra-grey spousePreviousOrContinue',
-            'data-form' => 'name'
+            'data-form' => 'start',
+            'data-section' => 'beneficiary'
         ]) }}
         {{ Form::button('Previous Step', [
             'class' => 'btn btn-tra-grey spousePreviousOrContinue',
-            'data-form' => 'military-convictions'
+            'data-form' => 'contact',
+            'data-section' => 'beneficiary'
         ]) }}
         {{ Form::button('Skip & Continue', [
             'class' => 'btn btn-tra-grey ms-2 spousePreviousOrContinue',
-            'data-form' => 'relationship'
+            'data-form' => 'place-of-birth',
+            'data-section' => 'beneficiary'
         ]) }}
         {{ Form::button('Save & Continue', [
             'class' => 'btn btn-tra-primary ms-2',
-            'id' => 'spouseAddressBtn',
+            'id' => 'spouseBeneficiaryAddressBtn',
             'type' => 'submit',
         ]) }}
     {{ Form::close() }}
     <script type="text/javascript" src="{{asset('assets/js/date-range.js')}}"></script>
     <script type="text/javascript">        
+        $(document).on('change', '.doesNotApply', function() {
+            var fieldClass = $(this).data('field');
+            var field = $('.' + fieldClass);
+            
+            if ($(this).is(':checked')) {
+                field.val('N/A');
+                field.prop('disabled', true);
+                field.prop('readonly', true);
+            } else {
+                field.val('');
+                field.prop('disabled', false);
+                field.prop('readonly', false);
+            }
+        });
+
+        $(document).ready(function() {
+            $('.doesNotApply:checked').each(function() {
+                var fieldClass = $(this).data('field');
+                var field = $('.' + fieldClass);
+                field.val('N/A');
+                field.prop('disabled', true);
+                field.prop('readonly', true);
+            });
+        });
+
         $(document).ready(function(){
             var countryCount = $('.appendCountry > .countryForm').length;
             if (countryCount == 10) {
@@ -187,20 +225,19 @@
         });
 
         $(document).ready(function(){
-            // getState($('.countryId').val());
-            getState(231);
+            getState($('.countryId').val());
         });
 
         $(document).on('change', '.countryId', function(){
-            // var countryId = $(this).val();
-            getState(231);
+            var countryId = $(this).val();
+            getState(countryId);
         });
 
         function getState(countryId)
         {
             $.ajax({                
                 type: 'get',
-                url: "{{ route('getState') }}",
+                url: "{{ route('spouseGetState') }}",
                 data: {
                     countryId: countryId
                 },
@@ -210,112 +247,64 @@
             });
         }
 
-        $("#spouseAddress").validate({
+        $("#spouseBeneficiaryAddress").validate({
             rules: {
-                in_care_name: {
-                    required: true,
+                in_care_name: { 
+                    required: function() {
+                        return !$('#in_care_name_na').is(':checked');
+                    }
                 },
-                number_and_street: {
-                    required: true,
+                number_and_street: { required: true },
+                apartment_suite_or_floor: { required: true },
+                apartment_suite_or_floor_no: { required: true },
+                town_or_city: { required: true },
+                country: { required: true },
+                state: { required: true },
+                province: { 
+                    required: function() {
+                        return !$('#province_na').is(':checked');
+                    }
                 },
-                apartment_suite_or_floor: {
-                    required: true,
+                postal_code: { 
+                    required: function() {
+                        return !$('#postal_code_na').is(':checked');
+                    }
                 },
-                apartment_suite_or_floor_no: {
-                    required: true,
-                },
-                town_or_city: {
-                    required: true,
-                },
-                country: {
-                    required: true,
-                },
-                state: {
-                    required: true,
-                },
-                province: {
-                    required: true,
-                },
-                postal_code: {
-                    required: true,
-                },
-                lived: {
-                    required: true,
-                },
-                country1: {
-                    required: true,
-                },
-                country2: {
-                    required: true,
-                },
-                country3: {
-                    required: true,
-                },
-                country4: {
-                    required: true,
-                },
-                country5: {
-                    required: true,
-                },
-                country6: {
-                    required: true,
-                },
-                country7: {
-                    required: true,
-                },
-                country8: {
-                    required: true,
-                },
-                country9: {
-                    required: true,
-                },
-                country10: {
-                    required: true,
-                },
+                lived: { required: true },
             },            
             messages: {
-               in_care_name: "Please enter name!",                                        
-               number_and_street: "Please enter address!",                                        
-               apartment_suite_or_floor: "Please enter address!",                                        
-               apartment_suite_or_floor_no: "Please enter address!",                                
-               town_or_city: "Please enter town or city!",                                        
-               country: "Please choose country!",                                        
-               state: "Please choose state!",                                        
-               province: "Please enter province!",                                        
-               postal_code: "Please enter postal code!",                                        
-               lived: "Please enter date!",                                        
-               country1: "Please choose country!",                                        
-               country2: "Please choose country!",                                        
-               country3: "Please choose country!",                                        
-               country4: "Please choose country!",                                        
-               country5: "Please choose country!",                                        
-               country6: "Please choose country!",                                        
-               country7: "Please choose country!",                                        
-               country8: "Please choose country!",                                        
-               country9: "Please choose country!",                                        
-               country10: "Please choose country!",                                        
+               in_care_name: "Please enter name or check 'Does Not Apply'",                                        
+               number_and_street: "Please enter address",                                        
+               apartment_suite_or_floor: "Please select an option",                                        
+               apartment_suite_or_floor_no: "Please enter number",                                
+               town_or_city: "Please enter town or city",                                        
+               country: "Please choose country",                                        
+               state: "Please choose state/province",                                        
+               province: "Please enter province or check 'Does Not Apply'",                                        
+               postal_code: "Please enter postal code or check 'Does Not Apply'",                                        
+               lived: "Please enter date",                                        
             },
             submitHandler: function(form) {
-                $('#spouseAddressBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
-                var serializedData = $(form).serialize();
+                $('#spouseBeneficiaryAddressBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
                 $.ajax({
-                    headers: {
-                        'X-CSRF-Token': $('input[name="_token"]').val()
-                    },
+                    headers: { 'X-CSRF-Token': $('input[name="_token"]').val() },
                     type: 'post',
-                    url: "{{ route('spouseAddress') }}",
-                    data: serializedData,
+                    url: "{{ route('spouseBeneficiaryAddress') }}",
+                    data: $(form).serialize(),
                     dataType: 'json',
                     success: function(data) {               
-                        if (data.status == true) {                                           
-                            $('.address').removeClass('active');
-                            $('.relationship').addClass('active');
+                        if (data.status) {                                           
+                            $('.beneficiary-address').removeClass('active');
+                            $('.beneficiary-place-of-birth').addClass('active');
                             $('.spouseVisaForm').html(data.data);                    
-                        }
-                        if (data.status == false) {
-                            toastr.options.timeOut = 10000;
+                        } else {
+                            $('#spouseBeneficiaryAddressBtn').html('Save & Continue');
                             toastr.error(data.message);                           
                         }
+                    },
+                    error: function() {
+                        $('#spouseBeneficiaryAddressBtn').html('Save & Continue');
+                        toastr.error('An error occurred. Please try again.');
                     }
                 });
                return false;

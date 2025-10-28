@@ -13,7 +13,6 @@ use App\Models\FianceVisaSubmittedStep;
 use App\Models\AdjustmentVisaSubmittedStep;
 use App\Models\SpouseVisaSubmittedStep;
 use Mail;
-// use App\Mail\ComposeMail;
 use Auth;
 use DB;
 
@@ -24,11 +23,8 @@ class ProfileController extends Controller
         return view('home');
     }
 
-    // app/Http/Controllers/ProfileController.php
-
-  public function profile(Request $request, $page)
+    public function profile(Request $request, $page)
     {
-
         $user = Auth::user();
         
         // Get submitted application
@@ -41,6 +37,9 @@ class ProfileController extends Controller
         $sponsorTotal = 0;
         $alienTotal = 0;
         $alienChildrenTotal = 0;
+        $spouseSponsorTotal = 0;
+        $spouseBeneficiaryTotal = 0;
+        $spouseRelationshipTotal = 0;
         $overAll = 0;
         
         // Calculate progress based on application type
@@ -62,17 +61,37 @@ class ProfileController extends Controller
                     
                 case 2: // Adjustment of Status
                     $count = AdjustmentVisaSubmittedStep::where('user_id', Auth::id())->count();
-                    $overAll = ($count / 17) * 100;  // Adjust based on total steps
+                    $overAll = ($count / 17) * 100;
                     break;
                     
                 case 3: // Spouse Visa
-                    $count = SpouseVisaSubmittedStep::where('user_id', Auth::id())->count();
-                    $overAll = ($count / 10) * 100;  // Adjust based on total steps
-                    break;
+                        // Calculate Sponsor Section Progress (9 steps)
+                        $sponsorCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
+                            ->where('section', 'sponsor')  // Changed from 'type' to 'section'
+                            ->count();
+                        $spouseSponsorTotal = ($sponsorCount / 9) * 100;
+                        
+                        // Calculate Beneficiary Section Progress (7 steps)
+                        $beneficiaryCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
+                            ->where('section', 'beneficiary')  // Changed from 'type' to 'section'
+                            ->count();
+                        $spouseBeneficiaryTotal = ($beneficiaryCount / 7) * 100;
+                        
+                        // Calculate Relationship/Shared Progress (1 step)
+                        $relationshipCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
+                            ->where('section', 'shared')  // Changed from 'type' to 'section'
+                            ->count();
+                        $spouseRelationshipTotal = ($relationshipCount / 1) * 100;
+                        
+                        // Overall Spouse Visa Progress (17 total steps)
+                        $overAll = (($sponsorCount + $beneficiaryCount + $relationshipCount) / 17) * 100;
+                        break;
                     
                 case 4: // Combined CR1 + AOS
-                    $count = CombinedCr1AosSubmittedStep::where('user_id', Auth::id())->count();
-                    $overAll = ($count / 20) * 100;  // Adjust based on total steps
+                    // Add this if you have a CombinedCr1AosSubmittedStep model
+                    // $count = CombinedCr1AosSubmittedStep::where('user_id', Auth::id())->count();
+                    // $overAll = ($count / 20) * 100;
+                    $overAll = 0; // Placeholder until implemented
                     break;
                     
                 default:
@@ -84,7 +103,10 @@ class ProfileController extends Controller
             'submission',
             'sponsorTotal', 
             'alienTotal', 
-            'alienChildrenTotal', 
+            'alienChildrenTotal',
+            'spouseSponsorTotal',
+            'spouseBeneficiaryTotal',
+            'spouseRelationshipTotal',
             'overAll'
         ));
     }
@@ -137,7 +159,6 @@ class ProfileController extends Controller
     {
         $request['user_id'] = Auth::id();
         ComposeMail::create($request->all());
-        // Mail::to($request->to)->send(new ComposeMail());
         return redirect()->back()->with('success', 'Mail has been sent!');
     }
 
@@ -159,71 +180,71 @@ class ProfileController extends Controller
         }
     }
 
-  public function chooseApplication(Request $request)
-{
-    DB::beginTransaction();
+    public function chooseApplication(Request $request)
+    {
+        DB::beginTransaction();
 
-    try {
-        // Map application types to their route names and IDs
-        $applicationMap = [
-            'fiancee' => [
-                'route' => 'fianceSponsorApplication',
-                'id' => 1,
-                'name' => 'Fiancée Visa (K-1)'
-            ],
-            'spouse' => [
-                'route' => 'spouseVisaApplication',
-                'id' => 3,
-                'name' => 'Spouse Visa (CR-1/IR-1)'
-            ],
-            'adjustment' => [
-                'route' => 'adjustment.show',  // Goes to selection page first
-                'id' => 2,
-                'name' => 'Adjustment of Status'
-            ],
-            'combined' => [
-                'route' => 'combinedCr1AosApplication',
-                'id' => 4,  // Add this ID to visa_applications table if needed
-                'name' => 'Combined CR-1 + AOS Package'
-            ]
-        ];
+        try {
+            // Map application types to their route names and IDs
+            $applicationMap = [
+                'fiancee' => [
+                    'route' => 'fianceSponsorApplication',
+                    'id' => 1,
+                    'name' => 'Fiancée Visa (K-1)'
+                ],
+                'spouse' => [
+                    'route' => 'spouseVisaApplication',
+                    'id' => 3,
+                    'name' => 'Spouse Visa (CR-1/IR-1)'
+                ],
+                'adjustment' => [
+                    'route' => 'adjustment.show',
+                    'id' => 2,
+                    'name' => 'Adjustment of Status'
+                ],
+                'combined' => [
+                    'route' => 'combinedCr1AosApplication',
+                    'id' => 4,
+                    'name' => 'Combined CR-1 + AOS Package'
+                ]
+            ];
 
-        $chosen = $request->chosen_application;
-        
-        if (!isset($applicationMap[$chosen])) {
-            return redirect()->back()->with('error', 'Invalid application type selected');
-        }
+            $chosen = $request->chosen_application;
+            
+            if (!isset($applicationMap[$chosen])) {
+                return redirect()->back()->with('error', 'Invalid application type selected');
+            }
 
-        $appData = $applicationMap[$chosen];
+            $appData = $applicationMap[$chosen];
 
-        // Update user record
-        User::where('id', Auth::id())->update([
-            'chosen_application' => $chosen,
-            'application_route' => $appData['route']
-        ]);
+            // Update user record
+            User::where('id', Auth::id())->update([
+                'chosen_application' => $chosen,
+                'application_route' => $appData['route']
+            ]);
 
-        // Create UserSubmittedApplication record if it doesn't exist
-        UserSubmittedApplication::firstOrCreate(
-            [
-                'user_id' => Auth::id(),
-                'application_id' => $appData['id']
-            ],
-            [
-                'status' => 'pending',
-                'submitted_at' => null
-            ]
-        );
-        
-        DB::commit();
-        
-        // Redirect to the appropriate application form
-        return redirect()->route($appData['route'])
-            ->with('success', 'Application type selected. Please complete your application.');
+            // Create UserSubmittedApplication record if it doesn't exist
+            UserSubmittedApplication::firstOrCreate(
+                [
+                    'user_id' => Auth::id(),
+                    'application_id' => $appData['id']
+                ],
+                [
+                    'status' => 'pending',
+                    'submitted_at' => null
+                ]
+            );
+            
+            DB::commit();
+            
+            // Redirect to the appropriate application form
+            return redirect()->route($appData['route'])
+                ->with('success', 'Application type selected. Please complete your application.');
 
-    } catch (\Exception $e) {
-        DB::rollback();
-        \Log::error('Choose application error: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'An error occurred. Please try again.');
-    }       
-}
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::error('Choose application error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred. Please try again.');
+        }       
+    }
 }
