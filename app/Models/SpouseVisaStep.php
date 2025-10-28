@@ -14,82 +14,65 @@ class SpouseVisaStep extends Model
         'user_id',
         'step_id',
         'name',
+        'section', // ADD THIS - to track sponsor/beneficiary/shared
     ];
 
     protected $appends = ['step'];    
 
     public function getStepAttribute()
     {
-        switch ($this->attributes['name']) {
-            case 'name':
-                $form = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                    ->where('step', 'contact')
-                    ->first();
-                $form['next'] = 'contact'; 
+        $section = $this->attributes['section'] ?? 'sponsor';
+        
+        // Define step flow for each section
+        $sponsorFlow = [
+            'name' => 'contact',
+            'contact' => 'address',
+            'address' => 'place-of-birth',
+            'place-of-birth' => 'status',
+            'status' => 'marital-status',
+            'marital-status' => 'other-filings',
+            'other-filings' => 'military-convictions',
+            'military-convictions' => 'employment',
+            'employment' => null, // End of sponsor section
+        ];
+
+        $beneficiaryFlow = [
+            'name' => 'contact',
+            'contact' => 'address',
+            'address' => 'place-of-birth',
+            'place-of-birth' => 'status',
+            'status' => 'marital-status',
+            'marital-status' => 'employment',
+            'employment' => null, // End of beneficiary section
+        ];
+
+        $flow = $section === 'sponsor' ? $sponsorFlow : $beneficiaryFlow;
+        $currentStep = $this->attributes['name'];
+        $nextStep = $flow[$currentStep] ?? null;
+
+        if ($nextStep) {
+            $form = SpouseVisaSubmittedStep::where('user_id', Auth::id())
+                ->where('section', $section)
+                ->where('step', $nextStep)
+                ->first();
+            
+            if ($form) {
+                $form['next'] = $nextStep;
                 return $form;
-            break;
-            case 'contact':
-                $form = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                    ->where('step', 'place-of-birth')
-                    ->first();
-                $form['next'] = 'place-of-birth'; 
-                return $form;
-            break;
-            case 'place-of-birth':
-                $form = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                    ->where('step', 'status')
-                    ->first();
-                $form['next'] = 'status'; 
-                return $form;
-            break;
-            case 'status':
-                $form = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                    ->where('step', 'marital-status')
-                    ->first();
-                $form['next'] = 'marital-status'; 
-                return $form;
-            break;
-            case 'marital-status':
-                $form = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                    ->where('step', 'other-filings')
-                    ->first();
-                $form['next'] = 'other-filings'; 
-                return $form;
-            break;
-            case 'other-filings':
-                $form = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                    ->where('step', 'military-convictions')
-                    ->first();
-                $form['next'] = 'military-convictions'; 
-                return $form;
-            break;
-            case 'military-convictions':
-                $form = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                    ->where('step', 'address')
-                    ->first();
-                $form['next'] = 'address'; 
-                return $form;
-            break;
-            case 'address':
-                $form = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                    ->where('step', 'relationship')
-                    ->first();
-                $form['next'] = 'relationship'; 
-                return $form;
-            break;
-            case 'relationship':
-                $form = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                    ->where('step', 'employment')
-                    ->first();
-                $form['next'] = 'employment'; 
-                return $form;
-            break;          
+            }
         }
+
+        return null;
     }
 
     public function previous()
     {
         return SpouseVisaSubmittedStep::where('id', $this->attributes['step_id'])
-                ->first();  
+            ->first();  
+    }
+
+    public function submittedStep()
+    {
+        return $this->belongsTo(SpouseVisaSubmittedStep::class, 'step_id');
     }
 }
