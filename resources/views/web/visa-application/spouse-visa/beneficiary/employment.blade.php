@@ -1,31 +1,31 @@
-<!-- resources\views\web\visa-application\spouse-visa\employment.blade.php -->
+<!-- resources/views/web/visa-application/spouse-visa/beneficiary/employment.blade.php -->
 <div class="step-wizard">
-    {{ Form::open(['url' => route('spouseEmployment'), 'id' => 'spouseEmployment']) }}
+    {{ Form::open(['url' => route('spouseBeneficiaryEmployment'), 'id' => 'spouseBeneficiaryEmployment']) }}
         <div class="form-card">
             <div class="row">                
                 <div class="col-md-12">
                     <div class="heading mb-30">
-                        <h2>Your Employment for the Past Five Years (U.S. Citizen Sponsor)</h2>
-                        <p>Enter "Unemployed" or "Retired" if appropriate. More space will be provided as needed to go back 5 years. You will need a source of income or adequate assets to be approved.</p>
+                        <h2>Beneficiary's Employment History (Past 5 Years)</h2>
+                        <p>Enter 'Unemployed', 'Retired', or 'Student' if applicable. Provide employment history for the past 5 years.</p>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        {{ Form::label('employer_name', 'Name of Employer/Company') }}
+                        {{ Form::label('employer_name', 'Employer Name') }}
                         <span class="required">*</span>
                         {{ Form::text('employer_name', @$step->detail['employer_name'], [
                             'class' => 'form-control',
-                            'placeholder' => 'Enter name'
+                            'placeholder' => 'Enter Employer Name'
                         ]) }}
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        {{ Form::label('occupation', 'Occupation or Job Title') }}
+                        {{ Form::label('occupation', 'Job Title/Occupation') }}
                         <span class="required">*</span>
                         {{ Form::text('occupation', @$step->detail['occupation'], [
                             'class' => 'form-control',
-                            'placeholder' => 'Enter Occupation or Job Title'
+                            'placeholder' => 'Enter Job Title or Occupation'
                         ]) }}
                     </div>
                 </div>                                             
@@ -60,7 +60,7 @@
                         <span class="required">*</span>
                         {{ Form::text('apartment', @$step->detail['apartment'], [
                             'class' => 'form-control',
-                            'placeholder' => 'Enter Apartment'
+                            'placeholder' => 'Enter Number'
                         ]) }}
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        {{ Form::label('state', "U.S. State (Select Does Not Apply if not USA)") }}
+                        {{ Form::label('state', "State/Province (Select Does Not Apply if not USA)") }}
                         <span class="required">*</span>
                         {{ Form::select('state', [], @$step->detail['state'], [
                             'class' => 'form-control states',
@@ -102,7 +102,7 @@
                             'placeholder' => 'Enter Province'
                         ]) }}
                         <div class="form-check mt-2">
-                            {{ Form::checkbox('province_not_apply', true, @$step->detail['province_not_apply'] == true ? true : '', [
+                            {{ Form::checkbox('province_not_apply', true, @$step->detail['province_not_apply'] == true, [
                                 'class' => 'form-check-input doesNotApply',
                                 'data-field' => "province",
                                 'id' => 'province_not_apply'
@@ -120,7 +120,7 @@
                             'placeholder' => 'Enter Postal Code'
                         ]) }}
                         <div class="form-check mt-2">
-                            {{ Form::checkbox('postal_not_apply', true, @$step->detail['postal_not_apply'] == true ? true : '', [
+                            {{ Form::checkbox('postal_not_apply', true, @$step->detail['postal_not_apply'] == true, [
                                 'class' => 'form-check-input doesNotApply',
                                 'data-field' => "postalCode",
                                 'id' => 'postal_not_apply'
@@ -131,7 +131,7 @@
                 </div>
                <div class="col-md-6">
                     <div class="form-group">
-                        {{ Form::label('job_category', 'Pick the category that best describes your job') }}
+                        {{ Form::label('job_category', 'Pick the category that best describes the job') }}
                         <span class="required">*</span>
                         {{ Form::select('job_category', [
                             '' => '- Select One -', 
@@ -145,6 +145,12 @@
                             'Government' => 'Government',
                             'Homemaker' => 'Homemaker',
                             'Legal Profession' => 'Legal Profession',
+                            'Medical/Healthcare' => 'Medical/Healthcare',
+                            'Military' => 'Military',
+                            'Retail/Sales' => 'Retail/Sales',
+                            'Student' => 'Student',
+                            'Unemployed' => 'Unemployed',
+                            'Other' => 'Other',
                         ], @$step->detail['job_category'], [
                             'class' => 'form-control'
                         ]) }}                        
@@ -152,7 +158,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        {{ Form::label('date', 'I began this job on (mm/dd/yyyy)') }}
+                        {{ Form::label('date', 'Employment start date (mm/dd/yyyy)') }}
                         <span class="required">*</span>
                         {{ Form::text('date', @$step->detail['date'], [
                             'class' => 'form-control datePicker',
@@ -163,42 +169,72 @@
             </div>            
         </div>
         {!! Form::hidden('id', @$step->id) !!}
+        {!! Form::hidden('section', 'beneficiary') !!}
         {!! Form::hidden('name', 'employment') !!}
-        {!! Form::hidden('next', 'name') !!}
+        {!! Form::hidden('next', 'relationship') !!}
         {{ Form::button('Back To Start', [
             'class' => 'btn btn-tra-grey spousePreviousOrContinue',
-            'data-form' => 'name'
+            'data-form' => 'start',
+            'data-section' => 'beneficiary'
         ]) }}
         {{ Form::button('Previous Step', [
             'class' => 'btn btn-tra-grey spousePreviousOrContinue',
-            'data-form' => 'relationship'
+            'data-form' => 'marital-status',
+            'data-section' => 'beneficiary'
         ]) }}
         {{ Form::button('Skip & Continue', [
             'class' => 'btn btn-tra-grey ms-2 spousePreviousOrContinue',
-            'data-form' => 'name'
+            'data-form' => 'relationship',
+            'data-section' => 'beneficiary'
         ]) }}
         {{ Form::button('Save & Continue', [
             'class' => 'btn btn-tra-primary ms-2',
-            'id' => 'spouseEmploymentBtn',
+            'id' => 'spouseBeneficiaryEmploymentBtn',
             'type' => 'submit',
         ]) }}
     {{ Form::close() }}
     <script type="text/javascript" src="{{asset('assets/js/date-range.js')}}"></script>
-    <script type="text/javascript">                
+    <script type="text/javascript">     
+        $(document).on('change', '.doesNotApply', function() {
+            var fieldClass = $(this).data('field');
+            var field = $('.' + fieldClass);
+            
+            if ($(this).is(':checked')) {
+                field.val('N/A');
+                field.prop('disabled', true);
+                field.prop('readonly', true);
+            } else {
+                field.val('');
+                field.prop('disabled', false);
+                field.prop('readonly', false);
+            }
+        });
+
+        $(document).ready(function() {
+            $('.doesNotApply:checked').each(function() {
+                var fieldClass = $(this).data('field');
+                var field = $('.' + fieldClass);
+                field.val('N/A');
+                field.prop('disabled', true);
+                field.prop('readonly', true);
+            });
+        });
+
         $(document).ready(function(){
             var state = $('.states').data('state');
-            getState(231, state);
+            getState($('.countryId').val(), state);
         });
 
         $(document).on('change', '.countryId', function(){
-            getState(231);
+            var countryId = $(this).val();
+            getState(countryId);
         });
 
         function getState(countryId, state = '')
         {
             $.ajax({                
                 type: 'get',
-                url: "{{ route('getState') }}",
+                url: "{{ route('spouseGetState') }}",
                 data: {
                     countryId: countryId,
                     state: state
@@ -209,19 +245,7 @@
             });
         }
 
-        // Handle "Does Not Apply" checkboxes
-        $(document).on('change', '.doesNotApply', function() {
-            var field = $(this).data('field');
-            if ($(this).is(':checked')) {
-                $('.' + field).val('N/A');
-                $('.' + field).prop('disabled', true);
-            } else {
-                $('.' + field).val('');
-                $('.' + field).prop('disabled', false);
-            }
-        });
-
-        $("#spouseEmployment").validate({
+        $("#spouseBeneficiaryEmployment").validate({
             rules: {
                 employer_name: { required: true },
                 occupation: { required: true },
@@ -245,44 +269,39 @@
                 date: { required: true },
             },            
             messages: {
-               employer_name: "Please enter name!",                                            
-               occupation: "Please enter occupation!",                                            
-               number_street: "Please enter number and street!",                                       
-               apartment_suite_or_floor: "Please select an option!",                                       
-               apartment: "Please enter apartment/suite/floor number!",                                            
-               town_city: "Please enter town or city!",                                            
-               country: "Please choose country!",                                            
-               state: "Please choose state!",                                            
-               province: "Please enter province or check 'Does Not Apply'!",                                            
-               postal_code: "Please enter postal code or check 'Does Not Apply'!",                                            
-               job_category: "Please choose job category!",                                            
-               date: "Please enter date!",                                            
+               employer_name: "Please enter employer name",                                            
+               occupation: "Please enter job title/occupation",                                            
+               number_street: "Please enter number and street",                                       
+               apartment_suite_or_floor: "Please select an option",                                       
+               apartment: "Please enter apartment/suite/floor number",                                            
+               town_city: "Please enter town or city",                                            
+               country: "Please select country",                                            
+               state: "Please select state/province",                                            
+               province: "Please enter province or check 'Does Not Apply'",                                            
+               postal_code: "Please enter postal code or check 'Does Not Apply'",                                            
+               job_category: "Please select job category",                                            
+               date: "Please enter employment start date",                                            
             },
             submitHandler: function(form) {
-                $('#spouseEmploymentBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
-                var serializedData = $(form).serialize();
+                $('#spouseBeneficiaryEmploymentBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
                 $.ajax({
-                    headers: {
-                        'X-CSRF-Token': $('input[name="_token"]').val()
-                    },
+                    headers: { 'X-CSRF-Token': $('input[name="_token"]').val() },
                     type: 'post',
-                    url: "{{ route('spouseEmployment') }}",
-                    data: serializedData,
+                    url: "{{ route('spouseBeneficiaryEmployment') }}",
+                    data: $(form).serialize(),
                     dataType: 'json',
                     success: function(data) {               
-                        if (data.status == true) {                                           
-                            $('.employment').removeClass('active');
-                            $('.name').addClass('active');
+                        if (data.status) {                                           
+                            $('.beneficiary-employment').removeClass('active');
+                            $('.relationship').addClass('active');
                             $('.spouseVisaForm').html(data.data);                    
-                        }
-                        if (data.status == false) {
-                            $('#spouseEmploymentBtn').html('Save & Continue');
-                            toastr.options.timeOut = 10000;
+                        } else {
+                            $('#spouseBeneficiaryEmploymentBtn').html('Save & Continue');
                             toastr.error(data.message);                           
                         }
                     },
                     error: function() {
-                        $('#spouseEmploymentBtn').html('Save & Continue');
+                        $('#spouseBeneficiaryEmploymentBtn').html('Save & Continue');
                         toastr.error('An error occurred. Please try again.');
                     }
                 });

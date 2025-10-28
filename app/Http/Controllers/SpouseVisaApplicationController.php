@@ -3,23 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\Spouse\NameRequest;
-use App\Http\Requests\Spouse\ContactRequest;
-use App\Http\Requests\Spouse\PlaceOfBirthRequest;
-use App\Http\Requests\Spouse\StatusRequest;
-use App\Http\Requests\Spouse\MaritalStatusRequest;
-use App\Http\Requests\Spouse\OtherFilingRequest;
-use App\Http\Requests\Spouse\MilitaryConvictionRequest;
-use App\Http\Requests\Spouse\AddressRequest;
 use App\Http\Requests\Spouse\RelationshipRequest;
-use App\Http\Requests\Spouse\EmploymentRequest;
 use App\Http\Services\Spouse\SpouseService;
 use App\Models\SpouseStep;
 use App\Models\SpouseVisaStep;
 use App\Models\UserSubmittedApplication;
 use App\Models\SpouseVisaSubmittedStep;
-use App\Models\User;
 use App\Models\State;
 use Auth;
 
@@ -44,157 +33,108 @@ class SpouseVisaApplicationController extends Controller
         } else {
             return view('web.service.spouse-visa');   
         }
-        // if (applicationRoute() == 'spouse.visa') {
-        //     return view('web.service.spouse-visa');     
-        // }
-        // return redirect()->route(applicationRoute());             
     }
     
     public function index(Request $request)
     {
         $spouseSteps = SpouseStep::select('id', 'name', 'icon', 'slug')->get();
-        $form = SpouseVisaStep::where('user_id', Auth::id())
-            ->orderBy('id', 'DESC')
-            ->first();
-        $step = @$form->step;
-        $name = 'name';
-        return view('web.visa-application.spouse-visa.index', compact('spouseSteps', 'step', 'name'));
+        $step = 'relationship';  // Show relationship form
+        $section = 'shared';
+
+        return view('web.visa-application.spouse-visa.index', compact('spouseSteps', 'step', 'section'));
     }
 
-    public function name(NameRequest $request, SpouseService $spouseService)
-    {                     
-        $step = $spouseService->create($request);        
-        return response()->json([
-            'status' => true,
-            'data' => view('web.visa-application.spouse-visa.contact', [
-                'step' => $spouseService->next($step)
-            ])->render(),
-        ]);
-    }
-
-    public function contact(ContactRequest $request, SpouseService $spouseService)
-    {                     
-        $step = $spouseService->create($request);        
-        return response()->json([
-            'status' => true,
-            'data' => view('web.visa-application.spouse-visa.place-of-birth', [
-                'step' => $spouseService->next($step)
-            ])->render(),
-        ]);
-    }
-
-    public function placeOfBirth(PlaceOfBirthRequest $request, SpouseService $spouseService)
-    {                     
-        $step = $spouseService->create($request);        
-        return response()->json([
-            'status' => true,
-            'data' => view('web.visa-application.spouse-visa.status', [
-                'step' => $spouseService->next($step)
-            ])->render(),
-        ]);
-    }
-
-    public function status(StatusRequest $request, SpouseService $spouseService)
-    {                     
-        $step = $spouseService->create($request);        
-        return response()->json([
-            'status' => true,
-            'data' => view('web.visa-application.spouse-visa.marital-status', [
-                'step' => $spouseService->next($step)
-            ])->render(),
-        ]);
-    }
-
-    public function maritalStatus(MaritalStatusRequest $request, SpouseService $spouseService)
-    {                     
-        $step = $spouseService->create($request);        
-        return response()->json([
-            'status' => true,
-            'data' => view('web.visa-application.spouse-visa.other-filings', [
-                'step' => $spouseService->next($step)
-            ])->render(),
-        ]);
-    }
-
-    public function otherFiling(OtherFilingRequest $request, SpouseService $spouseService)
-    {                     
-        $step = $spouseService->create($request);        
-        return response()->json([
-            'status' => true,
-            'data' => view('web.visa-application.spouse-visa.military-convictions', [
-                'step' => $spouseService->next($step)
-            ])->render(),
-        ]);
-    }
-
-    public function militaryConviction(MilitaryConvictionRequest $request, SpouseService $spouseService)
-    {                     
-        $step = $spouseService->create($request);        
-        return response()->json([
-            'status' => true,
-            'data' => view('web.visa-application.spouse-visa.address', [
-                'step' => $spouseService->next($step)
-            ])->render(),
-        ]);
-    }
-
-    public function address(AddressRequest $request, SpouseService $spouseService)
-    {                     
-        $step = $spouseService->create($request);        
-        return response()->json([
-            'status' => true,
-            'data' => view('web.visa-application.spouse-visa.relationship', [
-                'step' => $spouseService->next($step)
-            ])->render(),
-        ]);
+    public function navigate(Request $request)
+    {
+        try {
+            $section = $request->section; // sponsor, beneficiary, or shared
+            $form = $request->form; // name, contact, etc.
+            
+            if (!$section || !$form) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Section and form are required'
+                ]);
+            }
+            
+            // Get step data based on section
+            if ($section === 'sponsor') {
+                $stepId = \App\Models\SpouseSponsor::where('user_id', Auth::id())
+                    ->where('name', $form)
+                    ->pluck('step_id')
+                    ->first();
+            } elseif ($section === 'beneficiary') {
+                $stepId = \App\Models\SpouseBeneficiary::where('user_id', Auth::id())
+                    ->where('name', $form)
+                    ->pluck('step_id')
+                    ->first();
+            } else {
+                // Shared section (relationship)
+                $stepId = SpouseVisaStep::where('user_id', Auth::id())
+                    ->where('name', $form)
+                    ->pluck('step_id')
+                    ->first();
+            }
+            
+            $step = $stepId ? SpouseVisaSubmittedStep::find($stepId) : null;
+            
+            // Determine view path
+            if ($section === 'shared') {
+                $viewPath = 'web.visa-application.spouse-visa.' . $form;
+            } else {
+                $viewPath = 'web.visa-application.spouse-visa.' . $section . '.' . $form;
+            }
+            
+            // Check if view exists
+            if (!view()->exists($viewPath)) {
+                \Log::error('Spouse Visa View Not Found: ' . $viewPath);
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Form view not found: ' . $viewPath
+                ]);
+            }
+            
+            return response()->json([
+                'status' => true,
+                'step' => view($viewPath, ['step' => $step])->render()
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Spouse Visa Navigate Error: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+            
+            return response()->json([
+                'status' => false,
+                'message' => 'Error loading form: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function relationship(RelationshipRequest $request, SpouseService $spouseService)
-    {                     
-        $step = $spouseService->create($request);        
-        return response()->json([
-            'status' => true,
-            'data' => view('web.visa-application.spouse-visa.employment', [
-                'step' => $spouseService->next($step)
-            ])->render(),
-        ]);
-    }
-
-    public function employment(EmploymentRequest $request, SpouseService $spouseService)
-    {                     
-        $step = $spouseService->create($request);        
-        return response()->json([
-            'status' => true,
-            'data' => view('web.visa-application.spouse-visa.name', [
-                'step' => $spouseService->next($step)
-            ])->render(),
-        ]);
-    }
-   
-    public function previousOrContinue(Request $request)
     {
-        $stepId = SpouseVisaStep::where('user_id', Auth::id())
-            ->where('name', $request->form)
-            ->pluck('step_id')
-            ->first();         
-        $step = SpouseVisaSubmittedStep::where('id', $stepId)
-                ->first();       
+        $step = $spouseService->create($request);
+        
         return response()->json([
             'status' => true,
-            'step' => view('web.visa-application.spouse-visa.'.$request->form.'', [
-                'step' => $step
-            ])->render()
+            'message' => 'Relationship information saved successfully',
         ]);
     }
 
     public function getState(Request $request)
     {
-        $states = State::where('country_id', $request->countryId)->pluck('name');
-        // $getState = '';
+        $countryId = $request->countryId;
+        $selectedState = $request->state;
+        
+        $states = State::where('country_id', $countryId)->get();
+        
         $getState = '<option value="">-Select State-</option>';
+        $getState .= '<option value="Does Not Apply">Does Not Apply</option>';
+        
         foreach ($states as $state) {
-            $getState .= '<option value='.$state.'>'.$state.'</option>';
+            $selected = ($selectedState == $state->name) ? 'selected' : '';
+            $getState .= '<option value="'.$state->name.'" '.$selected.'>'.$state->name.'</option>';
         }
+        
         return $getState;
     }
 }

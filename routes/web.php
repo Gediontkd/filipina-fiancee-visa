@@ -1,5 +1,5 @@
 <?php
-// routes/web.php (Updated - Visa info pages are now public)
+// routes/web.php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -13,9 +13,17 @@ use App\Http\Controllers\SpouseVisaApplicationController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\StripeController;
-use App\Http\Controllers\FianceVisa\SponsorController;
+
+// Fiance Visa Controllers
+use App\Http\Controllers\FianceVisa\SponsorController as FianceSponsorController;
 use App\Http\Controllers\FianceVisa\AlienController;
 use App\Http\Controllers\FianceVisa\AlienChildrenController;
+
+// Spouse Visa Controllers (with aliases to avoid conflicts)
+use App\Http\Controllers\SpouseVisa\SponsorController as SpouseSponsorController;
+use App\Http\Controllers\SpouseVisa\BeneficiaryController as SpouseBeneficiaryController;
+
+// Admin Controllers
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -23,9 +31,11 @@ use App\Http\Controllers\Admin\ApplicationController;
 use App\Http\Controllers\Admin\MonitoringController;
 use App\Http\Controllers\Admin\MessageController as AdminMessageController;
 use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
+
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ImmigrationNewsController;
 use App\Http\Controllers\PdfGenerationController;
+use App\Http\Controllers\CombinedCr1AosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -110,6 +120,8 @@ Route::get('/combined-cr1-aos', [CombinedCr1AosController::class, 'index'])
 */
 
 Route::group(['middleware' => ['auth', 'application']], function() {
+    
+    // Profile Routes
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/user/{page}', 'profile')->name('user.page');
         Route::post('/basic-information', 'basicInformation')->name('basicInformation');
@@ -122,7 +134,7 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::post('/delete-mail', 'deleteMail')->name('deleteMail'); 
     });
 
-     // PDF Generation for Users
+    // PDF Generation for Users
     Route::get('/generate-pdf', [PdfGenerationController::class, 'generateUserPdf'])
         ->name('user.generate-pdf');
     
@@ -154,8 +166,14 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::get('/application/status', 'checkSubmissionStatus')->name('application.status');
     });
 
-    // Fiance visa step form routes
-    Route::controller(SponsorController::class)->prefix('fiance-sponsor')->group(function () {
+    /*
+    |--------------------------------------------------------------------------
+    | FIANCE VISA ROUTES (K-1)
+    |--------------------------------------------------------------------------
+    */
+    
+    // Fiance Visa - Sponsor Section
+    Route::controller(FianceSponsorController::class)->prefix('fiance-sponsor')->group(function () {
         Route::get('/application', 'index')->name('fianceSponsorApplication');
         Route::post('/name', 'name')->name('fianceSponsorName');    
         Route::post('/contact', 'contact')->name('fianceSponsorContact');    
@@ -172,6 +190,7 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::get('/get-city', 'getCities')->name('getCities');
     });
 
+    // Fiance Visa - Alien Section
     Route::controller(AlienController::class)->prefix('fiance-alien')->group(function () {
         Route::get('/application', 'index')->name('fianceAlienApplication');
         Route::post('/name', 'name')->name('fianceAlienName');    
@@ -198,6 +217,7 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::post('/previous-and-continue', 'previousOrContinue')->name('fianceAlienPreOrCon');        
     });
 
+    // Fiance Visa - Alien Children Section
     Route::controller(AlienChildrenController::class)->prefix('fiance-alien-child')->group(function () {
         Route::get('/application', 'index')->name('fianceAlienChildApplication');
         Route::post('/child1', 'child1')->name('fianceAlienChild1');        
@@ -208,23 +228,64 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::post('/previous-and-continue', 'previousOrContinue')->name('fianceAlienChildPreOrCon');      
     });
 
-    // Spouse visa step form routes
+    /*
+    |--------------------------------------------------------------------------
+    | SPOUSE VISA ROUTES (CR-1/IR-1)
+    |--------------------------------------------------------------------------
+    */
+    
+    // Main Spouse Visa Controller (handles navigation and shared sections)
     Route::controller(SpouseVisaApplicationController::class)->prefix('spouse-visa')->group(function () {
+        // Main application page
         Route::get('/application', 'index')->name('spouseVisaApplication');
-        Route::post('/name', 'name')->name('spouseName');
+        
+        // Navigation handler
+        Route::post('/navigate', 'navigate')->name('spouseNavigate');
+        
+        // Shared routes (Relationship)
+        Route::post('/relationship', 'relationship')->name('spouseRelationship');
+        
+        // Helper routes
+        Route::get('/get-state', 'getState')->name('spouseGetState');
+        Route::post('/previous-and-continue', 'navigate')->name('spousePreviousOrContinue');
+    });
+    
+    // Spouse Visa - Sponsor Section
+    Route::controller(SpouseSponsorController::class)->prefix('spouse-visa/sponsor')->group(function() {
+        Route::get('/application', 'index')->name('spouseSponsorApplication');
+        Route::post('/name', 'name')->name('spouseSponsorName');
         Route::post('/contact', 'contact')->name('spouseContact');
+        Route::post('/address', 'address')->name('spouseAddress');
         Route::post('/place-of-birth', 'placeOfBirth')->name('spousePlaceOfBirth');
         Route::post('/status', 'status')->name('spouseStatus');
         Route::post('/marital-status', 'maritalStatus')->name('spouseMaritalStatus');
         Route::post('/other-filing', 'otherFiling')->name('spouseOtherFiling');
         Route::post('/military-conviction', 'militaryConviction')->name('spouseMilitaryConviction');
-        Route::post('/address', 'address')->name('spouseAddress');
-        Route::post('/relationship', 'relationship')->name('spouseRelationship');
         Route::post('/employment', 'employment')->name('spouseEmployment');
-        Route::post('/previous-and-continue', 'previousOrContinue')->name('spousePreviousOrContinue');
+        Route::post('/previous-and-continue', 'previousOrContinue')->name('spouseSponsorPreviousOrContinue');
+        Route::get('/get-state', 'getState')->name('spouseSponsorGetState');
+    });
+    
+    // Spouse Visa - Beneficiary Section
+    Route::controller(SpouseBeneficiaryController::class)->prefix('spouse-visa/beneficiary')->group(function() {
+        Route::get('/application', 'index')->name('spouseBeneficiaryApplication');
+        Route::post('/name', 'name')->name('spouseBeneficiaryName');
+        Route::post('/contact', 'contact')->name('spouseBeneficiaryContact');
+        Route::post('/address', 'address')->name('spouseBeneficiaryAddress');
+        Route::post('/place-of-birth', 'placeOfBirth')->name('spouseBeneficiaryPlaceOfBirth');
+        Route::post('/status', 'status')->name('spouseBeneficiaryStatus');
+        Route::post('/marital-status', 'maritalStatus')->name('spouseBeneficiaryMaritalStatus');
+        Route::post('/employment', 'employment')->name('spouseBeneficiaryEmployment');
+        Route::post('/previous-and-continue', 'previousOrContinue')->name('spouseBeneficiaryPreviousOrContinue');
+        Route::get('/get-state', 'getState')->name('spouseBeneficiaryGetState');
     });
 
-    // Adjustment of status visa step form routes
+    /*
+    |--------------------------------------------------------------------------
+    | ADJUSTMENT OF STATUS ROUTES
+    |--------------------------------------------------------------------------
+    */
+    
     Route::controller(AdjustmentOfStatusController::class)->prefix('adjustment-of-status')->group(function () {
         Route::get('/adjustment', 'show')->name('adjustment.show');
         Route::get('/{type}', 'application')->name('adjustmentVisaApplication');
@@ -250,20 +311,21 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::post('/previous-and-continue', 'previousOrContinue')->name('adjustmentPreviousOrContinue');
     });
 
-    // Combined CR-1 + AOS Application Routes
+    /*
+    |--------------------------------------------------------------------------
+    | COMBINED CR-1 + AOS ROUTES
+    |--------------------------------------------------------------------------
+    */
+    
     Route::controller(CombinedCr1AosController::class)
         ->prefix('combined-cr1-aos')
         ->group(function () {
             Route::get('/application', 'application')->name('combinedCr1AosApplication');
             Route::post('/petitioner-name', 'petitionerName')->name('combinedPetitionerName');
             Route::post('/previous-and-continue', 'previousOrContinue')->name('combinedPreviousOrContinue');
-            
-            // Add specific form step routes as needed
-            // Route::post('/name', 'name')->name('combinedName');
-            // Route::post('/address', 'address')->name('combinedAddress');
-            // etc...
         });
 
+    // Drop Box
     Route::resource('drop-box', DropBoxController::class);
 });
 
@@ -345,7 +407,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
     });
 });
 
-// Add this route configuration to handle admin redirects
+// Admin redirect
 Route::redirect('/admin', '/admin/dashboard');
 
+// Auth routes
 Auth::routes();
