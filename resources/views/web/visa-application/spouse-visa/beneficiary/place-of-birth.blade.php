@@ -646,30 +646,47 @@
                she_deceased: "Please select an option",
             },
             submitHandler: function(form) {
-                $('#spouseBeneficiaryPlaceOfBirthBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
-                $.ajax({
-                    headers: { 'X-CSRF-Token': $('input[name="_token"]').val() },
-                    type: 'post',
-                    url: "{{ route('spouseBeneficiaryPlaceOfBirth') }}",
-                    data: $(form).serialize(),
-                    dataType: 'json',
-                    success: function(data) {               
-                        if (data.status) {                                           
-                            $('.beneficiary-place-of-birth').removeClass('active');
-                            $('.beneficiary-status').addClass('active');
-                            $('.spouseVisaForm').html(data.data);                    
-                        } else {
-                            $('#spouseBeneficiaryPlaceOfBirthBtn').html('Save & Continue');
-                            toastr.error(data.message);                            
-                        }
-                    },
-                    error: function() {
-                        $('#spouseBeneficiaryPlaceOfBirthBtn').html('Save & Continue');
-                        toastr.error('An error occurred. Please try again.');
-                    }
-                });
-               return false;
+    $('#spouseBeneficiaryPlaceOfBirthBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>')
+        .prop('disabled', true);
+    
+    $.ajax({
+        headers: {
+            'X-CSRF-Token': $('input[name="_token"]').val()
+        },
+        type: 'post',
+        url: "{{ route('spouseBeneficiaryPlaceOfBirth') }}",
+        data: $(form).serialize(),
+        dataType: 'json',
+        success: function(data) {               
+            if (data.status) {                                           
+                $('.beneficiary-place-of-birth').removeClass('active');
+                $('.beneficiary-status').addClass('active');
+                $('.spouseVisaForm').html(data.data);
+                $('html, body').animate({
+                    scrollTop: $('.spouseVisaForm').offset().top - 100
+                }, 300);
+                toastr.success('Birth information saved successfully');
+            } else {
+                toastr.error(data.message || 'Failed to save information');                            
             }
+        },
+        error: function(xhr) {
+            var errors = xhr.responseJSON?.errors;
+            if (errors) {
+                $.each(errors, function(field, messages) {
+                    toastr.error(messages[0]);
+                });
+            } else {
+                toastr.error(xhr.responseJSON?.message || 'An error occurred. Please try again.');
+            }
+        },
+        complete: function() {
+            $('#spouseBeneficiaryPlaceOfBirthBtn').html('Save & Continue')
+                .prop('disabled', false);
+        }
+    });
+    return false;
+}
         });
     </script>                                
 </div>
