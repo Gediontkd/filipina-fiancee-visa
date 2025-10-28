@@ -1,3 +1,4 @@
+// public\assets\js\spouse-steps.js
 $(document).on("change", ".applyUnkown", function () {
   var field = $(this).data("field");
   // console.log($('.'+field).attr('type'));
@@ -351,3 +352,70 @@ function calculateDurationMinus5Years(startDate, endDate) {
   // Return the duration in years and months as a string.
   return yearsDiff + " years, " + monthsDiff + " months";
 }
+
+// Prevent form buttons from triggering form submission
+$(document).on('click', '.spousePreviousOrContinue', function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    
+    var section = $(this).data('section');
+    var form = $(this).data('form');
+    
+    // Don't process if it's a section header
+    if ($(this).hasClass('section-header')) {
+        return false;
+    }
+    
+    // Validate section and form exist
+    if (!section || !form) {
+        toastr.error('Navigation error: missing section or form data');
+        return false;
+    }
+    
+    // Show loading
+    var $btn = $(this);
+    var originalHtml = $btn.html();
+    $btn.html('Loading...').prop('disabled', true);
+    
+    $.ajax({
+        headers: {
+           'X-CSRF-Token': $('input[name="_token"]').val()
+        },
+        type: 'post',
+        url: '/spouse-visa/navigate',
+        data: { 
+            section: section,
+            form: form 
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.status) {
+                // Remove active from all items
+                $('#progressbar li:not(.section-header)').removeClass('active');
+                
+                // Add active to the target
+                $('.' + section + '-' + form).addClass('active');
+                
+                // Load the form content
+                $('.spouseVisaForm').html(data.step);
+                
+                // Scroll to top of form
+                $('html, body').animate({
+                    scrollTop: $('.spouseVisaForm').offset().top - 100
+                }, 300);
+            } else {
+                toastr.error(data.message || 'Failed to load form');
+            }
+        },
+        error: function(xhr) {
+            var errorMsg = xhr.responseJSON?.message || 'Failed to load section. Please try again.';
+            toastr.error(errorMsg);
+            console.error('Navigation error:', xhr.responseJSON);
+        },
+        complete: function() {
+            $btn.html(originalHtml).prop('disabled', false);
+        }
+    });
+    
+    return false;
+});

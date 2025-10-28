@@ -230,15 +230,21 @@
         {!! Form::hidden('next', 'place-of-birth') !!}
         {{ Form::button('Back To Start', [
             'class' => 'btn btn-tra-grey spousePreviousOrContinue',
-            'data-form' => 'name'
+            'data-form' => 'name',
+            'data-section' => 'sponsor',
+            'type' => 'button'
         ]) }}
         {{ Form::button('Previous Step', [
             'class' => 'btn btn-tra-grey spousePreviousOrContinue',
-            'data-form' => 'name'
+            'data-form' => 'name',
+            'data-section' => 'sponsor',
+            'type' => 'button'
         ]) }}
         {{ Form::button('Skip & Continue', [
             'class' => 'btn btn-tra-grey ms-2 spousePreviousOrContinue',
-            'data-form' => 'place-of-birth'
+            'data-form' => 'place-of-birth',
+            'data-section' => 'sponsor',
+            'type' => 'button'
         ]) }}
         {{ Form::button('Save & Continue', [
             'class' => 'btn btn-tra-primary ms-2',
