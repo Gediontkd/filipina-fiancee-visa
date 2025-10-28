@@ -16,11 +16,11 @@ class NameRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'first_name' => ['required'],
-            // 'middle_name' => ['required'],           
-            // 'last_name' => ['required'],           
+            'first_name' => ['required'],
+            'middle_name' => ['required'],           
+            'last_name' => ['required'],           
             'gender' => ['required'],           
-            'related_to_you' => ['required'],           
+            // 'related_to_you' => ['required'],           
         ];    
     }
 

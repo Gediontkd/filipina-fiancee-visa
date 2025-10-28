@@ -302,30 +302,47 @@
                country10: "Please choose country!",                                        
             },
             submitHandler: function(form) {
-                $('#spouseAddressBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
-                var serializedData = $(form).serialize();
-                $.ajax({
-                    headers: {
-                        'X-CSRF-Token': $('input[name="_token"]').val()
-                    },
-                    type: 'post',
-                    url: "{{ route('spouseAddress') }}",
-                    data: serializedData,
-                    dataType: 'json',
-                    success: function(data) {               
-                        if (data.status == true) {                                           
-                            $('.address').removeClass('active');
-                            $('.relationship').addClass('active');
-                            $('.spouseVisaForm').html(data.data);                    
-                        }
-                        if (data.status == false) {
-                            toastr.options.timeOut = 10000;
-                            toastr.error(data.message);                           
-                        }
-                    }
-                });
-               return false;
+    $('#spouseAddressBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>')
+        .prop('disabled', true);
+    
+    $.ajax({
+        headers: {
+            'X-CSRF-Token': $('input[name="_token"]').val()
+        },
+        type: 'post',
+        url: "{{ route('spouseAddress') }}",
+        data: $(form).serialize(),
+        dataType: 'json',
+        success: function(data) {               
+            if (data.status) {                                           
+                $('.sponsor-address').removeClass('active');
+                $('.sponsor-relationship').addClass('active');
+                $('.spouseVisaForm').html(data.data);
+                $('html, body').animate({
+                    scrollTop: $('.spouseVisaForm').offset().top - 100
+                }, 300);
+                toastr.success('Address information saved successfully');
+            } else {
+                toastr.error(data.message || 'Failed to save information');                           
             }
+        },
+        error: function(xhr) {
+            var errors = xhr.responseJSON?.errors;
+            if (errors) {
+                $.each(errors, function(field, messages) {
+                    toastr.error(messages[0]);
+                });
+            } else {
+                toastr.error(xhr.responseJSON?.message || 'An error occurred. Please try again.');
+            }
+        },
+        complete: function() {
+            $('#spouseAddressBtn').html('Save & Continue')
+                .prop('disabled', false);
+        }
+    });
+    return false;
+}
         });
 
         function addAnotherCountry(index) {

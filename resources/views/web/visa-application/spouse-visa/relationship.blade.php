@@ -319,30 +319,47 @@
                end_date: "Please enter date!",                             
             },
             submitHandler: function(form) {
-                $('#spouseRelationshipBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
-                var serializedData = $(form).serialize();
-                $.ajax({
-                    headers: {
-                        'X-CSRF-Token': $('input[name="_token"]').val()
-                    },
-                    type: 'post',
-                    url: "{{ route('spouseRelationship') }}",
-                    data: serializedData,
-                    dataType: 'json',
-                    success: function(data) {               
-                        if (data.status == true) {                                           
-                            $('.relationship').removeClass('active');
-                            $('.employment').addClass('active');
-                            $('.spouseVisaForm').html(data.data);                    
-                        }
-                        if (data.status == false) {
-                            toastr.options.timeOut = 10000;
-                            toastr.error(data.message);                           
-                        }
-                    }
-                });
-               return false;
+    $('#spouseRelationshipBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>')
+        .prop('disabled', true);
+    
+    $.ajax({
+        headers: {
+            'X-CSRF-Token': $('input[name="_token"]').val()
+        },
+        type: 'post',
+        url: "{{ route('spouseRelationship') }}",
+        data: $(form).serialize(),
+        dataType: 'json',
+        success: function(data) {               
+            if (data.status) {                                           
+                $('.relationship').removeClass('active');
+                toastr.success('Relationship information saved successfully');
+                
+                // Optionally redirect to progress page
+                setTimeout(function() {
+                    window.location.href = "{{ route('user.page', 'progress') }}";
+                }, 2000);
+            } else {
+                toastr.error(data.message || 'Failed to save information');                           
             }
+        },
+        error: function(xhr) {
+            var errors = xhr.responseJSON?.errors;
+            if (errors) {
+                $.each(errors, function(field, messages) {
+                    toastr.error(messages[0]);
+                });
+            } else {
+                toastr.error(xhr.responseJSON?.message || 'An error occurred. Please try again.');
+            }
+        },
+        complete: function() {
+            $('#spouseRelationshipBtn').html('Save & Continue')
+                .prop('disabled', false);
+        }
+    });
+    return false;
+}
         });       
     </script>
 </div>

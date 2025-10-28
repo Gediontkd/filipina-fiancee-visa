@@ -265,35 +265,47 @@
                date: "Please enter date!",                                            
             },
             submitHandler: function(form) {
-                $('#spouseEmploymentBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
-                var serializedData = $(form).serialize();
-                $.ajax({
-                    headers: {
-                        'X-CSRF-Token': $('input[name="_token"]').val()
-                    },
-                    type: 'post',
-                    url: "{{ route('spouseEmployment') }}",
-                    data: serializedData,
-                    dataType: 'json',
-                    success: function(data) {               
-                        if (data.status == true) {                                           
-                            $('.employment').removeClass('active');
-                            $('.name').addClass('active');
-                            $('.spouseVisaForm').html(data.data);                    
-                        }
-                        if (data.status == false) {
-                            $('#spouseEmploymentBtn').html('Save & Continue');
-                            toastr.options.timeOut = 10000;
-                            toastr.error(data.message);                           
-                        }
-                    },
-                    error: function() {
-                        $('#spouseEmploymentBtn').html('Save & Continue');
-                        toastr.error('An error occurred. Please try again.');
-                    }
-                });
-               return false;
+    $('#spouseEmploymentBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>')
+        .prop('disabled', true);
+    
+    $.ajax({
+        headers: {
+            'X-CSRF-Token': $('input[name="_token"]').val()
+        },
+        type: 'post',
+        url: "{{ route('spouseEmployment') }}",
+        data: $(form).serialize(),
+        dataType: 'json',
+        success: function(data) {               
+            if (data.status) {                                           
+                $('.sponsor-employment').removeClass('active');
+                $('.relationship').addClass('active');
+                $('.spouseVisaForm').html(data.data);
+                $('html, body').animate({
+                    scrollTop: $('.spouseVisaForm').offset().top - 100
+                }, 300);
+                toastr.success('Employment information saved successfully');
+            } else {
+                toastr.error(data.message || 'Failed to save information');                           
             }
+        },
+        error: function(xhr) {
+            var errors = xhr.responseJSON?.errors;
+            if (errors) {
+                $.each(errors, function(field, messages) {
+                    toastr.error(messages[0]);
+                });
+            } else {
+                toastr.error(xhr.responseJSON?.message || 'An error occurred. Please try again.');
+            }
+        },
+        complete: function() {
+            $('#spouseEmploymentBtn').html('Save & Continue')
+                .prop('disabled', false);
+        }
+    });
+    return false;
+}
         });             
     </script>
 </div>

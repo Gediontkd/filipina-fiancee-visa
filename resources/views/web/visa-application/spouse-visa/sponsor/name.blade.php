@@ -293,34 +293,50 @@
                prior_name1: "Please indicate if you have used other names",
             },
             submitHandler: function(form) {
-                $('#spouseSponsorNameBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
-                var serializedData = $(form).serialize();
+                $('#spouseSponsorNameBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>')
+                    .prop('disabled', true);
+                
                 $.ajax({
                     headers: {
                         'X-CSRF-Token': $('input[name="_token"]').val()
                     },
                     type: 'post',
                     url: "{{ route('spouseSponsorName') }}",
-                    data: serializedData,
+                    data: $(form).serialize(),
                     dataType: 'json',
                     success: function(data) {               
-                        if (data.status == true) {                                           
+                        if (data.status) {                                           
+                            // Remove active from current
                             $('.sponsor-name').removeClass('active');
+                            // Add active to next
                             $('.sponsor-contact').addClass('active');
-                            $('.spouseVisaForm').html(data.data);                    
-                        }
-                        if (data.status == false) {
-                            $('#spouseSponsorNameBtn').html('Save & Continue');
-                            toastr.options.timeOut = 10000;
-                            toastr.error(data.message);                           
+                            // Load new form
+                            $('.spouseVisaForm').html(data.data);
+                            // Scroll to top
+                            $('html, body').animate({
+                                scrollTop: $('.spouseVisaForm').offset().top - 100
+                            }, 300);
+                            toastr.success('Information saved successfully');
+                        } else {
+                            toastr.error(data.message || 'Failed to save');                           
                         }
                     },
-                    error: function() {
-                        $('#spouseSponsorNameBtn').html('Save & Continue');
-                        toastr.error('An error occurred. Please try again.');
+                    error: function(xhr) {
+                        var errors = xhr.responseJSON?.errors;
+                        if (errors) {
+                            $.each(errors, function(field, messages) {
+                                toastr.error(messages[0]);
+                            });
+                        } else {
+                            toastr.error(xhr.responseJSON?.message || 'An error occurred');
+                        }
+                    },
+                    complete: function() {
+                        $('#spouseSponsorNameBtn').html('Save & Continue')
+                            .prop('disabled', false);
                     }
                 });
-               return false;
+                return false;
             }
         });
     </script>   
