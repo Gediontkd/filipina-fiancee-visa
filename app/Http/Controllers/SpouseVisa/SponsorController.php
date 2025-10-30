@@ -27,11 +27,18 @@ class SponsorController extends Controller
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            $request['submitted_app_id'] = UserSubmittedApplication::where('user_id', Auth::id())
-                ->where('application_id', 3)
-                ->where('status', 'pending')
-                ->pluck('id')
-                ->first();
+            $submission = UserSubmittedApplication::firstOrCreate(
+                [
+                    'user_id' => Auth::id(),
+                    'application_id' => 3,
+                ],
+                [
+                    'status' => 'pending',
+                    'submitted_at' => null
+                ]
+            );
+            
+            $request['submitted_app_id'] = $submission->id;
             return $next($request);
         });
     }
