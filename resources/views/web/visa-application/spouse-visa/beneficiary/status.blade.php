@@ -5,7 +5,7 @@
             <div class="heading mb-30">
                 <h2>Beneficiary's Biographic Information</h2>
                 <div class="card bg-info">
-                    <p class="text-center pt-3 text-white">Do not write your answers in all capital letters and never use any type of non-English characters.</p>
+                    <!-- <p class="text-center pt-3 text-white">Do not write your answers in all capital letters and never use any type of non-English characters.</p> -->
                 </div>
             </div>
             <div class="clearfix"></div>

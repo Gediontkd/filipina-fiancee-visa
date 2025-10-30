@@ -4,7 +4,7 @@
         <div class="form-card">
             <div class="heading mb-30">
                 <h2>All questions are about the Alien (foreign citizen).</h2>
-                <p class="text-danger">Do not write your answers in all capital letters and never use any type of non-English characters.</p>
+                <!-- <p class="text-danger">Do not write your answers in all capital letters and never use any type of non-English characters.</p> -->
             </div>
             <div class="row">
                 <div class="col-md-12">
