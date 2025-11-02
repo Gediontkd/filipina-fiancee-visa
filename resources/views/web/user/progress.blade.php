@@ -1,4 +1,4 @@
-<!-- resources\views\web\user\progress.blade.php -->
+{{-- resources/views/web/user/progress.blade.php (UPDATED - Payment & PDF for ALL) --}}
 @extends('web.layout.master')
 @section('content')
 <section class="myaccount ptb-80 bg-lightgrey">
@@ -10,6 +10,9 @@
             </div>
             <div class="col-lg-8 col-xl-9 col-xxl-9 col-md-9">
                 @php
+                    use App\Helpers\PaymentHelper;
+                    use App\Helpers\PdfControlHelper;
+                    
                     // Get the active pending application
                     $activeSubmission = \App\Models\UserSubmittedApplication::where('user_id', Auth::id())
                         ->where('status', 'pending')
@@ -22,6 +25,12 @@
                         ->with('visaApplication')
                         ->latest()
                         ->first();
+                    
+                    // Check payment status
+                    $paymentStatus = PaymentHelper::checkPaymentStatus(Auth::id());
+                    
+                    // Check PDF status
+                    $pdfStatus = PdfControlHelper::checkPdfStatus(Auth::id());
                 @endphp
 
                 @if($completedSubmission)
@@ -72,15 +81,40 @@
                                 </a>
                             </div>
 
-                            <!-- PDF Generation for Submitted Applications -->
+                            <!-- PDF Download Section -->
                             <div class="mt-4">
-                                <div class="alert alert-info">
-                                    <h6><i class="fa fa-file-pdf me-2"></i>Download Complete Application Package</h6>
-                                    <p class="mb-3">You can download a complete PDF package of your application forms.</p>
-                                    <button onclick="generateUserPdf()" id="user-pdf-btn-1" class="btn btn-danger">
-                                        <i class="fa fa-file-pdf me-2"></i>Generate PDF Package
-                                    </button>
-                                </div>
+                                @if($paymentStatus['has_paid'])
+                                    <!-- Payment Complete - Show PDF Download -->
+                                    <div class="alert alert-success">
+                                        <h6><i class="fa fa-check-circle me-2"></i>Payment Completed</h6>
+                                        <p class="mb-3">
+                                            <strong>Amount Paid:</strong> ${{ number_format($paymentStatus['amount'], 2) }}<br>
+                                            <strong>Paid On:</strong> {{ $paymentStatus['paid_at']->format('M j, Y') }}
+                                        </p>
+                                        
+                                        @if($pdfStatus['can_generate'])
+                                            <button onclick="generateUserPdf()" id="user-pdf-btn-1" class="btn btn-danger">
+                                                <i class="fa fa-file-pdf me-2"></i>Download PDF Package ({{ $pdfStatus['pdf_count'] }} file(s))
+                                            </button>
+                                        @else
+                                            <div class="alert alert-warning mb-0">
+                                                <i class="fa fa-clock me-2"></i>{{ $pdfStatus['message'] }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                @else
+                                    <!-- Payment Required -->
+                                    <div class="alert alert-warning">
+                                        <h6><i class="fa fa-credit-card me-2"></i>Payment Required for PDF Download</h6>
+                                        <p class="mb-3">Complete payment to download your application package.</p>
+                                        <p class="mb-3">
+                                            <strong>Amount:</strong> ${{ number_format($paymentStatus['amount'], 2) }}
+                                        </p>
+                                        <a href="{{ route('payment.index') }}" class="btn btn-warning">
+                                            <i class="fa fa-credit-card me-2"></i>Complete Payment (${{ number_format($paymentStatus['amount'], 2) }})
+                                        </a>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -90,9 +124,9 @@
                         $applicationType = $activeSubmission->application_id;
                     @endphp
 
-                    <!-- Section Progress Card -->
+                    <!-- Application Type Specific Progress -->
                     @if($applicationType == 1)
-                        <!-- Fiancée Visa Sections -->
+                        {{-- FIANCE VISA - Keep existing code --}}
                         <div class="card mb-3">
                             <div class="card-header p-3">
                                 <h2 class="card-title text-center">Section Progress - Fiancée Visa (K-1)</h2>
@@ -141,114 +175,239 @@
                                 </div>
                             </div>
                         </div>
+
                     @elseif($applicationType == 2)
-                        <!-- Adjustment of Status -->
+                        {{-- ADJUSTMENT OF STATUS --}}
                         <div class="card mb-3">
-                            <div class="card-header p-3">
-                                <h2 class="card-title text-center">Section Progress - Adjustment of Status</h2>
+                            <div class="card-header p-3 bg-primary text-white">
+                                <h2 class="card-title text-white mb-0">
+                                    <i class="fa fa-id-card me-2"></i>Adjustment of Status Application (I-485)
+                                </h2>
                             </div>
                             <div class="card-body p-3">
                                 @php
-                                    $adjustmentType = \App\Models\AdjustmentType::where('user_id', Auth::id())
+                                    $aosApp = \App\Models\SimplifiedAosApplication::where('user_id', Auth::id())
                                         ->where('submitted_app_id', $activeSubmission->id)
                                         ->first();
+                                    
+                                    $aosCompletion = 0;
+                                    if ($aosApp) {
+                                        $service = new \App\Http\Services\AdjustmentOfStatus\SimplifiedAosService();
+                                        $aosCompletion = $service->calculateCompletion($aosApp);
+                                    }
                                 @endphp
-                                
-                                @if($adjustmentType)
-                                    <div class="alert alert-info">
-                                        <strong>Application Type:</strong> {{ ucfirst($adjustmentType->name) }}
+
+                                @if($aosApp)
+                                    <div class="row mb-4">
+                                        <div class="col-md-12">
+                                            <h6 class="mb-2">Application Progress</h6>
+                                            <div class="progress" style="height: 30px;">
+                                                <div class="progress-bar progress-bar-striped {{ $aosCompletion >= 100 ? 'bg-success' : 'bg-info' }}" 
+                                                    role="progressbar" 
+                                                    style="width: {{ $aosCompletion }}%" 
+                                                    aria-valuenow="{{ $aosCompletion }}" 
+                                                    aria-valuemin="0" 
+                                                    aria-valuemax="100">
+                                                    <strong>{{ $aosCompletion }}%</strong>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <a href="{{ route('adjustmentVisaApplication', ['type' => $adjustmentType->name]) }}" class="btn btn-primary">
-                                        <i class="fa fa-edit me-2"></i>Continue Application
-                                    </a>
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-3">
+                                            <div class="card border-{{ $aosApp->applicant_first_name ? 'success' : 'secondary' }}">
+                                                <div class="card-body p-3 text-center">
+                                                    <i class="fa fa-user fa-2x mb-2 text-{{ $aosApp->applicant_first_name ? 'success' : 'muted' }}"></i>
+                                                    <h6>Applicant Info</h6>
+                                                    <span class="badge bg-{{ $aosApp->applicant_first_name ? 'success' : 'secondary' }}">
+                                                        {{ $aosApp->applicant_first_name ? 'Started' : 'Not Started' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="card border-{{ $aosApp->current_visa_type ? 'success' : 'secondary' }}">
+                                                <div class="card-body p-3 text-center">
+                                                    <i class="fa fa-passport fa-2x mb-2 text-{{ $aosApp->current_visa_type ? 'success' : 'muted' }}"></i>
+                                                    <h6>Immigration Status</h6>
+                                                    <span class="badge bg-{{ $aosApp->current_visa_type ? 'success' : 'secondary' }}">
+                                                        {{ $aosApp->current_visa_type ? 'Started' : 'Not Started' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="card border-{{ $aosApp->sponsor_first_name ? 'success' : 'secondary' }}">
+                                                <div class="card-body p-3 text-center">
+                                                    <i class="fa fa-users fa-2x mb-2 text-{{ $aosApp->sponsor_first_name ? 'success' : 'muted' }}"></i>
+                                                    <h6>Sponsor</h6>
+                                                    <span class="badge bg-{{ $aosApp->sponsor_first_name ? 'success' : 'secondary' }}">
+                                                        {{ $aosApp->sponsor_first_name ? 'Started' : 'Not Started' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="card border-{{ $aosApp->arrested_or_convicted !== null ? 'success' : 'secondary' }}">
+                                                <div class="card-body p-3 text-center">
+                                                    <i class="fa fa-clipboard-list fa-2x mb-2 text-{{ $aosApp->arrested_or_convicted !== null ? 'success' : 'muted' }}"></i>
+                                                    <h6>Background</h6>
+                                                    <span class="badge bg-{{ $aosApp->arrested_or_convicted !== null ? 'success' : 'secondary' }}">
+                                                        {{ $aosApp->arrested_or_convicted !== null ? 'Started' : 'Not Started' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <a href="{{ route('aos-simplified.index') }}" class="btn btn-primary btn-lg">
+                                            <i class="fa fa-edit me-2"></i>Continue Application
+                                        </a>
+                                        
+                                        @if($aosApp->status === 'draft')
+                                            <p class="text-muted mt-2 mb-0">
+                                                <small>
+                                                    <i class="fa fa-save me-1"></i>
+                                                    Last saved: {{ $aosApp->updated_at->diffForHumans() }}
+                                                </small>
+                                            </p>
+                                        @endif
+                                    </div>
                                 @else
-                                    <div class="alert alert-warning">
-                                        <h6><i class="fa fa-exclamation-triangle me-2"></i>Select Adjustment Type</h6>
-                                        <p>Please select which type of Adjustment of Status application you need:</p>
+                                    <div class="alert alert-info">
+                                        <h6><i class="fa fa-info-circle me-2"></i>Get Started</h6>
+                                        <p class="mb-0">Start your Adjustment of Status application.</p>
                                     </div>
-                                    <a href="{{ route('adjustment.show') }}" class="btn btn-primary">
-                                        <i class="fa fa-arrow-right me-2"></i>Select Application Type
-                                    </a>
+                                    
+                                    <div class="text-center">
+                                        <a href="{{ route('aos-simplified.index') }}" class="btn btn-primary btn-lg">
+                                            <i class="fa fa-plus me-2"></i>Start AOS Application
+                                        </a>
+                                    </div>
                                 @endif
                             </div>
                         </div>
-    @elseif($applicationType == 3)
-    <!-- Spouse Visa -->
-    <div class="card mb-3">
-        <div class="card-header p-3">
-            <h2 class="card-title text-center">Section Progress - Spouse Visa (CR-1/IR-1)</h2>
-        </div>
-        <div class="card-body p-3">
-            <div class="row">
-                <div class="col-md-4">
-                    <h6>Section</h6>
-                    <a href="{{ route('spouseSponsorApplication') }}" class="btn btn-tra-grey my-2 w-100">
-                        Sponsor Section
-                    </a>
-                    <a href="{{ route('spouseBeneficiaryApplication') }}" class="btn btn-tra-grey my-2 w-100">
-                        Beneficiary Section
-                    </a>
-                    <a href="{{ route('spouseVisaApplication') }}" class="btn btn-tra-grey my-2 w-100">
-                        Marriage Info (Shared)
-                    </a>
-                </div>
-                <div class="col-md-8">
-                    <h6>Progress</h6>
-                    
-                    <!-- Sponsor Progress -->
-                    <div class="progress my-4">
-                        <div class="progress-bar progress-bar-striped bg-success" 
-                            role="progressbar" 
-                            style="width: {{ $spouseSponsorTotal ?? 0 }}%" 
-                            aria-valuenow="{{ $spouseSponsorTotal ?? 0 }}" 
-                            aria-valuemin="0" 
-                            aria-valuemax="100">
-                            {{ number_format($spouseSponsorTotal ?? 0, 0) }}%
-                        </div>
-                    </div>
-                    
-                    <!-- Beneficiary Progress -->
-                    <div class="progress my-4">
-                        <div class="progress-bar progress-bar-striped bg-success" 
-                            role="progressbar" 
-                            style="width: {{ $spouseBeneficiaryTotal ?? 0 }}%" 
-                            aria-valuenow="{{ $spouseBeneficiaryTotal ?? 0 }}" 
-                            aria-valuemin="0" 
-                            aria-valuemax="100">
-                            {{ number_format($spouseBeneficiaryTotal ?? 0, 0) }}%
-                        </div>
-                    </div>
-                    
-                    <!-- Shared/Relationship Progress -->
-                    <div class="progress my-4">
-                        <div class="progress-bar progress-bar-striped bg-success" 
-                            role="progressbar" 
-                            style="width: {{ $spouseRelationshipTotal ?? 0 }}%" 
-                            aria-valuenow="{{ $spouseRelationshipTotal ?? 0 }}" 
-                            aria-valuemin="0" 
-                            aria-valuemax="100">
-                            {{ number_format($spouseRelationshipTotal ?? 0, 0) }}%
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-@elseif($applicationType == 4)
-    <!-- Combined CR-1 + AOS -->
-    <div class="card mb-3">
-        <div class="card-header p-3">
-            <h2 class="card-title text-center">Section Progress - Combined CR-1 + AOS</h2>
-        </div>
-        <div class="card-body p-3">
-            <a href="{{ route('combinedCr1AosApplication') }}" class="btn btn-primary">
-                <i class="fa fa-edit me-2"></i>Continue Application
-            </a>
-        </div>
-    </div>
-@endif
 
-                    <!-- Overall Progress -->
+                    @elseif($applicationType == 3)
+                        {{-- SPOUSE VISA --}}
+                        <div class="card mb-3">
+                            <div class="card-header p-3 bg-primary text-white">
+                                <h2 class="card-title text-white mb-0">
+                                    <i class="fa fa-heart me-2"></i>Spouse Visa Application (CR-1/IR-1)
+                                </h2>
+                            </div>
+                            <div class="card-body p-3">
+                                @php
+                                    $spouseApp = \App\Models\SimplifiedSpouseVisaApplication::where('user_id', Auth::id())
+                                        ->where('submitted_app_id', $activeSubmission->id)
+                                        ->first();
+                                    
+                                    $spouseCompletion = 0;
+                                    if ($spouseApp) {
+                                        $service = new \App\Http\Services\Spouse\SimplifiedSpouseVisaService();
+                                        $spouseCompletion = $service->calculateCompletion($spouseApp);
+                                    }
+                                @endphp
+
+                                @if($spouseApp)
+                                    <div class="row mb-4">
+                                        <div class="col-md-12">
+                                            <h6 class="mb-2">Application Progress</h6>
+                                            <div class="progress" style="height: 30px;">
+                                                <div class="progress-bar progress-bar-striped {{ $spouseCompletion >= 100 ? 'bg-success' : 'bg-info' }}" 
+                                                    role="progressbar" 
+                                                    style="width: {{ $spouseCompletion }}%" 
+                                                    aria-valuenow="{{ $spouseCompletion }}" 
+                                                    aria-valuemin="0" 
+                                                    aria-valuemax="100">
+                                                    <strong>{{ $spouseCompletion }}%</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-4">
+                                        <div class="col-md-4">
+                                            <div class="card border-{{ $spouseApp->sponsor_first_name ? 'success' : 'secondary' }}">
+                                                <div class="card-body p-3 text-center">
+                                                    <i class="fa fa-user fa-2x mb-2 text-{{ $spouseApp->sponsor_first_name ? 'success' : 'muted' }}"></i>
+                                                    <h6>Sponsor</h6>
+                                                    <span class="badge bg-{{ $spouseApp->sponsor_first_name ? 'success' : 'secondary' }}">
+                                                        {{ $spouseApp->sponsor_first_name ? 'Started' : 'Not Started' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card border-{{ $spouseApp->beneficiary_first_name ? 'success' : 'secondary' }}">
+                                                <div class="card-body p-3 text-center">
+                                                    <i class="fa fa-user-friends fa-2x mb-2 text-{{ $spouseApp->beneficiary_first_name ? 'success' : 'muted' }}"></i>
+                                                    <h6>Beneficiary</h6>
+                                                    <span class="badge bg-{{ $spouseApp->beneficiary_first_name ? 'success' : 'secondary' }}">
+                                                        {{ $spouseApp->beneficiary_first_name ? 'Started' : 'Not Started' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card border-{{ $spouseApp->marriage_date ? 'success' : 'secondary' }}">
+                                                <div class="card-body p-3 text-center">
+                                                    <i class="fa fa-heart fa-2x mb-2 text-{{ $spouseApp->marriage_date ? 'success' : 'muted' }}"></i>
+                                                    <h6>Relationship</h6>
+                                                    <span class="badge bg-{{ $spouseApp->marriage_date ? 'success' : 'secondary' }}">
+                                                        {{ $spouseApp->marriage_date ? 'Started' : 'Not Started' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <a href="{{ route('spouse-visa-simplified.index') }}" class="btn btn-primary btn-lg">
+                                            <i class="fa fa-edit me-2"></i>Continue Application
+                                        </a>
+                                        
+                                        @if($spouseApp->status === 'draft')
+                                            <p class="text-muted mt-2 mb-0">
+                                                <small>
+                                                    <i class="fa fa-save me-1"></i>
+                                                    Last saved: {{ $spouseApp->updated_at->diffForHumans() }}
+                                                </small>
+                                            </p>
+                                        @endif
+                                    </div>
+                                @else
+                                    <div class="alert alert-info">
+                                        <h6><i class="fa fa-info-circle me-2"></i>Get Started</h6>
+                                        <p class="mb-0">Start your spouse visa application.</p>
+                                    </div>
+                                    
+                                    <div class="text-center">
+                                        <a href="{{ route('spouse-visa-simplified.index') }}" class="btn btn-primary btn-lg">
+                                            <i class="fa fa-plus me-2"></i>Start Spouse Visa Application
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                    @elseif($applicationType == 4)
+                        {{-- COMBINED CR-1 + AOS --}}
+                        <div class="card mb-3">
+                            <div class="card-header p-3">
+                                <h2 class="card-title text-center">Combined CR-1 + AOS</h2>
+                            </div>
+                            <div class="card-body p-3">
+                                <a href="{{ route('combinedCr1AosApplication') }}" class="btn btn-primary">
+                                    <i class="fa fa-edit me-2"></i>Continue Application
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Overall Progress & Submit -->
                     <div class="card mb-3">
                         <div class="card-header p-3">
                             <h2 class="card-title text-center">Overall Progress</h2>
@@ -266,28 +425,34 @@
                             </div>
 
                             @if($overAll >= 100)
-                                <!-- Ready to Submit -->
                                 <div class="mt-4">
                                     <div class="alert alert-success">
                                         <h5><i class="fa fa-check-circle me-2"></i>Ready to Submit!</h5>
-                                        <p>Congratulations! You have completed all required sections. Your application is ready for submission.</p>
+                                        <p>Complete all required sections. Your application is ready for submission.</p>
                                     </div>
                                     
-                                    <div class="text-center">
-                                        <a href="{{ route('application.review') }}" class="btn btn-success btn-lg">
-                                            <i class="fa fa-paper-plane me-2"></i>Review & Submit Application
-                                        </a>
-                                        <p class="text-muted mt-2 small">
-                                            Review your information and submit your application for processing
-                                        </p>
-                                    </div>
+                                    <!-- Payment Required Before Submission -->
+                                    @if($paymentStatus['has_paid'])
+                                        <div class="text-center">
+                                            <a href="{{ route('application.review') }}" class="btn btn-success btn-lg">
+                                                <i class="fa fa-paper-plane me-2"></i>Review & Submit Application
+                                            </a>
+                                        </div>
+                                    @else
+                                        <div class="alert alert-warning">
+                                            <h6><i class="fa fa-credit-card me-2"></i>Payment Required Before Submission</h6>
+                                            <p class="mb-3">Please complete payment before submitting your application.</p>
+                                            <a href="{{ route('payment.index') }}" class="btn btn-warning btn-lg">
+                                                <i class="fa fa-credit-card me-2"></i>Pay Now (${{ number_format($paymentStatus['amount'], 2) }})
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                             @else
-                                <!-- Still Need to Complete -->
                                 <div class="mt-4">
                                     <div class="alert alert-warning">
                                         <h6><i class="fa fa-exclamation-triangle me-2"></i>Complete All Sections</h6>
-                                        <p class="mb-0">Please complete all required sections before submitting your application. You are {{ number_format($overAll, 0) }}% complete.</p>
+                                        <p class="mb-0">Please complete all required sections. You are {{ number_format($overAll, 0) }}% complete.</p>
                                     </div>
                                 </div>
                             @endif
@@ -299,7 +464,7 @@
                         <div class="card-body p-4 text-center">
                             <i class="fa fa-exclamation-circle fa-3x text-warning mb-3"></i>
                             <h4>No Application in Progress</h4>
-                            <p class="text-muted">You haven't started an application yet. Please select an application type to begin.</p>
+                            <p class="text-muted">You haven't started an application yet.</p>
                             <a href="{{ route('service') }}" class="btn btn-primary mt-3">
                                 <i class="fa fa-plus me-2"></i>Start New Application
                             </a>
@@ -328,7 +493,7 @@
                 if (data.payment_required) {
                     btns.forEach(btn => {
                         btn.disabled = false;
-                        btn.innerHTML = '<i class="fa fa-file-pdf me-2"></i>Generate PDF Package';
+                        btn.innerHTML = '<i class="fa fa-file-pdf me-2"></i>Download PDF Package';
                     });
                     
                     if (confirm('💳 Payment of $' + data.payment_amount.toFixed(2) + ' required to download PDF package.\n\nProceed to payment?')) {
@@ -340,7 +505,7 @@
                 if (!data.can_generate) {
                     btns.forEach(btn => {
                         btn.disabled = false;
-                        btn.innerHTML = '<i class="fa fa-file-pdf me-2"></i>Generate PDF Package';
+                        btn.innerHTML = '<i class="fa fa-file-pdf me-2"></i>Download PDF Package';
                     });
                     alert('⚠️ ' + data.message);
                     return;
@@ -358,7 +523,7 @@
                 console.error('Error:', error);
                 btns.forEach(btn => {
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="fa fa-file-pdf me-2"></i>Generate PDF Package';
+                    btn.innerHTML = '<i class="fa fa-file-pdf me-2"></i>Download PDF Package';
                 });
                 alert('Error checking status. Please try again.');
             });
