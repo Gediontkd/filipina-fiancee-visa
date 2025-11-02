@@ -261,6 +261,12 @@ function getAllVisaType()
 	];
 }
 
+/**
+ * Determine application route based on user's chosen application
+ * Returns the route name the user should be redirected to
+ * 
+ * @return string|null Route name or null if no application chosen
+ */
 function applicationRoute()
 {
     $user = App\Models\User::select('chosen_application', 'application_route')
@@ -272,13 +278,76 @@ function applicationRoute()
         return $user->application_route;
     }
     
-    // Fallback: determine route from chosen_application
+    // Map chosen_application to route names
     $routeMap = [
         'fiancee' => 'fianceSponsorApplication',
-        'spouse' => 'spouseVisaApplication',
-        'adjustment' => 'adjustment.show',
+        'spouse' => 'spouse-visa-simplified.index',  // Simplified Spouse Visa
+        'adjustment' => 'aos-simplified.index',      // UPDATED: Simplified AOS
         'combined' => 'combinedCr1AosApplication'
     ];
     
     return $routeMap[$user->chosen_application] ?? null;
+}
+
+/**
+ * Get list of US states for form dropdowns (Simplified Spouse Visa)
+ * Returns array of state names for US sponsor address
+ * 
+ * @return array
+ */
+function getUsStates()
+{
+    return [
+        '' => '-Select State-',
+        'AL' => 'Alabama',
+        'AK' => 'Alaska',
+        'AZ' => 'Arizona',
+        'AR' => 'Arkansas',
+        'CA' => 'California',
+        'CO' => 'Colorado',
+        'CT' => 'Connecticut',
+        'DE' => 'Delaware',
+        'FL' => 'Florida',
+        'GA' => 'Georgia',
+        'HI' => 'Hawaii',
+        'ID' => 'Idaho',
+        'IL' => 'Illinois',
+        'IN' => 'Indiana',
+        'IA' => 'Iowa',
+        'KS' => 'Kansas',
+        'KY' => 'Kentucky',
+        'LA' => 'Louisiana',
+        'ME' => 'Maine',
+        'MD' => 'Maryland',
+        'MA' => 'Massachusetts',
+        'MI' => 'Michigan',
+        'MN' => 'Minnesota',
+        'MS' => 'Mississippi',
+        'MO' => 'Missouri',
+        'MT' => 'Montana',
+        'NE' => 'Nebraska',
+        'NV' => 'Nevada',
+        'NH' => 'New Hampshire',
+        'NJ' => 'New Jersey',
+        'NM' => 'New Mexico',
+        'NY' => 'New York',
+        'NC' => 'North Carolina',
+        'ND' => 'North Dakota',
+        'OH' => 'Ohio',
+        'OK' => 'Oklahoma',
+        'OR' => 'Oregon',
+        'PA' => 'Pennsylvania',
+        'RI' => 'Rhode Island',
+        'SC' => 'South Carolina',
+        'SD' => 'South Dakota',
+        'TN' => 'Tennessee',
+        'TX' => 'Texas',
+        'UT' => 'Utah',
+        'VT' => 'Vermont',
+        'VA' => 'Virginia',
+        'WA' => 'Washington',
+        'WV' => 'West Virginia',
+        'WI' => 'Wisconsin',
+        'WY' => 'Wyoming'
+    ];
 }

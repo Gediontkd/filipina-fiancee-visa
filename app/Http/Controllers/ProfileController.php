@@ -65,27 +65,27 @@ class ProfileController extends Controller
                     break;
                     
                 case 3: // Spouse Visa
-                        // Calculate Sponsor Section Progress (9 steps)
-                        $sponsorCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                            ->where('section', 'sponsor')  // Changed from 'type' to 'section'
-                            ->count();
-                        $spouseSponsorTotal = ($sponsorCount / 9) * 100;
-                        
-                        // Calculate Beneficiary Section Progress (7 steps)
-                        $beneficiaryCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                            ->where('section', 'beneficiary')  // Changed from 'type' to 'section'
-                            ->count();
-                        $spouseBeneficiaryTotal = ($beneficiaryCount / 7) * 100;
-                        
-                        // Calculate Relationship/Shared Progress (1 step)
-                        $relationshipCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
-                            ->where('section', 'shared')  // Changed from 'type' to 'section'
-                            ->count();
-                        $spouseRelationshipTotal = ($relationshipCount / 1) * 100;
-                        
-                        // Overall Spouse Visa Progress (17 total steps)
-                        $overAll = (($sponsorCount + $beneficiaryCount + $relationshipCount) / 17) * 100;
-                        break;
+                    // Calculate Sponsor Section Progress (9 steps)
+                    $sponsorCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
+                        ->where('section', 'sponsor')
+                        ->count();
+                    $spouseSponsorTotal = ($sponsorCount / 9) * 100;
+                    
+                    // Calculate Beneficiary Section Progress (7 steps)
+                    $beneficiaryCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
+                        ->where('section', 'beneficiary')
+                        ->count();
+                    $spouseBeneficiaryTotal = ($beneficiaryCount / 7) * 100;
+                    
+                    // Calculate Relationship/Shared Progress (1 step)
+                    $relationshipCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
+                        ->where('section', 'shared')
+                        ->count();
+                    $spouseRelationshipTotal = ($relationshipCount / 1) * 100;
+                    
+                    // Overall Spouse Visa Progress (17 total steps)
+                    $overAll = (($sponsorCount + $beneficiaryCount + $relationshipCount) / 17) * 100;
+                    break;
                     
                 case 4: // Combined CR1 + AOS
                     // Add this if you have a CombinedCr1AosSubmittedStep model
@@ -186,6 +186,7 @@ class ProfileController extends Controller
 
         try {
             // Map application types to their route names and IDs
+            // UPDATED: Using new simplified route names
             $applicationMap = [
                 'fiancee' => [
                     'route' => 'fianceSponsorApplication',
@@ -193,12 +194,12 @@ class ProfileController extends Controller
                     'name' => 'Fiancée Visa (K-1)'
                 ],
                 'spouse' => [
-                    'route' => 'spouseVisaApplication',
+                    'route' => 'spouse-visa-simplified.index',  // FIXED: Updated route
                     'id' => 3,
                     'name' => 'Spouse Visa (CR-1/IR-1)'
                 ],
                 'adjustment' => [
-                    'route' => 'adjustment.show',
+                    'route' => 'aos-simplified.index',  // FIXED: Updated route
                     'id' => 2,
                     'name' => 'Adjustment of Status'
                 ],
