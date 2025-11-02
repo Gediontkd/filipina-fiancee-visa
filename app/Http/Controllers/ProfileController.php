@@ -24,92 +24,114 @@ class ProfileController extends Controller
     }
 
     public function profile(Request $request, $page)
-    {
-        $user = Auth::user();
-        
-        // Get submitted application
-        $submission = UserSubmittedApplication::where('user_id', Auth::id())
-            ->where('status', 'pending')
-            ->with('visaApplication')
-            ->first();
-        
-        // Initialize progress variables
-        $sponsorTotal = 0;
-        $alienTotal = 0;
-        $alienChildrenTotal = 0;
-        $spouseSponsorTotal = 0;
-        $spouseBeneficiaryTotal = 0;
-        $spouseRelationshipTotal = 0;
-        $overAll = 0;
-        
-        // Calculate progress based on application type
-        if ($submission) {
-            switch ($submission->application_id) {
-                case 1: // Fiancée Visa
-                    $alienCount = FianceVisaSubmittedStep::where('user_id', Auth::id())
-                        ->where('type', 'alien')->count();
-                    $sponsorCount = FianceVisaSubmittedStep::where('user_id', Auth::id())
-                        ->where('type', 'sponsor')->count();
-                    $alienChildrenCount = FianceVisaSubmittedStep::where('user_id', Auth::id())
-                        ->where('type', 'alien-children')->count();
-                    
-                    $alienTotal = ($alienCount / 21) * 100;
-                    $sponsorTotal = ($sponsorCount / 10) * 100;
-                    $alienChildrenTotal = ($alienChildrenCount / 5) * 100;     
-                    $overAll = (($alienCount + $sponsorCount + $alienChildrenCount) / 36) * 100;
-                    break;
-                    
-                case 2: // Adjustment of Status
+{
+    $user = Auth::user();
+    
+    // Get submitted application
+    $submission = UserSubmittedApplication::where('user_id', Auth::id())
+        ->where('status', 'pending')
+        ->with('visaApplication')
+        ->first();
+    
+    // Initialize progress variables
+    $sponsorTotal = 0;
+    $alienTotal = 0;
+    $alienChildrenTotal = 0;
+    $spouseSponsorTotal = 0;
+    $spouseBeneficiaryTotal = 0;
+    $spouseRelationshipTotal = 0;
+    $overAll = 0;
+    
+    // Calculate progress based on application type
+    if ($submission) {
+        switch ($submission->application_id) {
+            case 1: // Fiancée Visa (OLD SYSTEM)
+                $alienCount = FianceVisaSubmittedStep::where('user_id', Auth::id())
+                    ->where('type', 'alien')->count();
+                $sponsorCount = FianceVisaSubmittedStep::where('user_id', Auth::id())
+                    ->where('type', 'sponsor')->count();
+                $alienChildrenCount = FianceVisaSubmittedStep::where('user_id', Auth::id())
+                    ->where('type', 'alien-children')->count();
+                
+                $alienTotal = ($alienCount / 21) * 100;
+                $sponsorTotal = ($sponsorCount / 10) * 100;
+                $alienChildrenTotal = ($alienChildrenCount / 5) * 100;     
+                $overAll = (($alienCount + $sponsorCount + $alienChildrenCount) / 36) * 100;
+                break;
+                
+            case 2: // Adjustment of Status (SIMPLIFIED SYSTEM)
+                // Check for simplified AOS application
+                $aosApp = \App\Models\SimplifiedAosApplication::where('user_id', Auth::id())
+                    ->where('submitted_app_id', $submission->id)
+                    ->first();
+                
+                if ($aosApp) {
+                    // Use simplified service to calculate completion
+                    $service = new \App\Http\Services\AdjustmentOfStatus\SimplifiedAosService();
+                    $overAll = $service->calculateCompletion($aosApp);
+                } else {
+                    // Fallback to old system if no simplified app exists
                     $count = AdjustmentVisaSubmittedStep::where('user_id', Auth::id())->count();
                     $overAll = ($count / 17) * 100;
-                    break;
+                }
+                break;
+                
+            case 3: // Spouse Visa (SIMPLIFIED SYSTEM)
+                // Check for simplified spouse visa application
+                $spouseApp = \App\Models\SimplifiedSpouseVisaApplication::where('user_id', Auth::id())
+                    ->where('submitted_app_id', $submission->id)
+                    ->first();
+                
+                if ($spouseApp) {
+                    // Use simplified service to calculate completion
+                    $service = new \App\Http\Services\Spouse\SimplifiedSpouseVisaService();
+                    $overAll = $service->calculateCompletion($spouseApp);
                     
-                case 3: // Spouse Visa
-                    // Calculate Sponsor Section Progress (9 steps)
+                    // For backward compatibility with old system progress variables
+                    $spouseSponsorTotal = $overAll; // Approximate for display
+                    $spouseBeneficiaryTotal = $overAll;
+                    $spouseRelationshipTotal = $overAll;
+                } else {
+                    // Fallback to old system if no simplified app exists
                     $sponsorCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
                         ->where('section', 'sponsor')
                         ->count();
                     $spouseSponsorTotal = ($sponsorCount / 9) * 100;
                     
-                    // Calculate Beneficiary Section Progress (7 steps)
                     $beneficiaryCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
                         ->where('section', 'beneficiary')
                         ->count();
                     $spouseBeneficiaryTotal = ($beneficiaryCount / 7) * 100;
                     
-                    // Calculate Relationship/Shared Progress (1 step)
                     $relationshipCount = SpouseVisaSubmittedStep::where('user_id', Auth::id())
                         ->where('section', 'shared')
                         ->count();
                     $spouseRelationshipTotal = ($relationshipCount / 1) * 100;
                     
-                    // Overall Spouse Visa Progress (17 total steps)
                     $overAll = (($sponsorCount + $beneficiaryCount + $relationshipCount) / 17) * 100;
-                    break;
-                    
-                case 4: // Combined CR1 + AOS
-                    // Add this if you have a CombinedCr1AosSubmittedStep model
-                    // $count = CombinedCr1AosSubmittedStep::where('user_id', Auth::id())->count();
-                    // $overAll = ($count / 20) * 100;
-                    $overAll = 0; // Placeholder until implemented
-                    break;
-                    
-                default:
-                    $overAll = 0;
-            }
+                }
+                break;
+                
+            case 4: // Combined CR1 + AOS
+                $overAll = 0; // Placeholder until implemented
+                break;
+                
+            default:
+                $overAll = 0;
         }
-        
-        return view("web.user.$page", compact(
-            'submission',
-            'sponsorTotal', 
-            'alienTotal', 
-            'alienChildrenTotal',
-            'spouseSponsorTotal',
-            'spouseBeneficiaryTotal',
-            'spouseRelationshipTotal',
-            'overAll'
-        ));
     }
+    
+    return view("web.user.$page", compact(
+        'submission',
+        'sponsorTotal', 
+        'alienTotal', 
+        'alienChildrenTotal',
+        'spouseSponsorTotal',
+        'spouseBeneficiaryTotal',
+        'spouseRelationshipTotal',
+        'overAll'
+    ));
+}
 
     public function basicInformation(Request $request)
     {
