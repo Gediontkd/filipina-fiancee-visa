@@ -1,5 +1,4 @@
 <?php
-// app/Models/User.php (Enhanced with messaging relationships)
 
 namespace App\Models;
 
@@ -13,11 +12,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -28,21 +22,11 @@ class User extends Authenticatable
         'application_route',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
@@ -58,6 +42,7 @@ class User extends Authenticatable
         return $this->hasMany(UserSubmittedApplication::class);
     }
 
+    // OLD STEP-BASED SYSTEMS
     public function fianceVisaSteps()
     {
         return $this->hasMany(FianceVisaStep::class);
@@ -83,39 +68,38 @@ class User extends Authenticatable
         return $this->hasOne(FianceAlienChildren::class);
     }
 
+    // NEW SIMPLIFIED SYSTEMS
+    public function simplifiedSpouseVisaApplications()
+    {
+        return $this->hasMany(SimplifiedSpouseVisaApplication::class);
+    }
+
+    public function simplifiedAosApplications()
+    {
+        return $this->hasMany(SimplifiedAosApplication::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Messaging Relationships
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * All messages for this user (sent and received)
-     */
     public function messages()
     {
         return $this->hasMany(Message::class);
     }
 
-    /**
-     * Messages sent by this user
-     */
     public function sentMessages()
     {
         return $this->hasMany(Message::class)->where('sender_type', 'user');
     }
 
-    /**
-     * Messages received by this user (from admins)
-     */
     public function receivedMessages()
     {
         return $this->hasMany(Message::class)->where('sender_type', 'admin');
     }
 
-    /**
-     * Unread messages received by this user
-     */
     public function unreadMessages()
     {
         return $this->hasMany(Message::class)
@@ -129,18 +113,15 @@ class User extends Authenticatable
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Documents related to user's applications
-     */
     public function applicationDocuments()
     {
         return $this->hasManyThrough(
             ApplicationDocument::class,
             UserSubmittedApplication::class,
-            'user_id', // Foreign key on UserSubmittedApplication table
-            'application_id', // Foreign key on ApplicationDocument table
-            'id', // Local key on User table
-            'id' // Local key on UserSubmittedApplication table
+            'user_id',
+            'application_id',
+            'id',
+            'id'
         );
     }
 
@@ -150,9 +131,6 @@ class User extends Authenticatable
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Get the user's latest submitted application
-     */
     public function getLatestApplicationAttribute()
     {
         return $this->userSubmittedApplications()
@@ -161,33 +139,21 @@ class User extends Authenticatable
             ->first();
     }
 
-    /**
-     * Get unread message count
-     */
     public function getUnreadMessageCountAttribute()
     {
         return $this->unreadMessages()->count();
     }
 
-    /**
-     * Check if user has any submitted applications
-     */
     public function hasSubmittedApplications()
     {
         return $this->userSubmittedApplications()->exists();
     }
 
-    /**
-     * Check if user has unread messages
-     */
     public function hasUnreadMessages()
     {
         return $this->unreadMessages()->exists();
     }
 
-    /**
-     * Get messages for a specific application
-     */
     public function getMessagesForApplication($applicationId)
     {
         return $this->messages()
@@ -197,9 +163,6 @@ class User extends Authenticatable
             ->get();
     }
 
-    /**
-     * Get user's application progress summary
-     */
     public function getApplicationProgressSummary()
     {
         $applications = $this->userSubmittedApplications()->with('visaApplication')->get();
@@ -223,7 +186,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user has form data for specific application
+     * Check if user has form data for specific application (UPDATED FOR NEW SYSTEMS)
      */
     private function hasFormDataForApplication($application)
     {
@@ -235,27 +198,29 @@ class User extends Authenticatable
                        $this->fianceAlienChildren()->exists();
             
             case 'spouse':
-                return $this->spouseVisaSteps()->exists();
+                // Check BOTH old and new systems
+                return $this->simplifiedSpouseVisaApplications()
+                    ->where('submitted_app_id', $application->id)
+                    ->exists() || 
+                    $this->spouseVisaSteps()->exists();
             
             case 'adjustment':
-                return $this->adjustmentVisaSteps()->exists();
+                // Check BOTH old and new systems
+                return $this->simplifiedAosApplications()
+                    ->where('submitted_app_id', $application->id)
+                    ->exists() || 
+                    $this->adjustmentVisaSteps()->exists();
             
             default:
                 return false;
         }
     }
 
-    /**
-     * Get user's full name with fallback
-     */
     public function getFullNameAttribute()
     {
         return $this->name ?: 'Unknown User';
     }
 
-    /**
-     * Get user's initials for avatar
-     */
     public function getInitialsAttribute()
     {
         $names = explode(' ', $this->name);
@@ -269,13 +234,10 @@ class User extends Authenticatable
         return $initials ?: 'U';
     }
 
-    /**
-     * Get user's status color based on application progress
-     */
     public function getStatusColorAttribute()
     {
         if (!$this->hasSubmittedApplications()) {
-            return 'gray'; // No applications
+            return 'gray';
         }
 
         $latestApp = $this->latest_application;
@@ -292,17 +254,11 @@ class User extends Authenticatable
         };
     }
 
-    /**
-     * Mark all user's messages as read
-     */
     public function markAllMessagesAsRead()
     {
         return $this->unreadMessages()->update(['read_at' => now()]);
     }
 
-    /**
-     * Get conversation summary for all applications
-     */
     public function getConversationSummary()
     {
         $applications = $this->userSubmittedApplications()->with('visaApplication')->get();

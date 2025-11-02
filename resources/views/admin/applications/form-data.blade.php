@@ -1,7 +1,7 @@
-{{-- resources/views/admin/applications/form-data.blade.php (Updated) --}}
+{{-- resources/views/admin/applications/form-data.blade.php (FIXED - Complete Version) --}}
 @extends('admin.layouts.app')
 @section('title', 'Application Form Data')
-@section('page-title', 'Application Form Data for PDF Generation')
+@section('page-title', 'Application Form Data')
 
 @section('content')
 <div class="space-y-6">
@@ -17,12 +17,6 @@
         </div>
        
         <div class="flex space-x-3">
-            <!-- Generate PDF Button -->
-            <!-- <button onclick="generatePdf()" id="pdf-btn"
-                    class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors">
-                <i class="fas fa-file-pdf mr-2"></i>Generate PDF
-            </button> -->
-            
             <button onclick="window.print()"
                     class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
                 <i class="fas fa-print mr-2"></i>Print Form Data
@@ -64,27 +58,270 @@
     </div>
 
     <!-- Form Data Content -->
-    @if($applicationData)
+    @if(!empty($applicationData))
         <div id="form-data-content" class="space-y-6">
-            <!-- Fiance Visa Data -->
-            @if(isset($applicationData['sponsor']) || isset($applicationData['alien']) || isset($applicationData['children']))
+            
+            {{-- ADJUSTMENT OF STATUS DATA --}}
+            @if(isset($applicationData['applicant']))
+                <div class="bg-white rounded-lg shadow overflow-hidden print:shadow-none">
+                    <div class="bg-orange-50 px-6 py-4 border-b">
+                        <h3 class="text-xl font-semibold text-gray-900">
+                            <i class="fas fa-id-card mr-2"></i>Adjustment of Status Application (I-485)
+                        </h3>
+                    </div>
+                   
+                    <!-- Applicant Information -->
+                    @if(isset($applicationData['applicant']))
+                        <div class="p-6 border-b">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-user mr-2"></i>Applicant Information
+                            </h4>
+                            
+                            @foreach($applicationData['applicant'] as $sectionName => $sectionData)
+                                <div class="mb-6">
+                                    <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        @if(is_array($sectionData))
+                                            @foreach($sectionData as $key => $value)
+                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                    <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                    <span class="md:col-span-2 text-gray-900">{{ $value ?: 'Not provided' }}</span>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- Immigration Status -->
+                    @if(isset($applicationData['immigration_status']))
+                        <div class="p-6 border-b">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-passport mr-2"></i>Immigration Status
+                            </h4>
+                            
+                            @foreach($applicationData['immigration_status'] as $sectionName => $sectionData)
+                                <div class="mb-6">
+                                    <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        @if(is_array($sectionData))
+                                            @foreach($sectionData as $key => $value)
+                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                    <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                    <span class="md:col-span-2 text-gray-900">{{ $value ?: 'Not provided' }}</span>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- Sponsor Information (AOS) -->
+                    @if(isset($applicationData['sponsor']) && !isset($applicationData['beneficiary']))
+                        <div class="p-6 border-b">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-users mr-2"></i>Sponsor/Petitioner Information
+                            </h4>
+                            
+                            @foreach($applicationData['sponsor'] as $sectionName => $sectionData)
+                                <div class="mb-6">
+                                    <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        @if(is_array($sectionData))
+                                            @foreach($sectionData as $key => $value)
+                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                    <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                    <span class="md:col-span-2 text-gray-900">{{ $value ?: 'Not provided' }}</span>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- Background Questions -->
+                    @if(isset($applicationData['background_questions']))
+                        <div class="p-6">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-clipboard-check mr-2"></i>Background Questions
+                            </h4>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                @foreach($applicationData['background_questions'] as $key => $value)
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                        <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                        <span class="md:col-span-2 text-gray-900">
+                                            @if($key === 'explanation' && $value)
+                                                <div class="whitespace-pre-wrap">{{ $value }}</div>
+                                            @else
+                                                {{ $value ?: 'Not provided' }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Metadata -->
+                    @if(isset($applicationData['metadata']))
+                        <div class="p-6 bg-gray-50">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-info-circle mr-2"></i>Application Metadata
+                            </h4>
+                            
+                            <div class="bg-white rounded-lg p-4">
+                                @foreach($applicationData['metadata'] as $key => $value)
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                        <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                        <span class="md:col-span-2 text-gray-900">{{ $value ?: 'N/A' }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @endif
+
+            {{-- SPOUSE VISA DATA --}}
+            @if(isset($applicationData['beneficiary']))
+                <div class="bg-white rounded-lg shadow overflow-hidden print:shadow-none">
+                    <div class="bg-purple-50 px-6 py-4 border-b">
+                        <h3 class="text-xl font-semibold text-gray-900">
+                            <i class="fas fa-heart mr-2"></i>Spouse Visa Application (CR-1/IR-1)
+                        </h3>
+                    </div>
+                   
+                    <!-- Sponsor Information (Spouse) -->
+                    @if(isset($applicationData['sponsor']))
+                        <div class="p-6 border-b">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-user mr-2"></i>U.S. Sponsor Information
+                            </h4>
+                            
+                            @foreach($applicationData['sponsor'] as $sectionName => $sectionData)
+                                <div class="mb-6">
+                                    <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        @if(is_array($sectionData))
+                                            @foreach($sectionData as $key => $value)
+                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                    <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                    <span class="md:col-span-2 text-gray-900">{{ $value ?: 'Not provided' }}</span>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- Beneficiary Information -->
+                    @if(isset($applicationData['beneficiary']))
+                        <div class="p-6 border-b">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-user-friends mr-2"></i>Beneficiary (Foreign Spouse) Information
+                            </h4>
+                            
+                            @foreach($applicationData['beneficiary'] as $sectionName => $sectionData)
+                                <div class="mb-6">
+                                    <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        @if(is_array($sectionData))
+                                            @foreach($sectionData as $key => $value)
+                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                    <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                    <span class="md:col-span-2 text-gray-900">{{ $value ?: 'Not provided' }}</span>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- Relationship Information -->
+                    @if(isset($applicationData['relationship']))
+                        <div class="p-6">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-heart mr-2"></i>Relationship Information
+                            </h4>
+                            
+                            @foreach($applicationData['relationship'] as $sectionName => $sectionData)
+                                <div class="mb-6">
+                                    <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        @if(is_array($sectionData))
+                                            @foreach($sectionData as $key => $value)
+                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                    <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                    <span class="md:col-span-2 text-gray-900">
+                                                        @if($key === 'relationship_description' && $value)
+                                                            <div class="whitespace-pre-wrap">{{ $value }}</div>
+                                                        @else
+                                                            {{ $value ?: 'Not provided' }}
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- Metadata -->
+                    @if(isset($applicationData['metadata']))
+                        <div class="p-6 bg-gray-50">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-info-circle mr-2"></i>Application Metadata
+                            </h4>
+                            
+                            <div class="bg-white rounded-lg p-4">
+                                @foreach($applicationData['metadata'] as $key => $value)
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                        <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                        <span class="md:col-span-2 text-gray-900">{{ $value ?: 'N/A' }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @endif
+
+            {{-- FIANCE VISA DATA --}}
+            @if(isset($applicationData['alien']) || (isset($applicationData['sponsor']) && !isset($applicationData['beneficiary']) && !isset($applicationData['applicant'])))
                 <div class="bg-white rounded-lg shadow overflow-hidden print:shadow-none">
                     <div class="bg-blue-50 px-6 py-4 border-b">
-                        <h3 class="text-xl font-semibold text-gray-900">Fiance Visa Application Data</h3>
+                        <h3 class="text-xl font-semibold text-gray-900">
+                            <i class="fas fa-ring mr-2"></i>Fiance Visa Application (K-1)
+                        </h3>
                     </div>
                    
                     <!-- Sponsor Data -->
                     @if(!empty($applicationData['sponsor']))
                         <div class="p-6 border-b">
-                            <h4 class="text-lg font-medium text-gray-900 mb-4">U.S. Sponsor Information</h4>
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-user mr-2"></i>U.S. Sponsor Information
+                            </h4>
                             @foreach($applicationData['sponsor'] as $stepName => $stepData)
                                 <div class="mb-6">
                                     <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $stepName) }}</h5>
                                     <div class="bg-gray-50 rounded-lg p-4">
                                         @if(is_array($stepData))
                                             @foreach($stepData as $key => $value)
-                                                @if($key !== 'id' && $key !== '_token' && $key !== 'name' && $key !== 'next')
-                                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-1">
+                                                @if(!in_array($key, ['id', '_token', 'name', 'next']))
+                                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
                                                         <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
                                                         <span class="md:col-span-2 text-gray-900">
                                                             @if(is_array($value))
@@ -108,15 +345,17 @@
                     <!-- Alien Data -->
                     @if(!empty($applicationData['alien']))
                         <div class="p-6 border-b">
-                            <h4 class="text-lg font-medium text-gray-900 mb-4">Alien Information</h4>
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-user-tag mr-2"></i>Alien (Fiancé/Fiancée) Information
+                            </h4>
                             @foreach($applicationData['alien'] as $stepName => $stepData)
                                 <div class="mb-6">
                                     <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $stepName) }}</h5>
                                     <div class="bg-gray-50 rounded-lg p-4">
                                         @if(is_array($stepData))
                                             @foreach($stepData as $key => $value)
-                                                @if($key !== 'id' && $key !== '_token' && $key !== 'name' && $key !== 'next')
-                                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-1">
+                                                @if(!in_array($key, ['id', '_token', 'name', 'next']))
+                                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
                                                         <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
                                                         <span class="md:col-span-2 text-gray-900">
                                                             @if(is_array($value))
@@ -138,15 +377,17 @@
                     <!-- Children Data -->
                     @if(!empty($applicationData['children']))
                         <div class="p-6">
-                            <h4 class="text-lg font-medium text-gray-900 mb-4">Alien Children Information</h4>
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-child mr-2"></i>Alien Children Information
+                            </h4>
                             @foreach($applicationData['children'] as $stepName => $stepData)
                                 <div class="mb-6">
                                     <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $stepName) }}</h5>
                                     <div class="bg-gray-50 rounded-lg p-4">
                                         @if(is_array($stepData))
                                             @foreach($stepData as $key => $value)
-                                                @if($key !== 'id' && $key !== '_token' && $key !== 'name' && $key !== 'next')
-                                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-1">
+                                                @if(!in_array($key, ['id', '_token', 'name', 'next']))
+                                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
                                                         <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
                                                         <span class="md:col-span-2 text-gray-900">
                                                             @if(is_array($value))
@@ -166,26 +407,6 @@
                     @endif
                 </div>
             @endif
-
-            <!-- Spouse Visa Data -->
-            @if(isset($applicationData['spouse_data']) && !empty($applicationData['spouse_data']))
-                <div class="bg-white rounded-lg shadow overflow-hidden print:shadow-none">
-                    <div class="bg-purple-50 px-6 py-4 border-b">
-                        <h3 class="text-xl font-semibold text-gray-900">Spouse Visa Application Data</h3>
-                    </div>
-                    <!-- Similar structure for spouse data -->
-                </div>
-            @endif
-
-            <!-- Adjustment of Status Data -->
-            @if(isset($applicationData['adjustment_data']) && !empty($applicationData['adjustment_data']))
-                <div class="bg-white rounded-lg shadow overflow-hidden print:shadow-none">
-                    <div class="bg-orange-50 px-6 py-4 border-b">
-                        <h3 class="text-xl font-semibold text-gray-900">Adjustment of Status Application Data</h3>
-                    </div>
-                    <!-- Similar structure for adjustment data -->
-                </div>
-            @endif
         </div>
     @else
         <div class="bg-white rounded-lg shadow p-8 text-center">
@@ -199,55 +420,6 @@
 
 @push('scripts')
 <script>
-    // PDF Generation function
-    // Replace the existing generatePdf() function with this:
-function generatePdf() {
-    const btn = document.getElementById('pdf-btn');
-    const originalContent = btn.innerHTML;
-    
-    // First, CHECK if PDFs are available for this user
-    const applicationId = {{ $application->id }};
-    const userId = {{ $application->user_id }};
-    
-    // Disable button temporarily
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Checking...';
-    
-    // Check PDF status via AJAX
-    fetch('/admin/check-pdf-status?user_id=' + userId)
-        .then(response => response.json())
-        .then(data => {
-            console.log('PDF Status:', data);
-            
-            if (!data.can_generate) {
-                // PDFs not ready
-                showNotification(data.message, 'error');
-                btn.disabled = false;
-                btn.innerHTML = originalContent;
-                return;
-            }
-            
-            // PDFs are ready - proceed
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating PDF...';
-            showNotification('Generating ' + data.pdf_count + ' PDF file(s)...', 'info');
-            
-            // Redirect to generate
-            window.location.href = '{{ route("admin.applications.generate-pdf", $application) }}';
-            
-            // Re-enable after delay
-            setTimeout(() => {
-                btn.disabled = false;
-                btn.innerHTML = originalContent;
-            }, 3000);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showNotification('Error checking PDF status', 'error');
-            btn.disabled = false;
-            btn.innerHTML = originalContent;
-        });
-}
-
     function copyToClipboard() {
         const content = document.getElementById('form-data-content');
         if (!content) {
@@ -297,7 +469,8 @@ function generatePdf() {
     function showNotification(message, type) {
         const notification = document.createElement('div');
         notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${
-            type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            type === 'success' ? 'bg-green-500' : 
+            type === 'info' ? 'bg-blue-500' : 'bg-red-500'
         }`;
         notification.textContent = message;
        

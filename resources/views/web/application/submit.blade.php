@@ -63,7 +63,7 @@
                         @endif
 
                         <!-- Completion Status -->
-                        <div class="card mb-4">
+                        <!-- <div class="card mb-4">
                             <div class="card-header">
                                 <h5 class="mb-0">Application Sections Status</h5>
                             </div>
@@ -101,7 +101,7 @@
                                     </div>
                                 @endif
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- Submission Form -->
                         <form method="POST" action="{{ route('application.submit') }}" id="submission-form">

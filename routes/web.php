@@ -1,5 +1,4 @@
 <?php
-// routes/web.php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -8,8 +7,6 @@ use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DropBoxController;
 use App\Http\Controllers\FianceVisaApplicationController;
-use App\Http\Controllers\AdjustmentOfStatusController;
-use App\Http\Controllers\SpouseVisaApplicationController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\StripeController;
@@ -19,9 +16,11 @@ use App\Http\Controllers\FianceVisa\SponsorController as FianceSponsorController
 use App\Http\Controllers\FianceVisa\AlienController;
 use App\Http\Controllers\FianceVisa\AlienChildrenController;
 
-// Spouse Visa Controllers (with aliases to avoid conflicts)
-use App\Http\Controllers\SpouseVisa\SponsorController as SpouseSponsorController;
-use App\Http\Controllers\SpouseVisa\BeneficiaryController as SpouseBeneficiaryController;
+// Simplified Spouse Visa Controller
+use App\Http\Controllers\SpouseVisa\SimplifiedSpouseVisaController;
+
+// Simplified Adjustment of Status Controller
+use App\Http\Controllers\AdjustmentOfStatus\SimplifiedAosController;
 
 // Admin Controllers
 use App\Http\Controllers\Admin\AuthController;
@@ -47,8 +46,22 @@ Route::get('/change-lang', [LocalizationController::class, 'changeLang'])->name(
 
 // Public Visa Information Pages
 Route::get('/fiancee-visa', [FianceVisaApplicationController::class, 'index'])->name('fiancee.visa');
-Route::get('/adjustment-of-status', [AdjustmentOfStatusController::class, 'index'])->name('adjustment.visa');
-Route::get('/spouse-visa', [SpouseVisaApplicationController::class, 'spouseVisa'])->name('spouse.visa');
+
+// Adjustment of Status Public Page - Redirect to info or login
+Route::get('/adjustment-of-status', function() {
+    if (Auth::check()) {
+        return redirect()->route('aos-simplified.index');
+    }
+    return view('web.service.adjustment-visa.index'); // Info page for non-logged users
+})->name('adjustment.visa');
+
+// Spouse Visa Public Page - Redirect to info or login
+Route::get('/spouse-visa', function() {
+    if (Auth::check()) {
+        return redirect()->route('spouse-visa-simplified.index');
+    }
+    return view('web.service.spouse-visa'); // Info page for non-logged users
+})->name('spouse.visa');
 
 Route::group(['prefix' => 'contact-us'], function() {
     Route::get('/', [ContactUsController::class, 'index'])->name('contactUs');
@@ -230,85 +243,42 @@ Route::group(['middleware' => ['auth', 'application']], function() {
 
     /*
     |--------------------------------------------------------------------------
-    | SPOUSE VISA ROUTES (CR-1/IR-1)
+    | SIMPLIFIED SPOUSE VISA ROUTES (CR-1/IR-1)
     |--------------------------------------------------------------------------
     */
     
-    // Main Spouse Visa Controller (handles navigation and shared sections)
-    Route::controller(SpouseVisaApplicationController::class)->prefix('spouse-visa')->group(function () {
-        // Main application page
-        Route::get('/application', 'index')->name('spouseVisaApplication');
+    Route::prefix('spouse-visa-simplified')->name('spouse-visa-simplified.')->group(function () {
+        // Main application form
+        Route::get('/', [SimplifiedSpouseVisaController::class, 'index'])->name('index');
         
-        // Navigation handler
-        Route::post('/navigate', 'navigate')->name('spouseNavigate');
+        // Save/update application
+        Route::post('/store', [SimplifiedSpouseVisaController::class, 'store'])->name('store');
         
-        // Shared routes (Relationship)
-        Route::post('/relationship', 'relationship')->name('spouseRelationship');
+        // Submit completed application
+        Route::post('/submit', [SimplifiedSpouseVisaController::class, 'submit'])->name('submit');
         
-        // Helper routes
-        Route::get('/get-state', 'getState')->name('spouseGetState');
-        Route::post('/previous-and-continue', 'navigate')->name('spousePreviousOrContinue');
-    });
-    
-    // Spouse Visa - Sponsor Section
-    Route::controller(SpouseSponsorController::class)->prefix('spouse-visa/sponsor')->group(function() {
-        Route::get('/application', 'index')->name('spouseSponsorApplication');
-        Route::post('/name', 'name')->name('spouseSponsorName');
-        Route::post('/contact', 'contact')->name('spouseContact');
-        Route::post('/address', 'address')->name('spouseAddress');
-        Route::post('/place-of-birth', 'placeOfBirth')->name('spousePlaceOfBirth');
-        Route::post('/status', 'status')->name('spouseStatus');
-        Route::post('/marital-status', 'maritalStatus')->name('spouseMaritalStatus');
-        Route::post('/other-filing', 'otherFiling')->name('spouseOtherFiling');
-        Route::post('/military-conviction', 'militaryConviction')->name('spouseMilitaryConviction');
-        Route::post('/employment', 'employment')->name('spouseEmployment');
-        Route::post('/previous-and-continue', 'previousOrContinue')->name('spouseSponsorPreviousOrContinue');
-        Route::get('/get-state', 'getState')->name('spouseSponsorGetState');
-    });
-    
-    // Spouse Visa - Beneficiary Section
-    Route::controller(SpouseBeneficiaryController::class)->prefix('spouse-visa/beneficiary')->group(function() {
-        Route::get('/application', 'index')->name('spouseBeneficiaryApplication');
-        Route::post('/name', 'name')->name('spouseBeneficiaryName');
-        Route::post('/contact', 'contact')->name('spouseBeneficiaryContact');
-        Route::post('/address', 'address')->name('spouseBeneficiaryAddress');
-        Route::post('/place-of-birth', 'placeOfBirth')->name('spouseBeneficiaryPlaceOfBirth');
-        Route::post('/status', 'status')->name('spouseBeneficiaryStatus');
-        Route::post('/marital-status', 'maritalStatus')->name('spouseBeneficiaryMaritalStatus');
-        Route::post('/employment', 'employment')->name('spouseBeneficiaryEmployment');
-        Route::post('/previous-and-continue', 'previousOrContinue')->name('spouseBeneficiaryPreviousOrContinue');
-        Route::get('/get-state', 'getState')->name('spouseBeneficiaryGetState');
+        // AJAX: Get states for country
+        Route::get('/get-states', [SimplifiedSpouseVisaController::class, 'getStates'])->name('get-states');
     });
 
     /*
     |--------------------------------------------------------------------------
-    | ADJUSTMENT OF STATUS ROUTES
+    | SIMPLIFIED ADJUSTMENT OF STATUS ROUTES (I-485)
     |--------------------------------------------------------------------------
     */
     
-    Route::controller(AdjustmentOfStatusController::class)->prefix('adjustment-of-status')->group(function () {
-        Route::get('/adjustment', 'show')->name('adjustment.show');
-        Route::get('/{type}', 'application')->name('adjustmentVisaApplication');
-        Route::post('/name', 'name')->name('adjustmentName');
-        Route::post('/place-of-birth', 'placeOfBirth')->name('adjustmentPlaceOfBirth');
-        Route::post('/visa-info', 'visaInfo')->name('adjustmentvisaInfo');
-        Route::post('/address', 'address')->name('adjustmentAddress');
-        Route::post('/civil-status', 'civilStatus')->name('adjustmentCivilStatus');
-        Route::post('/sponsor-part-1', 'sponsorPart1')->name('adjustmentSponsorPart1');
-        Route::post('/sponsor-part-2', 'sponsorPart2')->name('adjustmentSponsorPart2');
-        Route::post('/qus-part-1', 'qusPart1')->name('adjustmentQusPart1');
-        Route::post('/qus-part-2', 'qusPart2')->name('adjustmentQusPart2');
-        Route::post('/qus-part-3', 'qusPart3')->name('adjustmentQusPart3');
-        Route::post('/qus-part-4', 'qusPart4')->name('adjustmentQusPart4');
-        Route::post('/qus-part-5', 'qusPart5')->name('adjustmentQusPart5');
-        Route::post('/ead', 'ead')->name('adjustmentEad');
-        Route::post('/accommodation', 'accommodation')->name('adjustmentAccommodation');
-        Route::post('/interpreter', 'interpreter')->name('adjustmentInterpreter');
-        Route::post('/children', 'children')->name('adjustmentChildren');
-        Route::post('/affiliation', 'affiliation')->name('adjustmentAffiliation');
-        Route::post('/alien-parents', 'alienParents')->name('adjustmentAlienParents');
-        Route::post('/alien-employement', 'alienEmployement')->name('adjustmentAlienEmployement');
-        Route::post('/previous-and-continue', 'previousOrContinue')->name('adjustmentPreviousOrContinue');
+    Route::prefix('aos-simplified')->name('aos-simplified.')->group(function () {
+        // Main application form
+        Route::get('/', [SimplifiedAosController::class, 'index'])->name('index');
+        
+        // Save/update application
+        Route::post('/store', [SimplifiedAosController::class, 'store'])->name('store');
+        
+        // Submit completed application
+        Route::post('/submit', [SimplifiedAosController::class, 'submit'])->name('submit');
+        
+        // AJAX: Get states for country
+        Route::get('/get-states', [SimplifiedAosController::class, 'getStates'])->name('get-states');
     });
 
     /*
