@@ -1096,8 +1096,9 @@ span.subheading {
 
 .contact-us {
     width: 100%;
-    background: url(../img/bottom-clouds.jpg) no-repeat bottom center;
+    background: url(../img/Couple-Holding-Hands.jpg) no-repeat center center;
     background-size: cover;
+    background-position: center 30%;
 }
 
 .contact-box h5 {
