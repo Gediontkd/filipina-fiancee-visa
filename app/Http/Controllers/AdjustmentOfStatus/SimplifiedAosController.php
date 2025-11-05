@@ -1,4 +1,6 @@
 <?php
+// FILE: app/Http/Controllers/AdjustmentOfStatus/SimplifiedAosController.php
+// ACTION: REPLACE your existing file with this version
 
 namespace App\Http\Controllers\AdjustmentOfStatus;
 
@@ -9,12 +11,16 @@ use App\Http\Services\AdjustmentOfStatus\SimplifiedAosService;
 use App\Models\SimplifiedAosApplication;
 use App\Models\UserSubmittedApplication;
 use App\Models\State;
+use App\Helpers\PaymentHelper;
 use Auth;
 use Log;
 
 /**
- * Simplified Adjustment of Status Controller
- * Handles AOS applications with a streamlined single-form approach
+ * Simplified Adjustment of Status Controller - FIXED VERSION
+ * 
+ * FIXES:
+ * - Save progress now works without validation
+ * - Payment verification before submission
  */
 class SimplifiedAosController extends Controller
 {
@@ -75,11 +81,12 @@ class SimplifiedAosController extends Controller
     }
 
     /**
-     * Save or update the AOS application
+     * FIXED: Save progress WITHOUT validation (allows partial saves)
      */
-    public function store(SimplifiedAosRequest $request)
+    public function store(Request $request)
     {
         try {
+            // NO VALIDATION HERE - Just save whatever they have
             $application = $this->aosService->saveApplication($request);
             
             // Calculate completion percentage
@@ -107,12 +114,29 @@ class SimplifiedAosController extends Controller
     }
 
     /**
-     * Submit the completed application
+     * FIXED: Submit with validation AND payment check
      */
-    public function submit(Request $request)
+    public function submit(SimplifiedAosRequest $request)
     {
         try {
-            $application = SimplifiedAosApplication::where('user_id', Auth::id())
+            $user = Auth::user();
+            
+            // CRITICAL: Check payment status BEFORE allowing submission
+            $paymentStatus = PaymentHelper::checkPaymentStatus($user->id);
+            
+            if (!$paymentStatus['has_paid']) {
+                Log::warning('AOS submission blocked - payment not verified', [
+                    'user_id' => $user->id
+                ]);
+                
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Payment Required - Please complete your payment before submitting your application for review.'
+                ], 402);
+            }
+
+            // Get the application
+            $application = SimplifiedAosApplication::where('user_id', $user->id)
                 ->where('submitted_app_id', $request->submitted_app_id)
                 ->firstOrFail();
 

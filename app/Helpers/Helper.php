@@ -261,6 +261,31 @@ function getAllVisaType()
 	];
 }
 
+function getAOSVisaTypes()
+{
+    return [
+        '' => 'Select Current Visa Type (Common Visa Types for AOS)',
+        
+        // K Visas
+        'K1 - ALIEN FIANCE(E) OF USC' => 'K1 – Fiancé(e) of U.S. Citizen',
+        'K2 - CHILD OF K1' => 'K2 – Child of K1',
+        
+        // Tourist Visas
+        'B1 - TEMPORARY VISITOR FOR BUSINESS' => 'B1 – Visitor for Business',
+        'B2 - TEMPORARY VISITOR FOR PLEASURE' => 'B2 – Visitor for Pleasure',
+        
+        // Visa Waiver Program (VWP)
+        'WT - VISITOR FOR PLEASURE - VWPP' => 'WT – Visitor for Pleasure (VWP)',
+        'WB - VISITOR FOR BUSINESS - VWPP' => 'WB – Visitor for Business (VWP)',
+        
+        // Academic / Exchange Cases
+        'F1 - STUDENT - ACADEMIC' => 'F1 – Student (Academic)',
+        'F2 - SPOUSE-CHILD OF F-1' => 'F2 – Spouse or Child of F1',
+        'J1 - EXCHANGE VISITOR - OTHERS' => 'J1 – Exchange Visitor',
+        'J2 - SPOUSE-CHILD OF J-1' => 'J2 – Spouse or Child of J1',
+    ];
+}
+
 /**
  * Determine application route based on user's chosen application
  * Returns the route name the user should be redirected to
