@@ -1,10 +1,12 @@
 <?php
-// app/Helpers/PaymentHelper.php
+// FILE: app/Helpers/PaymentHelper.php
+// ACTION: REPLACE your existing file with this version
 
 namespace App\Helpers;
 
 use App\Models\UserSubmittedApplication;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class PaymentHelper
 {
@@ -35,13 +37,14 @@ class PaymentHelper
                 'has_paid' => true,
                 'payment_required' => false,
                 'amount' => $application->payment_amount,
-                'paid_at' => $application->paid_at,
+                // FIXED: Ensure paid_at is a Carbon instance
+                'paid_at' => $application->paid_at ? Carbon::parse($application->paid_at) : now(),
                 'message' => 'Payment completed successfully.',
             ];
         }
 
         // Get payment amount based on application type
-        $amount = self::getPaymentAmount($application->visaApplication->name);
+        $amount = self::getPaymentAmount($application->visaApplication->name ?? 'Unknown');
 
         return [
             'has_paid' => false,
@@ -89,6 +92,9 @@ class PaymentHelper
             $application = UserSubmittedApplication::find($applicationId);
             
             if (!$application) {
+                Log::error('Application not found for payment', [
+                    'application_id' => $applicationId
+                ]);
                 return false;
             }
 
@@ -110,6 +116,7 @@ class PaymentHelper
             Log::error('Failed to mark application as paid', [
                 'application_id' => $applicationId,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
 
             return false;
