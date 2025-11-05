@@ -1,3 +1,6 @@
+{{-- FILE: resources/views/web/visa-application/spouse-visa-simplified/index.blade.php --}}
+{{-- ACTION: REPLACE your existing file with this version --}}
+
 @extends('web.layout.master')
 
 @section('content')
@@ -17,7 +20,7 @@
             <div class="col-md-12 mt-3">
                 <p class="jumbotron">
                     Complete all sections to submit your spouse visa application. 
-                    Your progress is automatically saved.
+                    Your progress is automatically saved every 30 seconds.
                 </p>
             </div>
 
@@ -161,17 +164,7 @@
 <script src="{{ asset('assets/js/date-range.js') }}"></script>
 <script>
     /**
-     * Auto-save application data
-     */
-    function autoSave() {
-        saveApplication(true);
-    }
-
-    // Auto-save every 30 seconds
-    setInterval(autoSave, 30000);
-
-    /**
-     * Save application data
+     * FIXED: Save function with proper success toast message
      */
     function saveApplication(isAutoSave = false) {
         const btn = $('#saveBtn');
@@ -196,13 +189,21 @@
                         .html('<strong>' + response.completion + '%</strong>');
                     
                     if (!isAutoSave) {
-                        toastr.success('Application saved successfully');
+                        // FIXED: Show proper success toast with exact text from document
+                        toastr.success(
+                            'Your information has been saved. You can return anytime to finish your application. You do not need to complete the entire form in one session.',
+                            'Progress Saved',
+                            {
+                                timeOut: 5000,
+                                progressBar: true
+                            }
+                        );
                         
                         // Reload page if completion is 100% to show submit button
                         if (response.completion >= 100) {
                             setTimeout(function() {
                                 window.location.reload();
-                            }, 1000);
+                            }, 1500);
                         }
                     }
                 } else {
@@ -230,6 +231,15 @@
             }
         });
     }
+
+    /**
+     * Auto-save every 30 seconds
+     */
+    function autoSave() {
+        saveApplication(true);
+    }
+    
+    setInterval(autoSave, 30000);
 
     /**
      * Load states when country changes

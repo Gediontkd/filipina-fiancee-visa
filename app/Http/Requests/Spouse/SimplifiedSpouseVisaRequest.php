@@ -1,4 +1,5 @@
 <?php
+// app/Http/Requests/Spouse/SimplifiedSpouseVisaRequest.php (FIXED)
 
 namespace App\Http\Requests\Spouse;
 
@@ -6,21 +7,15 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Simplified Spouse Visa Request Validation
- * Validates all spouse visa application fields
+ * FIXED: Made passport optional and adjusted validation rules
  */
 class SimplifiedSpouseVisaRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize()
     {
         return auth()->check();
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules()
     {
         return [
@@ -60,7 +55,9 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'beneficiary_dob' => 'required|date|before:today',
             'beneficiary_place_of_birth' => 'required|string|max:255',
             'beneficiary_citizenship' => 'required|string|max:255',
-            'beneficiary_passport_number' => 'required|string|max:50',
+            
+            // FIXED: Made passport optional
+            'beneficiary_passport_number' => 'nullable|string|max:50',
             'beneficiary_alien_number' => 'nullable|string|max:20',
             
             // Beneficiary Employment - Optional
@@ -87,9 +84,6 @@ class SimplifiedSpouseVisaRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     */
     public function messages()
     {
         return [
@@ -122,7 +116,6 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'beneficiary_dob.before' => 'Beneficiary date of birth must be in the past',
             'beneficiary_place_of_birth.required' => 'Beneficiary place of birth is required',
             'beneficiary_citizenship.required' => 'Beneficiary citizenship is required',
-            'beneficiary_passport_number.required' => 'Beneficiary passport number is required',
             
             // Relationship Messages
             'marriage_date.required' => 'Marriage date is required',
