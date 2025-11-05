@@ -1,173 +1,211 @@
 <?php
+// app/Http/Controllers/SpouseVisa/SimplifiedSpouseVisaController.php (FIXED)
 
 namespace App\Http\Controllers\SpouseVisa;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\Spouse\SimplifiedSpouseVisaRequest;
 use App\Http\Services\Spouse\SimplifiedSpouseVisaService;
 use App\Models\SimplifiedSpouseVisaApplication;
 use App\Models\UserSubmittedApplication;
-use App\Models\State;
-use Auth;
-use Log;
+use App\Helpers\PaymentHelper;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
-/**
- * Simplified Spouse Visa Controller
- * Handles CR-1/IR-1 visa applications with a streamlined single-form approach
- */
 class SimplifiedSpouseVisaController extends Controller
 {
-    protected $visaService;
+    protected $service;
 
-    public function __construct(SimplifiedSpouseVisaService $visaService)
+    public function __construct(SimplifiedSpouseVisaService $service)
     {
-        $this->visaService = $visaService;
-        
-        // Ensure user has an application record
-        $this->middleware(function ($request, $next) {
-            $submission = UserSubmittedApplication::firstOrCreate(
-                [
-                    'user_id' => Auth::id(),
-                    'application_id' => 3, // Spouse Visa
-                ],
-                [
-                    'status' => 'pending',
-                    'submitted_at' => null
-                ]
-            );
-            
-            $request->merge(['submitted_app_id' => $submission->id]);
-            return $next($request);
-        });
+        $this->service = $service;
     }
 
     /**
-     * Display the simplified spouse visa application form
+     * Show the application form
      */
-    public function index(Request $request)
+    public function index()
+    {
+        $user = Auth::user();
+        
+        // Get the active application
+        $submittedApp = UserSubmittedApplication::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->where('application_id', 3) // Spouse visa
+            ->first();
+
+        if (!$submittedApp) {
+            return redirect()->route('service')
+                ->with('error', 'Please select Spouse Visa application first.');
+        }
+
+        // Get or create the application
+        $application = SimplifiedSpouseVisaApplication::firstOrCreate(
+            [
+                'user_id' => $user->id,
+                'submitted_app_id' => $submittedApp->id,
+            ],
+            [
+                'status' => 'draft',
+            ]
+        );
+
+        $completionPercentage = $this->service->calculateCompletion($application);
+
+        return view('web.visa-application.spouse-visa-simplified.index', compact(
+            'application',
+            'completionPercentage'
+        ));
+    }
+
+    /**
+     * Save application progress (NO VALIDATION)
+     * FIXED: Removed validation to allow partial saves
+     */
+    public function store(Request $request)
     {
         try {
-            // Get existing application data if any
-            $application = SimplifiedSpouseVisaApplication::where('user_id', Auth::id())
-                ->where('submitted_app_id', $request->submitted_app_id)
+            // Get submitted app ID
+            $submittedApp = UserSubmittedApplication::where('user_id', Auth::id())
+                ->where('status', 'pending')
+                ->where('application_id', 3)
                 ->first();
 
-            // Calculate completion percentage
-            $completionPercentage = $application 
-                ? $this->visaService->calculateCompletion($application)
-                : 0;
+            if (!$submittedApp) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'No active application found.',
+                ], 400);
+            }
 
-            return view('web.visa-application.spouse-visa-simplified.index', [
-                'application' => $application,
-                'completionPercentage' => $completionPercentage,
-            ]);
-            
-        } catch (\Exception $e) {
-            Log::error('Error loading spouse visa form', [
-                'user_id' => Auth::id(),
-                'error' => $e->getMessage()
-            ]);
-            
-            return redirect()->route('service')
-                ->with('error', 'Failed to load application form. Please try again.');
-        }
-    }
+            // Add submitted_app_id to request
+            $request->merge(['submitted_app_id' => $submittedApp->id]);
 
-    /**
-     * Save or update the spouse visa application
-     */
-    public function store(SimplifiedSpouseVisaRequest $request)
-    {
-        try {
-            $application = $this->visaService->saveApplication($request);
-            
-            // Calculate completion percentage
-            $completionPercentage = $this->visaService->calculateCompletion($application);
-            
+            // FIXED: Save WITHOUT validation
+            $application = $this->service->saveApplication($request);
+            $completion = $this->service->calculateCompletion($application);
+
             return response()->json([
                 'status' => true,
-                'message' => 'Application saved successfully',
-                'completion' => $completionPercentage,
-                'can_submit' => $completionPercentage >= 100
+                'message' => 'Progress saved successfully.',
+                'completion' => $completion,
             ]);
-            
+
         } catch (\Exception $e) {
-            Log::error('Error saving spouse visa application', [
+            Log::error('Spouse visa save failed', [
                 'user_id' => Auth::id(),
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return response()->json([
                 'status' => false,
-                'message' => 'Failed to save application. Please try again.'
+                'message' => 'Failed to save: ' . $e->getMessage(),
             ], 500);
         }
     }
 
     /**
-     * Submit the completed application
+     * Submit application (WITH VALIDATION)
+     * FIXED: Added payment verification
      */
-    public function submit(Request $request)
+    public function submit(SimplifiedSpouseVisaRequest $request)
     {
         try {
-            $application = SimplifiedSpouseVisaApplication::where('user_id', Auth::id())
-                ->where('submitted_app_id', $request->submitted_app_id)
-                ->firstOrFail();
-
-            // Verify application is complete
-            $completionPercentage = $this->visaService->calculateCompletion($application);
+            $user = Auth::user();
             
-            if ($completionPercentage < 100) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Please complete all required fields before submitting.'
-                ], 422);
+            // FIXED: Check payment status BEFORE allowing submission
+            $paymentStatus = PaymentHelper::checkPaymentStatus($user->id);
+            
+            if (!$paymentStatus['has_paid']) {
+                return back()->withErrors([
+                    'payment' => 'Payment Required - Please complete your payment before submitting your application for review.'
+                ])->withInput();
+            }
+
+            // Get the application
+            $submittedApp = UserSubmittedApplication::where('user_id', $user->id)
+                ->where('status', 'pending')
+                ->where('application_id', 3)
+                ->first();
+
+            if (!$submittedApp) {
+                return back()->withErrors([
+                    'general' => 'No active application found.'
+                ]);
+            }
+
+            $application = SimplifiedSpouseVisaApplication::where('user_id', $user->id)
+                ->where('submitted_app_id', $submittedApp->id)
+                ->first();
+
+            if (!$application) {
+                return back()->withErrors([
+                    'general' => 'Application not found.'
+                ]);
+            }
+
+            // Check if application is complete
+            if (!$application->isComplete()) {
+                return back()->withErrors([
+                    'general' => 'Please complete all required fields before submitting.'
+                ]);
             }
 
             // Submit the application
-            $this->visaService->submitApplication($application);
-            
-            return response()->json([
-                'status' => true,
-                'message' => 'Application submitted successfully!',
-                'redirect' => route('user.page', 'progress')
-            ]);
-            
+            $this->service->submitApplication($application);
+
+            return redirect()->route('user.page', 'progress')
+                ->with('success', 'Application submitted successfully!');
+
         } catch (\Exception $e) {
-            Log::error('Error submitting spouse visa application', [
+            Log::error('Spouse visa submission failed', [
                 'user_id' => Auth::id(),
                 'error' => $e->getMessage()
             ]);
-            
-            return response()->json([
-                'status' => false,
-                'message' => 'Failed to submit application. Please try again.'
-            ], 500);
+
+            return back()->withErrors([
+                'general' => 'Failed to submit application: ' . $e->getMessage()
+            ]);
         }
     }
 
     /**
-     * Get states for a country (AJAX endpoint)
+     * Get states for a country (AJAX)
      */
     public function getStates(Request $request)
     {
-        $countryId = $request->country_id;
-        $selectedState = $request->selected_state;
-        
-        $states = State::where('country_id', $countryId)
-            ->orderBy('name')
-            ->pluck('name', 'name');
-        
-        $html = '<option value="">-Select State-</option>';
-        $html .= '<option value="Does Not Apply">Does Not Apply</option>';
-        
-        foreach ($states as $value => $name) {
-            $selected = ($selectedState == $value) ? 'selected' : '';
-            $html .= "<option value=\"{$value}\" {$selected}>{$name}</option>";
+        try {
+            $countryId = $request->get('country_id');
+            $selectedState = $request->get('selected_state', '');
+
+            // Get states from your database or use a helper
+            $states = \App\Models\State::where('country_id', $countryId)
+                ->orderBy('name')
+                ->get();
+
+            $html = '<option value="">-Select State-</option>';
+            
+            foreach ($states as $state) {
+                $selected = ($state->id == $selectedState) ? 'selected' : '';
+                $html .= sprintf(
+                    '<option value="%s" %s>%s</option>',
+                    $state->id,
+                    $selected,
+                    $state->name
+                );
+            }
+
+            return response($html);
+
+        } catch (\Exception $e) {
+            Log::error('Get states failed', [
+                'error' => $e->getMessage()
+            ]);
+            
+            return response('<option value="">Error loading states</option>');
         }
-        
-        return response($html);
     }
 }
