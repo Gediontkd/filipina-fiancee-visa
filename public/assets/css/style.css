@@ -1096,9 +1096,22 @@ span.subheading {
 
 .contact-us {
     width: 100%;
-    background: url(../img/Couple-Holding-Hands.jpg) no-repeat center center;
+    background: url(../img/Couple-Holding-Hands.jpg) no-repeat;
     background-size: cover;
-    background-position: center 30%;
+    background-position: 55% 25%;  /* CHANGED: Pull back to show more sunset */
+    position: relative;
+    z-index: 1;
+}
+
+.contact-us:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.40);  /* CHANGED: Lighter overlay to show warmth */
+    z-index: -1;
 }
 
 .contact-box h5 {
