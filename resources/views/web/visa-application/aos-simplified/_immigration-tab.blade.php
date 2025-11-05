@@ -11,7 +11,7 @@
             <div class="form-group mb-3">
                 {{ Form::label('current_visa_type', 'Current Visa Type') }}
                 <span class="text-danger">*</span>
-                {{ Form::select('current_visa_type', getAllVisaType(), optional($application)->current_visa_type ?? '', [
+                {{ Form::select('current_visa_type', getAOSVisaTypes(), optional($application)->current_visa_type ?? '', [
                     'class' => 'form-control',
                     'required' => true
                 ]) }}
