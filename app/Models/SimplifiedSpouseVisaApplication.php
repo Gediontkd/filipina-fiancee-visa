@@ -1,4 +1,5 @@
 <?php
+// app/Models/SimplifiedSpouseVisaApplication.php (FIXED)
 
 namespace App\Models;
 
@@ -7,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Simplified Spouse Visa Application Model
- * Stores all spouse visa application data in a single table
+ * FIXED: Removed passport requirement from completion check
  */
 class SimplifiedSpouseVisaApplication extends Model
 {
@@ -119,20 +120,25 @@ class SimplifiedSpouseVisaApplication extends Model
 
     /**
      * Check if application is complete
+     * FIXED: Removed passport from required fields
      */
     public function isComplete()
     {
         $requiredFields = [
+            // Sponsor required
             'sponsor_first_name', 'sponsor_last_name', 'sponsor_email',
             'sponsor_phone', 'sponsor_address', 'sponsor_city',
             'sponsor_state', 'sponsor_zip', 'sponsor_dob',
             'sponsor_place_of_birth', 'sponsor_citizenship', 'sponsor_ssn',
+            
+            // Beneficiary required (passport REMOVED)
             'beneficiary_first_name', 'beneficiary_last_name',
             'beneficiary_email', 'beneficiary_phone', 'beneficiary_address',
             'beneficiary_city', 'beneficiary_country', 'beneficiary_dob',
             'beneficiary_place_of_birth', 'beneficiary_citizenship',
-            'beneficiary_passport_number', 'marriage_date',
-            'marriage_location_city', 'marriage_location_country',
+            
+            // Relationship required
+            'marriage_date', 'marriage_location_city', 'marriage_location_country',
             'first_met_date', 'first_met_location',
             'relationship_description', 'times_met_in_person',
             'communication_methods'

@@ -1,5 +1,6 @@
 <?php
-// app/Http/Controllers/ApplicationSubmissionController.php
+// FILE: app/Http/Controllers/ApplicationSubmissionController.php
+// ACTION: ADD payment verification to your existing file
 
 namespace App\Http\Controllers;
 
@@ -8,6 +9,7 @@ use App\Models\VisaApplication;
 use App\Models\UserSubmittedApplication;
 use App\Services\ApplicationDataService;
 use App\Mail\ApplicationSubmittedMail;
+use App\Helpers\PaymentHelper; // ADD THIS LINE
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -59,6 +61,7 @@ class ApplicationSubmissionController extends Controller
 
     /**
      * Submit the application
+     * FIXED: Added payment verification
      */
     public function submitApplication(Request $request)
     {
@@ -69,6 +72,21 @@ class ApplicationSubmissionController extends Controller
         ]);
 
         $user = Auth::user();
+        
+        // ========== ADD THIS PAYMENT CHECK ==========
+        // CRITICAL: Verify payment before submission
+        $paymentStatus = PaymentHelper::checkPaymentStatus($user->id);
+        
+        if (!$paymentStatus['has_paid']) {
+            Log::warning('Submission blocked - payment not verified', [
+                'user_id' => $user->id
+            ]);
+            
+            return back()->withErrors([
+                'payment' => 'Payment Required - Please complete your payment before submitting your application for review.'
+            ]);
+        }
+        // ========== END PAYMENT CHECK ==========
         
         try {
             DB::beginTransaction();

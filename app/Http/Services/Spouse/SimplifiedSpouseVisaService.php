@@ -1,4 +1,5 @@
 <?php
+// app/Http/Services/Spouse/SimplifiedSpouseVisaService.php (FIXED)
 
 namespace App\Http\Services\Spouse;
 
@@ -11,7 +12,7 @@ use Log;
 
 /**
  * Simplified Spouse Visa Service
- * Handles business logic for spouse visa applications
+ * FIXED: Removed passport from completion calculation
  */
 class SimplifiedSpouseVisaService
 {
@@ -119,6 +120,7 @@ class SimplifiedSpouseVisaService
 
     /**
      * Calculate application completion percentage
+     * FIXED: Removed passport from required fields
      */
     public function calculateCompletion($application)
     {
@@ -133,12 +135,11 @@ class SimplifiedSpouseVisaService
             'sponsor_state', 'sponsor_zip', 'sponsor_dob', 
             'sponsor_place_of_birth', 'sponsor_citizenship', 'sponsor_ssn',
             
-            // Beneficiary required fields (33% weight)
+            // Beneficiary required fields (33% weight) - passport REMOVED
             'beneficiary_first_name', 'beneficiary_last_name', 
             'beneficiary_email', 'beneficiary_phone', 'beneficiary_address', 
             'beneficiary_city', 'beneficiary_country', 'beneficiary_dob', 
-            'beneficiary_place_of_birth', 'beneficiary_citizenship', 
-            'beneficiary_passport_number',
+            'beneficiary_place_of_birth', 'beneficiary_citizenship',
             
             // Relationship required fields (34% weight)
             'marriage_date', 'marriage_location_city', 

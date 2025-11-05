@@ -77,14 +77,18 @@
             </div>
         </div>
         <div class="col-md-6">
+            {{-- FIXED: Made passport optional with helper text --}}
             <div class="form-group mb-3">
                 {{ Form::label('beneficiary_passport_number', 'Passport Number') }}
-                <span class="text-danger">*</span>
                 {{ Form::text('beneficiary_passport_number', optional($application)->beneficiary_passport_number ?? '', [
                     'class' => 'form-control',
-                    'placeholder' => 'Enter passport number',
-                    'required' => true
+                    'placeholder' => 'Enter passport number (if available)'
                 ]) }}
+                <small class="form-text text-muted">
+                    <i class="fa fa-info-circle me-1"></i>
+                    A passport is not required to file this petition, but your spouse will need one later during the NVC and embassy stages.
+                    If she doesn't have one yet, it's a good idea to begin the process of getting one soon.
+                </small>
             </div>
         </div>
     </div>
