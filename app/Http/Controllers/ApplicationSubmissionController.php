@@ -1,6 +1,6 @@
 <?php
 // FILE: app/Http/Controllers/ApplicationSubmissionController.php
-// ACTION: ADD payment verification to your existing file
+// ACTION: REPLACE the showSubmissionPage() method
 
 namespace App\Http\Controllers;
 
@@ -9,7 +9,7 @@ use App\Models\VisaApplication;
 use App\Models\UserSubmittedApplication;
 use App\Services\ApplicationDataService;
 use App\Mail\ApplicationSubmittedMail;
-use App\Helpers\PaymentHelper; // ADD THIS LINE
+use App\Helpers\PaymentHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +27,8 @@ class ApplicationSubmissionController extends Controller
     }
 
     /**
-     * Show final submission page with review
+     * FIXED: Show final submission page with review
+     * Only treat as "existing submission" if it was actually submitted before
      */
     public function showSubmissionPage()
     {
@@ -38,13 +39,13 @@ class ApplicationSubmissionController extends Controller
             return redirect()->route('service')->with('error', 'Please choose an application type first.');
         }
 
-        // Check for existing submission (for resubmission scenario)
-        $existingSubmission = UserSubmittedApplication::where('user_id', $user->id)
-            ->whereHas('visaApplication', function($q) use ($user) {
-                $q->where('name', 'LIKE', '%' . $user->chosen_application . '%');
-            })
-            ->latest()
-            ->first();
+        // FIXED: Check payment status BEFORE showing review page
+        $paymentStatus = PaymentHelper::checkPaymentStatus($user->id);
+        
+        if (!$paymentStatus['has_paid']) {
+            return redirect()->route('payment.index')
+                ->with('info', 'Payment required before submission.');
+        }
 
         // Get the appropriate visa application
         $visaApplication = $this->getVisaApplicationByType($user->chosen_application);
@@ -53,7 +54,15 @@ class ApplicationSubmissionController extends Controller
             return redirect()->route('service')->with('error', 'Invalid application type.');
         }
 
-        // Check completion status (but don't require 100%)
+        // FIXED: Only treat as "existing" if it was actually SUBMITTED before
+        // Don't count "pending" or "draft" as existing submissions
+        $existingSubmission = UserSubmittedApplication::where('user_id', $user->id)
+            ->where('application_id', $visaApplication->id)
+            ->whereIn('status', ['submitted', 'under_review', 'approved', 'rejected'])
+            ->latest()
+            ->first();
+
+        // Check completion status
         $completionStatus = $this->checkApplicationCompletion($user);
         
         return view('web.application.submit', compact('user', 'visaApplication', 'completionStatus', 'existingSubmission'));
@@ -73,7 +82,6 @@ class ApplicationSubmissionController extends Controller
 
         $user = Auth::user();
         
-        // ========== ADD THIS PAYMENT CHECK ==========
         // CRITICAL: Verify payment before submission
         $paymentStatus = PaymentHelper::checkPaymentStatus($user->id);
         
@@ -86,7 +94,6 @@ class ApplicationSubmissionController extends Controller
                 'payment' => 'Payment Required - Please complete your payment before submitting your application for review.'
             ]);
         }
-        // ========== END PAYMENT CHECK ==========
         
         try {
             DB::beginTransaction();
@@ -98,17 +105,19 @@ class ApplicationSubmissionController extends Controller
                 throw new \Exception('Invalid application type.');
             }
 
-            // Check if this is an update or new submission
+            // FIXED: Only look for ACTUALLY submitted applications
             $existingSubmission = UserSubmittedApplication::where('user_id', $user->id)
                 ->where('application_id', $visaApplication->id)
+                ->whereIn('status', ['submitted', 'under_review', 'approved', 'rejected'])
                 ->latest()
                 ->first();
 
             if ($request->submission_type === 'update' && $existingSubmission) {
-                // Update existing submission
+                // This is a RE-submission (updating previous submission)
                 $existingSubmission->update([
                     'transaction_id' => $this->generateTransactionId(),
-                    'status' => 'pending',
+                    'status' => 'submitted',
+                    'submitted_at' => now(),
                     'admin_notes' => null,
                     'reviewed_at' => null,
                     'reviewed_by' => null,
@@ -117,13 +126,32 @@ class ApplicationSubmissionController extends Controller
                 $submission = $existingSubmission;
                 $message = 'Your application has been updated and resubmitted successfully!';
             } else {
-                // Create new submission
-                $submission = UserSubmittedApplication::create([
-                    'user_id' => $user->id,
-                    'application_id' => $visaApplication->id,
-                    'transaction_id' => $this->generateTransactionId(),
-                    'status' => 'pending',
-                ]);
+                // FIXED: This is a NEW submission (first time)
+                // Find or use the pending record
+                $pendingRecord = UserSubmittedApplication::where('user_id', $user->id)
+                    ->where('application_id', $visaApplication->id)
+                    ->where('status', 'pending')
+                    ->first();
+
+                if ($pendingRecord) {
+                    // Update the pending record to submitted
+                    $pendingRecord->update([
+                        'transaction_id' => $this->generateTransactionId(),
+                        'status' => 'submitted',
+                        'submitted_at' => now(),
+                    ]);
+                    $submission = $pendingRecord;
+                } else {
+                    // Create new submission
+                    $submission = UserSubmittedApplication::create([
+                        'user_id' => $user->id,
+                        'application_id' => $visaApplication->id,
+                        'transaction_id' => $this->generateTransactionId(),
+                        'status' => 'submitted',
+                        'submitted_at' => now(),
+                    ]);
+                }
+                
                 $message = 'Your application has been submitted successfully!';
             }
 
@@ -205,7 +233,7 @@ class ApplicationSubmissionController extends Controller
     }
 
     /**
-     * Check application completion status (allows partial completion)
+     * Check application completion status
      */
     private function checkApplicationCompletion($user)
     {
@@ -272,7 +300,10 @@ class ApplicationSubmissionController extends Controller
     {
         $user = Auth::user();
         
-        $submission = UserSubmittedApplication::where('user_id', $user->id)->latest()->first();
+        $submission = UserSubmittedApplication::where('user_id', $user->id)
+            ->whereIn('status', ['submitted', 'under_review', 'approved', 'rejected'])
+            ->latest()
+            ->first();
         
         if ($submission) {
             return response()->json([
