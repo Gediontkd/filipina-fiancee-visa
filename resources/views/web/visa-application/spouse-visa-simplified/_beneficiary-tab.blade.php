@@ -1,8 +1,11 @@
+{{-- FILE: resources/views/web/visa-application/spouse-visa-simplified/_beneficiary-tab.blade.php --}}
+{{-- FIXED: Added gender, parents info, format validation, N/A checkboxes --}}
+
 <div class="beneficiary-section">
     <h4 class="mb-4 border-bottom pb-2">
         <i class="fa fa-user-friends me-2 text-primary"></i>Beneficiary Information
     </h4>
-    <p class="text-muted mb-4">Enter information about the foreign spouse (beneficiary)</p>
+    <p class="text-muted mb-4">Enter information about the foreign spouse (beneficiary) - Form I-130, Part 4</p>
 
     <!-- Personal Information -->
     <h5 class="mb-3"><i class="fa fa-id-card me-2"></i>Personal Information</h5>
@@ -14,8 +17,10 @@
                 {{ Form::text('beneficiary_first_name', optional($application)->beneficiary_first_name ?? '', [
                     'class' => 'form-control',
                     'placeholder' => 'Enter first name',
-                    'required' => true
+                    'required' => true,
+                    'maxlength' => 50
                 ]) }}
+                <small class="form-text text-muted">I-130, Item 4.b</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -23,8 +28,10 @@
                 {{ Form::label('beneficiary_middle_name', 'Middle Name') }}
                 {{ Form::text('beneficiary_middle_name', optional($application)->beneficiary_middle_name ?? '', [
                     'class' => 'form-control',
-                    'placeholder' => 'Enter middle name (optional)'
+                    'placeholder' => 'Middle name (optional)',
+                    'maxlength' => 50
                 ]) }}
+                <small class="form-text text-muted">I-130, Item 4.c</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -34,14 +41,16 @@
                 {{ Form::text('beneficiary_last_name', optional($application)->beneficiary_last_name ?? '', [
                     'class' => 'form-control',
                     'placeholder' => 'Enter last name',
-                    'required' => true
+                    'required' => true,
+                    'maxlength' => 50
                 ]) }}
+                <small class="form-text text-muted">I-130, Item 4.a</small>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="form-group mb-3">
                 {{ Form::label('beneficiary_dob', 'Date of Birth') }}
                 <span class="text-danger">*</span>
@@ -50,17 +59,35 @@
                     'placeholder' => 'MM/DD/YYYY',
                     'required' => true
                 ]) }}
+                <small class="form-text text-muted">I-130, Item 8</small>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <div class="form-group mb-3">
+                {{ Form::label('beneficiary_sex', 'Sex') }}
+                <span class="text-danger">*</span>
+                {{ Form::select('beneficiary_sex', [
+                    '' => '-Select-',
+                    'Male' => 'Male',
+                    'Female' => 'Female'
+                ], optional($application)->beneficiary_sex ?? '', [
+                    'class' => 'form-control',
+                    'required' => true
+                ]) }}
+                <small class="form-text text-muted">I-130, Item 9</small>
+            </div>
+        </div>
+        <div class="col-md-4">
             <div class="form-group mb-3">
                 {{ Form::label('beneficiary_place_of_birth', 'Place of Birth (City, Country)') }}
                 <span class="text-danger">*</span>
                 {{ Form::text('beneficiary_place_of_birth', optional($application)->beneficiary_place_of_birth ?? '', [
                     'class' => 'form-control',
                     'placeholder' => 'e.g., Manila, Philippines',
-                    'required' => true
+                    'required' => true,
+                    'maxlength' => 100
                 ]) }}
+                <small class="form-text text-muted">I-130, Items 6-7</small>
             </div>
         </div>
     </div>
@@ -74,20 +101,31 @@
                     'class' => 'form-control',
                     'required' => true
                 ]) }}
+                <small class="form-text text-muted">I-130, Part 4</small>
             </div>
         </div>
         <div class="col-md-6">
-            {{-- FIXED: Made passport optional with helper text --}}
             <div class="form-group mb-3">
                 {{ Form::label('beneficiary_passport_number', 'Passport Number') }}
-                {{ Form::text('beneficiary_passport_number', optional($application)->beneficiary_passport_number ?? '', [
-                    'class' => 'form-control',
-                    'placeholder' => 'Enter passport number (if available)'
-                ]) }}
+                <div class="input-group">
+                    {{ Form::text('beneficiary_passport_number', optional($application)->beneficiary_passport_number ?? '', [
+                        'class' => 'form-control',
+                        'placeholder' => 'Enter passport number',
+                        'maxlength' => 50,
+                        'id' => 'beneficiary_passport_number'
+                    ]) }}
+                </div>
+                <div class="form-check mt-2">
+                    {{ Form::checkbox('beneficiary_passport_na', 1, 
+                        (optional($application)->beneficiary_passport_number ?? '') === 'N/A', [
+                        'class' => 'form-check-input does-not-apply-checkbox',
+                        'data-target' => '#beneficiary_passport_number'
+                    ]) }}
+                    <label class="form-check-label">Does Not Apply / Will Get Later</label>
+                </div>
                 <small class="form-text text-muted">
                     <i class="fa fa-info-circle me-1"></i>
-                    A passport is not required to file this petition, but your spouse will need one later during the NVC and embassy stages.
-                    If she doesn't have one yet, it's a good idea to begin the process of getting one soon.
+                    Optional for I-130 filing. Required later for visa interview.
                 </small>
             </div>
         </div>
@@ -97,12 +135,12 @@
         <div class="col-md-12">
             <div class="form-group mb-3">
                 {{ Form::label('beneficiary_alien_number', 'Alien Registration Number (A-Number)') }}
-                <span class="text-muted">(If applicable)</span>
                 <div class="input-group">
                     {{ Form::text('beneficiary_alien_number', optional($application)->beneficiary_alien_number ?? '', [
                         'class' => 'form-control',
                         'placeholder' => 'A12345678',
-                        'id' => 'beneficiary_alien_number'
+                        'id' => 'beneficiary_alien_number',
+                        'maxlength' => 20
                     ]) }}
                 </div>
                 <div class="form-check mt-2">
@@ -113,6 +151,7 @@
                     ]) }}
                     <label class="form-check-label">Does Not Apply</label>
                 </div>
+                <small class="form-text text-muted">I-130, Item 1 - Only if previously had U.S. immigration status</small>
             </div>
         </div>
     </div>
@@ -127,7 +166,8 @@
                 {{ Form::email('beneficiary_email', optional($application)->beneficiary_email ?? '', [
                     'class' => 'form-control',
                     'placeholder' => 'beneficiary@example.com',
-                    'required' => true
+                    'required' => true,
+                    'maxlength' => 100
                 ]) }}
             </div>
         </div>
@@ -137,9 +177,11 @@
                 <span class="text-danger">*</span>
                 {{ Form::text('beneficiary_phone', optional($application)->beneficiary_phone ?? '', [
                     'class' => 'form-control',
-                    'placeholder' => '+63 912 345 6789',
-                    'required' => true
+                    'placeholder' => '+63 912 345 6789 or (###) ###-####',
+                    'required' => true,
+                    'maxlength' => 50
                 ]) }}
+                <small class="form-text text-muted">International format accepted</small>
             </div>
         </div>
     </div>
@@ -147,15 +189,39 @@
     <!-- Current Address -->
     <h5 class="mb-3 mt-4"><i class="fa fa-home me-2"></i>Current Address</h5>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-8">
             <div class="form-group mb-3">
                 {{ Form::label('beneficiary_address', 'Street Address') }}
                 <span class="text-danger">*</span>
                 {{ Form::text('beneficiary_address', optional($application)->beneficiary_address ?? '', [
                     'class' => 'form-control',
-                    'placeholder' => 'Street address, apartment, building',
-                    'required' => true
+                    'placeholder' => 'Street address, building',
+                    'required' => true,
+                    'maxlength' => 100
                 ]) }}
+                <small class="form-text text-muted">I-130, Item 11.a</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group mb-3">
+                {{ Form::label('beneficiary_apt', 'Apt/Suite/Floor') }}
+                <div class="input-group">
+                    {{ Form::text('beneficiary_apt', optional($application)->beneficiary_apt ?? '', [
+                        'class' => 'form-control',
+                        'placeholder' => 'Apt #',
+                        'maxlength' => 20,
+                        'id' => 'beneficiary_apt'
+                    ]) }}
+                </div>
+                <div class="form-check mt-2">
+                    {{ Form::checkbox('beneficiary_apt_na', 1, 
+                        (optional($application)->beneficiary_apt ?? '') === 'N/A', [
+                        'class' => 'form-check-input does-not-apply-checkbox',
+                        'data-target' => '#beneficiary_apt'
+                    ]) }}
+                    <label class="form-check-label">N/A</label>
+                </div>
+                <small class="form-text text-muted">I-130, Item 11.b</small>
             </div>
         </div>
     </div>
@@ -168,8 +234,10 @@
                 {{ Form::text('beneficiary_city', optional($application)->beneficiary_city ?? '', [
                     'class' => 'form-control',
                     'placeholder' => 'Enter city',
-                    'required' => true
+                    'required' => true,
+                    'maxlength' => 50
                 ]) }}
+                <small class="form-text text-muted">I-130, Item 11.c</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -181,6 +249,7 @@
                     'data-state-target' => '#beneficiary_state',
                     'required' => true
                 ]) }}
+                <small class="form-text text-muted">I-130, Item 11.h</small>
             </div>
         </div>
     </div>
@@ -189,11 +258,13 @@
         <div class="col-md-6">
             <div class="form-group mb-3">
                 {{ Form::label('beneficiary_state', 'State/Province') }}
-                {{ Form::select('beneficiary_state', [], optional($application)->beneficiary_state ?? '', [
+                {{ Form::text('beneficiary_state', optional($application)->beneficiary_state ?? '', [
                     'class' => 'form-control',
                     'id' => 'beneficiary_state',
-                    'data-selected' => optional($application)->beneficiary_state ?? ''
+                    'placeholder' => 'State or Province',
+                    'maxlength' => 50
                 ]) }}
+                <small class="form-text text-muted">I-130, Items 11.d (US) or 11.f (Province)</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -201,14 +272,178 @@
                 {{ Form::label('beneficiary_zip', 'Postal/ZIP Code') }}
                 {{ Form::text('beneficiary_zip', optional($application)->beneficiary_zip ?? '', [
                     'class' => 'form-control',
-                    'placeholder' => 'Enter postal code'
+                    'placeholder' => 'Enter postal code',
+                    'maxlength' => 20
                 ]) }}
+                <small class="form-text text-muted">I-130, Items 11.e (US) or 11.g (Postal)</small>
             </div>
         </div>
     </div>
 
-    <!-- Employment Information -->
-    <h5 class="mb-3 mt-4"><i class="fa fa-briefcase me-2"></i>Employment Information</h5>
+    <!-- Parents Information -->
+    <h5 class="mb-3 mt-4"><i class="fa fa-users me-2"></i>Beneficiary's Parents Information</h5>
+    <p class="text-muted">Provide information about the beneficiary's biological or adoptive parents</p>
+    
+    <!-- Parent 1 -->
+    <div class="card mb-3">
+        <div class="card-header bg-light">
+            <strong>Parent 1</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent1_first_name', 'First Name') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('beneficiary_parent1_first_name', optional($application)->beneficiary_parent1_first_name ?? '', [
+                            'class' => 'form-control',
+                            'required' => true,
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent1_middle_name', 'Middle Name') }}
+                        {{ Form::text('beneficiary_parent1_middle_name', optional($application)->beneficiary_parent1_middle_name ?? '', [
+                            'class' => 'form-control',
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent1_last_name', 'Last Name') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('beneficiary_parent1_last_name', optional($application)->beneficiary_parent1_last_name ?? '', [
+                            'class' => 'form-control',
+                            'required' => true,
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent1_dob', 'Date of Birth') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('beneficiary_parent1_dob', optional($application)->beneficiary_parent1_dob ? optional($application)->beneficiary_parent1_dob->format('m/d/Y') : '', [
+                            'class' => 'form-control datePicker',
+                            'placeholder' => 'MM/DD/YYYY',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent1_sex', 'Sex') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::select('beneficiary_parent1_sex', [
+                            '' => '-Select-',
+                            'Male' => 'Male',
+                            'Female' => 'Female'
+                        ], optional($application)->beneficiary_parent1_sex ?? '', [
+                            'class' => 'form-control',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent1_country', 'Country of Birth') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::select('beneficiary_parent1_country', getAllCountry(), optional($application)->beneficiary_parent1_country ?? '', [
+                            'class' => 'form-control',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Parent 2 -->
+    <div class="card mb-3">
+        <div class="card-header bg-light">
+            <strong>Parent 2</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent2_first_name', 'First Name') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('beneficiary_parent2_first_name', optional($application)->beneficiary_parent2_first_name ?? '', [
+                            'class' => 'form-control',
+                            'required' => true,
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent2_middle_name', 'Middle Name') }}
+                        {{ Form::text('beneficiary_parent2_middle_name', optional($application)->beneficiary_parent2_middle_name ?? '', [
+                            'class' => 'form-control',
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent2_last_name', 'Last Name') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('beneficiary_parent2_last_name', optional($application)->beneficiary_parent2_last_name ?? '', [
+                            'class' => 'form-control',
+                            'required' => true,
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent2_dob', 'Date of Birth') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('beneficiary_parent2_dob', optional($application)->beneficiary_parent2_dob ? optional($application)->beneficiary_parent2_dob->format('m/d/Y') : '', [
+                            'class' => 'form-control datePicker',
+                            'placeholder' => 'MM/DD/YYYY',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent2_sex', 'Sex') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::select('beneficiary_parent2_sex', [
+                            '' => '-Select-',
+                            'Male' => 'Male',
+                            'Female' => 'Female'
+                        ], optional($application)->beneficiary_parent2_sex ?? '', [
+                            'class' => 'form-control',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_parent2_country', 'Country of Birth') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::select('beneficiary_parent2_country', getAllCountry(), optional($application)->beneficiary_parent2_country ?? '', [
+                            'class' => 'form-control',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employment Information - OPTIONAL for beneficiary -->
+    <h5 class="mb-3 mt-4"><i class="fa fa-briefcase me-2"></i>Employment Information (Optional)</h5>
     <div class="row">
         <div class="col-md-6">
             <div class="form-group mb-3">
@@ -231,7 +466,8 @@
                 {{ Form::label('beneficiary_occupation', 'Occupation/Job Title') }}
                 {{ Form::text('beneficiary_occupation', optional($application)->beneficiary_occupation ?? '', [
                     'class' => 'form-control',
-                    'placeholder' => 'Job title (if employed)'
+                    'placeholder' => 'Job title (if employed)',
+                    'maxlength' => 100
                 ]) }}
             </div>
         </div>
@@ -243,7 +479,8 @@
                 {{ Form::label('beneficiary_employer_name', 'Employer Name') }}
                 {{ Form::text('beneficiary_employer_name', optional($application)->beneficiary_employer_name ?? '', [
                     'class' => 'form-control',
-                    'placeholder' => 'Company name (if employed)'
+                    'placeholder' => 'Company name (if employed)',
+                    'maxlength' => 100
                 ]) }}
             </div>
         </div>
