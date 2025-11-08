@@ -1,15 +1,12 @@
 <?php
-// app/Models/SimplifiedSpouseVisaApplication.php (FIXED)
+// FILE: app/Models/SimplifiedSpouseVisaApplication.php
+// FIXED: Financial fields are optional, not required for I-130
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Simplified Spouse Visa Application Model
- * FIXED: Removed passport requirement from completion check
- */
 class SimplifiedSpouseVisaApplication extends Model
 {
     use HasFactory;
@@ -24,9 +21,11 @@ class SimplifiedSpouseVisaApplication extends Model
         'sponsor_first_name',
         'sponsor_middle_name',
         'sponsor_last_name',
+        'sponsor_sex',
         'sponsor_email',
         'sponsor_phone',
         'sponsor_address',
+        'sponsor_apt',
         'sponsor_city',
         'sponsor_state',
         'sponsor_zip',
@@ -35,6 +34,22 @@ class SimplifiedSpouseVisaApplication extends Model
         'sponsor_place_of_birth',
         'sponsor_citizenship',
         'sponsor_ssn',
+        
+        // Sponsor Parents
+        'sponsor_parent1_first_name',
+        'sponsor_parent1_middle_name',
+        'sponsor_parent1_last_name',
+        'sponsor_parent1_dob',
+        'sponsor_parent1_sex',
+        'sponsor_parent1_country',
+        'sponsor_parent2_first_name',
+        'sponsor_parent2_middle_name',
+        'sponsor_parent2_last_name',
+        'sponsor_parent2_dob',
+        'sponsor_parent2_sex',
+        'sponsor_parent2_country',
+        
+        // Sponsor Employment - OPTIONAL
         'sponsor_employment_status',
         'sponsor_employer_name',
         'sponsor_occupation',
@@ -44,9 +59,11 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_first_name',
         'beneficiary_middle_name',
         'beneficiary_last_name',
+        'beneficiary_sex',
         'beneficiary_email',
         'beneficiary_phone',
         'beneficiary_address',
+        'beneficiary_apt',
         'beneficiary_city',
         'beneficiary_state',
         'beneficiary_zip',
@@ -56,6 +73,22 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_citizenship',
         'beneficiary_passport_number',
         'beneficiary_alien_number',
+        
+        // Beneficiary Parents
+        'beneficiary_parent1_first_name',
+        'beneficiary_parent1_middle_name',
+        'beneficiary_parent1_last_name',
+        'beneficiary_parent1_dob',
+        'beneficiary_parent1_sex',
+        'beneficiary_parent1_country',
+        'beneficiary_parent2_first_name',
+        'beneficiary_parent2_middle_name',
+        'beneficiary_parent2_last_name',
+        'beneficiary_parent2_dob',
+        'beneficiary_parent2_sex',
+        'beneficiary_parent2_country',
+        
+        // Beneficiary Employment - OPTIONAL
         'beneficiary_employment_status',
         'beneficiary_employer_name',
         'beneficiary_occupation',
@@ -63,16 +96,17 @@ class SimplifiedSpouseVisaApplication extends Model
         // Relationship Information
         'marriage_date',
         'marriage_location_city',
+        'marriage_location_state',
+        'marriage_location_province',
         'marriage_location_country',
-        'first_met_date',
-        'first_met_location',
-        'relationship_description',
-        'times_met_in_person',
-        'last_meeting_date',
-        'communication_methods',
+        'sponsor_times_married',
         'sponsor_previous_marriages',
-        'beneficiary_previous_marriages',
+        'sponsor_prev_spouse_first_name',
+        'sponsor_prev_spouse_last_name',
         'sponsor_divorce_date',
+        'beneficiary_previous_marriages',
+        'beneficiary_prev_spouse_first_name',
+        'beneficiary_prev_spouse_last_name',
         'beneficiary_divorce_date',
         
         'status',
@@ -81,20 +115,19 @@ class SimplifiedSpouseVisaApplication extends Model
 
     protected $casts = [
         'sponsor_dob' => 'date',
-        'beneficiary_dob' => 'date',
-        'marriage_date' => 'date',
-        'first_met_date' => 'date',
-        'last_meeting_date' => 'date',
+        'sponsor_parent1_dob' => 'date',
+        'sponsor_parent2_dob' => 'date',
         'sponsor_divorce_date' => 'date',
+        'beneficiary_dob' => 'date',
+        'beneficiary_parent1_dob' => 'date',
+        'beneficiary_parent2_dob' => 'date',
         'beneficiary_divorce_date' => 'date',
+        'marriage_date' => 'date',
         'submitted_at' => 'datetime',
         'sponsor_annual_income' => 'decimal:2',
-        'times_met_in_person' => 'integer',
+        'sponsor_times_married' => 'integer',
     ];
 
-    /**
-     * Relationships
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -105,9 +138,6 @@ class SimplifiedSpouseVisaApplication extends Model
         return $this->belongsTo(UserSubmittedApplication::class, 'submitted_app_id');
     }
 
-    /**
-     * Scopes
-     */
     public function scopeDraft($query)
     {
         return $query->where('status', 'draft');
@@ -119,33 +149,44 @@ class SimplifiedSpouseVisaApplication extends Model
     }
 
     /**
-     * Check if application is complete
-     * FIXED: Removed passport from required fields
+     * Check if I-130 application is complete
+     * FIXED: Financial fields are NOT required
      */
     public function isComplete()
     {
         $requiredFields = [
-            // Sponsor required
-            'sponsor_first_name', 'sponsor_last_name', 'sponsor_email',
-            'sponsor_phone', 'sponsor_address', 'sponsor_city',
-            'sponsor_state', 'sponsor_zip', 'sponsor_dob',
-            'sponsor_place_of_birth', 'sponsor_citizenship', 'sponsor_ssn',
+            // Sponsor Basic (13)
+            'sponsor_first_name', 'sponsor_last_name', 'sponsor_sex',
+            'sponsor_email', 'sponsor_phone', 'sponsor_address',
+            'sponsor_city', 'sponsor_state', 'sponsor_zip',
+            'sponsor_dob', 'sponsor_place_of_birth',
+            'sponsor_citizenship', 'sponsor_ssn',
             
-            // Beneficiary required (passport REMOVED)
-            'beneficiary_first_name', 'beneficiary_last_name',
+            // Sponsor Parents (10)
+            'sponsor_parent1_first_name', 'sponsor_parent1_last_name',
+            'sponsor_parent1_dob', 'sponsor_parent1_sex', 'sponsor_parent1_country',
+            'sponsor_parent2_first_name', 'sponsor_parent2_last_name',
+            'sponsor_parent2_dob', 'sponsor_parent2_sex', 'sponsor_parent2_country',
+            
+            // Beneficiary Basic (11)
+            'beneficiary_first_name', 'beneficiary_last_name', 'beneficiary_sex',
             'beneficiary_email', 'beneficiary_phone', 'beneficiary_address',
             'beneficiary_city', 'beneficiary_country', 'beneficiary_dob',
             'beneficiary_place_of_birth', 'beneficiary_citizenship',
             
-            // Relationship required
+            // Beneficiary Parents (10)
+            'beneficiary_parent1_first_name', 'beneficiary_parent1_last_name',
+            'beneficiary_parent1_dob', 'beneficiary_parent1_sex', 'beneficiary_parent1_country',
+            'beneficiary_parent2_first_name', 'beneficiary_parent2_last_name',
+            'beneficiary_parent2_dob', 'beneficiary_parent2_sex', 'beneficiary_parent2_country',
+            
+            // Marriage (6)
             'marriage_date', 'marriage_location_city', 'marriage_location_country',
-            'first_met_date', 'first_met_location',
-            'relationship_description', 'times_met_in_person',
-            'communication_methods'
+            'sponsor_times_married', 'sponsor_previous_marriages', 'beneficiary_previous_marriages'
         ];
 
         foreach ($requiredFields as $field) {
-            if (empty($this->$field)) {
+            if (empty($this->$field) || $this->$field === null || trim($this->$field) === '') {
                 return false;
             }
         }
