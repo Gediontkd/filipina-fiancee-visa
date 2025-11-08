@@ -1,21 +1,31 @@
 <?php
-// app/Http/Controllers/StripeController.php (FIXED)
+// FILE: app/Http/Controllers/StripeController.php
+// FIXED: Auto-submit application after successful payment
 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Helpers\PaymentHelper;
+use App\Models\User;
 use App\Models\UserSubmittedApplication;
+use App\Services\ApplicationDataService;
+use App\Mail\ApplicationSubmittedMail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\File;
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
 
 class StripeController extends Controller
 {
-    public function __construct()
+    protected ApplicationDataService $dataService;
+
+    public function __construct(ApplicationDataService $dataService)
     {
         Stripe::setApiKey(config('services.stripe.secret'));
+        $this->dataService = $dataService;
     }
 
     public function index(Request $request)
@@ -58,8 +68,8 @@ class StripeController extends Controller
                     'price_data' => [
                         'currency' => 'usd',
                         'product_data' => [
-                            'name' => 'PDF Package - ' . $application->visaApplication->name,
-                            'description' => 'Complete application package download',
+                            'name' => 'Full Service Package - ' . $application->visaApplication->name,
+                            'description' => 'Complete immigration application service including expert review, PDF generation, and support',
                         ],
                         'unit_amount' => $paymentStatus['amount'] * 100,
                     ],
@@ -73,6 +83,7 @@ class StripeController extends Controller
                 'metadata' => [
                     'user_id' => (string)$user->id,
                     'application_id' => (string)$application->id,
+                    'auto_submit' => 'true', // Flag for auto-submission
                 ],
             ]);
 
@@ -96,7 +107,8 @@ class StripeController extends Controller
     }
 
     /**
-     * Payment success callback - FIXED
+     * Payment success callback
+     * FIXED: Auto-submit application after payment
      */
     public function success(Request $request)
     {
@@ -105,13 +117,12 @@ class StripeController extends Controller
             
             Log::info('Payment success callback received', [
                 'session_id' => $sessionId,
-                'all_params' => $request->all()
             ]);
 
             if (!$sessionId) {
                 Log::error('No session ID in payment success callback');
                 return redirect()->route('user.page', 'progress')
-                    ->with('error', 'Invalid payment session - no session ID');
+                    ->with('error', 'Invalid payment session');
             }
 
             // Retrieve session from Stripe
@@ -120,7 +131,6 @@ class StripeController extends Controller
             Log::info('Stripe session retrieved', [
                 'session_id' => $sessionId,
                 'payment_status' => $session->payment_status,
-                'client_reference_id' => $session->client_reference_id
             ]);
 
             if ($session->payment_status === 'paid') {
@@ -128,21 +138,60 @@ class StripeController extends Controller
                 $paymentIntentId = $session->payment_intent;
                 $amount = $session->amount_total / 100;
 
-                Log::info('Marking application as paid', [
-                    'application_id' => $applicationId,
-                    'payment_intent_id' => $paymentIntentId,
-                    'amount' => $amount
-                ]);
+                DB::beginTransaction();
 
-                $result = PaymentHelper::markAsPaid($applicationId, $paymentIntentId, $amount);
+                try {
+                    // Mark payment as complete
+                    Log::info('Marking application as paid', [
+                        'application_id' => $applicationId,
+                        'payment_intent_id' => $paymentIntentId,
+                    ]);
 
-                if ($result) {
+                    $paymentResult = PaymentHelper::markAsPaid($applicationId, $paymentIntentId, $amount);
+
+                    if (!$paymentResult) {
+                        throw new \Exception('Failed to mark payment');
+                    }
+
+                    // AUTO-SUBMIT APPLICATION
+                    $submission = UserSubmittedApplication::findOrFail($applicationId);
+                    
+                    Log::info('Auto-submitting application after payment', [
+                        'application_id' => $applicationId,
+                        'user_id' => $submission->user_id,
+                    ]);
+
+                    // Update submission status
+                    $submission->update([
+                        'transaction_id' => $this->generateTransactionId(),
+                        'status' => 'submitted',
+                        'submitted_at' => now(),
+                    ]);
+
+                    // Collect and email application data
+                    $this->emailApplicationData($submission);
+
+                    DB::commit();
+
+                    Log::info('Application auto-submitted successfully', [
+                        'application_id' => $applicationId,
+                        'transaction_id' => $submission->transaction_id,
+                    ]);
+
                     return redirect()->route('user.page', 'progress')
-                        ->with('success', 'Payment successful! You can now download your PDF package.');
-                } else {
-                    Log::error('Failed to mark application as paid');
+                        ->with('success', '🎉 Payment successful! Your application has been submitted for expert review. Our team will contact you within 2-3 business days.');
+
+                } catch (\Exception $e) {
+                    DB::rollback();
+                    
+                    Log::error('Auto-submission failed after payment', [
+                        'application_id' => $applicationId,
+                        'error' => $e->getMessage(),
+                    ]);
+
+                    // Payment succeeded but submission failed - notify user
                     return redirect()->route('user.page', 'progress')
-                        ->with('error', 'Payment received but database update failed. Please contact support.');
+                        ->with('warning', 'Payment received successfully, but there was an issue submitting your application. Please contact support or try submitting manually.');
                 }
             }
 
@@ -162,9 +211,71 @@ class StripeController extends Controller
         }
     }
 
+    /**
+     * Email application data to admin
+     */
+    private function emailApplicationData($submission)
+    {
+        try {
+            // Collect application data
+            $applicationData = $this->dataService->collectApplicationData($submission);
+            
+            // Format as JSON
+            $jsonData = $this->dataService->formatAsJson($applicationData);
+            
+            // Save JSON file temporarily
+            $filename = sprintf(
+                'application_%s_%s.json',
+                $submission->transaction_id,
+                date('Y-m-d_His')
+            );
+            $jsonFilePath = $this->dataService->saveJsonFile($jsonData, $filename);
+
+            // Get user info
+            $user = User::find($submission->user_id);
+
+            // Send email with JSON attachment
+            $adminEmail = config('mail.admin_email', 'gediondaniel454@gmail.com');
+            
+            Mail::to($adminEmail)->send(
+                new ApplicationSubmittedMail(
+                    $applicationData,
+                    $jsonFilePath,
+                    $user->name,
+                    $submission->visaApplication->name
+                )
+            );
+
+            // Clean up temporary file
+            if (File::exists($jsonFilePath)) {
+                File::delete($jsonFilePath);
+            }
+
+            Log::info('Application data emailed successfully', [
+                'submission_id' => $submission->id,
+                'transaction_id' => $submission->transaction_id,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to email application data', [
+                'submission_id' => $submission->id,
+                'error' => $e->getMessage(),
+            ]);
+            // Don't throw - submission already succeeded
+        }
+    }
+
+    /**
+     * Generate unique transaction ID
+     */
+    private function generateTransactionId()
+    {
+        return 'APP-' . strtoupper(uniqid()) . '-' . time();
+    }
+
     public function cancel()
     {
         return redirect()->route('user.page', 'progress')
-            ->with('error', 'Payment cancelled. You can try again when ready.');
+            ->with('info', 'Payment cancelled. You can try again when ready.');
     }
 }
