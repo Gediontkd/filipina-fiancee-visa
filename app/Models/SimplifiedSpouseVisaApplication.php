@@ -108,6 +108,19 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_prev_spouse_first_name',
         'beneficiary_prev_spouse_last_name',
         'beneficiary_divorce_date',
+
+        'sponsor_mailing_address',
+        'sponsor_mailing_apt',
+        'sponsor_mailing_city',
+        'sponsor_mailing_state',
+        'sponsor_mailing_zip',
+        'sponsor_mailing_date_from',
+        'sponsor_mailing_date_to',
+        'sponsor_same_address',
+        'sponsor_address_history',
+        'beneficiary_address_history',
+        'sponsor_employment_history',
+        'beneficiary_employment_history',
         
         'status',
         'submitted_at'
@@ -126,6 +139,13 @@ class SimplifiedSpouseVisaApplication extends Model
         'submitted_at' => 'datetime',
         'sponsor_annual_income' => 'decimal:2',
         'sponsor_times_married' => 'integer',
+        'sponsor_mailing_date_from' => 'date',
+        'sponsor_mailing_date_to' => 'date',
+        'sponsor_same_address' => 'boolean',
+        'sponsor_address_history' => 'array',
+        'beneficiary_address_history' => 'array',
+        'sponsor_employment_history' => 'array',
+        'beneficiary_employment_history' => 'array',
     ];
 
     public function user()
@@ -147,6 +167,52 @@ class SimplifiedSpouseVisaApplication extends Model
     {
         return $query->where('status', 'submitted');
     }
+
+    /**
+ * Check if address history covers 5 years
+ */
+public function hasCompleteFiveYearAddressHistory($person = 'sponsor')
+{
+    $field = $person . '_address_history';
+    $addresses = $this->$field ?? [];
+    
+    if (empty($addresses)) {
+        return false;
+    }
+    
+    // Sort by date_from descending
+    usort($addresses, function($a, $b) {
+        return strtotime($b['date_from']) - strtotime($a['date_from']);
+    });
+    
+    $oldestDate = strtotime($addresses[count($addresses) - 1]['date_from']);
+    $fiveYearsAgo = strtotime('-5 years');
+    
+    return $oldestDate <= $fiveYearsAgo;
+}
+
+/**
+ * Check if employment history covers 5 years
+ */
+public function hasCompleteFiveYearEmploymentHistory($person = 'sponsor')
+{
+    $field = $person . '_employment_history';
+    $employment = $this->$field ?? [];
+    
+    if (empty($employment)) {
+        return false;
+    }
+    
+    // Sort by date_from descending
+    usort($employment, function($a, $b) {
+        return strtotime($b['date_from']) - strtotime($a['date_from']);
+    });
+    
+    $oldestDate = strtotime($employment[count($employment) - 1]['date_from']);
+    $fiveYearsAgo = strtotime('-5 years');
+    
+    return $oldestDate <= $fiveYearsAgo;
+}
 
     /**
      * Check if I-130 application is complete
