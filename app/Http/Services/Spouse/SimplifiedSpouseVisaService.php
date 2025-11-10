@@ -1,6 +1,6 @@
 <?php
 // FILE: app/Http/Services/Spouse/SimplifiedSpouseVisaService.php
-// FIXED: Financial fields are NOT required for I-130 completion
+// UPDATED: Added mailing address, address history, employment history
 
 namespace App\Http\Services\Spouse;
 
@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use Log;
+use Carbon\Carbon;
 
 class SimplifiedSpouseVisaService
 {
@@ -21,6 +22,73 @@ class SimplifiedSpouseVisaService
         DB::beginTransaction();
 
         try {
+            // Process address history
+            $sponsorAddressHistory = [];
+            if ($request->has('sponsor_address_history')) {
+                foreach ($request->sponsor_address_history as $address) {
+                    if (!empty($address['address']) || !empty($address['city'])) {
+                        $sponsorAddressHistory[] = [
+                            'address' => $address['address'] ?? '',
+                            'apt' => $address['apt'] ?? '',
+                            'city' => $address['city'] ?? '',
+                            'state' => $address['state'] ?? '',
+                            'zip' => $address['zip'] ?? '',
+                            'date_from' => $address['date_from'] ?? '',
+                            'date_to' => $address['date_to'] ?? '',
+                        ];
+                    }
+                }
+            }
+
+            $beneficiaryAddressHistory = [];
+            if ($request->has('beneficiary_address_history')) {
+                foreach ($request->beneficiary_address_history as $address) {
+                    if (!empty($address['address']) || !empty($address['city'])) {
+                        $beneficiaryAddressHistory[] = [
+                            'address' => $address['address'] ?? '',
+                            'apt' => $address['apt'] ?? '',
+                            'city' => $address['city'] ?? '',
+                            'state' => $address['state'] ?? '',
+                            'country' => $address['country'] ?? '',
+                            'zip' => $address['zip'] ?? '',
+                            'date_from' => $address['date_from'] ?? '',
+                            'date_to' => $address['date_to'] ?? '',
+                        ];
+                    }
+                }
+            }
+
+            // Process employment history
+            $sponsorEmploymentHistory = [];
+            if ($request->has('sponsor_employment_history')) {
+                foreach ($request->sponsor_employment_history as $job) {
+                    if (!empty($job['employer'])) {
+                        $sponsorEmploymentHistory[] = [
+                            'employer' => $job['employer'] ?? '',
+                            'occupation' => $job['occupation'] ?? '',
+                            'address' => $job['address'] ?? '',
+                            'date_from' => $job['date_from'] ?? '',
+                            'date_to' => $job['date_to'] ?? '',
+                        ];
+                    }
+                }
+            }
+
+            $beneficiaryEmploymentHistory = [];
+            if ($request->has('beneficiary_employment_history')) {
+                foreach ($request->beneficiary_employment_history as $job) {
+                    if (!empty($job['employer'])) {
+                        $beneficiaryEmploymentHistory[] = [
+                            'employer' => $job['employer'] ?? '',
+                            'occupation' => $job['occupation'] ?? '',
+                            'address' => $job['address'] ?? '',
+                            'date_from' => $job['date_from'] ?? '',
+                            'date_to' => $job['date_to'] ?? '',
+                        ];
+                    }
+                }
+            }
+
             // Prepare application data
             $applicationData = [
                 'user_id' => Auth::id(),
@@ -33,15 +101,31 @@ class SimplifiedSpouseVisaService
                 'sponsor_sex' => $request->sponsor_sex,
                 'sponsor_email' => $request->sponsor_email,
                 'sponsor_phone' => $request->sponsor_phone,
+                'sponsor_dob' => $request->sponsor_dob,
+                'sponsor_place_of_birth' => $request->sponsor_place_of_birth,
+                'sponsor_citizenship' => $request->sponsor_citizenship,
+                'sponsor_ssn' => $request->sponsor_ssn,
+                
+                // Sponsor Mailing Address
+                'sponsor_mailing_address' => $request->sponsor_mailing_address,
+                'sponsor_mailing_apt' => $request->sponsor_mailing_apt === 'N/A' ? 'N/A' : $request->sponsor_mailing_apt,
+                'sponsor_mailing_city' => $request->sponsor_mailing_city,
+                'sponsor_mailing_state' => $request->sponsor_mailing_state,
+                'sponsor_mailing_zip' => $request->sponsor_mailing_zip,
+                'sponsor_mailing_date_from' => $request->sponsor_mailing_date_from,
+                'sponsor_mailing_date_to' => $request->sponsor_mailing_date_to,
+                
+                // Sponsor Physical Address (if different)
+                'sponsor_same_address' => $request->sponsor_same_address,
                 'sponsor_address' => $request->sponsor_address,
                 'sponsor_apt' => $request->sponsor_apt === 'N/A' ? 'N/A' : $request->sponsor_apt,
                 'sponsor_city' => $request->sponsor_city,
                 'sponsor_state' => $request->sponsor_state,
                 'sponsor_zip' => $request->sponsor_zip,
-                'sponsor_dob' => $request->sponsor_dob,
-                'sponsor_place_of_birth' => $request->sponsor_place_of_birth,
-                'sponsor_citizenship' => $request->sponsor_citizenship,
-                'sponsor_ssn' => $request->sponsor_ssn,
+                
+                // Sponsor History
+                'sponsor_address_history' => $sponsorAddressHistory,
+                'sponsor_employment_history' => $sponsorEmploymentHistory,
                 
                 // Sponsor Parents (I-130 Items 25-35)
                 'sponsor_parent1_first_name' => $request->sponsor_parent1_first_name,
@@ -71,17 +155,34 @@ class SimplifiedSpouseVisaService
                 'beneficiary_sex' => $request->beneficiary_sex,
                 'beneficiary_email' => $request->beneficiary_email,
                 'beneficiary_phone' => $request->beneficiary_phone,
-                'beneficiary_address' => $request->beneficiary_address,
-                'beneficiary_apt' => $request->beneficiary_apt === 'N/A' ? 'N/A' : $request->beneficiary_apt,
-                'beneficiary_city' => $request->beneficiary_city,
-                'beneficiary_state' => $request->beneficiary_state,
-                'beneficiary_zip' => $request->beneficiary_zip,
-                'beneficiary_country' => $request->beneficiary_country,
                 'beneficiary_dob' => $request->beneficiary_dob,
                 'beneficiary_place_of_birth' => $request->beneficiary_place_of_birth,
                 'beneficiary_citizenship' => $request->beneficiary_citizenship,
                 'beneficiary_passport_number' => $request->beneficiary_passport_number === 'N/A' ? 'N/A' : $request->beneficiary_passport_number,
                 'beneficiary_alien_number' => $request->beneficiary_alien_number === 'N/A' ? 'N/A' : $request->beneficiary_alien_number,
+                
+                // Beneficiary Mailing Address
+                'beneficiary_mailing_address' => $request->beneficiary_mailing_address,
+                'beneficiary_mailing_apt' => $request->beneficiary_mailing_apt === 'N/A' ? 'N/A' : $request->beneficiary_mailing_apt,
+                'beneficiary_mailing_city' => $request->beneficiary_mailing_city,
+                'beneficiary_mailing_state' => $request->beneficiary_mailing_state,
+                'beneficiary_mailing_country' => $request->beneficiary_mailing_country,
+                'beneficiary_mailing_zip' => $request->beneficiary_mailing_zip,
+                'beneficiary_mailing_date_from' => $request->beneficiary_mailing_date_from,
+                'beneficiary_mailing_date_to' => $request->beneficiary_mailing_date_to,
+                
+                // Beneficiary Physical Address (if different)
+                'beneficiary_same_address' => $request->beneficiary_same_address,
+                'beneficiary_address' => $request->beneficiary_address,
+                'beneficiary_apt' => $request->beneficiary_apt === 'N/A' ? 'N/A' : $request->beneficiary_apt,
+                'beneficiary_city' => $request->beneficiary_city,
+                'beneficiary_state' => $request->beneficiary_state,
+                'beneficiary_country' => $request->beneficiary_country,
+                'beneficiary_zip' => $request->beneficiary_zip,
+                
+                // Beneficiary History
+                'beneficiary_address_history' => $beneficiaryAddressHistory,
+                'beneficiary_employment_history' => $beneficiaryEmploymentHistory,
                 
                 // Beneficiary Parents
                 'beneficiary_parent1_first_name' => $request->beneficiary_parent1_first_name,
@@ -138,7 +239,9 @@ class SimplifiedSpouseVisaService
             
             Log::info('Spouse visa application saved', [
                 'user_id' => Auth::id(),
-                'application_id' => $application->id
+                'application_id' => $application->id,
+                'address_history_count' => count($sponsorAddressHistory) + count($beneficiaryAddressHistory),
+                'employment_history_count' => count($sponsorEmploymentHistory) + count($beneficiaryEmploymentHistory)
             ]);
 
             return $application;
@@ -177,14 +280,18 @@ class SimplifiedSpouseVisaService
             'sponsor_sex',
             'sponsor_email',
             'sponsor_phone',
-            'sponsor_address',
-            'sponsor_city',
-            'sponsor_state',
-            'sponsor_zip',
             'sponsor_dob',
             'sponsor_place_of_birth',
             'sponsor_citizenship',
             'sponsor_ssn',
+            
+            // Mailing address (6 fields)
+            'sponsor_mailing_address',
+            'sponsor_mailing_city',
+            'sponsor_mailing_state',
+            'sponsor_mailing_zip',
+            'sponsor_mailing_date_from',
+            'sponsor_mailing_date_to',
             
             // ==========================================
             // SPONSOR PARENTS (10 fields - 5 per parent)
@@ -209,12 +316,16 @@ class SimplifiedSpouseVisaService
             'beneficiary_sex',
             'beneficiary_email',
             'beneficiary_phone',
-            'beneficiary_address',
-            'beneficiary_city',
-            'beneficiary_country',
             'beneficiary_dob',
             'beneficiary_place_of_birth',
             'beneficiary_citizenship',
+            
+            // Mailing address (6 fields)
+            'beneficiary_mailing_address',
+            'beneficiary_mailing_city',
+            'beneficiary_mailing_country',
+            'beneficiary_mailing_date_from',
+            'beneficiary_mailing_date_to',
             
             // ==========================================
             // BENEFICIARY PARENTS (10 fields - 5 per parent)
@@ -240,26 +351,10 @@ class SimplifiedSpouseVisaService
             'sponsor_times_married',
             'sponsor_previous_marriages',
             'beneficiary_previous_marriages'
-            
-            // ==========================================
-            // NOT REQUIRED (excluded from calculation):
-            // ==========================================
-            // - sponsor_employment_status
-            // - sponsor_employer_name
-            // - sponsor_occupation
-            // - sponsor_annual_income
-            // - beneficiary_employment_status
-            // - beneficiary_employer_name
-            // - beneficiary_occupation
-            // - sponsor_apt (optional)
-            // - beneficiary_apt (optional)
-            // - middle names (optional)
-            // - passport number (optional)
-            // - alien number (optional)
         ];
 
         $completedFields = 0;
-        $totalFields = count($requiredFields); // Should be 50 fields
+        $totalFields = count($requiredFields); // 62 fields
 
         foreach ($requiredFields as $field) {
             $value = $application->$field;
@@ -270,16 +365,127 @@ class SimplifiedSpouseVisaService
             }
         }
 
+        // Check 5-year coverage for address and employment history
+        $historyCriteria = [
+            'sponsor_address_history' => $this->hasCompleteFiveYearAddressHistory($application, 'sponsor'),
+            'beneficiary_address_history' => $this->hasCompleteFiveYearAddressHistory($application, 'beneficiary'),
+            'sponsor_employment_history' => $this->hasCompleteFiveYearEmploymentHistory($application, 'sponsor'),
+            'beneficiary_employment_history' => $this->hasCompleteFiveYearEmploymentHistory($application, 'beneficiary')
+        ];
+
+        // Add 4 more criteria to total fields
+        $totalFields += 4;
+        foreach ($historyCriteria as $criterion => $isComplete) {
+            if ($isComplete) {
+                $completedFields++;
+            }
+        }
+
         $percentage = round(($completedFields / $totalFields) * 100);
         
         // Log for debugging
         Log::info('Completion calculation', [
             'completed' => $completedFields,
             'total' => $totalFields,
-            'percentage' => $percentage
+            'percentage' => $percentage,
+            'history_status' => $historyCriteria
         ]);
 
         return $percentage;
+    }
+
+    /**
+     * Check if address history covers at least 5 years
+     */
+    private function hasCompleteFiveYearAddressHistory($application, $person)
+    {
+        $addressHistory = $application->{$person . '_address_history'} ?? [];
+        
+        if (empty($addressHistory)) {
+            return false;
+        }
+
+        // Get mailing address dates
+        $mailingDateTo = $application->{$person . '_mailing_date_to'};
+        $currentDate = $mailingDateTo === 'Present' ? now() : Carbon::parse($mailingDateTo);
+        $fiveYearsAgo = $currentDate->copy()->subYears(5);
+
+        // Collect all date ranges
+        $dateRanges = [];
+        
+        // Add mailing address period
+        $mailingDateFrom = Carbon::parse($application->{$person . '_mailing_date_from'});
+        $dateRanges[] = [
+            'from' => $mailingDateFrom,
+            'to' => $currentDate
+        ];
+
+        // Add address history periods
+        foreach ($addressHistory as $address) {
+            if (!empty($address['date_from']) && !empty($address['date_to'])) {
+                $from = Carbon::parse($address['date_from']);
+                $to = $address['date_to'] === 'Present' ? now() : Carbon::parse($address['date_to']);
+                $dateRanges[] = [
+                    'from' => $from,
+                    'to' => $to
+                ];
+            }
+        }
+
+        // Sort ranges by start date
+        usort($dateRanges, function($a, $b) {
+            return $a['from']->timestamp - $b['from']->timestamp;
+        });
+
+        // Find earliest date covered
+        if (!empty($dateRanges)) {
+            $earliestDate = $dateRanges[0]['from'];
+            return $earliestDate->lte($fiveYearsAgo);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if employment history covers at least 5 years
+     */
+    private function hasCompleteFiveYearEmploymentHistory($application, $person)
+    {
+        $employmentHistory = $application->{$person . '_employment_history'} ?? [];
+        
+        if (empty($employmentHistory)) {
+            return false;
+        }
+
+        $currentDate = now();
+        $fiveYearsAgo = $currentDate->copy()->subYears(5);
+
+        // Collect all date ranges
+        $dateRanges = [];
+        
+        foreach ($employmentHistory as $job) {
+            if (!empty($job['date_from']) && !empty($job['date_to'])) {
+                $from = Carbon::parse($job['date_from']);
+                $to = $job['date_to'] === 'Present' ? now() : Carbon::parse($job['date_to']);
+                $dateRanges[] = [
+                    'from' => $from,
+                    'to' => $to
+                ];
+            }
+        }
+
+        // Sort ranges by start date
+        usort($dateRanges, function($a, $b) {
+            return $a['from']->timestamp - $b['from']->timestamp;
+        });
+
+        // Find earliest date covered
+        if (!empty($dateRanges)) {
+            $earliestDate = $dateRanges[0]['from'];
+            return $earliestDate->lte($fiveYearsAgo);
+        }
+
+        return false;
     }
 
     /**

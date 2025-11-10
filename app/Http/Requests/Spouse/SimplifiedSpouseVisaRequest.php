@@ -160,6 +160,46 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'beneficiary_prev_spouse_first_name' => 'nullable|string|max:50',
             'beneficiary_prev_spouse_last_name' => 'nullable|string|max:50',
             'beneficiary_divorce_date' => 'nullable|date|before:marriage_date',
+
+            // Mailing address - REQUIRED
+        'sponsor_mailing_address' => 'required|string|max:100',
+        'sponsor_mailing_apt' => 'nullable|string|max:20',
+        'sponsor_mailing_city' => 'required|string|max:50',
+        'sponsor_mailing_state' => 'required|string|size:2|regex:/^[A-Z]{2}$/',
+        'sponsor_mailing_zip' => 'required|string|regex:/^\d{5}(-\d{4})?$/',
+        'sponsor_mailing_date_from' => 'required|date',
+        'sponsor_mailing_date_to' => 'required',
+        'sponsor_same_address' => 'required|boolean',
+        
+        // Address history - arrays
+        'sponsor_address_history' => 'nullable|array',
+        'sponsor_address_history.*.address' => 'required|string|max:100',
+        'sponsor_address_history.*.city' => 'required|string|max:50',
+        'sponsor_address_history.*.state' => 'nullable|string|max:2',
+        'sponsor_address_history.*.zip' => 'nullable|string|max:10',
+        'sponsor_address_history.*.date_from' => 'required|date',
+        'sponsor_address_history.*.date_to' => 'required',
+        
+        'beneficiary_address_history' => 'nullable|array',
+        'beneficiary_address_history.*.address' => 'required|string|max:100',
+        'beneficiary_address_history.*.city' => 'required|string|max:50',
+        'beneficiary_address_history.*.date_from' => 'required|date',
+        'beneficiary_address_history.*.date_to' => 'required',
+        
+        // Employment history - arrays
+        'sponsor_employment_history' => 'nullable|array',
+        'sponsor_employment_history.*.employer' => 'required|string|max:100',
+        'sponsor_employment_history.*.occupation' => 'nullable|string|max:100',
+        'sponsor_employment_history.*.address' => 'required|string|max:200',
+        'sponsor_employment_history.*.date_from' => 'required|date',
+        'sponsor_employment_history.*.date_to' => 'required',
+        
+        'beneficiary_employment_history' => 'nullable|array',
+        'beneficiary_employment_history.*.employer' => 'required|string|max:100',
+        'beneficiary_employment_history.*.occupation' => 'nullable|string|max:100',
+        'beneficiary_employment_history.*.address' => 'required|string|max:200',
+        'beneficiary_employment_history.*.date_from' => 'required|date',
+        'beneficiary_employment_history.*.date_to' => 'required',
         ];
     }
 
