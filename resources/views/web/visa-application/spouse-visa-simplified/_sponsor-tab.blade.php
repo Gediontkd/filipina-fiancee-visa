@@ -5,7 +5,7 @@
     <h4 class="mb-4 border-bottom pb-2">
         <i class="fa fa-user me-2 text-primary"></i>U.S. Sponsor Information
     </h4>
-    <p class="text-muted mb-4">Enter information about the U.S. citizen sponsor (petitioner) - Form I-130, Part 2</p>
+    <p class="text-muted mb-4">Enter information about the U.S. citizen sponsor (petitioner)</p>
 
     <!-- Personal Information -->
     <h5 class="mb-3"><i class="fa fa-id-card me-2"></i>Personal Information</h5>
@@ -20,7 +20,6 @@
                     'required' => true,
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 4.b</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -31,7 +30,6 @@
                     'placeholder' => 'Middle name (optional)',
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 4.c</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -44,7 +42,6 @@
                     'required' => true,
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 4.a</small>
             </div>
         </div>
     </div>
@@ -59,7 +56,6 @@
                     'placeholder' => 'MM/DD/YYYY',
                     'required' => true
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 8</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -74,7 +70,6 @@
                     'class' => 'form-control',
                     'required' => true
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 9</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -87,7 +82,6 @@
                     'required' => true,
                     'maxlength' => 100
                 ]) }}
-                <small class="form-text text-muted">I-130, Items 6-7</small>
             </div>
         </div>
     </div>
@@ -105,7 +99,6 @@
                     'class' => 'form-control',
                     'required' => true
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 36</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -119,7 +112,6 @@
                     'pattern' => '\d{3}-\d{2}-\d{4}',
                     'maxlength' => 11
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 3 - Format: ###-##-####</small>
             </div>
         </div>
     </div>
@@ -168,7 +160,6 @@
                     'required' => true,
                     'maxlength' => 100
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 10.a</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -190,7 +181,6 @@
                     ]) }}
                     <label class="form-check-label">N/A</label>
                 </div>
-                <small class="form-text text-muted">I-130, Item 10.b</small>
             </div>
         </div>
     </div>
@@ -206,7 +196,6 @@
                     'required' => true,
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 10.c</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -221,7 +210,6 @@
                     'maxlength' => 2,
                     'style' => 'text-transform: uppercase;'
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 10.d - Two letters only</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -235,7 +223,6 @@
                     'pattern' => '\d{5}(-\d{4})?',
                     'maxlength' => 10
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 10.e - Numeric only</small>
             </div>
         </div>
     </div>
@@ -260,7 +247,6 @@
                             'required' => true,
                             'maxlength' => 50
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 25.b</small>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -270,7 +256,6 @@
                             'class' => 'form-control',
                             'maxlength' => 50
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 25.c</small>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -282,7 +267,6 @@
                             'required' => true,
                             'maxlength' => 50
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 25.a</small>
                     </div>
                 </div>
             </div>
@@ -296,7 +280,6 @@
                             'placeholder' => 'MM/DD/YYYY',
                             'required' => true
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 26</small>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -311,7 +294,6 @@
                             'class' => 'form-control',
                             'required' => true
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 27</small>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -322,7 +304,6 @@
                             'class' => 'form-control',
                             'required' => true
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 28</small>
                     </div>
                 </div>
             </div>
@@ -345,7 +326,6 @@
                             'required' => true,
                             'maxlength' => 50
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 30.b</small>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -355,7 +335,6 @@
                             'class' => 'form-control',
                             'maxlength' => 50
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 30.c</small>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -367,7 +346,6 @@
                             'required' => true,
                             'maxlength' => 50
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 30.a</small>
                     </div>
                 </div>
             </div>
@@ -381,7 +359,6 @@
                             'placeholder' => 'MM/DD/YYYY',
                             'required' => true
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 31</small>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -396,7 +373,6 @@
                             'class' => 'form-control',
                             'required' => true
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 32</small>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -407,7 +383,6 @@
                             'class' => 'form-control',
                             'required' => true
                         ]) }}
-                        <small class="form-text text-muted">I-130, Item 33</small>
                     </div>
                 </div>
             </div>
@@ -418,7 +393,7 @@
     <h5 class="mb-3 mt-4"><i class="fa fa-briefcase me-2"></i>Employment Information</h5>
     <div class="alert alert-warning">
         <i class="fa fa-lock me-2"></i>
-        <strong>Post-Approval Section:</strong> Financial and employment information will be needed after USCIS approval when preparing for the National Visa Center (NVC) stage. This section will unlock after you receive your I-130 approval notice.
+        <strong>Post-Approval Section:</strong> Financial and employment information will be needed after USCIS approval when preparing for the National Visa Center (NVC) stage. This section will unlock after you receive approval notice.
     </div>
     
     <div class="financial-locked-section" style="opacity: 0.5; pointer-events: none;">

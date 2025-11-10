@@ -5,7 +5,7 @@
     <h4 class="mb-4 border-bottom pb-2">
         <i class="fa fa-heart me-2 text-primary"></i>Relationship Information
     </h4>
-    <p class="text-muted mb-4">Provide details about your marriage as required by Form I-130</p>
+    <p class="text-muted mb-4">Provide details about your marriage</p>
 
     <!-- Marriage Information (I-130 Part 2, Items 17-20) -->
     <h5 class="mb-3"><i class="fa fa-ring me-2"></i>Marriage Details</h5>
@@ -19,7 +19,6 @@
                     'placeholder' => 'MM/DD/YYYY',
                     'required' => true
                 ]) }}
-                <small class="form-text text-muted">Form I-130, Part 2, Item 18</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -32,7 +31,6 @@
                     'required' => true,
                     'min' => 1
                 ]) }}
-                <small class="form-text text-muted">Form I-130, Part 2, Item 16</small>
             </div>
         </div>
     </div>
@@ -48,7 +46,6 @@
                     'required' => true,
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">Form I-130, Part 2, Item 19.a</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -61,7 +58,6 @@
                     'pattern' => '[A-Z]{2}',
                     'style' => 'text-transform: uppercase;'
                 ]) }}
-                <small class="form-text text-muted">Form I-130, Part 2, Item 19.b - Two letters only</small>
             </div>
         </div>
     </div>
@@ -75,7 +71,6 @@
                     'placeholder' => 'Province/Region',
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">Form I-130, Part 2, Item 19.c</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -86,7 +81,6 @@
                     'class' => 'form-control',
                     'required' => true
                 ]) }}
-                <small class="form-text text-muted">Form I-130, Part 2, Item 19.d</small>
             </div>
         </div>
     </div>
@@ -140,7 +134,6 @@
                     'placeholder' => 'First name',
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">Form I-130, Part 2, Item 21.b</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -151,7 +144,6 @@
                     'placeholder' => 'Last name',
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">Form I-130, Part 2, Item 21.a</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -161,7 +153,6 @@
                     'class' => 'form-control datePicker',
                     'placeholder' => 'MM/DD/YYYY'
                 ]) }}
-                <small class="form-text text-muted">Divorce, annulment, or death date (Form I-130, Part 2, Item 22)</small>
             </div>
         </div>
     </div>
@@ -212,7 +203,6 @@
                     'placeholder' => 'First name',
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">Form I-130, Part 4, Item 21.b</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -223,7 +213,6 @@
                     'placeholder' => 'Last name',
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">Form I-130, Part 4, Item 21.a</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -233,7 +222,6 @@
                     'class' => 'form-control datePicker',
                     'placeholder' => 'MM/DD/YYYY'
                 ]) }}
-                <small class="form-text text-muted">Divorce, annulment, or death date (Form I-130, Part 4, Item 22)</small>
             </div>
         </div>
     </div>

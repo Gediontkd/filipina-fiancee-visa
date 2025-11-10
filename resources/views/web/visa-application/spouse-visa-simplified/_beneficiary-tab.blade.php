@@ -5,7 +5,7 @@
     <h4 class="mb-4 border-bottom pb-2">
         <i class="fa fa-user-friends me-2 text-primary"></i>Beneficiary Information
     </h4>
-    <p class="text-muted mb-4">Enter information about the foreign spouse (beneficiary) - Form I-130, Part 4</p>
+    <p class="text-muted mb-4">Enter information about the foreign spouse (beneficiary)</p>
 
     <!-- Personal Information -->
     <h5 class="mb-3"><i class="fa fa-id-card me-2"></i>Personal Information</h5>
@@ -20,7 +20,6 @@
                     'required' => true,
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 4.b</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -31,7 +30,6 @@
                     'placeholder' => 'Middle name (optional)',
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 4.c</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -44,7 +42,6 @@
                     'required' => true,
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 4.a</small>
             </div>
         </div>
     </div>
@@ -59,7 +56,6 @@
                     'placeholder' => 'MM/DD/YYYY',
                     'required' => true
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 8</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -74,7 +70,6 @@
                     'class' => 'form-control',
                     'required' => true
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 9</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -87,7 +82,6 @@
                     'required' => true,
                     'maxlength' => 100
                 ]) }}
-                <small class="form-text text-muted">I-130, Items 6-7</small>
             </div>
         </div>
     </div>
@@ -101,7 +95,6 @@
                     'class' => 'form-control',
                     'required' => true
                 ]) }}
-                <small class="form-text text-muted">I-130, Part 4</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -123,10 +116,6 @@
                     ]) }}
                     <label class="form-check-label">Does Not Apply / Will Get Later</label>
                 </div>
-                <small class="form-text text-muted">
-                    <i class="fa fa-info-circle me-1"></i>
-                    Optional for I-130 filing. Required later for visa interview.
-                </small>
             </div>
         </div>
     </div>
@@ -151,7 +140,6 @@
                     ]) }}
                     <label class="form-check-label">Does Not Apply</label>
                 </div>
-                <small class="form-text text-muted">I-130, Item 1 - Only if previously had U.S. immigration status</small>
             </div>
         </div>
     </div>
@@ -199,7 +187,6 @@
                     'required' => true,
                     'maxlength' => 100
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 11.a</small>
             </div>
         </div>
         <div class="col-md-4">
@@ -221,7 +208,6 @@
                     ]) }}
                     <label class="form-check-label">N/A</label>
                 </div>
-                <small class="form-text text-muted">I-130, Item 11.b</small>
             </div>
         </div>
     </div>
@@ -237,7 +223,6 @@
                     'required' => true,
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 11.c</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -249,7 +234,6 @@
                     'data-state-target' => '#beneficiary_state',
                     'required' => true
                 ]) }}
-                <small class="form-text text-muted">I-130, Item 11.h</small>
             </div>
         </div>
     </div>
@@ -264,7 +248,6 @@
                     'placeholder' => 'State or Province',
                     'maxlength' => 50
                 ]) }}
-                <small class="form-text text-muted">I-130, Items 11.d (US) or 11.f (Province)</small>
             </div>
         </div>
         <div class="col-md-6">
@@ -275,7 +258,6 @@
                     'placeholder' => 'Enter postal code',
                     'maxlength' => 20
                 ]) }}
-                <small class="form-text text-muted">I-130, Items 11.e (US) or 11.g (Postal)</small>
             </div>
         </div>
     </div>
