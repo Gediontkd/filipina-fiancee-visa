@@ -1,5 +1,4 @@
 {{-- FILE: resources/views/web/visa-application/spouse-visa-simplified/_sponsor-tab.blade.php --}}
-{{-- UPDATED: Added mailing address, address history, employment history --}}
 
 <div class="sponsor-section">
     <h4 class="mb-4 border-bottom pb-2">
@@ -163,25 +162,11 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="form-group mb-3">
-                {{ Form::label('sponsor_mailing_apt', 'Apt/Suite/Floor') }}
-                <div class="input-group">
-                    {{ Form::text('sponsor_mailing_apt', optional($application)->sponsor_mailing_apt ?? '', [
-                        'class' => 'form-control',
-                        'placeholder' => 'Apt #',
-                        'maxlength' => 20,
-                        'id' => 'sponsor_mailing_apt'
-                    ]) }}
-                </div>
-                <div class="form-check mt-2">
-                    {{ Form::checkbox('sponsor_mailing_apt_na', 1, 
-                        (optional($application)->sponsor_mailing_apt ?? '') === 'N/A', [
-                        'class' => 'form-check-input does-not-apply-checkbox',
-                        'data-target' => '#sponsor_mailing_apt'
-                    ]) }}
-                    <label class="form-check-label">N/A</label>
-                </div>
-            </div>
+            @include('components.apt-suite-floor', [
+                'name' => 'sponsor_mailing_apt',
+                'value' => optional($application)->sponsor_mailing_apt,
+                'required' => false
+            ])
         </div>
     </div>
 
@@ -300,25 +285,11 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_apt', 'Apt/Suite/Floor') }}
-                    <div class="input-group">
-                        {{ Form::text('sponsor_apt', optional($application)->sponsor_apt ?? '', [
-                            'class' => 'form-control',
-                            'placeholder' => 'Apt #',
-                            'maxlength' => 20,
-                            'id' => 'sponsor_apt'
-                        ]) }}
-                    </div>
-                    <div class="form-check mt-2">
-                        {{ Form::checkbox('sponsor_apt_na', 1, 
-                            (optional($application)->sponsor_apt ?? '') === 'N/A', [
-                            'class' => 'form-check-input does-not-apply-checkbox',
-                            'data-target' => '#sponsor_apt'
-                        ]) }}
-                        <label class="form-check-label">N/A</label>
-                    </div>
-                </div>
+                @include('components.apt-suite-floor', [
+                    'name' => 'sponsor_apt',
+                    'value' => optional($application)->sponsor_apt,
+                    'required' => false
+                ])
             </div>
         </div>
         
@@ -392,11 +363,11 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label>Apt/Suite/Floor</label>
-                                    <input type="text" name="sponsor_address_history[{{ $index }}][apt]" 
-                                        class="form-control" value="{{ $address['apt'] ?? '' }}" maxlength="20">
-                                </div>
+                                @include('components.apt-suite-floor', [
+                                    'name' => "sponsor_address_history[{$index}][apt]",
+                                    'value' => $address['apt'] ?? '',
+                                    'required' => false
+                                ])
                             </div>
                         </div>
                         <div class="row">
@@ -826,7 +797,7 @@ $(document).ready(function() {
         $('#sponsor_mailing_date_to').val('Present');
     });
 
-    // Add address history
+    // Add address history with apt/suite/floor component
     $('#addSponsorAddress').on('click', function() {
         const count = parseInt($('#sponsor_address_history_count').val());
         const newIndex = count;
@@ -851,8 +822,32 @@ $(document).ready(function() {
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label>Apt/Suite/Floor</label>
-                                <input type="text" name="sponsor_address_history[${newIndex}][apt]" 
-                                    class="form-control" maxlength="20">
+                                <div class="d-flex gap-3 mb-2 apt-checkboxes" data-target="sponsor_address_history_${newIndex}_apt">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input apt-type-checkbox" 
+                                            id="sponsor_addr_${newIndex}_apt" value="Apt">
+                                        <label class="form-check-label" for="sponsor_addr_${newIndex}_apt">Apt.</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input apt-type-checkbox" 
+                                            id="sponsor_addr_${newIndex}_ste" value="Ste">
+                                        <label class="form-check-label" for="sponsor_addr_${newIndex}_ste">Ste.</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input apt-type-checkbox" 
+                                            id="sponsor_addr_${newIndex}_flr" value="Flr">
+                                        <label class="form-check-label" for="sponsor_addr_${newIndex}_flr">Flr.</label>
+                                    </div>
+                                </div>
+                                <div class="apt-number-container" id="sponsor_addr_${newIndex}_container" style="display: none;">
+                                    <input type="text" class="form-control apt-number-input" 
+                                        id="sponsor_addr_${newIndex}_number" 
+                                        placeholder="Enter number (max 6 chars)" 
+                                        maxlength="6" style="max-width: 150px;">
+                                    <small class="form-text text-muted">Letters and numbers only, no spaces</small>
+                                </div>
+                                <input type="hidden" name="sponsor_address_history[${newIndex}][apt]" 
+                                    id="sponsor_addr_${newIndex}_hidden">
                             </div>
                         </div>
                     </div>
@@ -902,6 +897,9 @@ $(document).ready(function() {
         
         $('#sponsor_address_history_container').append(html);
         $('#sponsor_address_history_count').val(newIndex + 1);
+        
+        // Initialize apt/suite/floor component for new entry
+        initDynamicAptComponent(newIndex, 'sponsor');
         
         // Reinitialize datepicker
         $('.datePicker').datepicker({
@@ -1003,15 +1001,72 @@ $(document).ready(function() {
             $('#sponsor_unemployment_reminder').slideDown();
         }
     });
+});
 
-    // Handle "Does Not Apply" checkboxes
-    $(document).on('change', '.does-not-apply-checkbox', function() {
-        const target = $(this).data('target');
-        if ($(this).is(':checked')) {
-            $(target).val('N/A').prop('readonly', true);
-        } else {
-            $(target).val('').prop('readonly', false);
+// Function to initialize apt/suite/floor for dynamically added entries
+function initDynamicAptComponent(index, person) {
+    const uniqueId = person + '_address_history_' + index + '_apt';
+    const container = document.querySelector('[data-target="' + uniqueId + '"]');
+    
+    if (!container) return;
+    
+    const checkboxes = container.querySelectorAll('.apt-type-checkbox');
+    const numberContainer = document.getElementById(person + '_addr_' + index + '_container');
+    const numberInput = document.getElementById(person + '_addr_' + index + '_number');
+    const hiddenInput = document.getElementById(person + '_addr_' + index + '_hidden');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                checkboxes.forEach(cb => {
+                    if (cb !== this) cb.checked = false;
+                });
+                numberContainer.style.display = 'block';
+                numberInput.focus();
+            } else {
+                const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                if (!anyChecked) {
+                    numberContainer.style.display = 'none';
+                    numberInput.value = '';
+                    hiddenInput.value = '';
+                }
+            }
+            updateValue();
+        });
+    });
+    
+    numberInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^A-Za-z0-9]/g, '');
+        if (this.value.length > 6) {
+            this.value = this.value.substring(0, 6);
+        }
+        updateValue();
+    });
+    
+    numberInput.addEventListener('paste', function(e) {
+        e.preventDefault();
+        const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+        const cleanedText = pastedText.replace(/[^A-Za-z0-9]/g, '').substring(0, 6);
+        this.value = cleanedText;
+        updateValue();
+    });
+    
+    numberInput.addEventListener('keypress', function(e) {
+        const char = String.fromCharCode(e.which);
+        if (!/[A-Za-z0-9]/.test(char)) {
+            e.preventDefault();
         }
     });
-});
+    
+    function updateValue() {
+        const selectedCheckbox = Array.from(checkboxes).find(cb => cb.checked);
+        const numberValue = numberInput.value.trim();
+        
+        if (selectedCheckbox && numberValue) {
+            hiddenInput.value = selectedCheckbox.value + ':' + numberValue;
+        } else {
+            hiddenInput.value = '';
+        }
+    }
+}
 </script>
