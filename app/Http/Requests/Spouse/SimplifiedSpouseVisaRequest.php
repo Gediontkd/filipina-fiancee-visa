@@ -1,6 +1,5 @@
 <?php
 // FILE: app/Http/Requests/Spouse/SimplifiedSpouseVisaRequest.php
-// FIXED: Financial fields are optional (not required for I-130)
 
 namespace App\Http\Requests\Spouse;
 
@@ -44,13 +43,21 @@ class SimplifiedSpouseVisaRequest extends FormRequest
                 'regex:/^\(\d{3}\) \d{3}-\d{4}$/'
             ],
             
-            // Address
-            'sponsor_address' => 'required|string|max:100',
-            'sponsor_apt' => 'nullable|string|max:20',
-            'sponsor_city' => 'required|string|max:50',
+            // Mailing Address - REQUIRED
+            'sponsor_mailing_address' => 'required|string|max:100',
+            
+            // UPDATED: Apt/Suite/Floor - Format: "Apt:2B" or "Ste:123" or "Flr:5A"
+            'sponsor_mailing_apt' => [
+                'nullable',
+                'string',
+                'max:10',
+                'regex:/^(Apt|Ste|Flr):[A-Za-z0-9]{1,6}$/'
+            ],
+            
+            'sponsor_mailing_city' => 'required|string|max:50',
             
             // State - Two letter code
-            'sponsor_state' => [
+            'sponsor_mailing_state' => [
                 'required',
                 'string',
                 'size:2',
@@ -58,11 +65,56 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             ],
             
             // ZIP - 5 or 9 digits
-            'sponsor_zip' => [
+            'sponsor_mailing_zip' => [
                 'required',
                 'string',
                 'regex:/^\d{5}(-\d{4})?$/'
             ],
+            
+            'sponsor_mailing_date_from' => 'required|date',
+            'sponsor_mailing_date_to' => 'required',
+            'sponsor_same_address' => 'required|boolean',
+            
+            // Physical Address (if different) - OPTIONAL
+            'sponsor_address' => 'nullable|string|max:100',
+            
+            // UPDATED: Physical apt format
+            'sponsor_apt' => [
+                'nullable',
+                'string',
+                'max:10',
+                'regex:/^(Apt|Ste|Flr):[A-Za-z0-9]{1,6}$/'
+            ],
+            
+            'sponsor_city' => 'nullable|string|max:50',
+            'sponsor_state' => 'nullable|string|size:2|regex:/^[A-Z]{2}$/',
+            'sponsor_zip' => 'nullable|string|regex:/^\d{5}(-\d{4})?$/',
+            
+            // Address History
+            'sponsor_address_history' => 'nullable|array',
+            'sponsor_address_history.*.address' => 'required|string|max:100',
+            
+            // UPDATED: Address history apt format
+            'sponsor_address_history.*.apt' => [
+                'nullable',
+                'string',
+                'max:10',
+                'regex:/^(Apt|Ste|Flr):[A-Za-z0-9]{1,6}$/'
+            ],
+            
+            'sponsor_address_history.*.city' => 'required|string|max:50',
+            'sponsor_address_history.*.state' => 'nullable|string|max:2',
+            'sponsor_address_history.*.zip' => 'nullable|string|max:10',
+            'sponsor_address_history.*.date_from' => 'required|date',
+            'sponsor_address_history.*.date_to' => 'required',
+            
+            // Employment History
+            'sponsor_employment_history' => 'nullable|array',
+            'sponsor_employment_history.*.employer' => 'required|string|max:100',
+            'sponsor_employment_history.*.occupation' => 'nullable|string|max:100',
+            'sponsor_employment_history.*.address' => 'required|string|max:200',
+            'sponsor_employment_history.*.date_from' => 'required|date',
+            'sponsor_employment_history.*.date_to' => 'required',
             
             // ============================================
             // SPONSOR PARENTS - REQUIRED
@@ -108,13 +160,67 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'beneficiary_email' => 'required|email|max:100',
             'beneficiary_phone' => 'required|string|max:50',
             
-            // Address
-            'beneficiary_address' => 'required|string|max:100',
-            'beneficiary_apt' => 'nullable|string|max:20',
-            'beneficiary_city' => 'required|string|max:50',
+            // Mailing Address - REQUIRED
+            'beneficiary_mailing_address' => 'required|string|max:100',
+            
+            // UPDATED: Apt format
+            'beneficiary_mailing_apt' => [
+                'nullable',
+                'string',
+                'max:10',
+                'regex:/^(Apt|Ste|Flr):[A-Za-z0-9]{1,6}$/'
+            ],
+            
+            'beneficiary_mailing_city' => 'required|string|max:50',
+            'beneficiary_mailing_state' => 'nullable|string|max:50',
+            'beneficiary_mailing_zip' => 'nullable|string|max:20',
+            'beneficiary_mailing_country' => 'required|string|max:100',
+            'beneficiary_mailing_date_from' => 'required|date',
+            'beneficiary_mailing_date_to' => 'required',
+            'beneficiary_same_address' => 'required|boolean',
+            
+            // Physical Address (if different) - OPTIONAL
+            'beneficiary_address' => 'nullable|string|max:100',
+            
+            // UPDATED: Physical apt format
+            'beneficiary_apt' => [
+                'nullable',
+                'string',
+                'max:10',
+                'regex:/^(Apt|Ste|Flr):[A-Za-z0-9]{1,6}$/'
+            ],
+            
+            'beneficiary_city' => 'nullable|string|max:50',
             'beneficiary_state' => 'nullable|string|max:50',
             'beneficiary_zip' => 'nullable|string|max:20',
-            'beneficiary_country' => 'required|string|max:100',
+            'beneficiary_country' => 'nullable|string|max:100',
+            
+            // Address History
+            'beneficiary_address_history' => 'nullable|array',
+            'beneficiary_address_history.*.address' => 'required|string|max:100',
+            
+            // UPDATED: Address history apt format
+            'beneficiary_address_history.*.apt' => [
+                'nullable',
+                'string',
+                'max:10',
+                'regex:/^(Apt|Ste|Flr):[A-Za-z0-9]{1,6}$/'
+            ],
+            
+            'beneficiary_address_history.*.city' => 'required|string|max:50',
+            'beneficiary_address_history.*.state' => 'nullable|string|max:50',
+            'beneficiary_address_history.*.country' => 'nullable|string|max:100',
+            'beneficiary_address_history.*.zip' => 'nullable|string|max:20',
+            'beneficiary_address_history.*.date_from' => 'required|date',
+            'beneficiary_address_history.*.date_to' => 'required',
+            
+            // Employment History
+            'beneficiary_employment_history' => 'nullable|array',
+            'beneficiary_employment_history.*.employer' => 'required|string|max:100',
+            'beneficiary_employment_history.*.occupation' => 'nullable|string|max:100',
+            'beneficiary_employment_history.*.address' => 'required|string|max:200',
+            'beneficiary_employment_history.*.date_from' => 'required|date',
+            'beneficiary_employment_history.*.date_to' => 'required',
             
             // ============================================
             // BENEFICIARY PARENTS - REQUIRED
@@ -160,46 +266,6 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'beneficiary_prev_spouse_first_name' => 'nullable|string|max:50',
             'beneficiary_prev_spouse_last_name' => 'nullable|string|max:50',
             'beneficiary_divorce_date' => 'nullable|date|before:marriage_date',
-
-            // Mailing address - REQUIRED
-        'sponsor_mailing_address' => 'required|string|max:100',
-        'sponsor_mailing_apt' => 'nullable|string|max:20',
-        'sponsor_mailing_city' => 'required|string|max:50',
-        'sponsor_mailing_state' => 'required|string|size:2|regex:/^[A-Z]{2}$/',
-        'sponsor_mailing_zip' => 'required|string|regex:/^\d{5}(-\d{4})?$/',
-        'sponsor_mailing_date_from' => 'required|date',
-        'sponsor_mailing_date_to' => 'required',
-        'sponsor_same_address' => 'required|boolean',
-        
-        // Address history - arrays
-        'sponsor_address_history' => 'nullable|array',
-        'sponsor_address_history.*.address' => 'required|string|max:100',
-        'sponsor_address_history.*.city' => 'required|string|max:50',
-        'sponsor_address_history.*.state' => 'nullable|string|max:2',
-        'sponsor_address_history.*.zip' => 'nullable|string|max:10',
-        'sponsor_address_history.*.date_from' => 'required|date',
-        'sponsor_address_history.*.date_to' => 'required',
-        
-        'beneficiary_address_history' => 'nullable|array',
-        'beneficiary_address_history.*.address' => 'required|string|max:100',
-        'beneficiary_address_history.*.city' => 'required|string|max:50',
-        'beneficiary_address_history.*.date_from' => 'required|date',
-        'beneficiary_address_history.*.date_to' => 'required',
-        
-        // Employment history - arrays
-        'sponsor_employment_history' => 'nullable|array',
-        'sponsor_employment_history.*.employer' => 'required|string|max:100',
-        'sponsor_employment_history.*.occupation' => 'nullable|string|max:100',
-        'sponsor_employment_history.*.address' => 'required|string|max:200',
-        'sponsor_employment_history.*.date_from' => 'required|date',
-        'sponsor_employment_history.*.date_to' => 'required',
-        
-        'beneficiary_employment_history' => 'nullable|array',
-        'beneficiary_employment_history.*.employer' => 'required|string|max:100',
-        'beneficiary_employment_history.*.occupation' => 'nullable|string|max:100',
-        'beneficiary_employment_history.*.address' => 'required|string|max:200',
-        'beneficiary_employment_history.*.date_from' => 'required|date',
-        'beneficiary_employment_history.*.date_to' => 'required',
         ];
     }
 
@@ -214,13 +280,20 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'sponsor_email.email' => 'Please enter a valid email address',
             'sponsor_phone.required' => 'Sponsor phone number is required',
             'sponsor_phone.regex' => 'Phone must be in format: (###) ###-####',
-            'sponsor_address.required' => 'Sponsor address is required',
-            'sponsor_city.required' => 'Sponsor city is required',
-            'sponsor_state.required' => 'Sponsor state is required',
-            'sponsor_state.size' => 'State must be exactly 2 letters (e.g., CA)',
-            'sponsor_state.regex' => 'State must be 2 uppercase letters only',
-            'sponsor_zip.required' => 'Sponsor ZIP code is required',
-            'sponsor_zip.regex' => 'ZIP must be 5 digits or 9 digits (12345 or 12345-6789)',
+            'sponsor_mailing_address.required' => 'Sponsor mailing address is required',
+            'sponsor_mailing_city.required' => 'Sponsor mailing city is required',
+            'sponsor_mailing_state.required' => 'Sponsor mailing state is required',
+            'sponsor_mailing_state.size' => 'State must be exactly 2 letters (e.g., CA)',
+            'sponsor_mailing_state.regex' => 'State must be 2 uppercase letters only',
+            'sponsor_mailing_zip.required' => 'Sponsor mailing ZIP code is required',
+            'sponsor_mailing_zip.regex' => 'ZIP must be 5 digits or 9 digits (12345 or 12345-6789)',
+            
+            // UPDATED: Apt validation messages
+            'sponsor_mailing_apt.regex' => 'Apt/Suite/Floor must be in format: Apt:2B or Ste:123 or Flr:5A (max 6 characters, alphanumeric only)',
+            'sponsor_apt.regex' => 'Apt/Suite/Floor must be in format: Apt:2B or Ste:123 or Flr:5A (max 6 characters, alphanumeric only)',
+            'beneficiary_mailing_apt.regex' => 'Apt/Suite/Floor must be in format: Apt:2B or Ste:123 or Flr:5A (max 6 characters, alphanumeric only)',
+            'beneficiary_apt.regex' => 'Apt/Suite/Floor must be in format: Apt:2B or Ste:123 or Flr:5A (max 6 characters, alphanumeric only)',
+            
             'sponsor_dob.required' => 'Sponsor date of birth is required',
             'sponsor_dob.before' => 'Sponsor date of birth must be in the past',
             'sponsor_place_of_birth.required' => 'Sponsor place of birth is required',
@@ -250,9 +323,9 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'beneficiary_email.required' => 'Beneficiary email is required',
             'beneficiary_email.email' => 'Please enter a valid email address',
             'beneficiary_phone.required' => 'Beneficiary phone number is required',
-            'beneficiary_address.required' => 'Beneficiary address is required',
-            'beneficiary_city.required' => 'Beneficiary city is required',
-            'beneficiary_country.required' => 'Beneficiary country is required',
+            'beneficiary_mailing_address.required' => 'Beneficiary mailing address is required',
+            'beneficiary_mailing_city.required' => 'Beneficiary mailing city is required',
+            'beneficiary_mailing_country.required' => 'Beneficiary mailing country is required',
             'beneficiary_dob.required' => 'Beneficiary date of birth is required',
             'beneficiary_dob.before' => 'Beneficiary date of birth must be in the past',
             'beneficiary_place_of_birth.required' => 'Beneficiary place of birth is required',
