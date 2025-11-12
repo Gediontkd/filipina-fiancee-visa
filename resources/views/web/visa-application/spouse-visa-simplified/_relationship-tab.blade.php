@@ -2,6 +2,10 @@
 {{-- FIXED: Removed all non-I-130 fields, kept only marriage details + previous marriages --}}
 
 <div class="relationship-section">
+    {{-- Include city auto-fill script --}}
+    @push('scripts')
+    <script src="{{ asset('assets/js/city-auto-fill.js') }}"></script>
+    @endpush
     <h4 class="mb-4 border-bottom pb-2">
         <i class="fa fa-heart me-2 text-primary"></i>Relationship Information
     </h4>
