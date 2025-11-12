@@ -217,11 +217,13 @@
             <div class="form-group mb-3">
                 {{ Form::label('sponsor_mailing_date_from', 'Date From') }}
                 <span class="text-danger">*</span>
-                {{ Form::text('sponsor_mailing_date_from', optional($application)->sponsor_mailing_date_from ? optional($application)->sponsor_mailing_date_from->format('m/d/Y') : '', [
-                    'class' => 'form-control datePicker',
-                    'placeholder' => 'MM/DD/YYYY',
-                    'required' => true
-                ]) }}
+                {{ Form::text(
+                    'sponsor_mailing_date_from',
+                    optional($application)->sponsor_mailing_date_from
+                        ? \Carbon\Carbon::parse($application->sponsor_mailing_date_from)->format('m/d/Y')
+                        : '',
+                    ['class' => 'form-control datePicker', 'placeholder' => 'MM/DD/YYYY', 'required' => true]
+                ) }}
             </div>
         </div>
         <div class="col-md-6">
@@ -229,12 +231,13 @@
                 {{ Form::label('sponsor_mailing_date_to', 'Date To') }}
                 <span class="text-danger">*</span>
                 <div class="input-group">
-                    {{ Form::text('sponsor_mailing_date_to', optional($application)->sponsor_mailing_date_to ? optional($application)->sponsor_mailing_date_to->format('m/d/Y') : '', [
-                        'class' => 'form-control datePicker',
-                        'placeholder' => 'MM/DD/YYYY',
-                        'required' => true,
-                        'id' => 'sponsor_mailing_date_to'
-                    ]) }}
+                    {{ Form::text(
+                        'sponsor_mailing_date_to',
+                        optional($application)->sponsor_mailing_date_to
+                            ? \Carbon\Carbon::parse($application->sponsor_mailing_date_to)->format('m/d/Y')
+                            : '',
+                        ['class' => 'form-control datePicker', 'placeholder' => 'MM/DD/YYYY', 'required' => true, 'id' => 'sponsor_mailing_date_to']
+                    ) }}
                     <button type="button" class="btn btn-outline-secondary" id="setMailingPresent">Present</button>
                 </div>
             </div>
@@ -906,6 +909,11 @@ $(document).ready(function() {
             format: 'mm/dd/yyyy',
             autoclose: true
         });
+
+        // UPDATED: Reinitialize city auto-fill for newly added fields
+        if (typeof window.reinitializeCityAutoFill === 'function') {
+            window.reinitializeCityAutoFill('sponsor');
+        }
     });
 
     // Remove address
