@@ -1,6 +1,10 @@
 {{-- FILE: resources/views/web/visa-application/spouse-visa-simplified/_beneficiary-tab.blade.php --}}
 
 <div class="beneficiary-section">
+    {{-- Include city auto-fill script --}}
+@push('scripts')
+<script src="{{ asset('assets/js/city-auto-fill.js') }}"></script>
+@endpush
     <h4 class="mb-4 border-bottom pb-2">
         <i class="fa fa-user-friends me-2 text-primary"></i>Beneficiary Information
     </h4>
@@ -934,6 +938,10 @@ $(document).ready(function() {
             format: 'mm/dd/yyyy',
             autoclose: true
         });
+
+        if (typeof window.reinitializeCityAutoFill === 'function') {
+            window.reinitializeCityAutoFill('beneficiary');
+        }
     });
 
     // Remove address

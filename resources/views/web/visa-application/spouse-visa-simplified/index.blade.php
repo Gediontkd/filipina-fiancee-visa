@@ -162,6 +162,7 @@
 
 @section('customScript')
 <script src="{{ asset('assets/js/date-range.js') }}"></script>
+<script src="{{ asset('assets/js/city-auto-fill.js') }}"></script>
 <script>
     /**
      * FIXED: Save function with proper success toast message

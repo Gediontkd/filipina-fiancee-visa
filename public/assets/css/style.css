@@ -1098,7 +1098,7 @@ span.subheading {
     width: 100%;
     background: url(../img/Couple-Holding-Hands.jpg) no-repeat;
     background-size: cover;
-    background-position: 55% 25%;  /* CHANGED: Pull back to show more sunset */
+    background-position: 55% 30%;  /* CHANGED: Pull back to show more sunset */
     position: relative;
     z-index: 1;
 }
