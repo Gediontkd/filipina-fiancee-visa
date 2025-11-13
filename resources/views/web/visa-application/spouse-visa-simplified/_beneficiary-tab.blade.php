@@ -265,14 +265,27 @@
             <div class="form-group mb-3">
                 {{ Form::label('beneficiary_mailing_date_to', 'Date To') }}
                 <span class="text-danger">*</span>
-                <div class="input-group">
-                    {{ Form::text('beneficiary_mailing_date_to', optional($application)->beneficiary_mailing_date_to ? optional($application)->beneficiary_mailing_date_to->format('m/d/Y') : '', [
-                        'class' => 'form-control datePicker',
-                        'placeholder' => 'MM/DD/YYYY',
-                        'required' => true,
-                        'id' => 'beneficiary_mailing_date_to'
+                @php
+                    $benMailingDateTo = optional($application)->beneficiary_mailing_date_to;
+                    $isBenMailingPresent = ($benMailingDateTo === 'Present' || $benMailingDateTo === 'present');
+                    $benMailingDateToValue = $isBenMailingPresent ? '' : ($benMailingDateTo ? \Carbon\Carbon::parse($benMailingDateTo)->format('m/d/Y') : '');
+                @endphp
+                {{ Form::text('beneficiary_mailing_date_to', $benMailingDateToValue, [
+                    'class' => 'form-control datePicker',
+                    'placeholder' => 'MM/DD/YYYY',
+                    'required' => true,
+                    'id' => 'beneficiary_mailing_date_to',
+                    'disabled' => $isBenMailingPresent
+                ]) }}
+                <div class="form-check mt-2">
+                    {{ Form::checkbox('beneficiary_mailing_present', 1, $isBenMailingPresent, [
+                        'class' => 'form-check-input present-checkbox',
+                        'id' => 'beneficiary_mailing_present',
+                        'data-target' => '#beneficiary_mailing_date_to'
                     ]) }}
-                    <button type="button" class="btn btn-outline-secondary" id="setBeneficiaryMailingPresent">Present</button>
+                    <label class="form-check-label" for="beneficiary_mailing_present">
+                        Present (Currently living here)
+                    </label>
                 </div>
             </div>
         </div>
@@ -464,9 +477,27 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label>Date To</label>
-                                    <input type="text" name="beneficiary_address_history[{{ $index }}][date_to]" 
-                                        class="form-control datePicker" value="{{ $address['date_to'] ?? '' }}" 
-                                        placeholder="MM/DD/YYYY">
+                                    @php
+                                        $benAddrDateTo = $address['date_to'] ?? '';
+                                        $isBenAddrPresent = ($benAddrDateTo === 'Present' || $benAddrDateTo === 'present');
+                                    @endphp
+                                    <input type="text" 
+                                        name="beneficiary_address_history[{{ $index }}][date_to]" 
+                                        class="form-control datePicker addr-date-to" 
+                                        value="{{ $isBenAddrPresent ? '' : $benAddrDateTo }}" 
+                                        placeholder="MM/DD/YYYY"
+                                        id="beneficiary_addr_date_to_{{ $index }}"
+                                        {{ $isBenAddrPresent ? 'disabled' : '' }}>
+                                    <div class="form-check mt-2">
+                                        <input type="checkbox" 
+                                            class="form-check-input present-checkbox" 
+                                            id="beneficiary_addr_present_{{ $index }}"
+                                            data-target="#beneficiary_addr_date_to_{{ $index }}"
+                                            {{ $isBenAddrPresent ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="beneficiary_addr_present_{{ $index }}">
+                                            Present
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -551,12 +582,26 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label>Date To</label>
-                                    <div class="input-group">
-                                        <input type="text" name="beneficiary_employment_history[{{ $index }}][date_to]" 
-                                            class="form-control datePicker employment-date-to" 
-                                            value="{{ $job['date_to'] ?? '' }}" 
-                                            placeholder="MM/DD/YYYY">
-                                        <button type="button" class="btn btn-outline-secondary set-employment-present">Present</button>
+                                    @php
+                                        $benEmpDateTo = $job['date_to'] ?? '';
+                                        $isBenEmpPresent = ($benEmpDateTo === 'Present' || $benEmpDateTo === 'present');
+                                    @endphp
+                                    <input type="text" 
+                                        name="beneficiary_employment_history[{{ $index }}][date_to]" 
+                                        class="form-control datePicker employment-date-to" 
+                                        value="{{ $isBenEmpPresent ? '' : $benEmpDateTo }}" 
+                                        placeholder="MM/DD/YYYY"
+                                        id="beneficiary_emp_date_to_{{ $index }}"
+                                        {{ $isBenEmpPresent ? 'disabled' : '' }}>
+                                    <div class="form-check mt-2">
+                                        <input type="checkbox" 
+                                            class="form-check-input present-checkbox" 
+                                            id="beneficiary_emp_present_{{ $index }}"
+                                            data-target="#beneficiary_emp_date_to_{{ $index }}"
+                                            {{ $isBenEmpPresent ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="beneficiary_emp_present_{{ $index }}">
+                                            Present (Currently working here)
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -809,9 +854,27 @@ $(document).ready(function() {
         }
     });
 
-    // Set mailing date to Present
-    $('#setBeneficiaryMailingPresent').on('click', function() {
-        $('#beneficiary_mailing_date_to').val('Present');
+    // FIXED: Handle Present checkbox for all date_to fields
+    $(document).on('change', '.present-checkbox', function() {
+        const targetInput = $($(this).data('target'));
+        
+        if ($(this).is(':checked')) {
+            // Store current value before disabling
+            targetInput.data('previous-value', targetInput.val());
+            targetInput.val('Present').prop('disabled', true).prop('readonly', true);
+        } else {
+            // Restore previous value or clear
+            const prevValue = targetInput.data('previous-value') || '';
+            targetInput.val(prevValue).prop('disabled', false).prop('readonly', false);
+        }
+    });
+
+    // Prevent form submission from changing Present value
+    $('#simplifiedSpouseVisaForm').on('submit', function() {
+        $('.present-checkbox:checked').each(function() {
+            const targetInput = $($(this).data('target'));
+            targetInput.prop('disabled', false);
+        });
     });
 
     // Add address history with apt/suite/floor component
@@ -919,7 +982,16 @@ $(document).ready(function() {
                             <div class="form-group mb-3">
                                 <label>Date To</label>
                                 <input type="text" name="beneficiary_address_history[${newIndex}][date_to]" 
-                                    class="form-control datePicker" placeholder="MM/DD/YYYY">
+                                    class="form-control datePicker addr-date-to" placeholder="MM/DD/YYYY"
+                                    id="beneficiary_addr_date_to_${newIndex}">
+                                <div class="form-check mt-2">
+                                    <input type="checkbox" class="form-check-input present-checkbox" 
+                                        id="beneficiary_addr_present_${newIndex}"
+                                        data-target="#beneficiary_addr_date_to_${newIndex}">
+                                    <label class="form-check-label" for="beneficiary_addr_present_${newIndex}">
+                                        Present
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -999,10 +1071,16 @@ $(document).ready(function() {
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label>Date To</label>
-                                <div class="input-group">
-                                    <input type="text" name="beneficiary_employment_history[${newIndex}][date_to]" 
-                                        class="form-control datePicker employment-date-to" placeholder="MM/DD/YYYY">
-                                    <button type="button" class="btn btn-outline-secondary set-employment-present">Present</button>
+                                <input type="text" name="beneficiary_employment_history[${newIndex}][date_to]" 
+                                    class="form-control datePicker employment-date-to" placeholder="MM/DD/YYYY"
+                                    id="beneficiary_emp_date_to_${newIndex}">
+                                <div class="form-check mt-2">
+                                    <input type="checkbox" class="form-check-input present-checkbox" 
+                                        id="beneficiary_emp_present_${newIndex}"
+                                        data-target="#beneficiary_emp_date_to_${newIndex}">
+                                    <label class="form-check-label" for="beneficiary_emp_present_${newIndex}">
+                                        Present (Currently working here)
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -1024,11 +1102,6 @@ $(document).ready(function() {
     // Remove employment
     $(document).on('click', '.remove-employment', function() {
         $(this).closest('.employment-history-item').remove();
-    });
-
-    // Set employment date to Present
-    $(document).on('click', '.set-employment-present', function() {
-        $(this).siblings('.employment-date-to').val('Present');
     });
 
     // Handle "Does Not Apply" checkboxes for passport and alien number

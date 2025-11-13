@@ -230,15 +230,31 @@
             <div class="form-group mb-3">
                 {{ Form::label('sponsor_mailing_date_to', 'Date To') }}
                 <span class="text-danger">*</span>
-                <div class="input-group">
-                    {{ Form::text(
-                        'sponsor_mailing_date_to',
-                        optional($application)->sponsor_mailing_date_to
-                            ? \Carbon\Carbon::parse($application->sponsor_mailing_date_to)->format('m/d/Y')
-                            : '',
-                        ['class' => 'form-control datePicker', 'placeholder' => 'MM/DD/YYYY', 'required' => true, 'id' => 'sponsor_mailing_date_to']
-                    ) }}
-                    <button type="button" class="btn btn-outline-secondary" id="setMailingPresent">Present</button>
+                @php
+                    $mailingDateTo = optional($application)->sponsor_mailing_date_to;
+                    $isMailingPresent = ($mailingDateTo === 'Present' || $mailingDateTo === 'present');
+                    $mailingDateToValue = $isMailingPresent ? '' : ($mailingDateTo ? \Carbon\Carbon::parse($mailingDateTo)->format('m/d/Y') : '');
+                @endphp
+                {{ Form::text(
+                    'sponsor_mailing_date_to',
+                    $mailingDateToValue,
+                    [
+                        'class' => 'form-control datePicker', 
+                        'placeholder' => 'MM/DD/YYYY', 
+                        'required' => true, 
+                        'id' => 'sponsor_mailing_date_to',
+                        'disabled' => $isMailingPresent
+                    ]
+                ) }}
+                <div class="form-check mt-2">
+                    {{ Form::checkbox('sponsor_mailing_present', 1, $isMailingPresent, [
+                        'class' => 'form-check-input present-checkbox',
+                        'id' => 'sponsor_mailing_present',
+                        'data-target' => '#sponsor_mailing_date_to'
+                    ]) }}
+                    <label class="form-check-label" for="sponsor_mailing_present">
+                        Present (Currently living here)
+                    </label>
                 </div>
             </div>
         </div>
@@ -409,9 +425,27 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label>Date To</label>
-                                    <input type="text" name="sponsor_address_history[{{ $index }}][date_to]" 
-                                        class="form-control datePicker" value="{{ $address['date_to'] ?? '' }}" 
-                                        placeholder="MM/DD/YYYY">
+                                    @php
+                                        $addrDateTo = $address['date_to'] ?? '';
+                                        $isAddrPresent = ($addrDateTo === 'Present' || $addrDateTo === 'present');
+                                    @endphp
+                                    <input type="text" 
+                                        name="sponsor_address_history[{{ $index }}][date_to]" 
+                                        class="form-control datePicker addr-date-to" 
+                                        value="{{ $isAddrPresent ? '' : $addrDateTo }}" 
+                                        placeholder="MM/DD/YYYY"
+                                        id="sponsor_addr_date_to_{{ $index }}"
+                                        {{ $isAddrPresent ? 'disabled' : '' }}>
+                                    <div class="form-check mt-2">
+                                        <input type="checkbox" 
+                                            class="form-check-input present-checkbox" 
+                                            id="sponsor_addr_present_{{ $index }}"
+                                            data-target="#sponsor_addr_date_to_{{ $index }}"
+                                            {{ $isAddrPresent ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="sponsor_addr_present_{{ $index }}">
+                                            Present
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -496,12 +530,26 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label>Date To</label>
-                                    <div class="input-group">
-                                        <input type="text" name="sponsor_employment_history[{{ $index }}][date_to]" 
-                                            class="form-control datePicker employment-date-to" 
-                                            value="{{ $job['date_to'] ?? '' }}" 
-                                            placeholder="MM/DD/YYYY">
-                                        <button type="button" class="btn btn-outline-secondary set-employment-present">Present</button>
+                                    @php
+                                        $empDateTo = $job['date_to'] ?? '';
+                                        $isEmpPresent = ($empDateTo === 'Present' || $empDateTo === 'present');
+                                    @endphp
+                                    <input type="text" 
+                                        name="sponsor_employment_history[{{ $index }}][date_to]" 
+                                        class="form-control datePicker employment-date-to" 
+                                        value="{{ $isEmpPresent ? '' : $empDateTo }}" 
+                                        placeholder="MM/DD/YYYY"
+                                        id="sponsor_emp_date_to_{{ $index }}"
+                                        {{ $isEmpPresent ? 'disabled' : '' }}>
+                                    <div class="form-check mt-2">
+                                        <input type="checkbox" 
+                                            class="form-check-input present-checkbox" 
+                                            id="sponsor_emp_present_{{ $index }}"
+                                            data-target="#sponsor_emp_date_to_{{ $index }}"
+                                            {{ $isEmpPresent ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="sponsor_emp_present_{{ $index }}">
+                                            Present (Currently working here)
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -795,9 +843,27 @@ $(document).ready(function() {
         }
     });
 
-    // Set mailing date to Present
-    $('#setMailingPresent').on('click', function() {
-        $('#sponsor_mailing_date_to').val('Present');
+    // FIXED: Handle Present checkbox for all date_to fields
+    $(document).on('change', '.present-checkbox', function() {
+        const targetInput = $($(this).data('target'));
+        
+        if ($(this).is(':checked')) {
+            // Store current value before disabling
+            targetInput.data('previous-value', targetInput.val());
+            targetInput.val('Present').prop('disabled', true).prop('readonly', true);
+        } else {
+            // Restore previous value or clear
+            const prevValue = targetInput.data('previous-value') || '';
+            targetInput.val(prevValue).prop('disabled', false).prop('readonly', false);
+        }
+    });
+
+    // Prevent form submission from changing Present value
+    $('#simplifiedSpouseVisaForm').on('submit', function() {
+        $('.present-checkbox:checked').each(function() {
+            const targetInput = $($(this).data('target'));
+            targetInput.prop('disabled', false);
+        });
     });
 
     // Add address history with apt/suite/floor component
@@ -890,7 +956,16 @@ $(document).ready(function() {
                             <div class="form-group mb-3">
                                 <label>Date To</label>
                                 <input type="text" name="sponsor_address_history[${newIndex}][date_to]" 
-                                    class="form-control datePicker" placeholder="MM/DD/YYYY">
+                                    class="form-control datePicker addr-date-to" placeholder="MM/DD/YYYY"
+                                    id="sponsor_addr_date_to_${newIndex}">
+                                <div class="form-check mt-2">
+                                    <input type="checkbox" class="form-check-input present-checkbox" 
+                                        id="sponsor_addr_present_${newIndex}"
+                                        data-target="#sponsor_addr_date_to_${newIndex}">
+                                    <label class="form-check-label" for="sponsor_addr_present_${newIndex}">
+                                        Present
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -910,7 +985,6 @@ $(document).ready(function() {
             autoclose: true
         });
 
-        // UPDATED: Reinitialize city auto-fill for newly added fields
         if (typeof window.reinitializeCityAutoFill === 'function') {
             window.reinitializeCityAutoFill('sponsor');
         }
@@ -971,10 +1045,16 @@ $(document).ready(function() {
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label>Date To</label>
-                                <div class="input-group">
-                                    <input type="text" name="sponsor_employment_history[${newIndex}][date_to]" 
-                                        class="form-control datePicker employment-date-to" placeholder="MM/DD/YYYY">
-                                    <button type="button" class="btn btn-outline-secondary set-employment-present">Present</button>
+                                <input type="text" name="sponsor_employment_history[${newIndex}][date_to]" 
+                                    class="form-control datePicker employment-date-to" placeholder="MM/DD/YYYY"
+                                    id="sponsor_emp_date_to_${newIndex}">
+                                <div class="form-check mt-2">
+                                    <input type="checkbox" class="form-check-input present-checkbox" 
+                                        id="sponsor_emp_present_${newIndex}"
+                                        data-target="#sponsor_emp_date_to_${newIndex}">
+                                    <label class="form-check-label" for="sponsor_emp_present_${newIndex}">
+                                        Present (Currently working here)
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -996,11 +1076,6 @@ $(document).ready(function() {
     // Remove employment
     $(document).on('click', '.remove-employment', function() {
         $(this).closest('.employment-history-item').remove();
-    });
-
-    // Set employment date to Present
-    $(document).on('click', '.set-employment-present', function() {
-        $(this).siblings('.employment-date-to').val('Present');
     });
 
     // Check for unemployment and show reminder
