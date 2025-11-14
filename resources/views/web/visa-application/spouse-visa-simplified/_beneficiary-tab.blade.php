@@ -262,33 +262,22 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group mb-3">
-                {{ Form::label('beneficiary_mailing_date_to', 'Date To') }}
-                <span class="text-danger">*</span>
-                @php
-                    $benMailingDateTo = optional($application)->beneficiary_mailing_date_to;
-                    $isBenMailingPresent = ($benMailingDateTo === 'Present' || $benMailingDateTo === 'present');
-                    $benMailingDateToValue = $isBenMailingPresent ? '' : ($benMailingDateTo ? \Carbon\Carbon::parse($benMailingDateTo)->format('m/d/Y') : '');
-                @endphp
-                {{ Form::text('beneficiary_mailing_date_to', $benMailingDateToValue, [
-                    'class' => 'form-control datePicker',
-                    'placeholder' => 'MM/DD/YYYY',
-                    'required' => true,
-                    'id' => 'beneficiary_mailing_date_to',
-                    'disabled' => $isBenMailingPresent
-                ]) }}
-                <div class="form-check mt-2">
-                    {{ Form::checkbox('beneficiary_mailing_present', 1, $isBenMailingPresent, [
-                        'class' => 'form-check-input present-checkbox',
-                        'id' => 'beneficiary_mailing_present',
-                        'data-target' => '#beneficiary_mailing_date_to'
-                    ]) }}
-                    <label class="form-check-label" for="beneficiary_mailing_present">
-                        Present (Currently living here)
-                    </label>
-                </div>
-            </div>
+    <div class="form-group mb-3">
+        {{ Form::label('beneficiary_mailing_date_to', 'Date To') }}
+        <span class="text-danger">*</span>
+        
+        {{-- Display field showing PRESENT --}}
+        <div class="form-control" style="background-color: #e9ecef; cursor: default;">
+            PRESENT
         </div>
+        
+        {{-- Hidden date field (empty, not used) --}}
+        {{ Form::hidden('beneficiary_mailing_date_to', '') }}
+        
+        {{-- Hidden checkbox that's always checked - this tells backend to save "Present" --}}
+        {{ Form::hidden('beneficiary_mailing_present', 1) }}
+    </div>
+</div>
     </div>
 
     <!-- Same Address Question -->
