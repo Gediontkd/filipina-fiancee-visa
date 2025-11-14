@@ -227,37 +227,22 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="form-group mb-3">
-                {{ Form::label('sponsor_mailing_date_to', 'Date To') }}
-                <span class="text-danger">*</span>
-                @php
-                    $mailingDateTo = optional($application)->sponsor_mailing_date_to;
-                    $isMailingPresent = ($mailingDateTo === 'Present' || $mailingDateTo === 'present');
-                    $mailingDateToValue = $isMailingPresent ? '' : ($mailingDateTo ? \Carbon\Carbon::parse($mailingDateTo)->format('m/d/Y') : '');
-                @endphp
-                {{ Form::text(
-                    'sponsor_mailing_date_to',
-                    $mailingDateToValue,
-                    [
-                        'class' => 'form-control datePicker', 
-                        'placeholder' => 'MM/DD/YYYY', 
-                        'required' => true, 
-                        'id' => 'sponsor_mailing_date_to',
-                        'disabled' => $isMailingPresent
-                    ]
-                ) }}
-                <div class="form-check mt-2">
-                    {{ Form::checkbox('sponsor_mailing_present', 1, $isMailingPresent, [
-                        'class' => 'form-check-input present-checkbox',
-                        'id' => 'sponsor_mailing_present',
-                        'data-target' => '#sponsor_mailing_date_to'
-                    ]) }}
-                    <label class="form-check-label" for="sponsor_mailing_present">
-                        Present (Currently living here)
-                    </label>
-                </div>
-            </div>
+    <div class="form-group mb-3">
+        {{ Form::label('sponsor_mailing_date_to', 'Date To') }}
+        <span class="text-danger">*</span>
+        
+        {{-- Display field showing PRESENT --}}
+        <div class="form-control" style="background-color: #e9ecef; cursor: default;">
+            PRESENT
         </div>
+        
+        {{-- Hidden date field (empty, not used) --}}
+        {{ Form::hidden('sponsor_mailing_date_to', '') }}
+        
+        {{-- Hidden checkbox that's always checked - this tells backend to save "Present" --}}
+        {{ Form::hidden('sponsor_mailing_present', 1) }}
+    </div>
+</div>
     </div>
 
     <!-- Same Address Question -->
