@@ -834,31 +834,32 @@
 
 <script>
 $(document).ready(function() {
+    // CRITICAL: Initialize apt components on page load
+    initBeneficiaryAptComponents();
+    
     // Show/hide physical address
     $('input[name="beneficiary_same_address"]').on('change', function() {
         if ($(this).val() == '0') {
             $('#beneficiary_physical_address_section').slideDown();
+            initBeneficiaryAptComponents(); // Reinitialize when shown
         } else {
             $('#beneficiary_physical_address_section').slideUp();
         }
     });
 
-    // FIXED: Handle Present checkbox for all date_to fields
+    // Handle Present checkbox
     $(document).on('change', '.present-checkbox', function() {
         const targetInput = $($(this).data('target'));
         
         if ($(this).is(':checked')) {
-            // Store current value before disabling
             targetInput.data('previous-value', targetInput.val());
             targetInput.val('Present').prop('disabled', true).prop('readonly', true);
         } else {
-            // Restore previous value or clear
             const prevValue = targetInput.data('previous-value') || '';
             targetInput.val(prevValue).prop('disabled', false).prop('readonly', false);
         }
     });
 
-    // Prevent form submission from changing Present value
     $('#simplifiedSpouseVisaForm').on('submit', function() {
         $('.present-checkbox:checked').each(function() {
             const targetInput = $($(this).data('target'));
@@ -866,7 +867,7 @@ $(document).ready(function() {
         });
     });
 
-    // Add address history with apt/suite/floor component
+    // Add address history
     $('#addBeneficiaryAddress').on('click', function() {
         const count = parseInt($('#beneficiary_address_history_count').val());
         const newIndex = count;
@@ -881,7 +882,7 @@ $(document).ready(function() {
             <div class="card mb-3 address-history-item" data-index="${newIndex}">
                 <div class="card-header bg-light d-flex justify-content-between">
                     <strong>Previous Address ${newIndex + 1}</strong>
-                    <button type="button" class="btn btn-sm btn-danger remove-address" data-person="beneficiary" data-index="${newIndex}">
+                    <button type="button" class="btn btn-sm btn-danger remove-address" data-index="${newIndex}">
                         <i class="fa fa-trash"></i>
                     </button>
                 </div>
@@ -897,32 +898,28 @@ $(document).ready(function() {
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label>Apt/Suite/Floor</label>
-                                <div class="d-flex gap-3 mb-2 apt-checkboxes" data-target="beneficiary_address_history_${newIndex}_apt">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input apt-type-checkbox" 
-                                            id="beneficiary_addr_${newIndex}_apt" value="Apt">
-                                        <label class="form-check-label" for="beneficiary_addr_${newIndex}_apt">Apt.</label>
+                                <div class="apt-suite-floor-component" data-target-field="beneficiary_address_history[${newIndex}][apt]">
+                                    <div class="d-flex gap-3 mb-2">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input apt-type-checkbox" value="Apt">
+                                            <label class="form-check-label">Apt.</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input apt-type-checkbox" value="Ste">
+                                            <label class="form-check-label">Ste.</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input apt-type-checkbox" value="Flr">
+                                            <label class="form-check-label">Flr.</label>
+                                        </div>
                                     </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input apt-type-checkbox" 
-                                            id="beneficiary_addr_${newIndex}_ste" value="Ste">
-                                        <label class="form-check-label" for="beneficiary_addr_${newIndex}_ste">Ste.</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input apt-type-checkbox" 
-                                            id="beneficiary_addr_${newIndex}_flr" value="Flr">
-                                        <label class="form-check-label" for="beneficiary_addr_${newIndex}_flr">Flr.</label>
+                                    <div class="apt-number-container" style="display: none;">
+                                        <input type="text" class="form-control apt-number-input" 
+                                            placeholder="Enter number (max 6 chars)" maxlength="6" style="max-width: 150px;">
+                                        <small class="form-text text-muted">Letters and numbers only, no spaces</small>
                                     </div>
                                 </div>
-                                <div class="apt-number-container" id="beneficiary_addr_${newIndex}_container" style="display: none;">
-                                    <input type="text" class="form-control apt-number-input" 
-                                        id="beneficiary_addr_${newIndex}_number" 
-                                        placeholder="Enter number (max 6 chars)" 
-                                        maxlength="6" style="max-width: 150px;">
-                                    <small class="form-text text-muted">Letters and numbers only, no spaces</small>
-                                </div>
-                                <input type="hidden" name="beneficiary_address_history[${newIndex}][apt]" 
-                                    id="beneficiary_addr_${newIndex}_hidden">
+                                <input type="hidden" name="beneficiary_address_history[${newIndex}][apt]">
                             </div>
                         </div>
                     </div>
@@ -971,7 +968,7 @@ $(document).ready(function() {
                             <div class="form-group mb-3">
                                 <label>Date To</label>
                                 <input type="text" name="beneficiary_address_history[${newIndex}][date_to]" 
-                                    class="form-control datePicker addr-date-to" placeholder="MM/DD/YYYY"
+                                    class="form-control datePicker" placeholder="MM/DD/YYYY"
                                     id="beneficiary_addr_date_to_${newIndex}">
                                 <div class="form-check mt-2">
                                     <input type="checkbox" class="form-check-input present-checkbox" 
@@ -991,21 +988,15 @@ $(document).ready(function() {
         $('#beneficiary_address_history_container').append(html);
         $('#beneficiary_address_history_count').val(newIndex + 1);
         
-        // Initialize apt/suite/floor component for new entry
-        initDynamicAptComponent(newIndex, 'beneficiary');
-        
-        // Reinitialize datepicker
-        $('.datePicker').datepicker({
-            format: 'mm/dd/yyyy',
-            autoclose: true
-        });
-
-        if (typeof window.reinitializeCityAutoFill === 'function') {
-            window.reinitializeCityAutoFill('beneficiary');
+        // Initialize apt component for new entry
+        const newAptContainer = document.querySelector('[data-target-field="beneficiary_address_history[' + newIndex + '][apt]"]');
+        if (newAptContainer) {
+            setupAptComponent(newAptContainer, 'beneficiary_address_history[' + newIndex + '][apt]');
         }
+        
+        $('.datePicker').datepicker({ format: 'mm/dd/yyyy', autoclose: true });
     });
 
-    // Remove address
     $(document).on('click', '.remove-address', function() {
         $(this).closest('.address-history-item').remove();
     });
@@ -1019,7 +1010,7 @@ $(document).ready(function() {
             <div class="card mb-3 employment-history-item" data-index="${newIndex}">
                 <div class="card-header bg-light d-flex justify-content-between">
                     <strong>Employment ${newIndex + 1}</strong>
-                    <button type="button" class="btn btn-sm btn-danger remove-employment" data-person="beneficiary" data-index="${newIndex}">
+                    <button type="button" class="btn btn-sm btn-danger remove-employment" data-index="${newIndex}">
                         <i class="fa fa-trash"></i>
                     </button>
                 </div>
@@ -1061,7 +1052,7 @@ $(document).ready(function() {
                             <div class="form-group mb-3">
                                 <label>Date To</label>
                                 <input type="text" name="beneficiary_employment_history[${newIndex}][date_to]" 
-                                    class="form-control datePicker employment-date-to" placeholder="MM/DD/YYYY"
+                                    class="form-control datePicker" placeholder="MM/DD/YYYY"
                                     id="beneficiary_emp_date_to_${newIndex}">
                                 <div class="form-check mt-2">
                                     <input type="checkbox" class="form-check-input present-checkbox" 
@@ -1081,14 +1072,9 @@ $(document).ready(function() {
         $('#beneficiary_employment_history_container').append(html);
         $('#beneficiary_employment_history_count').val(newIndex + 1);
         
-        // Reinitialize datepicker
-        $('.datePicker').datepicker({
-            format: 'mm/dd/yyyy',
-            autoclose: true
-        });
+        $('.datePicker').datepicker({ format: 'mm/dd/yyyy', autoclose: true });
     });
 
-    // Remove employment
     $(document).on('click', '.remove-employment', function() {
         $(this).closest('.employment-history-item').remove();
     });
@@ -1104,24 +1090,40 @@ $(document).ready(function() {
     });
 });
 
-// Function to initialize apt/suite/floor for dynamically added entries
-function initDynamicAptComponent(index, person) {
-    const uniqueId = person + '_address_history_' + index + '_apt';
-    const container = document.querySelector('[data-target="' + uniqueId + '"]');
+// CRITICAL: Initialize apt components for static mailing + physical address fields
+function initBeneficiaryAptComponents() {
+    const beneficiaryMailingApt = document.querySelector('[data-target-field="beneficiary_mailing_apt"]');
+    if (beneficiaryMailingApt) {
+        setupAptComponent(beneficiaryMailingApt, 'beneficiary_mailing_apt');
+    }
     
-    if (!container) return;
-    
+    const beneficiaryApt = document.querySelector('[data-target-field="beneficiary_apt"]');
+    if (beneficiaryApt) {
+        setupAptComponent(beneficiaryApt, 'beneficiary_apt');
+    }
+}
+
+// Setup function for any apt component
+function setupAptComponent(container, hiddenFieldName) {
     const checkboxes = container.querySelectorAll('.apt-type-checkbox');
-    const numberContainer = document.getElementById(person + '_addr_' + index + '_container');
-    const numberInput = document.getElementById(person + '_addr_' + index + '_number');
-    const hiddenInput = document.getElementById(person + '_addr_' + index + '_hidden');
+    const numberContainer = container.querySelector('.apt-number-container');
+    const numberInput = container.querySelector('.apt-number-input');
+    const hiddenInput = document.querySelector('input[name="' + hiddenFieldName + '"]');
+    
+    if (!checkboxes.length || !numberContainer || !numberInput || !hiddenInput) {
+        return;
+    }
+    
+    // Prevent multiple event listeners
+    if (container.dataset.initialized === 'true') {
+        return;
+    }
+    container.dataset.initialized = 'true';
     
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             if (this.checked) {
-                checkboxes.forEach(cb => {
-                    if (cb !== this) cb.checked = false;
-                });
+                checkboxes.forEach(cb => { if (cb !== this) cb.checked = false; });
                 numberContainer.style.display = 'block';
                 numberInput.focus();
             } else {
@@ -1136,19 +1138,15 @@ function initDynamicAptComponent(index, person) {
         });
     });
     
-    numberInput.addEventListener('input', function(e) {
-        this.value = this.value.replace(/[^A-Za-z0-9]/g, '');
-        if (this.value.length > 6) {
-            this.value = this.value.substring(0, 6);
-        }
+    numberInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^A-Za-z0-9]/g, '').substring(0, 6);
         updateValue();
     });
     
     numberInput.addEventListener('paste', function(e) {
         e.preventDefault();
-        const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-        const cleanedText = pastedText.replace(/[^A-Za-z0-9]/g, '').substring(0, 6);
-        this.value = cleanedText;
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        this.value = text.replace(/[^A-Za-z0-9]/g, '').substring(0, 6);
         updateValue();
     });
     
@@ -1160,14 +1158,9 @@ function initDynamicAptComponent(index, person) {
     });
     
     function updateValue() {
-        const selectedCheckbox = Array.from(checkboxes).find(cb => cb.checked);
-        const numberValue = numberInput.value.trim();
-        
-        if (selectedCheckbox && numberValue) {
-            hiddenInput.value = selectedCheckbox.value + ':' + numberValue;
-        } else {
-            hiddenInput.value = '';
-        }
+        const selected = Array.from(checkboxes).find(cb => cb.checked);
+        const num = numberInput.value.trim();
+        hiddenInput.value = (selected && num) ? selected.value + ':' + num : '';
     }
 }
 </script>
