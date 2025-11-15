@@ -1,6 +1,6 @@
 <?php
 // FILE: app/Models/SimplifiedSpouseVisaApplication.php
-// FIXED: Financial fields are optional, not required for I-130
+// FIXED: date_to fields can be "Present" string OR date
 
 namespace App\Models;
 
@@ -35,6 +35,16 @@ class SimplifiedSpouseVisaApplication extends Model
         'sponsor_citizenship',
         'sponsor_ssn',
         
+        // Sponsor Mailing Address
+        'sponsor_mailing_address',
+        'sponsor_mailing_apt',
+        'sponsor_mailing_city',
+        'sponsor_mailing_state',
+        'sponsor_mailing_zip',
+        'sponsor_mailing_date_from',
+        'sponsor_mailing_date_to',
+        'sponsor_same_address',
+        
         // Sponsor Parents
         'sponsor_parent1_first_name',
         'sponsor_parent1_middle_name',
@@ -48,6 +58,10 @@ class SimplifiedSpouseVisaApplication extends Model
         'sponsor_parent2_dob',
         'sponsor_parent2_sex',
         'sponsor_parent2_country',
+        
+        // Sponsor History
+        'sponsor_address_history',
+        'sponsor_employment_history',
         
         // Sponsor Employment - OPTIONAL
         'sponsor_employment_status',
@@ -74,6 +88,17 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_passport_number',
         'beneficiary_alien_number',
         
+        // Beneficiary Mailing Address
+        'beneficiary_mailing_address',
+        'beneficiary_mailing_apt',
+        'beneficiary_mailing_city',
+        'beneficiary_mailing_state',
+        'beneficiary_mailing_zip',
+        'beneficiary_mailing_country',
+        'beneficiary_mailing_date_from',
+        'beneficiary_mailing_date_to',
+        'beneficiary_same_address',
+        
         // Beneficiary Parents
         'beneficiary_parent1_first_name',
         'beneficiary_parent1_middle_name',
@@ -87,6 +112,10 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_parent2_dob',
         'beneficiary_parent2_sex',
         'beneficiary_parent2_country',
+        
+        // Beneficiary History
+        'beneficiary_address_history',
+        'beneficiary_employment_history',
         
         // Beneficiary Employment - OPTIONAL
         'beneficiary_employment_status',
@@ -108,19 +137,6 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_prev_spouse_first_name',
         'beneficiary_prev_spouse_last_name',
         'beneficiary_divorce_date',
-
-        'sponsor_mailing_address',
-        'sponsor_mailing_apt',
-        'sponsor_mailing_city',
-        'sponsor_mailing_state',
-        'sponsor_mailing_zip',
-        'sponsor_mailing_date_from',
-        'sponsor_mailing_date_to',
-        'sponsor_same_address',
-        'sponsor_address_history',
-        'beneficiary_address_history',
-        'sponsor_employment_history',
-        'beneficiary_employment_history',
         
         'status',
         'submitted_at'
@@ -139,9 +155,15 @@ class SimplifiedSpouseVisaApplication extends Model
         'submitted_at' => 'datetime',
         'sponsor_annual_income' => 'decimal:2',
         'sponsor_times_married' => 'integer',
+        
+        // CRITICAL FIX: Only cast date_from as date, NOT date_to (can be "Present")
         'sponsor_mailing_date_from' => 'date',
-        'sponsor_mailing_date_to' => 'date',
+        'beneficiary_mailing_date_from' => 'date',
+        // REMOVED: 'sponsor_mailing_date_to' => 'date',
+        // REMOVED: 'beneficiary_mailing_date_to' => 'date',
+        
         'sponsor_same_address' => 'boolean',
+        'beneficiary_same_address' => 'boolean',
         'sponsor_address_history' => 'array',
         'beneficiary_address_history' => 'array',
         'sponsor_employment_history' => 'array',
@@ -169,52 +191,6 @@ class SimplifiedSpouseVisaApplication extends Model
     }
 
     /**
- * Check if address history covers 5 years
- */
-public function hasCompleteFiveYearAddressHistory($person = 'sponsor')
-{
-    $field = $person . '_address_history';
-    $addresses = $this->$field ?? [];
-    
-    if (empty($addresses)) {
-        return false;
-    }
-    
-    // Sort by date_from descending
-    usort($addresses, function($a, $b) {
-        return strtotime($b['date_from']) - strtotime($a['date_from']);
-    });
-    
-    $oldestDate = strtotime($addresses[count($addresses) - 1]['date_from']);
-    $fiveYearsAgo = strtotime('-5 years');
-    
-    return $oldestDate <= $fiveYearsAgo;
-}
-
-/**
- * Check if employment history covers 5 years
- */
-public function hasCompleteFiveYearEmploymentHistory($person = 'sponsor')
-{
-    $field = $person . '_employment_history';
-    $employment = $this->$field ?? [];
-    
-    if (empty($employment)) {
-        return false;
-    }
-    
-    // Sort by date_from descending
-    usort($employment, function($a, $b) {
-        return strtotime($b['date_from']) - strtotime($a['date_from']);
-    });
-    
-    $oldestDate = strtotime($employment[count($employment) - 1]['date_from']);
-    $fiveYearsAgo = strtotime('-5 years');
-    
-    return $oldestDate <= $fiveYearsAgo;
-}
-
-    /**
      * Check if I-130 application is complete
      * FIXED: Financial fields are NOT required
      */
@@ -223,8 +199,8 @@ public function hasCompleteFiveYearEmploymentHistory($person = 'sponsor')
         $requiredFields = [
             // Sponsor Basic (13)
             'sponsor_first_name', 'sponsor_last_name', 'sponsor_sex',
-            'sponsor_email', 'sponsor_phone', 'sponsor_address',
-            'sponsor_city', 'sponsor_state', 'sponsor_zip',
+            'sponsor_email', 'sponsor_phone', 'sponsor_mailing_address',
+            'sponsor_mailing_city', 'sponsor_mailing_state', 'sponsor_mailing_zip',
             'sponsor_dob', 'sponsor_place_of_birth',
             'sponsor_citizenship', 'sponsor_ssn',
             
@@ -236,8 +212,8 @@ public function hasCompleteFiveYearEmploymentHistory($person = 'sponsor')
             
             // Beneficiary Basic (11)
             'beneficiary_first_name', 'beneficiary_last_name', 'beneficiary_sex',
-            'beneficiary_email', 'beneficiary_phone', 'beneficiary_address',
-            'beneficiary_city', 'beneficiary_country', 'beneficiary_dob',
+            'beneficiary_email', 'beneficiary_phone', 'beneficiary_mailing_address',
+            'beneficiary_mailing_city', 'beneficiary_mailing_country', 'beneficiary_dob',
             'beneficiary_place_of_birth', 'beneficiary_citizenship',
             
             // Beneficiary Parents (10)
