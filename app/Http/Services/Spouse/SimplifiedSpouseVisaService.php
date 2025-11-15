@@ -22,6 +22,12 @@ class SimplifiedSpouseVisaService
         DB::beginTransaction();
 
         try {
+
+            $request->merge([
+                'sponsor_mailing_date_to' => 'Present',
+                'beneficiary_mailing_date_to' => 'Present'
+            ]);
+
             // Process address history
             $sponsorAddressHistory = [];
             if ($request->has('sponsor_address_history')) {
