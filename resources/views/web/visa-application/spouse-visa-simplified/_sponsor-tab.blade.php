@@ -774,7 +774,10 @@
 
 <script>
 $(document).ready(function() {
-    // Format SSN as ###-##-####
+    // CRITICAL: Initialize apt components on page load
+    initMainAptComponents();
+    
+    // Format SSN, phone, ZIP, state (keep existing formatters)
     $(document).on('input', '.ssn-format', function() {
         let value = this.value.replace(/\D/g, '');
         if (value.length > 9) value = value.substring(0, 9);
@@ -788,7 +791,6 @@ $(document).ready(function() {
         }
     });
 
-    // Format phone as (###) ###-####
     $(document).on('input', '.phone-format', function() {
         let value = this.value.replace(/\D/g, '');
         if (value.length > 10) value = value.substring(0, 10);
@@ -802,7 +804,6 @@ $(document).ready(function() {
         }
     });
 
-    // Format ZIP code
     $(document).on('input', '.zip-format', function() {
         let value = this.value.replace(/\D/g, '');
         if (value.length > 9) value = value.substring(0, 9);
@@ -814,7 +815,6 @@ $(document).ready(function() {
         }
     });
 
-    // Format state to uppercase
     $(document).on('input', '.state-format', function() {
         this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '');
     });
@@ -823,27 +823,25 @@ $(document).ready(function() {
     $('input[name="sponsor_same_address"]').on('change', function() {
         if ($(this).val() == '0') {
             $('#sponsor_physical_address_section').slideDown();
+            initMainAptComponents(); // Reinitialize when shown
         } else {
             $('#sponsor_physical_address_section').slideUp();
         }
     });
 
-    // FIXED: Handle Present checkbox for all date_to fields
+    // Handle Present checkbox
     $(document).on('change', '.present-checkbox', function() {
         const targetInput = $($(this).data('target'));
         
         if ($(this).is(':checked')) {
-            // Store current value before disabling
             targetInput.data('previous-value', targetInput.val());
             targetInput.val('Present').prop('disabled', true).prop('readonly', true);
         } else {
-            // Restore previous value or clear
             const prevValue = targetInput.data('previous-value') || '';
             targetInput.val(prevValue).prop('disabled', false).prop('readonly', false);
         }
     });
 
-    // Prevent form submission from changing Present value
     $('#simplifiedSpouseVisaForm').on('submit', function() {
         $('.present-checkbox:checked').each(function() {
             const targetInput = $($(this).data('target'));
@@ -851,7 +849,7 @@ $(document).ready(function() {
         });
     });
 
-    // Add address history with apt/suite/floor component
+    // Add/Remove address history
     $('#addSponsorAddress').on('click', function() {
         const count = parseInt($('#sponsor_address_history_count').val());
         const newIndex = count;
@@ -860,7 +858,7 @@ $(document).ready(function() {
             <div class="card mb-3 address-history-item" data-index="${newIndex}">
                 <div class="card-header bg-light d-flex justify-content-between">
                     <strong>Previous Address ${newIndex + 1}</strong>
-                    <button type="button" class="btn btn-sm btn-danger remove-address" data-person="sponsor" data-index="${newIndex}">
+                    <button type="button" class="btn btn-sm btn-danger remove-address" data-index="${newIndex}">
                         <i class="fa fa-trash"></i>
                     </button>
                 </div>
@@ -876,32 +874,28 @@ $(document).ready(function() {
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label>Apt/Suite/Floor</label>
-                                <div class="d-flex gap-3 mb-2 apt-checkboxes" data-target="sponsor_address_history_${newIndex}_apt">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input apt-type-checkbox" 
-                                            id="sponsor_addr_${newIndex}_apt" value="Apt">
-                                        <label class="form-check-label" for="sponsor_addr_${newIndex}_apt">Apt.</label>
+                                <div class="apt-suite-floor-component" data-target-field="sponsor_address_history[${newIndex}][apt]">
+                                    <div class="d-flex gap-3 mb-2">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input apt-type-checkbox" value="Apt">
+                                            <label class="form-check-label">Apt.</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input apt-type-checkbox" value="Ste">
+                                            <label class="form-check-label">Ste.</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input apt-type-checkbox" value="Flr">
+                                            <label class="form-check-label">Flr.</label>
+                                        </div>
                                     </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input apt-type-checkbox" 
-                                            id="sponsor_addr_${newIndex}_ste" value="Ste">
-                                        <label class="form-check-label" for="sponsor_addr_${newIndex}_ste">Ste.</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input apt-type-checkbox" 
-                                            id="sponsor_addr_${newIndex}_flr" value="Flr">
-                                        <label class="form-check-label" for="sponsor_addr_${newIndex}_flr">Flr.</label>
+                                    <div class="apt-number-container" style="display: none;">
+                                        <input type="text" class="form-control apt-number-input" 
+                                            placeholder="Enter number (max 6 chars)" maxlength="6" style="max-width: 150px;">
+                                        <small class="form-text text-muted">Letters and numbers only, no spaces</small>
                                     </div>
                                 </div>
-                                <div class="apt-number-container" id="sponsor_addr_${newIndex}_container" style="display: none;">
-                                    <input type="text" class="form-control apt-number-input" 
-                                        id="sponsor_addr_${newIndex}_number" 
-                                        placeholder="Enter number (max 6 chars)" 
-                                        maxlength="6" style="max-width: 150px;">
-                                    <small class="form-text text-muted">Letters and numbers only, no spaces</small>
-                                </div>
-                                <input type="hidden" name="sponsor_address_history[${newIndex}][apt]" 
-                                    id="sponsor_addr_${newIndex}_hidden">
+                                <input type="hidden" name="sponsor_address_history[${newIndex}][apt]">
                             </div>
                         </div>
                     </div>
@@ -909,23 +903,20 @@ $(document).ready(function() {
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label>City</label>
-                                <input type="text" name="sponsor_address_history[${newIndex}][city]" 
-                                    class="form-control" maxlength="50">
+                                <input type="text" name="sponsor_address_history[${newIndex}][city]" class="form-control" maxlength="50">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label>State</label>
                                 <input type="text" name="sponsor_address_history[${newIndex}][state]" 
-                                    class="form-control state-format" maxlength="2" pattern="[A-Z]{2}" 
-                                    style="text-transform: uppercase;">
+                                    class="form-control state-format" maxlength="2" style="text-transform: uppercase;">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group mb-3">
                                 <label>ZIP Code</label>
-                                <input type="text" name="sponsor_address_history[${newIndex}][zip]" 
-                                    class="form-control zip-format" maxlength="10">
+                                <input type="text" name="sponsor_address_history[${newIndex}][zip]" class="form-control zip-format" maxlength="10">
                             </div>
                         </div>
                     </div>
@@ -941,15 +932,11 @@ $(document).ready(function() {
                             <div class="form-group mb-3">
                                 <label>Date To</label>
                                 <input type="text" name="sponsor_address_history[${newIndex}][date_to]" 
-                                    class="form-control datePicker addr-date-to" placeholder="MM/DD/YYYY"
-                                    id="sponsor_addr_date_to_${newIndex}">
+                                    class="form-control datePicker" placeholder="MM/DD/YYYY" id="sponsor_addr_date_to_${newIndex}">
                                 <div class="form-check mt-2">
                                     <input type="checkbox" class="form-check-input present-checkbox" 
-                                        id="sponsor_addr_present_${newIndex}"
-                                        data-target="#sponsor_addr_date_to_${newIndex}">
-                                    <label class="form-check-label" for="sponsor_addr_present_${newIndex}">
-                                        Present
-                                    </label>
+                                        id="sponsor_addr_present_${newIndex}" data-target="#sponsor_addr_date_to_${newIndex}">
+                                    <label class="form-check-label" for="sponsor_addr_present_${newIndex}">Present</label>
                                 </div>
                             </div>
                         </div>
@@ -961,26 +948,20 @@ $(document).ready(function() {
         $('#sponsor_address_history_container').append(html);
         $('#sponsor_address_history_count').val(newIndex + 1);
         
-        // Initialize apt/suite/floor component for new entry
-        initDynamicAptComponent(newIndex, 'sponsor');
-        
-        // Reinitialize datepicker
-        $('.datePicker').datepicker({
-            format: 'mm/dd/yyyy',
-            autoclose: true
-        });
-
-        if (typeof window.reinitializeCityAutoFill === 'function') {
-            window.reinitializeCityAutoFill('sponsor');
+        // Initialize apt component for new entry
+        const newAptContainer = document.querySelector('[data-target-field="sponsor_address_history[' + newIndex + '][apt]"]');
+        if (newAptContainer) {
+            setupAptComponent(newAptContainer, 'sponsor_address_history[' + newIndex + '][apt]');
         }
+        
+        $('.datePicker').datepicker({ format: 'mm/dd/yyyy', autoclose: true });
     });
 
-    // Remove address
     $(document).on('click', '.remove-address', function() {
         $(this).closest('.address-history-item').remove();
     });
 
-    // Add employment history
+    // Employment history (keep existing code)
     $('#addSponsorEmployment').on('click', function() {
         const count = parseInt($('#sponsor_employment_history_count').val());
         const newIndex = count;
@@ -989,7 +970,7 @@ $(document).ready(function() {
             <div class="card mb-3 employment-history-item" data-index="${newIndex}">
                 <div class="card-header bg-light d-flex justify-content-between">
                     <strong>Employment ${newIndex + 1}</strong>
-                    <button type="button" class="btn btn-sm btn-danger remove-employment" data-person="sponsor" data-index="${newIndex}">
+                    <button type="button" class="btn btn-sm btn-danger remove-employment" data-index="${newIndex}">
                         <i class="fa fa-trash"></i>
                     </button>
                 </div>
@@ -1031,12 +1012,10 @@ $(document).ready(function() {
                             <div class="form-group mb-3">
                                 <label>Date To</label>
                                 <input type="text" name="sponsor_employment_history[${newIndex}][date_to]" 
-                                    class="form-control datePicker employment-date-to" placeholder="MM/DD/YYYY"
-                                    id="sponsor_emp_date_to_${newIndex}">
+                                    class="form-control datePicker" placeholder="MM/DD/YYYY" id="sponsor_emp_date_to_${newIndex}">
                                 <div class="form-check mt-2">
                                     <input type="checkbox" class="form-check-input present-checkbox" 
-                                        id="sponsor_emp_present_${newIndex}"
-                                        data-target="#sponsor_emp_date_to_${newIndex}">
+                                        id="sponsor_emp_present_${newIndex}" data-target="#sponsor_emp_date_to_${newIndex}">
                                     <label class="form-check-label" for="sponsor_emp_present_${newIndex}">
                                         Present (Currently working here)
                                     </label>
@@ -1051,44 +1030,42 @@ $(document).ready(function() {
         $('#sponsor_employment_history_container').append(html);
         $('#sponsor_employment_history_count').val(newIndex + 1);
         
-        // Reinitialize datepicker
-        $('.datePicker').datepicker({
-            format: 'mm/dd/yyyy',
-            autoclose: true
-        });
+        $('.datePicker').datepicker({ format: 'mm/dd/yyyy', autoclose: true });
     });
 
-    // Remove employment
     $(document).on('click', '.remove-employment', function() {
         $(this).closest('.employment-history-item').remove();
     });
-
-    // Check for unemployment and show reminder
-    $(document).on('input', 'input[name^="sponsor_employment_history"][name$="[employer]"]', function() {
-        if ($(this).val().toLowerCase() === 'unemployed') {
-            $('#sponsor_unemployment_reminder').slideDown();
-        }
-    });
 });
 
-// Function to initialize apt/suite/floor for dynamically added entries
-function initDynamicAptComponent(index, person) {
-    const uniqueId = person + '_address_history_' + index + '_apt';
-    const container = document.querySelector('[data-target="' + uniqueId + '"]');
+// CRITICAL: Initialize apt components for static mailing + physical address fields
+function initMainAptComponents() {
+    const sponsorMailingApt = document.querySelector('[data-target-field="sponsor_mailing_apt"]');
+    if (sponsorMailingApt) {
+        setupAptComponent(sponsorMailingApt, 'sponsor_mailing_apt');
+    }
     
-    if (!container) return;
-    
+    const sponsorApt = document.querySelector('[data-target-field="sponsor_apt"]');
+    if (sponsorApt) {
+        setupAptComponent(sponsorApt, 'sponsor_apt');
+    }
+}
+
+// Setup function for any apt component
+function setupAptComponent(container, hiddenFieldName) {
     const checkboxes = container.querySelectorAll('.apt-type-checkbox');
-    const numberContainer = document.getElementById(person + '_addr_' + index + '_container');
-    const numberInput = document.getElementById(person + '_addr_' + index + '_number');
-    const hiddenInput = document.getElementById(person + '_addr_' + index + '_hidden');
+    const numberContainer = container.querySelector('.apt-number-container');
+    const numberInput = container.querySelector('.apt-number-input');
+    const hiddenInput = document.querySelector('input[name="' + hiddenFieldName + '"]');
+    
+    if (!checkboxes.length || !numberContainer || !numberInput || !hiddenInput) {
+        return;
+    }
     
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             if (this.checked) {
-                checkboxes.forEach(cb => {
-                    if (cb !== this) cb.checked = false;
-                });
+                checkboxes.forEach(cb => { if (cb !== this) cb.checked = false; });
                 numberContainer.style.display = 'block';
                 numberInput.focus();
             } else {
@@ -1103,38 +1080,22 @@ function initDynamicAptComponent(index, person) {
         });
     });
     
-    numberInput.addEventListener('input', function(e) {
-        this.value = this.value.replace(/[^A-Za-z0-9]/g, '');
-        if (this.value.length > 6) {
-            this.value = this.value.substring(0, 6);
-        }
+    numberInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^A-Za-z0-9]/g, '').substring(0, 6);
         updateValue();
     });
     
     numberInput.addEventListener('paste', function(e) {
         e.preventDefault();
-        const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-        const cleanedText = pastedText.replace(/[^A-Za-z0-9]/g, '').substring(0, 6);
-        this.value = cleanedText;
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        this.value = text.replace(/[^A-Za-z0-9]/g, '').substring(0, 6);
         updateValue();
     });
     
-    numberInput.addEventListener('keypress', function(e) {
-        const char = String.fromCharCode(e.which);
-        if (!/[A-Za-z0-9]/.test(char)) {
-            e.preventDefault();
-        }
-    });
-    
     function updateValue() {
-        const selectedCheckbox = Array.from(checkboxes).find(cb => cb.checked);
-        const numberValue = numberInput.value.trim();
-        
-        if (selectedCheckbox && numberValue) {
-            hiddenInput.value = selectedCheckbox.value + ':' + numberValue;
-        } else {
-            hiddenInput.value = '';
-        }
+        const selected = Array.from(checkboxes).find(cb => cb.checked);
+        const num = numberInput.value.trim();
+        hiddenInput.value = (selected && num) ? selected.value + ':' + num : '';
     }
 }
 </script>
