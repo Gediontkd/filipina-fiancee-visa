@@ -367,10 +367,10 @@ class SimplifiedSpouseVisaService
 
         // Check 5-year coverage for address and employment history
         $historyCriteria = [
-            'sponsor_address_history' => $this->hasCompleteFiveYearAddressHistory($application, 'sponsor'),
-            'beneficiary_address_history' => $this->hasCompleteFiveYearAddressHistory($application, 'beneficiary'),
-            'sponsor_employment_history' => $this->hasCompleteFiveYearEmploymentHistory($application, 'sponsor'),
-            'beneficiary_employment_history' => $this->hasCompleteFiveYearEmploymentHistory($application, 'beneficiary')
+            'sponsor_address_history' => $this->hasAddressHistory($application, 'sponsor'),
+            'beneficiary_address_history' => $this->hasAddressHistory($application, 'beneficiary'),
+            'sponsor_employment_history' => $this->hasEmploymentHistory($application, 'sponsor'),
+            'beneficiary_employment_history' => $this->hasEmploymentHistory($application, 'beneficiary')
         ];
 
         // Add 4 more criteria to total fields
@@ -483,6 +483,50 @@ class SimplifiedSpouseVisaService
         if (!empty($dateRanges)) {
             $earliestDate = $dateRanges[0]['from'];
             return $earliestDate->lte($fiveYearsAgo);
+        }
+
+        return false;
+    }
+
+
+    /**
+     * UPDATED: Simple check - just verify at least one address exists
+     */
+    private function hasAddressHistory($application, $person)
+    {
+        $addressHistory = $application->{$person . '_address_history'} ?? [];
+        
+        // Just check if there's at least one address entry with required fields
+        if (empty($addressHistory)) {
+            return false;
+        }
+
+        foreach ($addressHistory as $address) {
+            if (!empty($address['address']) && !empty($address['city']) && 
+                !empty($address['date_from']) && !empty($address['date_to'])) {
+                return true; // At least one complete address found
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * UPDATED: Simple check - just verify at least one employment exists
+     */
+    private function hasEmploymentHistory($application, $person)
+    {
+        $employmentHistory = $application->{$person . '_employment_history'} ?? [];
+        
+        // Just check if there's at least one employment entry with required fields
+        if (empty($employmentHistory)) {
+            return false;
+        }
+
+        foreach ($employmentHistory as $job) {
+            if (!empty($job['employer']) && !empty($job['date_from']) && !empty($job['date_to'])) {
+                return true; // At least one complete job found
+            }
         }
 
         return false;
