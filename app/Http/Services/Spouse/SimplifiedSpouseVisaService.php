@@ -24,8 +24,19 @@ class SimplifiedSpouseVisaService
         try {
             // CRITICAL FIX: Force "Present" for mailing addresses BEFORE processing
             $data = $request->all();
+
+            unset($data['beneficiary_passport_na']);
+            unset($data['beneficiary_alien_number_na']);
+            unset($data['sponsor_mailing_present']);
+            unset($data['beneficiary_mailing_present']);
+
             $data['sponsor_mailing_date_to'] = 'Present';
             $data['beneficiary_mailing_date_to'] = 'Present';
+
+            Log::info('Saving application', [
+                'beneficiary_alien_number' => $data['beneficiary_alien_number'] ?? 'NOT SET',
+                'beneficiary_passport_number' => $data['beneficiary_passport_number'] ?? 'NOT SET',
+            ]);
 
             // Process address history
             $sponsorAddressHistory = [];
