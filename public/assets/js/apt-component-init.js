@@ -1,7 +1,6 @@
 /**
  * FILE: public/assets/js/apt-component-init.js
  * CRITICAL: Global initialization for apt-suite-floor components
- * Include this in your master layout AFTER jQuery
  */
 
 (function() {
@@ -142,5 +141,116 @@
     // Export for manual calls if needed
     window.initAptComponents = initAllAptComponents;
     window.setupSingleAptComponent = setupAptComponent;
+    
+})();
+
+
+(function() {
+    'use strict';
+    
+    /**
+     * Handle "Present" checkboxes for address/employment history
+     * FIXED: Use readonly instead of disabled so values are submitted
+     */
+    $(document).on('change', '.present-checkbox', function() {
+        const targetInput = $($(this).data('target'));
+        
+        if ($(this).is(':checked')) {
+            // Save previous value
+            targetInput.data('previous-value', targetInput.val());
+            
+            // CRITICAL FIX: Use readonly instead of disabled
+            // Readonly fields ARE submitted, disabled fields are NOT
+            targetInput.val('Present')
+                .prop('readonly', true)
+                .css({
+                    'background-color': '#e9ecef',
+                    'cursor': 'not-allowed'
+                });
+        } else {
+            // Restore previous value
+            const prevValue = targetInput.data('previous-value') || '';
+            targetInput.val(prevValue)
+                .prop('readonly', false)
+                .css({
+                    'background-color': '',
+                    'cursor': ''
+                });
+        }
+    });
+    
+    /**
+     * Handle "Does Not Apply" checkboxes
+     * FIXED: More robust handler with better targeting
+     */
+    $(document).on('change', '.does-not-apply-checkbox', function() {
+        const targetSelector = $(this).data('target');
+        const targetInput = $(targetSelector);
+        
+        if (targetInput.length === 0) {
+            console.error('Does not apply checkbox target not found:', targetSelector);
+            return;
+        }
+        
+        if ($(this).is(':checked')) {
+            // Save previous value
+            targetInput.data('previous-value', targetInput.val());
+            
+            // Set to N/A and make readonly
+            targetInput.val('N/A')
+                .prop('readonly', true)
+                .css({
+                    'background-color': '#e9ecef',
+                    'cursor': 'not-allowed'
+                });
+        } else {
+            // Restore previous value
+            const prevValue = targetInput.data('previous-value') || '';
+            targetInput.val(prevValue)
+                .prop('readonly', false)
+                .css({
+                    'background-color': '',
+                    'cursor': ''
+                });
+        }
+    });
+    
+    /**
+     * Initialize checkboxes on page load
+     */
+    function initCheckboxes() {
+        // Initialize Present checkboxes that are already checked
+        $('.present-checkbox:checked').each(function() {
+            const targetInput = $($(this).data('target'));
+            if (targetInput.val() === 'Present' || targetInput.val() === 'present') {
+                targetInput.prop('readonly', true)
+                    .css({
+                        'background-color': '#e9ecef',
+                        'cursor': 'not-allowed'
+                    });
+            }
+        });
+        
+        // Initialize "Does Not Apply" checkboxes that are already checked
+        $('.does-not-apply-checkbox:checked').each(function() {
+            const targetInput = $($(this).data('target'));
+            if (targetInput.val() === 'N/A') {
+                targetInput.prop('readonly', true)
+                    .css({
+                        'background-color': '#e9ecef',
+                        'cursor': 'not-allowed'
+                    });
+            }
+        });
+    }
+    
+    // Initialize on DOM ready
+    $(document).ready(function() {
+        initCheckboxes();
+        
+        console.log('Form handlers initialized');
+        console.log('Present checkboxes:', $('.present-checkbox').length);
+        console.log('Does not apply checkboxes:', $('.does-not-apply-checkbox').length);
+    });
     
 })();
