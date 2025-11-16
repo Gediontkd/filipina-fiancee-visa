@@ -1,4 +1,6 @@
 <?php
+// FILE: app/Services/ApplicationDataService.php
+// FIXED: Complete data formatting for all application types
 
 namespace App\Services;
 
@@ -147,7 +149,7 @@ class ApplicationDataService
     }
 
     /**
-     * Format simplified spouse visa data for display
+     * FIXED: Format simplified spouse visa data with ALL fields
      */
     private function formatSimplifiedSpouseData(SimplifiedSpouseVisaApplication $app): array
     {
@@ -157,6 +159,7 @@ class ApplicationDataService
                     'first_name' => $app->sponsor_first_name,
                     'middle_name' => $app->sponsor_middle_name,
                     'last_name' => $app->sponsor_last_name,
+                    'sex' => $app->sponsor_sex,
                     'date_of_birth' => $app->sponsor_dob?->format('m/d/Y'),
                     'place_of_birth' => $app->sponsor_place_of_birth,
                     'citizenship' => $app->sponsor_citizenship,
@@ -166,12 +169,41 @@ class ApplicationDataService
                     'email' => $app->sponsor_email,
                     'phone' => $app->sponsor_phone,
                 ],
-                'address' => [
+                'mailing_address' => [
+                    'street' => $app->sponsor_mailing_address,
+                    'apt_suite_floor' => $app->sponsor_mailing_apt,
+                    'city' => $app->sponsor_mailing_city,
+                    'state' => $app->sponsor_mailing_state,
+                    'zip' => $app->sponsor_mailing_zip,
+                    'date_from' => $app->sponsor_mailing_date_from,
+                    'date_to' => $app->sponsor_mailing_date_to ?? 'Present',
+                ],
+                'same_physical_address' => $app->sponsor_same_address,
+                'physical_address' => [
                     'street' => $app->sponsor_address,
+                    'apt_suite_floor' => $app->sponsor_apt,
                     'city' => $app->sponsor_city,
                     'state' => $app->sponsor_state,
                     'zip' => $app->sponsor_zip,
-                    'country' => $app->sponsor_country,
+                ],
+                'address_history' => $app->sponsor_address_history ?? [],
+                'parents' => [
+                    'parent_1' => [
+                        'first_name' => $app->sponsor_parent1_first_name,
+                        'middle_name' => $app->sponsor_parent1_middle_name,
+                        'last_name' => $app->sponsor_parent1_last_name,
+                        'date_of_birth' => $app->sponsor_parent1_dob?->format('m/d/Y'),
+                        'sex' => $app->sponsor_parent1_sex,
+                        'country_of_birth' => $app->sponsor_parent1_country,
+                    ],
+                    'parent_2' => [
+                        'first_name' => $app->sponsor_parent2_first_name,
+                        'middle_name' => $app->sponsor_parent2_middle_name,
+                        'last_name' => $app->sponsor_parent2_last_name,
+                        'date_of_birth' => $app->sponsor_parent2_dob?->format('m/d/Y'),
+                        'sex' => $app->sponsor_parent2_sex,
+                        'country_of_birth' => $app->sponsor_parent2_country,
+                    ],
                 ],
                 'employment' => [
                     'status' => $app->sponsor_employment_status,
@@ -179,12 +211,14 @@ class ApplicationDataService
                     'occupation' => $app->sponsor_occupation,
                     'annual_income' => $app->sponsor_annual_income,
                 ],
+                'employment_history' => $app->sponsor_employment_history ?? [],
             ],
             'beneficiary' => [
                 'personal_information' => [
                     'first_name' => $app->beneficiary_first_name,
                     'middle_name' => $app->beneficiary_middle_name,
                     'last_name' => $app->beneficiary_last_name,
+                    'sex' => $app->beneficiary_sex,
                     'date_of_birth' => $app->beneficiary_dob?->format('m/d/Y'),
                     'place_of_birth' => $app->beneficiary_place_of_birth,
                     'citizenship' => $app->beneficiary_citizenship,
@@ -195,39 +229,68 @@ class ApplicationDataService
                     'email' => $app->beneficiary_email,
                     'phone' => $app->beneficiary_phone,
                 ],
-                'address' => [
+                'mailing_address' => [
+                    'street' => $app->beneficiary_mailing_address,
+                    'apt_suite_floor' => $app->beneficiary_mailing_apt,
+                    'city' => $app->beneficiary_mailing_city,
+                    'state' => $app->beneficiary_mailing_state,
+                    'country' => $app->beneficiary_mailing_country,
+                    'zip' => $app->beneficiary_mailing_zip,
+                    'date_from' => $app->beneficiary_mailing_date_from,
+                    'date_to' => $app->beneficiary_mailing_date_to ?? 'Present',
+                ],
+                'same_physical_address' => $app->beneficiary_same_address,
+                'physical_address' => [
                     'street' => $app->beneficiary_address,
+                    'apt_suite_floor' => $app->beneficiary_apt,
                     'city' => $app->beneficiary_city,
                     'state' => $app->beneficiary_state,
-                    'zip' => $app->beneficiary_zip,
                     'country' => $app->beneficiary_country,
+                    'zip' => $app->beneficiary_zip,
+                ],
+                'address_history' => $app->beneficiary_address_history ?? [],
+                'parents' => [
+                    'parent_1' => [
+                        'first_name' => $app->beneficiary_parent1_first_name,
+                        'middle_name' => $app->beneficiary_parent1_middle_name,
+                        'last_name' => $app->beneficiary_parent1_last_name,
+                        'date_of_birth' => $app->beneficiary_parent1_dob?->format('m/d/Y'),
+                        'sex' => $app->beneficiary_parent1_sex,
+                        'country_of_birth' => $app->beneficiary_parent1_country,
+                    ],
+                    'parent_2' => [
+                        'first_name' => $app->beneficiary_parent2_first_name,
+                        'middle_name' => $app->beneficiary_parent2_middle_name,
+                        'last_name' => $app->beneficiary_parent2_last_name,
+                        'date_of_birth' => $app->beneficiary_parent2_dob?->format('m/d/Y'),
+                        'sex' => $app->beneficiary_parent2_sex,
+                        'country_of_birth' => $app->beneficiary_parent2_country,
+                    ],
                 ],
                 'employment' => [
                     'status' => $app->beneficiary_employment_status,
                     'employer' => $app->beneficiary_employer_name,
                     'occupation' => $app->beneficiary_occupation,
                 ],
+                'employment_history' => $app->beneficiary_employment_history ?? [],
             ],
             'relationship' => [
                 'marriage_information' => [
                     'marriage_date' => $app->marriage_date?->format('m/d/Y'),
                     'marriage_city' => $app->marriage_location_city,
+                    'marriage_state' => $app->marriage_location_state,
+                    'marriage_province' => $app->marriage_location_province,
                     'marriage_country' => $app->marriage_location_country,
-                ],
-                'first_meeting' => [
-                    'date' => $app->first_met_date?->format('m/d/Y'),
-                    'location' => $app->first_met_location,
-                ],
-                'relationship_details' => [
-                    'times_met_in_person' => $app->times_met_in_person,
-                    'last_meeting_date' => $app->last_meeting_date?->format('m/d/Y'),
-                    'communication_methods' => $app->communication_methods,
-                    'relationship_description' => $app->relationship_description,
+                    'sponsor_times_married' => $app->sponsor_times_married,
                 ],
                 'previous_marriages' => [
                     'sponsor_previous_marriages' => $app->sponsor_previous_marriages,
+                    'sponsor_previous_spouse_first_name' => $app->sponsor_prev_spouse_first_name,
+                    'sponsor_previous_spouse_last_name' => $app->sponsor_prev_spouse_last_name,
                     'sponsor_divorce_date' => $app->sponsor_divorce_date?->format('m/d/Y'),
                     'beneficiary_previous_marriages' => $app->beneficiary_previous_marriages,
+                    'beneficiary_previous_spouse_first_name' => $app->beneficiary_prev_spouse_first_name,
+                    'beneficiary_previous_spouse_last_name' => $app->beneficiary_prev_spouse_last_name,
                     'beneficiary_divorce_date' => $app->beneficiary_divorce_date?->format('m/d/Y'),
                 ],
             ],
