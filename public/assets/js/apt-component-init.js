@@ -1,7 +1,6 @@
 /**
  * FILE: public/assets/js/apt-component-init.js
  * CRITICAL: Global initialization for apt-suite-floor components
- * Include this in your master layout AFTER jQuery
  */
 
 (function() {
@@ -142,5 +141,171 @@
     // Export for manual calls if needed
     window.initAptComponents = initAllAptComponents;
     window.setupSingleAptComponent = setupAptComponent;
+
+    /**
+     * CRITICAL FIX: Handle "Present" checkboxes
+     * Issue: Datepicker was interfering with the value
+     */
+    $(document).on('change', '.present-checkbox', function() {
+        const checkboxId = $(this).attr('id');
+        const targetSelector = $(this).data('target');
+        const targetInput = $(targetSelector);
+        
+        console.log('Present checkbox changed:', checkboxId, 'checked:', $(this).is(':checked'));
+        
+        if (targetInput.length === 0) {
+            console.error('Present checkbox target not found:', targetSelector);
+            return;
+        }
+        
+        if ($(this).is(':checked')) {
+            // Destroy datepicker on this field
+            if (targetInput.data('datepicker')) {
+                targetInput.datepicker('destroy');
+            }
+            targetInput.removeClass('datePicker');
+            
+            // Save previous value and set to Present
+            targetInput.data('previous-value', targetInput.val());
+            targetInput.val('Present')
+                .prop('readonly', true)
+                .css({
+                    'background-color': '#e9ecef',
+                    'cursor': 'not-allowed'
+                });
+            
+            console.log('Set to Present:', targetInput.val());
+        } else {
+            // Restore datepicker
+            targetInput.addClass('datePicker');
+            targetInput.datepicker({
+                format: 'mm/dd/yyyy',
+                autoclose: true
+            });
+            
+            // Restore previous value
+            const prevValue = targetInput.data('previous-value') || '';
+            targetInput.val(prevValue)
+                .prop('readonly', false)
+                .css({
+                    'background-color': '',
+                    'cursor': ''
+                });
+            
+            console.log('Restored to:', targetInput.val());
+        }
+    });
+    
+    /**
+     * CRITICAL FIX: Handle "Does Not Apply" checkboxes
+     * Issue: Checkbox value was being saved instead of target field value
+     */
+    $(document).on('change', '.does-not-apply-checkbox', function() {
+        const checkboxId = $(this).attr('id');
+        const targetSelector = $(this).data('target');
+        const targetInput = $(targetSelector);
+        
+        console.log('Does not apply checkbox changed:', checkboxId, 'checked:', $(this).is(':checked'));
+        
+        if (targetInput.length === 0) {
+            console.error('Does not apply target not found:', targetSelector);
+            return;
+        }
+        
+        if ($(this).is(':checked')) {
+            // Save previous value and set to N/A
+            targetInput.data('previous-value', targetInput.val());
+            targetInput.val('N/A')
+                .prop('readonly', true)
+                .css({
+                    'background-color': '#e9ecef',
+                    'cursor': 'not-allowed'
+                });
+            
+            console.log('Set to N/A:', targetInput.val());
+        } else {
+            // Restore previous value
+            const prevValue = targetInput.data('previous-value') || '';
+            targetInput.val(prevValue)
+                .prop('readonly', false)
+                .css({
+                    'background-color': '',
+                    'cursor': ''
+                });
+            
+            console.log('Restored to:', targetInput.val());
+        }
+    });
+    
+    /**
+     * CRITICAL: Before form submit, ensure Present values are included
+     */
+    $(document).on('submit', '#simplifiedSpouseVisaForm', function(e) {
+        console.log('Form submitting...');
+        
+        // Ensure all Present checkbox values are set correctly
+        $('.present-checkbox:checked').each(function() {
+            const targetInput = $($(this).data('target'));
+            if (targetInput.length && targetInput.val() !== 'Present') {
+                console.warn('Fixing Present value for:', targetInput.attr('name'));
+                targetInput.val('Present');
+            }
+        });
+        
+        // Ensure all N/A checkbox values are set correctly
+        $('.does-not-apply-checkbox:checked').each(function() {
+            const targetInput = $($(this).data('target'));
+            if (targetInput.length && targetInput.val() !== 'N/A') {
+                console.warn('Fixing N/A value for:', targetInput.attr('name'));
+                targetInput.val('N/A');
+            }
+        });
+        
+        // Log what's being submitted for debugging
+        console.log('Form data:', $(this).serialize());
+    });
+    
+    /**
+     * Initialize on page load
+     */
+    $(document).ready(function() {
+        console.log('Initializing checkboxes...');
+        
+        // Initialize Present checkboxes
+        $('.present-checkbox:checked').each(function() {
+            const targetInput = $($(this).data('target'));
+            if (targetInput.length) {
+                // Destroy datepicker if exists
+                if (targetInput.data('datepicker')) {
+                    targetInput.datepicker('destroy');
+                }
+                targetInput.removeClass('datePicker');
+                
+                // Set to Present if not already
+                if (targetInput.val() === 'Present' || targetInput.val() === 'present') {
+                    targetInput.prop('readonly', true)
+                        .css({
+                            'background-color': '#e9ecef',
+                            'cursor': 'not-allowed'
+                        });
+                }
+            }
+        });
+        
+        // Initialize Does Not Apply checkboxes
+        $('.does-not-apply-checkbox:checked').each(function() {
+            const targetInput = $($(this).data('target'));
+            if (targetInput.length && targetInput.val() === 'N/A') {
+                targetInput.prop('readonly', true)
+                    .css({
+                        'background-color': '#e9ecef',
+                        'cursor': 'not-allowed'
+                    });
+            }
+        });
+        
+        console.log('Present checkboxes found:', $('.present-checkbox').length);
+        console.log('Does not apply checkboxes found:', $('.does-not-apply-checkbox').length);
+    });
     
 })();

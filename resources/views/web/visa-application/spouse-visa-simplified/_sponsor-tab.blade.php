@@ -772,12 +772,10 @@
     </div>
 </div>
 
+
 <script>
 $(document).ready(function() {
-    // Apt components are auto-initialized by global script
-    // No manual initialization needed
-    
-    // Format SSN, phone, ZIP, state
+    // Format SSN
     $(document).on('input', '.ssn-format', function() {
         let value = this.value.replace(/\D/g, '');
         if (value.length > 9) value = value.substring(0, 9);
@@ -791,6 +789,7 @@ $(document).ready(function() {
         }
     });
 
+    // Format phone
     $(document).on('input', '.phone-format', function() {
         let value = this.value.replace(/\D/g, '');
         if (value.length > 10) value = value.substring(0, 10);
@@ -804,6 +803,7 @@ $(document).ready(function() {
         }
     });
 
+    // Format ZIP
     $(document).on('input', '.zip-format', function() {
         let value = this.value.replace(/\D/g, '');
         if (value.length > 9) value = value.substring(0, 9);
@@ -815,6 +815,7 @@ $(document).ready(function() {
         }
     });
 
+    // Format state
     $(document).on('input', '.state-format', function() {
         this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '');
     });
@@ -823,31 +824,9 @@ $(document).ready(function() {
     $('input[name="sponsor_same_address"]').on('change', function() {
         if ($(this).val() == '0') {
             $('#sponsor_physical_address_section').slideDown();
-            // Apt components will auto-reinitialize via global script
         } else {
             $('#sponsor_physical_address_section').slideUp();
         }
-    });
-
-    // Handle Present checkbox for address/employment history
-    $(document).on('change', '.present-checkbox', function() {
-        const targetInput = $($(this).data('target'));
-        
-        if ($(this).is(':checked')) {
-            targetInput.data('previous-value', targetInput.val());
-            targetInput.val('Present').prop('disabled', true).prop('readonly', true);
-        } else {
-            const prevValue = targetInput.data('previous-value') || '';
-            targetInput.val(prevValue).prop('disabled', false).prop('readonly', false);
-        }
-    });
-
-    // Enable Present fields before form submit
-    $('#simplifiedSpouseVisaForm').on('submit', function() {
-        $('.present-checkbox:checked').each(function() {
-            const targetInput = $($(this).data('target'));
-            targetInput.prop('disabled', false);
-        });
     });
 
     // Add address history
@@ -949,7 +928,6 @@ $(document).ready(function() {
         $('#sponsor_address_history_container').append(html);
         $('#sponsor_address_history_count').val(newIndex + 1);
         
-        // Reinitialize apt components and datepickers
         if (window.initAptComponents) {
             window.initAptComponents();
         }
