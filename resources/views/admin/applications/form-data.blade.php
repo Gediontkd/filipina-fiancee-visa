@@ -1,7 +1,25 @@
-{{-- resources/views/admin/applications/form-data.blade.php (FIXED - Complete Version) --}}
+{{-- resources/views/admin/applications/form-data.blade.php (FULLY FIXED) --}}
 @extends('admin.layouts.app')
 @section('title', 'Application Form Data')
 @section('page-title', 'Application Form Data')
+
+@php
+    /**
+     * Helper function to safely display any value
+     */
+    function displayValue($value) {
+        if (is_null($value) || $value === '') {
+            return 'Not provided';
+        }
+        if (is_array($value)) {
+            return json_encode($value, JSON_PRETTY_PRINT);
+        }
+        if (is_bool($value)) {
+            return $value ? 'Yes' : 'No';
+        }
+        return $value;
+    }
+@endphp
 
 @section('content')
 <div class="space-y-6">
@@ -61,6 +79,280 @@
     @if(!empty($applicationData))
         <div id="form-data-content" class="space-y-6">
             
+            {{-- SPOUSE VISA DATA --}}
+            @if(isset($applicationData['beneficiary']))
+                <div class="bg-white rounded-lg shadow overflow-hidden print:shadow-none">
+                    <div class="bg-purple-50 px-6 py-4 border-b">
+                        <h3 class="text-xl font-semibold text-gray-900">
+                            <i class="fas fa-heart mr-2"></i>Spouse Visa Application (CR-1/IR-1)
+                        </h3>
+                    </div>
+                   
+                    <!-- Sponsor Information -->
+                    @if(isset($applicationData['sponsor']))
+                        <div class="p-6 border-b">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-user mr-2"></i>U.S. Sponsor Information
+                            </h4>
+                            
+                            @foreach($applicationData['sponsor'] as $sectionName => $sectionData)
+                                @if($sectionName === 'parents')
+                                    {{-- Handle Parents Section --}}
+                                    <div class="mb-6">
+                                        <h5 class="font-medium text-gray-700 mb-3">Parents Information</h5>
+                                        
+                                        @if(is_array($sectionData))
+                                            @foreach($sectionData as $parentKey => $parentData)
+                                                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                                    <h6 class="font-medium text-gray-800 mb-2">{{ ucfirst(str_replace('_', ' ', $parentKey)) }}</h6>
+                                                    @if(is_array($parentData))
+                                                        @foreach($parentData as $key => $value)
+                                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                                <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                                <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                    
+                                @elseif($sectionName === 'address_history')
+                                    {{-- Handle Address History --}}
+                                    <div class="mb-6">
+                                        <h5 class="font-medium text-gray-700 mb-3">Address History</h5>
+                                        
+                                        @if(is_array($sectionData) && count($sectionData) > 0)
+                                            @foreach($sectionData as $index => $address)
+                                                <div class="bg-gray-50 rounded-lg p-4 mb-3">
+                                                    <h6 class="font-medium text-gray-800 mb-2">Address {{ $index + 1 }}</h6>
+                                                    @if(is_array($address))
+                                                        @foreach($address as $key => $value)
+                                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                                <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                                <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <p class="text-gray-500 italic">No address history provided</p>
+                                        @endif
+                                    </div>
+                                    
+                                @elseif($sectionName === 'employment_history')
+                                    {{-- Handle Employment History --}}
+                                    <div class="mb-6">
+                                        <h5 class="font-medium text-gray-700 mb-3">Employment History</h5>
+                                        
+                                        @if(is_array($sectionData) && count($sectionData) > 0)
+                                            @foreach($sectionData as $index => $job)
+                                                <div class="bg-gray-50 rounded-lg p-4 mb-3">
+                                                    <h6 class="font-medium text-gray-800 mb-2">Employment {{ $index + 1 }}</h6>
+                                                    @if(is_array($job))
+                                                        @foreach($job as $key => $value)
+                                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                                <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                                <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <p class="text-gray-500 italic">No employment history provided</p>
+                                        @endif
+                                    </div>
+                                    
+                                @else
+                                    {{-- Handle Regular Sections --}}
+                                    <div class="mb-6">
+                                        <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
+                                        <div class="bg-gray-50 rounded-lg p-4">
+                                            @if(is_array($sectionData))
+                                                @foreach($sectionData as $key => $value)
+                                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                        <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                        <span class="md:col-span-2 text-gray-900">
+                                                            @if(is_array($value))
+                                                                <pre class="text-xs bg-gray-100 p-2 rounded overflow-x-auto">{!! displayValue($value) !!}</pre>
+                                                            @else
+                                                                {!! displayValue($value) !!}
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <p class="text-gray-600">{!! displayValue($sectionData) !!}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- Beneficiary Information -->
+                    @if(isset($applicationData['beneficiary']))
+                        <div class="p-6 border-b">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-user-friends mr-2"></i>Beneficiary (Foreign Spouse) Information
+                            </h4>
+                            
+                            @foreach($applicationData['beneficiary'] as $sectionName => $sectionData)
+                                @if($sectionName === 'parents')
+                                    {{-- Handle Parents Section --}}
+                                    <div class="mb-6">
+                                        <h5 class="font-medium text-gray-700 mb-3">Parents Information</h5>
+                                        
+                                        @if(is_array($sectionData))
+                                            @foreach($sectionData as $parentKey => $parentData)
+                                                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                                    <h6 class="font-medium text-gray-800 mb-2">{{ ucfirst(str_replace('_', ' ', $parentKey)) }}</h6>
+                                                    @if(is_array($parentData))
+                                                        @foreach($parentData as $key => $value)
+                                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                                <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                                <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                    
+                                @elseif($sectionName === 'address_history')
+                                    {{-- Handle Address History --}}
+                                    <div class="mb-6">
+                                        <h5 class="font-medium text-gray-700 mb-3">Address History</h5>
+                                        
+                                        @if(is_array($sectionData) && count($sectionData) > 0)
+                                            @foreach($sectionData as $index => $address)
+                                                <div class="bg-gray-50 rounded-lg p-4 mb-3">
+                                                    <h6 class="font-medium text-gray-800 mb-2">Address {{ $index + 1 }}</h6>
+                                                    @if(is_array($address))
+                                                        @foreach($address as $key => $value)
+                                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                                <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                                <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <p class="text-gray-500 italic">No address history provided</p>
+                                        @endif
+                                    </div>
+                                    
+                                @elseif($sectionName === 'employment_history')
+                                    {{-- Handle Employment History --}}
+                                    <div class="mb-6">
+                                        <h5 class="font-medium text-gray-700 mb-3">Employment History</h5>
+                                        
+                                        @if(is_array($sectionData) && count($sectionData) > 0)
+                                            @foreach($sectionData as $index => $job)
+                                                <div class="bg-gray-50 rounded-lg p-4 mb-3">
+                                                    <h6 class="font-medium text-gray-800 mb-2">Employment {{ $index + 1 }}</h6>
+                                                    @if(is_array($job))
+                                                        @foreach($job as $key => $value)
+                                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                                <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                                <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
+                                                            </div>
+                                                        @endforeach
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <p class="text-gray-500 italic">No employment history provided</p>
+                                        @endif
+                                    </div>
+                                    
+                                @else
+                                    {{-- Handle Regular Sections --}}
+                                    <div class="mb-6">
+                                        <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
+                                        <div class="bg-gray-50 rounded-lg p-4">
+                                            @if(is_array($sectionData))
+                                                @foreach($sectionData as $key => $value)
+                                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                        <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                        <span class="md:col-span-2 text-gray-900">
+                                                            @if(is_array($value))
+                                                                <pre class="text-xs bg-gray-100 p-2 rounded overflow-x-auto">{!! displayValue($value) !!}</pre>
+                                                            @else
+                                                                {!! displayValue($value) !!}
+                                                            @endif
+                                                        </span>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <p class="text-gray-600">{!! displayValue($sectionData) !!}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- Relationship Information -->
+                    @if(isset($applicationData['relationship']))
+                        <div class="p-6 border-b">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-heart mr-2"></i>Relationship Information
+                            </h4>
+                            
+                            @foreach($applicationData['relationship'] as $sectionName => $sectionData)
+                                <div class="mb-6">
+                                    <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        @if(is_array($sectionData))
+                                            @foreach($sectionData as $key => $value)
+                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                                    <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                                    <span class="md:col-span-2 text-gray-900">
+                                                        @if(is_array($value))
+                                                            <pre class="text-xs bg-gray-100 p-2 rounded overflow-x-auto">{!! displayValue($value) !!}</pre>
+                                                        @else
+                                                            {!! displayValue($value) !!}
+                                                        @endif
+                                                    </span>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <p class="text-gray-600">{!! displayValue($sectionData) !!}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <!-- Metadata -->
+                    @if(isset($applicationData['metadata']))
+                        <div class="p-6 bg-gray-50">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">
+                                <i class="fas fa-info-circle mr-2"></i>Application Metadata
+                            </h4>
+                            
+                            <div class="bg-white rounded-lg p-4">
+                                @foreach($applicationData['metadata'] as $key => $value)
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
+                                        <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
+                                        <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @endif
+
             {{-- ADJUSTMENT OF STATUS DATA --}}
             @if(isset($applicationData['applicant']))
                 <div class="bg-white rounded-lg shadow overflow-hidden print:shadow-none">
@@ -85,9 +377,11 @@
                                             @foreach($sectionData as $key => $value)
                                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
                                                     <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                                    <span class="md:col-span-2 text-gray-900">{{ $value ?: 'Not provided' }}</span>
+                                                    <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
                                                 </div>
                                             @endforeach
+                                        @else
+                                            <p class="text-gray-600">{!! displayValue($sectionData) !!}</p>
                                         @endif
                                     </div>
                                 </div>
@@ -110,9 +404,11 @@
                                             @foreach($sectionData as $key => $value)
                                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
                                                     <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                                    <span class="md:col-span-2 text-gray-900">{{ $value ?: 'Not provided' }}</span>
+                                                    <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
                                                 </div>
                                             @endforeach
+                                        @else
+                                            <p class="text-gray-600">{!! displayValue($sectionData) !!}</p>
                                         @endif
                                     </div>
                                 </div>
@@ -135,9 +431,11 @@
                                             @foreach($sectionData as $key => $value)
                                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
                                                     <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                                    <span class="md:col-span-2 text-gray-900">{{ $value ?: 'Not provided' }}</span>
+                                                    <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
                                                 </div>
                                             @endforeach
+                                        @else
+                                            <p class="text-gray-600">{!! displayValue($sectionData) !!}</p>
                                         @endif
                                     </div>
                                 </div>
@@ -147,7 +445,7 @@
 
                     <!-- Background Questions -->
                     @if(isset($applicationData['background_questions']))
-                        <div class="p-6">
+                        <div class="p-6 border-b">
                             <h4 class="text-lg font-medium text-gray-900 mb-4">
                                 <i class="fas fa-clipboard-check mr-2"></i>Background Questions
                             </h4>
@@ -158,9 +456,9 @@
                                         <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
                                         <span class="md:col-span-2 text-gray-900">
                                             @if($key === 'explanation' && $value)
-                                                <div class="whitespace-pre-wrap">{{ $value }}</div>
+                                                <div class="whitespace-pre-wrap">{!! displayValue($value) !!}</div>
                                             @else
-                                                {{ $value ?: 'Not provided' }}
+                                                {!! displayValue($value) !!}
                                             @endif
                                         </span>
                                     </div>
@@ -180,7 +478,7 @@
                                 @foreach($applicationData['metadata'] as $key => $value)
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
                                         <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                        <span class="md:col-span-2 text-gray-900">{{ $value ?: 'N/A' }}</span>
+                                        <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -189,117 +487,7 @@
                 </div>
             @endif
 
-            {{-- SPOUSE VISA DATA --}}
-            @if(isset($applicationData['beneficiary']))
-                <div class="bg-white rounded-lg shadow overflow-hidden print:shadow-none">
-                    <div class="bg-purple-50 px-6 py-4 border-b">
-                        <h3 class="text-xl font-semibold text-gray-900">
-                            <i class="fas fa-heart mr-2"></i>Spouse Visa Application (CR-1/IR-1)
-                        </h3>
-                    </div>
-                   
-                    <!-- Sponsor Information (Spouse) -->
-                    @if(isset($applicationData['sponsor']))
-                        <div class="p-6 border-b">
-                            <h4 class="text-lg font-medium text-gray-900 mb-4">
-                                <i class="fas fa-user mr-2"></i>U.S. Sponsor Information
-                            </h4>
-                            
-                            @foreach($applicationData['sponsor'] as $sectionName => $sectionData)
-                                <div class="mb-6">
-                                    <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
-                                    <div class="bg-gray-50 rounded-lg p-4">
-                                        @if(is_array($sectionData))
-                                            @foreach($sectionData as $key => $value)
-                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
-                                                    <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                                    <span class="md:col-span-2 text-gray-900">{{ $value ?: 'Not provided' }}</span>
-                                                </div>
-                                            @endforeach
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    <!-- Beneficiary Information -->
-                    @if(isset($applicationData['beneficiary']))
-                        <div class="p-6 border-b">
-                            <h4 class="text-lg font-medium text-gray-900 mb-4">
-                                <i class="fas fa-user-friends mr-2"></i>Beneficiary (Foreign Spouse) Information
-                            </h4>
-                            
-                            @foreach($applicationData['beneficiary'] as $sectionName => $sectionData)
-                                <div class="mb-6">
-                                    <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
-                                    <div class="bg-gray-50 rounded-lg p-4">
-                                        @if(is_array($sectionData))
-                                            @foreach($sectionData as $key => $value)
-                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
-                                                    <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                                    <span class="md:col-span-2 text-gray-900">{{ $value ?: 'Not provided' }}</span>
-                                                </div>
-                                            @endforeach
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    <!-- Relationship Information -->
-                    @if(isset($applicationData['relationship']))
-                        <div class="p-6">
-                            <h4 class="text-lg font-medium text-gray-900 mb-4">
-                                <i class="fas fa-heart mr-2"></i>Relationship Information
-                            </h4>
-                            
-                            @foreach($applicationData['relationship'] as $sectionName => $sectionData)
-                                <div class="mb-6">
-                                    <h5 class="font-medium text-gray-700 mb-3 capitalize">{{ str_replace('_', ' ', $sectionName) }}</h5>
-                                    <div class="bg-gray-50 rounded-lg p-4">
-                                        @if(is_array($sectionData))
-                                            @foreach($sectionData as $key => $value)
-                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
-                                                    <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                                    <span class="md:col-span-2 text-gray-900">
-                                                        @if($key === 'relationship_description' && $value)
-                                                            <div class="whitespace-pre-wrap">{{ $value }}</div>
-                                                        @else
-                                                            {{ $value ?: 'Not provided' }}
-                                                        @endif
-                                                    </span>
-                                                </div>
-                                            @endforeach
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    <!-- Metadata -->
-                    @if(isset($applicationData['metadata']))
-                        <div class="p-6 bg-gray-50">
-                            <h4 class="text-lg font-medium text-gray-900 mb-4">
-                                <i class="fas fa-info-circle mr-2"></i>Application Metadata
-                            </h4>
-                            
-                            <div class="bg-white rounded-lg p-4">
-                                @foreach($applicationData['metadata'] as $key => $value)
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
-                                        <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                        <span class="md:col-span-2 text-gray-900">{{ $value ?: 'N/A' }}</span>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            @endif
-
-            {{-- FIANCE VISA DATA --}}
+            {{-- FIANCE VISA DATA (OLD SYSTEM) --}}
             @if(isset($applicationData['alien']) || (isset($applicationData['sponsor']) && !isset($applicationData['beneficiary']) && !isset($applicationData['applicant'])))
                 <div class="bg-white rounded-lg shadow overflow-hidden print:shadow-none">
                     <div class="bg-blue-50 px-6 py-4 border-b">
@@ -323,18 +511,12 @@
                                                 @if(!in_array($key, ['id', '_token', 'name', 'next']))
                                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
                                                         <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                                        <span class="md:col-span-2 text-gray-900">
-                                                            @if(is_array($value))
-                                                                {{ json_encode($value, JSON_PRETTY_PRINT) }}
-                                                            @else
-                                                                {{ $value ?: 'Not provided' }}
-                                                            @endif
-                                                        </span>
+                                                        <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
                                                     </div>
                                                 @endif
                                             @endforeach
                                         @else
-                                            <p class="text-gray-600">{{ $stepData }}</p>
+                                            <p class="text-gray-600">{!! displayValue($stepData) !!}</p>
                                         @endif
                                     </div>
                                 </div>
@@ -357,13 +539,7 @@
                                                 @if(!in_array($key, ['id', '_token', 'name', 'next']))
                                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
                                                         <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                                        <span class="md:col-span-2 text-gray-900">
-                                                            @if(is_array($value))
-                                                                {{ json_encode($value, JSON_PRETTY_PRINT) }}
-                                                            @else
-                                                                {{ $value ?: 'Not provided' }}
-                                                            @endif
-                                                        </span>
+                                                        <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
                                                     </div>
                                                 @endif
                                             @endforeach
@@ -389,13 +565,7 @@
                                                 @if(!in_array($key, ['id', '_token', 'name', 'next']))
                                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 py-2 border-b border-gray-200 last:border-0">
                                                         <span class="font-medium text-gray-600 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
-                                                        <span class="md:col-span-2 text-gray-900">
-                                                            @if(is_array($value))
-                                                                {{ json_encode($value, JSON_PRETTY_PRINT) }}
-                                                            @else
-                                                                {{ $value ?: 'Not provided' }}
-                                                            @endif
-                                                        </span>
+                                                        <span class="md:col-span-2 text-gray-900">{!! displayValue($value) !!}</span>
                                                     </div>
                                                 @endif
                                             @endforeach
