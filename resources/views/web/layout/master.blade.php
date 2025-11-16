@@ -17,6 +17,7 @@
 		<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
 		<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 		<script src="{{ asset('assets/js/jquery.validate.min.js') }}"></script>
+		<script src="{{ asset('assets/js/apt-component-init.js') }}"></script>
 		<script type="text/javascript">
 			var _baseURL = '{{ url('/') }}';		
 		</script>

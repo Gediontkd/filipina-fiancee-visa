@@ -834,14 +834,11 @@
 
 <script>
 $(document).ready(function() {
-    // CRITICAL: Initialize apt components on page load
-    initBeneficiaryAptComponents();
     
     // Show/hide physical address
     $('input[name="beneficiary_same_address"]').on('change', function() {
         if ($(this).val() == '0') {
             $('#beneficiary_physical_address_section').slideDown();
-            initBeneficiaryAptComponents(); // Reinitialize when shown
         } else {
             $('#beneficiary_physical_address_section').slideUp();
         }
@@ -988,11 +985,9 @@ $(document).ready(function() {
         $('#beneficiary_address_history_container').append(html);
         $('#beneficiary_address_history_count').val(newIndex + 1);
         
-        // Initialize apt component for new entry
-        const newAptContainer = document.querySelector('[data-target-field="beneficiary_address_history[' + newIndex + '][apt]"]');
-        if (newAptContainer) {
-            setupAptComponent(newAptContainer, 'beneficiary_address_history[' + newIndex + '][apt]');
-        }
+        if (window.initAptComponents) {
+        window.initAptComponents();
+    }
         
         $('.datePicker').datepicker({ format: 'mm/dd/yyyy', autoclose: true });
     });
@@ -1089,78 +1084,4 @@ $(document).ready(function() {
         }
     });
 });
-
-// CRITICAL: Initialize apt components for static mailing + physical address fields
-function initBeneficiaryAptComponents() {
-    const beneficiaryMailingApt = document.querySelector('[data-target-field="beneficiary_mailing_apt"]');
-    if (beneficiaryMailingApt) {
-        setupAptComponent(beneficiaryMailingApt, 'beneficiary_mailing_apt');
-    }
-    
-    const beneficiaryApt = document.querySelector('[data-target-field="beneficiary_apt"]');
-    if (beneficiaryApt) {
-        setupAptComponent(beneficiaryApt, 'beneficiary_apt');
-    }
-}
-
-// Setup function for any apt component
-function setupAptComponent(container, hiddenFieldName) {
-    const checkboxes = container.querySelectorAll('.apt-type-checkbox');
-    const numberContainer = container.querySelector('.apt-number-container');
-    const numberInput = container.querySelector('.apt-number-input');
-    const hiddenInput = document.querySelector('input[name="' + hiddenFieldName + '"]');
-    
-    if (!checkboxes.length || !numberContainer || !numberInput || !hiddenInput) {
-        return;
-    }
-    
-    // Prevent multiple event listeners
-    if (container.dataset.initialized === 'true') {
-        return;
-    }
-    container.dataset.initialized = 'true';
-    
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                checkboxes.forEach(cb => { if (cb !== this) cb.checked = false; });
-                numberContainer.style.display = 'block';
-                numberInput.focus();
-            } else {
-                const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-                if (!anyChecked) {
-                    numberContainer.style.display = 'none';
-                    numberInput.value = '';
-                    hiddenInput.value = '';
-                }
-            }
-            updateValue();
-        });
-    });
-    
-    numberInput.addEventListener('input', function() {
-        this.value = this.value.replace(/[^A-Za-z0-9]/g, '').substring(0, 6);
-        updateValue();
-    });
-    
-    numberInput.addEventListener('paste', function(e) {
-        e.preventDefault();
-        const text = (e.clipboardData || window.clipboardData).getData('text');
-        this.value = text.replace(/[^A-Za-z0-9]/g, '').substring(0, 6);
-        updateValue();
-    });
-    
-    numberInput.addEventListener('keypress', function(e) {
-        const char = String.fromCharCode(e.which);
-        if (!/[A-Za-z0-9]/.test(char)) {
-            e.preventDefault();
-        }
-    });
-    
-    function updateValue() {
-        const selected = Array.from(checkboxes).find(cb => cb.checked);
-        const num = numberInput.value.trim();
-        hiddenInput.value = (selected && num) ? selected.value + ':' + num : '';
-    }
-}
 </script>

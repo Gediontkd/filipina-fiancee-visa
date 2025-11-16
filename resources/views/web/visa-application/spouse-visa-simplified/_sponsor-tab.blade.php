@@ -774,10 +774,10 @@
 
 <script>
 $(document).ready(function() {
-    // CRITICAL: Initialize apt components on page load
-    initMainAptComponents();
+    // Apt components are auto-initialized by global script
+    // No manual initialization needed
     
-    // Format SSN, phone, ZIP, state (keep existing formatters)
+    // Format SSN, phone, ZIP, state
     $(document).on('input', '.ssn-format', function() {
         let value = this.value.replace(/\D/g, '');
         if (value.length > 9) value = value.substring(0, 9);
@@ -823,13 +823,13 @@ $(document).ready(function() {
     $('input[name="sponsor_same_address"]').on('change', function() {
         if ($(this).val() == '0') {
             $('#sponsor_physical_address_section').slideDown();
-            initMainAptComponents(); // Reinitialize when shown
+            // Apt components will auto-reinitialize via global script
         } else {
             $('#sponsor_physical_address_section').slideUp();
         }
     });
 
-    // Handle Present checkbox
+    // Handle Present checkbox for address/employment history
     $(document).on('change', '.present-checkbox', function() {
         const targetInput = $($(this).data('target'));
         
@@ -842,6 +842,7 @@ $(document).ready(function() {
         }
     });
 
+    // Enable Present fields before form submit
     $('#simplifiedSpouseVisaForm').on('submit', function() {
         $('.present-checkbox:checked').each(function() {
             const targetInput = $($(this).data('target'));
@@ -849,7 +850,7 @@ $(document).ready(function() {
         });
     });
 
-    // Add/Remove address history
+    // Add address history
     $('#addSponsorAddress').on('click', function() {
         const count = parseInt($('#sponsor_address_history_count').val());
         const newIndex = count;
@@ -948,12 +949,10 @@ $(document).ready(function() {
         $('#sponsor_address_history_container').append(html);
         $('#sponsor_address_history_count').val(newIndex + 1);
         
-        // Initialize apt component for new entry
-        const newAptContainer = document.querySelector('[data-target-field="sponsor_address_history[' + newIndex + '][apt]"]');
-        if (newAptContainer) {
-            setupAptComponent(newAptContainer, 'sponsor_address_history[' + newIndex + '][apt]');
+        // Reinitialize apt components and datepickers
+        if (window.initAptComponents) {
+            window.initAptComponents();
         }
-        
         $('.datePicker').datepicker({ format: 'mm/dd/yyyy', autoclose: true });
     });
 
@@ -961,7 +960,7 @@ $(document).ready(function() {
         $(this).closest('.address-history-item').remove();
     });
 
-    // Employment history (keep existing code)
+    // Add employment history
     $('#addSponsorEmployment').on('click', function() {
         const count = parseInt($('#sponsor_employment_history_count').val());
         const newIndex = count;
@@ -1037,65 +1036,4 @@ $(document).ready(function() {
         $(this).closest('.employment-history-item').remove();
     });
 });
-
-// CRITICAL: Initialize apt components for static mailing + physical address fields
-function initMainAptComponents() {
-    const sponsorMailingApt = document.querySelector('[data-target-field="sponsor_mailing_apt"]');
-    if (sponsorMailingApt) {
-        setupAptComponent(sponsorMailingApt, 'sponsor_mailing_apt');
-    }
-    
-    const sponsorApt = document.querySelector('[data-target-field="sponsor_apt"]');
-    if (sponsorApt) {
-        setupAptComponent(sponsorApt, 'sponsor_apt');
-    }
-}
-
-// Setup function for any apt component
-function setupAptComponent(container, hiddenFieldName) {
-    const checkboxes = container.querySelectorAll('.apt-type-checkbox');
-    const numberContainer = container.querySelector('.apt-number-container');
-    const numberInput = container.querySelector('.apt-number-input');
-    const hiddenInput = document.querySelector('input[name="' + hiddenFieldName + '"]');
-    
-    if (!checkboxes.length || !numberContainer || !numberInput || !hiddenInput) {
-        return;
-    }
-    
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                checkboxes.forEach(cb => { if (cb !== this) cb.checked = false; });
-                numberContainer.style.display = 'block';
-                numberInput.focus();
-            } else {
-                const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-                if (!anyChecked) {
-                    numberContainer.style.display = 'none';
-                    numberInput.value = '';
-                    hiddenInput.value = '';
-                }
-            }
-            updateValue();
-        });
-    });
-    
-    numberInput.addEventListener('input', function() {
-        this.value = this.value.replace(/[^A-Za-z0-9]/g, '').substring(0, 6);
-        updateValue();
-    });
-    
-    numberInput.addEventListener('paste', function(e) {
-        e.preventDefault();
-        const text = (e.clipboardData || window.clipboardData).getData('text');
-        this.value = text.replace(/[^A-Za-z0-9]/g, '').substring(0, 6);
-        updateValue();
-    });
-    
-    function updateValue() {
-        const selected = Array.from(checkboxes).find(cb => cb.checked);
-        const num = numberInput.value.trim();
-        hiddenInput.value = (selected && num) ? selected.value + ':' + num : '';
-    }
-}
 </script>
