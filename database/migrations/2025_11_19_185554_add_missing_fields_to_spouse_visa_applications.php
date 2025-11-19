@@ -26,23 +26,23 @@ return new class extends Migration
             // Citizenship Details
             $table->string('sponsor_citizenship_method', 50)->nullable()->after('sponsor_citizenship');
             $table->string('sponsor_certificate_number', 50)->nullable()->after('sponsor_citizenship_method');
-            $table->string('sponsor_certificate_place', 100)->nullable()->after('sponsor_certificate_number');
+            $table->text('sponsor_certificate_place')->nullable()->after('sponsor_certificate_number');
             $table->date('sponsor_certificate_date')->nullable()->after('sponsor_certificate_place');
             
             // Biographic Information
             $table->string('sponsor_ethnicity', 50)->nullable()->after('sponsor_citizenship');
             $table->json('sponsor_race')->nullable()->after('sponsor_ethnicity');
-            $table->integer('sponsor_height_feet')->nullable()->after('sponsor_race');
-            $table->integer('sponsor_height_inches')->nullable()->after('sponsor_height_feet');
-            $table->integer('sponsor_weight')->nullable()->after('sponsor_height_inches');
+            $table->tinyInteger('sponsor_height_feet')->nullable()->after('sponsor_race');
+            $table->tinyInteger('sponsor_height_inches')->nullable()->after('sponsor_height_feet');
+            $table->smallInteger('sponsor_weight')->nullable()->after('sponsor_height_inches');
             $table->string('sponsor_eye_color', 30)->nullable()->after('sponsor_weight');
             $table->string('sponsor_hair_color', 30)->nullable()->after('sponsor_eye_color');
             
             // Parent Residence Information
-            $table->string('sponsor_parent1_city_residence', 100)->nullable()->after('sponsor_parent1_country');
-            $table->string('sponsor_parent1_country_residence', 100)->nullable()->after('sponsor_parent1_city_residence');
-            $table->string('sponsor_parent2_city_residence', 100)->nullable()->after('sponsor_parent2_country');
-            $table->string('sponsor_parent2_country_residence', 100)->nullable()->after('sponsor_parent2_city_residence');
+            $table->text('sponsor_parent1_city_residence')->nullable()->after('sponsor_parent1_country');
+            $table->text('sponsor_parent1_country_residence')->nullable()->after('sponsor_parent1_city_residence');
+            $table->text('sponsor_parent2_city_residence')->nullable()->after('sponsor_parent2_country');
+            $table->text('sponsor_parent2_country_residence')->nullable()->after('sponsor_parent2_city_residence');
             
             // ========================================
             // BENEFICIARY ADDITIONAL FIELDS
@@ -57,7 +57,7 @@ return new class extends Migration
             $table->string('beneficiary_petition_filed_before', 20)->nullable()->after('beneficiary_uscis_account');
             
             // Passport Details
-            $table->string('beneficiary_passport_country', 100)->nullable()->after('beneficiary_passport_number');
+            $table->text('beneficiary_passport_country')->nullable()->after('beneficiary_passport_number');
             $table->date('beneficiary_passport_expiration')->nullable()->after('beneficiary_passport_country');
             
             // Contact Information
@@ -66,7 +66,7 @@ return new class extends Migration
             
             // Intended U.S. Address
             $table->boolean('beneficiary_intended_address_same')->default(false)->after('beneficiary_mailing_zip');
-            $table->string('beneficiary_intended_address', 100)->nullable()->after('beneficiary_intended_address_same');
+            $table->text('beneficiary_intended_address')->nullable()->after('beneficiary_intended_address_same');
             $table->string('beneficiary_intended_apt', 10)->nullable()->after('beneficiary_intended_address');
             $table->string('beneficiary_intended_city', 50)->nullable()->after('beneficiary_intended_apt');
             $table->string('beneficiary_intended_state', 2)->nullable()->after('beneficiary_intended_city');
@@ -82,28 +82,28 @@ return new class extends Migration
             // Immigration Proceedings
             $table->string('beneficiary_immigration_proceedings', 10)->nullable()->after('beneficiary_date_authorized_stay_expires');
             $table->json('beneficiary_proceedings_types')->nullable()->after('beneficiary_immigration_proceedings');
-            $table->string('beneficiary_proceedings_city', 100)->nullable()->after('beneficiary_proceedings_types');
+            $table->text('beneficiary_proceedings_city')->nullable()->after('beneficiary_proceedings_types');
             $table->string('beneficiary_proceedings_state', 2)->nullable()->after('beneficiary_proceedings_city');
             $table->date('beneficiary_proceedings_date')->nullable()->after('beneficiary_proceedings_state');
             
             // Current Employment Details
-            $table->string('beneficiary_current_employer', 100)->nullable()->after('beneficiary_employer_name');
-            $table->string('beneficiary_current_occupation', 100)->nullable()->after('beneficiary_current_employer');
-            $table->string('beneficiary_employer_address_full', 100)->nullable()->after('beneficiary_current_occupation');
+            $table->text('beneficiary_current_employer')->nullable()->after('beneficiary_employer_name');
+            $table->text('beneficiary_current_occupation')->nullable()->after('beneficiary_current_employer');
+            $table->text('beneficiary_employer_address_full')->nullable()->after('beneficiary_current_occupation');
             $table->string('beneficiary_employer_apt', 10)->nullable()->after('beneficiary_employer_address_full');
             $table->string('beneficiary_employer_city', 50)->nullable()->after('beneficiary_employer_apt');
             $table->string('beneficiary_employer_province', 50)->nullable()->after('beneficiary_employer_city');
             $table->string('beneficiary_employer_postal', 20)->nullable()->after('beneficiary_employer_province');
-            $table->string('beneficiary_employer_country', 100)->nullable()->after('beneficiary_employer_postal');
+            $table->text('beneficiary_employer_country')->nullable()->after('beneficiary_employer_postal');
             $table->date('beneficiary_employment_start_date')->nullable()->after('beneficiary_employer_country');
             
             // Parent Birth/Residence Cities
-            $table->string('beneficiary_parent1_city_birth', 100)->nullable()->after('beneficiary_parent1_dob');
-            $table->string('beneficiary_parent1_city_residence', 100)->nullable()->after('beneficiary_parent1_country');
-            $table->string('beneficiary_parent1_country_residence', 100)->nullable()->after('beneficiary_parent1_city_residence');
-            $table->string('beneficiary_parent2_city_birth', 100)->nullable()->after('beneficiary_parent2_dob');
-            $table->string('beneficiary_parent2_city_residence', 100)->nullable()->after('beneficiary_parent2_country');
-            $table->string('beneficiary_parent2_country_residence', 100)->nullable()->after('beneficiary_parent2_city_residence');
+            $table->text('beneficiary_parent1_city_birth')->nullable()->after('beneficiary_parent1_dob');
+            $table->text('beneficiary_parent1_city_residence')->nullable()->after('beneficiary_parent1_country');
+            $table->text('beneficiary_parent1_country_residence')->nullable()->after('beneficiary_parent1_city_residence');
+            $table->text('beneficiary_parent2_city_birth')->nullable()->after('beneficiary_parent2_dob');
+            $table->text('beneficiary_parent2_city_residence')->nullable()->after('beneficiary_parent2_country');
+            $table->text('beneficiary_parent2_country_residence')->nullable()->after('beneficiary_parent2_city_residence');
             
             // ========================================
             // RELATIONSHIP ADDITIONAL FIELDS
@@ -111,23 +111,23 @@ return new class extends Migration
             
             // Last Address Lived Together
             $table->boolean('never_lived_together')->default(false)->after('beneficiary_divorce_date');
-            $table->string('last_lived_together_address', 100)->nullable()->after('never_lived_together');
+            $table->text('last_lived_together_address')->nullable()->after('never_lived_together');
             $table->string('last_lived_together_apt', 10)->nullable()->after('last_lived_together_address');
             $table->string('last_lived_together_city', 50)->nullable()->after('last_lived_together_apt');
             $table->string('last_lived_together_state', 2)->nullable()->after('last_lived_together_city');
             $table->string('last_lived_together_province', 50)->nullable()->after('last_lived_together_state');
             $table->string('last_lived_together_postal', 20)->nullable()->after('last_lived_together_province');
-            $table->string('last_lived_together_country', 100)->nullable()->after('last_lived_together_postal');
+            $table->text('last_lived_together_country')->nullable()->after('last_lived_together_postal');
             $table->date('last_lived_together_date_from')->nullable()->after('last_lived_together_country');
             $table->date('last_lived_together_date_to')->nullable()->after('last_lived_together_date_from');
             
             // Application Location
             $table->string('beneficiary_application_location', 20)->nullable()->after('last_lived_together_date_to');
-            $table->string('beneficiary_uscis_office_city', 100)->nullable()->after('beneficiary_application_location');
+            $table->text('beneficiary_uscis_office_city')->nullable()->after('beneficiary_application_location');
             $table->string('beneficiary_uscis_office_state', 2)->nullable()->after('beneficiary_uscis_office_city');
-            $table->string('beneficiary_consulate_city', 100)->nullable()->after('beneficiary_uscis_office_state');
-            $table->string('beneficiary_consulate_province', 100)->nullable()->after('beneficiary_consulate_city');
-            $table->string('beneficiary_consulate_country', 100)->nullable()->after('beneficiary_consulate_province');
+            $table->text('beneficiary_consulate_city')->nullable()->after('beneficiary_uscis_office_state');
+            $table->text('beneficiary_consulate_province')->nullable()->after('beneficiary_consulate_city');
+            $table->text('beneficiary_consulate_country')->nullable()->after('beneficiary_consulate_province');
         });
     }
 
