@@ -49,6 +49,151 @@
         </div>
     </div>
 
+    <!-- Other Names Used -->
+<h5 class="mb-3 mt-4"><i class="fa fa-user-tag me-2"></i>Other Names Used</h5>
+<div class="alert alert-info">
+    <i class="fa fa-info-circle me-2"></i>
+    <strong>Note:</strong> Provide all other names the beneficiary has ever used, including aliases, maiden name, and nicknames. If none, you can skip this section.
+</div>
+
+<div id="beneficiary_other_names_container">
+    @php
+        $benOtherNames = optional($application)->beneficiary_other_names ?? [];
+    @endphp
+    
+    @if(!empty($benOtherNames))
+        @foreach($benOtherNames as $index => $name)
+            <div class="card mb-3 other-name-item" data-index="{{ $index }}">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <strong>Other Name {{ $index + 1 }}</strong>
+                    <button type="button" class="btn btn-sm btn-danger remove-other-name" data-person="beneficiary" data-index="{{ $index }}">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label>Family Name (Last Name)</label>
+                                <input type="text" name="beneficiary_other_names[{{ $index }}][last_name]" 
+                                    class="form-control" value="{{ $name['last_name'] ?? '' }}" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label>Given Name (First Name)</label>
+                                <input type="text" name="beneficiary_other_names[{{ $index }}][first_name]" 
+                                    class="form-control" value="{{ $name['first_name'] ?? '' }}" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label>Middle Name</label>
+                                <input type="text" name="beneficiary_other_names[{{ $index }}][middle_name]" 
+                                    class="form-control" value="{{ $name['middle_name'] ?? '' }}" maxlength="50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    @endif
+    
+    <input type="hidden" name="beneficiary_other_names_count" value="{{ count($benOtherNames) }}" id="beneficiary_other_names_count">
+</div>
+
+<button type="button" class="btn btn-outline-secondary mb-4" id="addBeneficiaryOtherName">
+    <i class="fa fa-plus me-2"></i>Add Other Name
+</button>
+
+<!-- Additional IDs -->
+<h5 class="mb-3 mt-4"><i class="fa fa-id-badge me-2"></i>Additional Identification Numbers</h5>
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_ssn', 'U.S. Social Security Number') }}
+            <div class="input-group">
+                {{ Form::text('beneficiary_ssn', optional($application)->beneficiary_ssn ?? '', [
+                    'class' => 'form-control ssn-format',
+                    'placeholder' => '###-##-####',
+                    'id' => 'beneficiary_ssn',
+                    'pattern' => '\d{3}-\d{2}-\d{4}',
+                    'maxlength' => 11
+                ]) }}
+            </div>
+            <div class="form-check mt-2">
+                {{ Form::checkbox('beneficiary_ssn_na', 1, 
+                    (optional($application)->beneficiary_ssn ?? '') === 'N/A', [
+                    'class' => 'form-check-input does-not-apply-checkbox',
+                    'data-target' => '#beneficiary_ssn'
+                ]) }}
+                <label class="form-check-label">Does Not Apply</label>
+            </div>
+            <small class="form-text text-muted">If beneficiary has never been assigned a U.S. SSN, check "Does Not Apply"</small>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_uscis_account', 'USCIS Online Account Number') }}
+            <div class="input-group">
+                {{ Form::text('beneficiary_uscis_account', optional($application)->beneficiary_uscis_account ?? '', [
+                    'class' => 'form-control',
+                    'placeholder' => 'USCIS Account Number',
+                    'id' => 'beneficiary_uscis_account',
+                    'maxlength' => 20
+                ]) }}
+            </div>
+            <div class="form-check mt-2">
+                {{ Form::checkbox('beneficiary_uscis_account_na', 1, 
+                    (optional($application)->beneficiary_uscis_account ?? '') === 'N/A', [
+                    'class' => 'form-check-input does-not-apply-checkbox',
+                    'data-target' => '#beneficiary_uscis_account'
+                ]) }}
+                <label class="form-check-label">Does Not Apply</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_petition_filed_before', 'Has anyone filed petition for beneficiary before?') }}
+            <span class="text-danger">*</span>
+            {{ Form::select('beneficiary_petition_filed_before', [
+                '' => '-Select-',
+                'Yes' => 'Yes',
+                'No' => 'No',
+                'Unknown' => 'Unknown'
+            ], optional($application)->beneficiary_petition_filed_before ?? '', [
+                'class' => 'form-control',
+                'required' => true
+            ]) }}
+        </div>
+    </div>
+</div>
+
+<!-- Passport Details -->
+<h5 class="mb-3 mt-4"><i class="fa fa-passport me-2"></i>Passport Details</h5>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_passport_country', 'Country of Issuance for Passport') }}
+            {{ Form::select('beneficiary_passport_country', getAllCountry(), optional($application)->beneficiary_passport_country ?? '', [
+                'class' => 'form-control',
+                'placeholder' => 'Select country'
+            ]) }}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_passport_expiration', 'Passport Expiration Date') }}
+            {{ Form::text('beneficiary_passport_expiration', optional($application)->beneficiary_passport_expiration ? optional($application)->beneficiary_passport_expiration->format('m/d/Y') : '', [
+                'class' => 'form-control datePicker',
+                'placeholder' => 'MM/DD/YYYY'
+            ]) }}
+            <small class="form-text text-muted">Leave blank if passport not yet obtained</small>
+        </div>
+    </div>
+</div>
+
     <div class="row">
         <div class="col-md-4">
             <div class="form-group mb-3">
@@ -177,6 +322,33 @@
         </div>
     </div>
 
+    <!-- Daytime Telephone (Separate from Mobile) -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_daytime_phone', 'Daytime Telephone Number') }}
+            <span class="text-danger">*</span>
+            {{ Form::text('beneficiary_daytime_phone', optional($application)->beneficiary_daytime_phone ?? '', [
+                'class' => 'form-control',
+                'placeholder' => '+63 32 555 0198 or (###) ###-####',
+                'required' => true,
+                'maxlength' => 50
+            ]) }}
+            <small class="form-text text-muted">Can be same as mobile if no landline</small>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_mobile_phone', 'Mobile Telephone Number') }}
+            {{ Form::text('beneficiary_mobile_phone', optional($application)->beneficiary_phone ?? '', [
+                'class' => 'form-control',
+                'placeholder' => '+63 917 123 4567',
+                'maxlength' => 50
+            ]) }}
+        </div>
+    </div>
+</div>
+
     <!-- Mailing Address -->
     <h5 class="mb-3 mt-4"><i class="fa fa-envelope me-2"></i>Mailing Address</h5>
     <div class="row">
@@ -200,6 +372,93 @@
             ])
         </div>
     </div>
+
+    <!-- Intended U.S. Address (I-130 Part 4, Item 12) -->
+<h5 class="mb-3 mt-4"><i class="fa fa-home me-2"></i>Intended Address in the United States</h5>
+<div class="alert alert-info">
+    <i class="fa fa-info-circle me-2"></i>
+    <strong>Note:</strong> This is where the beneficiary intends to live in the United States. If same as sponsor's address, you can check the box below.
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group mb-3">
+            <div class="form-check">
+                {{ Form::checkbox('beneficiary_intended_address_same', 1, 
+                    optional($application)->beneficiary_intended_address_same ?? false, [
+                    'class' => 'form-check-input',
+                    'id' => 'beneficiary_intended_address_same'
+                ]) }}
+                <label class="form-check-label" for="beneficiary_intended_address_same">
+                    <strong>Same as sponsor's mailing address</strong>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="beneficiary_intended_address_section" 
+    style="display: {{ optional($application)->beneficiary_intended_address_same ? 'none' : 'block' }};">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group mb-3">
+                {{ Form::label('beneficiary_intended_address', 'Street Address') }}
+                <span class="text-danger">*</span>
+                {{ Form::text('beneficiary_intended_address', optional($application)->beneficiary_intended_address ?? '', [
+                    'class' => 'form-control',
+                    'placeholder' => 'Street address in USA',
+                    'maxlength' => 100
+                ]) }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            @include('components.apt-suite-floor', [
+                'name' => 'beneficiary_intended_apt',
+                'value' => optional($application)->beneficiary_intended_apt,
+                'required' => false
+            ])
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group mb-3">
+                {{ Form::label('beneficiary_intended_city', 'City') }}
+                <span class="text-danger">*</span>
+                {{ Form::text('beneficiary_intended_city', optional($application)->beneficiary_intended_city ?? '', [
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter city',
+                    'maxlength' => 50
+                ]) }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group mb-3">
+                {{ Form::label('beneficiary_intended_state', 'State') }}
+                <span class="text-danger">*</span>
+                {{ Form::text('beneficiary_intended_state', optional($application)->beneficiary_intended_state ?? '', [
+                    'class' => 'form-control state-format',
+                    'placeholder' => 'CA',
+                    'pattern' => '[A-Z]{2}',
+                    'maxlength' => 2,
+                    'style' => 'text-transform: uppercase;'
+                ]) }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group mb-3">
+                {{ Form::label('beneficiary_intended_zip', 'ZIP Code') }}
+                <span class="text-danger">*</span>
+                {{ Form::text('beneficiary_intended_zip', optional($application)->beneficiary_intended_zip ?? '', [
+                    'class' => 'form-control zip-format',
+                    'placeholder' => '12345 or 12345-6789',
+                    'pattern' => '\d{5}(-\d{4})?',
+                    'maxlength' => 10
+                ]) }}
+            </div>
+        </div>
+    </div>
+</div>
 
     <div class="row">
         <div class="col-md-6">
@@ -506,6 +765,200 @@
         <strong>Incomplete:</strong> Your address history must cover at least five full years.
     </div>
 
+    <!-- Entry Information (I-130 Part 4, Items 45-46) -->
+<h5 class="mb-3 mt-4"><i class="fa fa-plane me-2"></i>U.S. Entry Information</h5>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group mb-3">
+            <label>Was the beneficiary EVER in the United States?</label>
+            <span class="text-danger">*</span>
+            <div class="d-flex gap-3">
+                <div class="form-check">
+                    {{ Form::radio('beneficiary_ever_in_us', 'yes', 
+                        (optional($application)->beneficiary_ever_in_us ?? '') === 'yes', [
+                        'class' => 'form-check-input',
+                        'id' => 'beneficiary_ever_in_us_yes',
+                        'required' => true
+                    ]) }}
+                    <label class="form-check-label" for="beneficiary_ever_in_us_yes">Yes</label>
+                </div>
+                <div class="form-check">
+                    {{ Form::radio('beneficiary_ever_in_us', 'no', 
+                        (optional($application)->beneficiary_ever_in_us ?? '') === 'no', [
+                        'class' => 'form-check-input',
+                        'id' => 'beneficiary_ever_in_us_no',
+                        'required' => true
+                    ]) }}
+                    <label class="form-check-label" for="beneficiary_ever_in_us_no">No</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Entry Details (shown if Yes) -->
+<div id="beneficiary_entry_section" 
+    style="display: {{ (optional($application)->beneficiary_ever_in_us ?? '') === 'yes' ? 'block' : 'none' }};">
+    <div class="card mb-3 bg-light">
+        <div class="card-body">
+            <h6 class="mb-3">Most Recent U.S. Entry Details</h6>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_class_of_admission', 'Class of Admission') }}
+                        {{ Form::text('beneficiary_class_of_admission', optional($application)->beneficiary_class_of_admission ?? '', [
+                            'class' => 'form-control',
+                            'placeholder' => 'e.g., B-2, F-1, etc.',
+                            'maxlength' => 20
+                        ]) }}
+                        <small class="form-text text-muted">Visa type they entered with</small>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_i94_number', 'Form I-94 Arrival-Departure Record Number') }}
+                        {{ Form::text('beneficiary_i94_number', optional($application)->beneficiary_i94_number ?? '', [
+                            'class' => 'form-control',
+                            'placeholder' => 'I-94 number',
+                            'maxlength' => 20
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_date_of_arrival', 'Date of Arrival') }}
+                        {{ Form::text('beneficiary_date_of_arrival', optional($application)->beneficiary_date_of_arrival ? optional($application)->beneficiary_date_of_arrival->format('m/d/Y') : '', [
+                            'class' => 'form-control datePicker',
+                            'placeholder' => 'MM/DD/YYYY'
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_date_authorized_stay_expires', 'Date Authorized Stay Expires') }}
+                        {{ Form::text('beneficiary_date_authorized_stay_expires', optional($application)->beneficiary_date_authorized_stay_expires ?? '', [
+                            'class' => 'form-control',
+                            'placeholder' => 'MM/DD/YYYY or D/S',
+                            'maxlength' => 20
+                        ]) }}
+                        <small class="form-text text-muted">Enter date or "D/S" for Duration of Status</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Immigration Proceedings (I-130 Part 4, Items 53-56) -->
+<h5 class="mb-3 mt-4"><i class="fa fa-gavel me-2"></i>Immigration Proceedings</h5>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group mb-3">
+            <label>Was the beneficiary EVER in immigration proceedings?</label>
+            <span class="text-danger">*</span>
+            <div class="d-flex gap-3">
+                <div class="form-check">
+                    {{ Form::radio('beneficiary_immigration_proceedings', 'yes', 
+                        (optional($application)->beneficiary_immigration_proceedings ?? '') === 'yes', [
+                        'class' => 'form-check-input',
+                        'id' => 'beneficiary_proceedings_yes',
+                        'required' => true
+                    ]) }}
+                    <label class="form-check-label" for="beneficiary_proceedings_yes">Yes</label>
+                </div>
+                <div class="form-check">
+                    {{ Form::radio('beneficiary_immigration_proceedings', 'no', 
+                        (optional($application)->beneficiary_immigration_proceedings ?? '') === 'no', [
+                        'class' => 'form-check-input',
+                        'id' => 'beneficiary_proceedings_no',
+                        'required' => true
+                    ]) }}
+                    <label class="form-check-label" for="beneficiary_proceedings_no">No</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Proceedings Details (shown if Yes) -->
+<div id="beneficiary_proceedings_section" 
+    style="display: {{ (optional($application)->beneficiary_immigration_proceedings ?? '') === 'yes' ? 'block' : 'none' }};">
+    <div class="card mb-3 bg-light">
+        <div class="card-body">
+            <h6 class="mb-3">Proceedings Details</h6>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label>Type of Proceedings</label>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check">
+                                {{ Form::checkbox('beneficiary_proceedings_types[]', 'Removal', 
+                                    in_array('Removal', optional($application)->beneficiary_proceedings_types ?? []), [
+                                    'class' => 'form-check-input',
+                                    'id' => 'proceedings_removal'
+                                ]) }}
+                                <label class="form-check-label" for="proceedings_removal">Removal</label>
+                            </div>
+                            <div class="form-check">
+                                {{ Form::checkbox('beneficiary_proceedings_types[]', 'Exclusion/Deportation', 
+                                    in_array('Exclusion/Deportation', optional($application)->beneficiary_proceedings_types ?? []), [
+                                    'class' => 'form-check-input',
+                                    'id' => 'proceedings_deportation'
+                                ]) }}
+                                <label class="form-check-label" for="proceedings_deportation">Exclusion/Deportation</label>
+                            </div>
+                            <div class="form-check">
+                                {{ Form::checkbox('beneficiary_proceedings_types[]', 'Rescission', 
+                                    in_array('Rescission', optional($application)->beneficiary_proceedings_types ?? []), [
+                                    'class' => 'form-check-input',
+                                    'id' => 'proceedings_rescission'
+                                ]) }}
+                                <label class="form-check-label" for="proceedings_rescission">Rescission</label>
+                            </div>
+                            <div class="form-check">
+                                {{ Form::checkbox('beneficiary_proceedings_types[]', 'Other', 
+                                    in_array('Other', optional($application)->beneficiary_proceedings_types ?? []), [
+                                    'class' => 'form-check-input',
+                                    'id' => 'proceedings_other'
+                                ]) }}
+                                <label class="form-check-label" for="proceedings_other">Other Judicial Proceedings</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_proceedings_city', 'City/Town') }}
+                        {{ Form::text('beneficiary_proceedings_city', optional($application)->beneficiary_proceedings_city ?? '', [
+                            'class' => 'form-control',
+                            'placeholder' => 'Location of proceedings',
+                            'maxlength' => 100
+                        ]) }}
+                    </div>
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_proceedings_state', 'State') }}
+                        {{ Form::text('beneficiary_proceedings_state', optional($application)->beneficiary_proceedings_state ?? '', [
+                            'class' => 'form-control state-format',
+                            'placeholder' => 'CA',
+                            'maxlength' => 2,
+                            'style' => 'text-transform: uppercase;'
+                        ]) }}
+                    </div>
+                    <div class="form-group mb-3">
+                        {{ Form::label('beneficiary_proceedings_date', 'Date of Proceedings') }}
+                        {{ Form::text('beneficiary_proceedings_date', optional($application)->beneficiary_proceedings_date ? optional($application)->beneficiary_proceedings_date->format('m/d/Y') : '', [
+                            'class' => 'form-control datePicker',
+                            'placeholder' => 'MM/DD/YYYY'
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- Employment History (5 Years) -->
     <h5 class="mb-3 mt-4"><i class="fa fa-briefcase me-2"></i>Employment History (Last 5 Years)</h5>
     <div class="alert alert-info">
@@ -616,206 +1069,358 @@
     <p class="text-muted">Provide information about the beneficiary's biological or adoptive parents</p>
     
     <!-- Parent 1 -->
-    <div class="card mb-3">
-        <div class="card-header bg-light">
-            <strong>Parent 1</strong>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent1_first_name', 'First Name') }}
-                        <span class="text-danger">*</span>
-                        {{ Form::text('beneficiary_parent1_first_name', optional($application)->beneficiary_parent1_first_name ?? '', [
-                            'class' => 'form-control',
-                            'required' => true,
-                            'maxlength' => 50
-                        ]) }}
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent1_middle_name', 'Middle Name') }}
-                        {{ Form::text('beneficiary_parent1_middle_name', optional($application)->beneficiary_parent1_middle_name ?? '', [
-                            'class' => 'form-control',
-                            'maxlength' => 50
-                        ]) }}
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent1_last_name', 'Last Name') }}
-                        <span class="text-danger">*</span>
-                        {{ Form::text('beneficiary_parent1_last_name', optional($application)->beneficiary_parent1_last_name ?? '', [
-                            'class' => 'form-control',
-                            'required' => true,
-                            'maxlength' => 50
-                        ]) }}
-                    </div>
+<div class="card mb-3">
+    <div class="card-header bg-light">
+        <strong>Parent 1</strong>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent1_first_name', 'First Name') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent1_first_name', optional($application)->beneficiary_parent1_first_name ?? '', [
+                        'class' => 'form-control',
+                        'required' => true,
+                        'maxlength' => 50
+                    ]) }}
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent1_dob', 'Date of Birth') }}
-                        <span class="text-danger">*</span>
-                        {{ Form::text('beneficiary_parent1_dob', optional($application)->beneficiary_parent1_dob ? optional($application)->beneficiary_parent1_dob->format('m/d/Y') : '', [
-                            'class' => 'form-control datePicker',
-                            'placeholder' => 'MM/DD/YYYY',
-                            'required' => true
-                        ]) }}
-                    </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent1_middle_name', 'Middle Name') }}
+                    {{ Form::text('beneficiary_parent1_middle_name', optional($application)->beneficiary_parent1_middle_name ?? '', [
+                        'class' => 'form-control',
+                        'maxlength' => 50
+                    ]) }}
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent1_sex', 'Sex') }}
-                        <span class="text-danger">*</span>
-                        {{ Form::select('beneficiary_parent1_sex', [
-                            '' => '-Select-',
-                            'Male' => 'Male',
-                            'Female' => 'Female'
-                        ], optional($application)->beneficiary_parent1_sex ?? '', [
-                            'class' => 'form-control',
-                            'required' => true
-                        ]) }}
-                    </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent1_last_name', 'Last Name') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent1_last_name', optional($application)->beneficiary_parent1_last_name ?? '', [
+                        'class' => 'form-control',
+                        'required' => true,
+                        'maxlength' => 50
+                    ]) }}
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent1_country', 'Country of Birth') }}
-                        <span class="text-danger">*</span>
-                        {{ Form::select('beneficiary_parent1_country', getAllCountry(), optional($application)->beneficiary_parent1_country ?? '', [
-                            'class' => 'form-control',
-                            'required' => true
-                        ]) }}
-                    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent1_dob', 'Date of Birth') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent1_dob', optional($application)->beneficiary_parent1_dob ? optional($application)->beneficiary_parent1_dob->format('m/d/Y') : '', [
+                        'class' => 'form-control datePicker',
+                        'placeholder' => 'MM/DD/YYYY',
+                        'required' => true
+                    ]) }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent1_sex', 'Sex') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::select('beneficiary_parent1_sex', [
+                        '' => '-Select-',
+                        'Male' => 'Male',
+                        'Female' => 'Female'
+                    ], optional($application)->beneficiary_parent1_sex ?? '', [
+                        'class' => 'form-control',
+                        'required' => true
+                    ]) }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent1_city_birth', 'City/Town of Birth') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent1_city_birth', optional($application)->beneficiary_parent1_city_birth ?? '', [
+                        'class' => 'form-control',
+                        'placeholder' => 'Birth city',
+                        'required' => true,
+                        'maxlength' => 100
+                    ]) }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent1_country', 'Country of Birth') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::select('beneficiary_parent1_country', getAllCountry(), optional($application)->beneficiary_parent1_country ?? '', [
+                        'class' => 'form-control',
+                        'required' => true
+                    ]) }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent1_city_residence', 'City/Town of Residence') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent1_city_residence', optional($application)->beneficiary_parent1_city_residence ?? '', [
+                        'class' => 'form-control',
+                        'placeholder' => 'Current city',
+                        'required' => true,
+                        'maxlength' => 100
+                    ]) }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent1_country_residence', 'Country of Residence') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::select('beneficiary_parent1_country_residence', getAllCountry(), optional($application)->beneficiary_parent1_country_residence ?? '', [
+                        'class' => 'form-control',
+                        'required' => true
+                    ]) }}
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Parent 2 -->
-    <div class="card mb-3">
-        <div class="card-header bg-light">
-            <strong>Parent 2</strong>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent2_first_name', 'First Name') }}
-                        <span class="text-danger">*</span>
-                        {{ Form::text('beneficiary_parent2_first_name', optional($application)->beneficiary_parent2_first_name ?? '', [
-                            'class' => 'form-control',
-                            'required' => true,
-                            'maxlength' => 50
-                        ]) }}
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent2_middle_name', 'Middle Name') }}
-                        {{ Form::text('beneficiary_parent2_middle_name', optional($application)->beneficiary_parent2_middle_name ?? '', [
-                            'class' => 'form-control',
-                            'maxlength' => 50
-                        ]) }}
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent2_last_name', 'Last Name') }}
-                        <span class="text-danger">*</span>
-                        {{ Form::text('beneficiary_parent2_last_name', optional($application)->beneficiary_parent2_last_name ?? '', [
-                            'class' => 'form-control',
-                            'required' => true,
-                            'maxlength' => 50
-                        ]) }}
-                    </div>
+<!-- Parent 2 -->
+<div class="card mb-3">
+    <div class="card-header bg-light">
+        <strong>Parent 2</strong>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent2_first_name', 'First Name') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent2_first_name', optional($application)->beneficiary_parent2_first_name ?? '', [
+                        'class' => 'form-control',
+                        'required' => true,
+                        'maxlength' => 50
+                    ]) }}
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent2_dob', 'Date of Birth') }}
-                        <span class="text-danger">*</span>
-                        {{ Form::text('beneficiary_parent2_dob', optional($application)->beneficiary_parent2_dob ? optional($application)->beneficiary_parent2_dob->format('m/d/Y') : '', [
-                            'class' => 'form-control datePicker',
-                            'placeholder' => 'MM/DD/YYYY',
-                            'required' => true
-                        ]) }}
-                    </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent2_middle_name', 'Middle Name') }}
+                    {{ Form::text('beneficiary_parent2_middle_name', optional($application)->beneficiary_parent2_middle_name ?? '', [
+                        'class' => 'form-control',
+                        'maxlength' => 50
+                    ]) }}
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent2_sex', 'Sex') }}
-                        <span class="text-danger">*</span>
-                        {{ Form::select('beneficiary_parent2_sex', [
-                            '' => '-Select-',
-                            'Male' => 'Male',
-                            'Female' => 'Female'
-                        ], optional($application)->beneficiary_parent2_sex ?? '', [
-                            'class' => 'form-control',
-                            'required' => true
-                        ]) }}
-                    </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent2_last_name', 'Last Name') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent2_last_name', optional($application)->beneficiary_parent2_last_name ?? '', [
+                        'class' => 'form-control',
+                        'required' => true,
+                        'maxlength' => 50
+                    ]) }}
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('beneficiary_parent2_country', 'Country of Birth') }}
-                        <span class="text-danger">*</span>
-                        {{ Form::select('beneficiary_parent2_country', getAllCountry(), optional($application)->beneficiary_parent2_country ?? '', [
-                            'class' => 'form-control',
-                            'required' => true
-                        ]) }}
-                    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent2_dob', 'Date of Birth') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent2_dob', optional($application)->beneficiary_parent2_dob ? optional($application)->beneficiary_parent2_dob->format('m/d/Y') : '', [
+                        'class' => 'form-control datePicker',
+                        'placeholder' => 'MM/DD/YYYY',
+                        'required' => true
+                    ]) }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent2_sex', 'Sex') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::select('beneficiary_parent2_sex', [
+                        '' => '-Select-',
+                        'Male' => 'Male',
+                        'Female' => 'Female'
+                    ], optional($application)->beneficiary_parent2_sex ?? '', [
+                        'class' => 'form-control',
+                        'required' => true
+                    ]) }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent2_city_birth', 'City/Town of Birth') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent2_city_birth', optional($application)->beneficiary_parent2_city_birth ?? '', [
+                        'class' => 'form-control',
+                        'placeholder' => 'Birth city',
+                        'required' => true,
+                        'maxlength' => 100
+                    ]) }}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent2_country', 'Country of Birth') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::select('beneficiary_parent2_country', getAllCountry(), optional($application)->beneficiary_parent2_country ?? '', [
+                        'class' => 'form-control',
+                        'required' => true
+                    ]) }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent2_city_residence', 'City/Town of Residence') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent2_city_residence', optional($application)->beneficiary_parent2_city_residence ?? '', [
+                        'class' => 'form-control',
+                        'placeholder' => 'Current city',
+                        'required' => true,
+                        'maxlength' => 100
+                    ]) }}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent2_country_residence', 'Country of Residence') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::select('beneficiary_parent2_country_residence', getAllCountry(), optional($application)->beneficiary_parent2_country_residence ?? '', [
+                        'class' => 'form-control',
+                        'required' => true
+                    ]) }}
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Employment Information - OPTIONAL for beneficiary -->
-    <h5 class="mb-3 mt-4"><i class="fa fa-briefcase me-2"></i>Current Employment Information (Optional)</h5>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                {{ Form::label('beneficiary_employment_status', 'Employment Status') }}
-                {{ Form::select('beneficiary_employment_status', [
-                    '' => '-Select Status-',
-                    'Employed' => 'Employed',
-                    'Self-Employed' => 'Self-Employed',
-                    'Unemployed' => 'Unemployed',
-                    'Retired' => 'Retired',
-                    'Student' => 'Student',
-                    'Homemaker' => 'Homemaker'
-                ], optional($application)->beneficiary_employment_status ?? '', [
-                    'class' => 'form-control'
-                ]) }}
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                {{ Form::label('beneficiary_occupation', 'Occupation/Job Title') }}
-                {{ Form::text('beneficiary_occupation', optional($application)->beneficiary_occupation ?? '', [
-                    'class' => 'form-control',
-                    'placeholder' => 'Job title (if employed)',
-                    'maxlength' => 100
-                ]) }}
-            </div>
-        </div>
-    </div>
+    <!-- Current Employment Information (I-130 Part 4, Items 51-52) -->
+<h5 class="mb-3 mt-4"><i class="fa fa-briefcase me-2"></i>Current Employment Information</h5>
+<div class="alert alert-info">
+    <i class="fa fa-info-circle me-2"></i>
+    <strong>Note:</strong> Provide information about current employment. If unemployed, enter "Unemployed" for employer name.
+</div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="form-group mb-3">
-                {{ Form::label('beneficiary_employer_name', 'Employer Name') }}
-                {{ Form::text('beneficiary_employer_name', optional($application)->beneficiary_employer_name ?? '', [
-                    'class' => 'form-control',
-                    'placeholder' => 'Company name (if employed)',
-                    'maxlength' => 100
-                ]) }}
-            </div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_employer_name', 'Name of Current Employer') }}
+            {{ Form::text('beneficiary_employer_name', optional($application)->beneficiary_employer_name ?? '', [
+                'class' => 'form-control',
+                'placeholder' => 'Company name or "Unemployed"',
+                'maxlength' => 100
+            ]) }}
         </div>
     </div>
+    <div class="col-md-6">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_occupation', 'Occupation/Job Title') }}
+            {{ Form::text('beneficiary_occupation', optional($application)->beneficiary_occupation ?? '', [
+                'class' => 'form-control',
+                'placeholder' => 'Job title or "N/A"',
+                'maxlength' => 100
+            ]) }}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_employment_status', 'Employment Status') }}
+            {{ Form::select('beneficiary_employment_status', [
+                '' => '-Select Status-',
+                'Employed' => 'Employed',
+                'Self-Employed' => 'Self-Employed',
+                'Unemployed' => 'Unemployed',
+                'Retired' => 'Retired',
+                'Student' => 'Student',
+                'Homemaker' => 'Homemaker'
+            ], optional($application)->beneficiary_employment_status ?? '', [
+                'class' => 'form-control'
+            ]) }}
+            <small class="form-text text-muted">Optional: Select current employment status</small>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_employer_address_full', 'Employer Street Address') }}
+            {{ Form::text('beneficiary_employer_address_full', optional($application)->beneficiary_employer_address_full ?? '', [
+                'class' => 'form-control',
+                'placeholder' => 'Full street address or "N/A"',
+                'maxlength' => 100
+            ]) }}
+        </div>
+    </div>
+    <div class="col-md-4">
+        @include('components.apt-suite-floor', [
+            'name' => 'beneficiary_employer_apt',
+            'value' => optional($application)->beneficiary_employer_apt,
+            'required' => false
+        ])
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_employer_city', 'City or Town') }}
+            {{ Form::text('beneficiary_employer_city', optional($application)->beneficiary_employer_city ?? '', [
+                'class' => 'form-control',
+                'placeholder' => 'City',
+                'maxlength' => 50
+            ]) }}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_employer_province', 'State/Province') }}
+            {{ Form::text('beneficiary_employer_province', optional($application)->beneficiary_employer_province ?? '', [
+                'class' => 'form-control',
+                'placeholder' => 'State or Province',
+                'maxlength' => 50
+            ]) }}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_employer_postal', 'Postal Code') }}
+            {{ Form::text('beneficiary_employer_postal', optional($application)->beneficiary_employer_postal ?? '', [
+                'class' => 'form-control',
+                'placeholder' => 'Postal code',
+                'maxlength' => 20
+            ]) }}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_employer_country', 'Country') }}
+            {{ Form::select('beneficiary_employer_country', getAllCountry(), optional($application)->beneficiary_employer_country ?? '', [
+                'class' => 'form-control',
+                'placeholder' => 'Select country'
+            ]) }}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group mb-3">
+            {{ Form::label('beneficiary_employment_start_date', 'Date Employment Began') }}
+            {{ Form::text('beneficiary_employment_start_date', optional($application)->beneficiary_employment_start_date ? optional($application)->beneficiary_employment_start_date->format('m/d/Y') : '', [
+                'class' => 'form-control datePicker',
+                'placeholder' => 'MM/DD/YYYY'
+            ]) }}
+        </div>
+    </div>
+</div>
 
     <!-- Navigation -->
     <div class="d-flex justify-content-between mt-4">
@@ -832,6 +1437,104 @@
     </div>
 </div>
 
+
+<script>
+$(document).ready(function() {
+    // Add other name
+    $('#addBeneficiaryOtherName').on('click', function() {
+        const count = parseInt($('#beneficiary_other_names_count').val());
+        const newIndex = count;
+        
+        const html = `
+            <div class="card mb-3 other-name-item" data-index="${newIndex}">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <strong>Other Name ${newIndex + 1}</strong>
+                    <button type="button" class="btn btn-sm btn-danger remove-other-name" data-person="beneficiary" data-index="${newIndex}">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label>Family Name (Last Name)</label>
+                                <input type="text" name="beneficiary_other_names[${newIndex}][last_name]" 
+                                    class="form-control" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label>Given Name (First Name)</label>
+                                <input type="text" name="beneficiary_other_names[${newIndex}][first_name]" 
+                                    class="form-control" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label>Middle Name</label>
+                                <input type="text" name="beneficiary_other_names[${newIndex}][middle_name]" 
+                                    class="form-control" maxlength="50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        $('#beneficiary_other_names_container').append(html);
+        $('#beneficiary_other_names_count').val(newIndex + 1);
+    });
+
+    $(document).on('click', '.remove-other-name[data-person="beneficiary"]', function() {
+        $(this).closest('.other-name-item').remove();
+    });
+
+    // Show/hide intended address section
+    $('#beneficiary_intended_address_same').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('#beneficiary_intended_address_section').slideUp();
+        } else {
+            $('#beneficiary_intended_address_section').slideDown();
+        }
+    });
+
+    // Show/hide US entry details
+    $('input[name="beneficiary_ever_in_us"]').on('change', function() {
+        if ($(this).val() === 'yes') {
+            $('#beneficiary_entry_section').slideDown();
+        } else {
+            $('#beneficiary_entry_section').slideUp();
+            $('#beneficiary_entry_section input').val('');
+        }
+    });
+
+    // Show/hide immigration proceedings details
+    $('input[name="beneficiary_immigration_proceedings"]').on('change', function() {
+        if ($(this).val() === 'yes') {
+            $('#beneficiary_proceedings_section').slideDown();
+        } else {
+            $('#beneficiary_proceedings_section').slideUp();
+            $('#beneficiary_proceedings_section input, #beneficiary_proceedings_section select').val('');
+            $('#beneficiary_proceedings_section input[type="checkbox"]').prop('checked', false);
+        }
+    });
+
+    // Format SSN for beneficiary
+    $(document).on('input', '#beneficiary_ssn', function() {
+        let value = this.value.replace(/\D/g, '');
+        if (value.length > 9) value = value.substring(0, 9);
+        
+        if (value.length >= 5) {
+            this.value = value.substring(0, 3) + '-' + value.substring(3, 5) + '-' + value.substring(5);
+        } else if (value.length >= 3) {
+            this.value = value.substring(0, 3) + '-' + value.substring(3);
+        } else {
+            this.value = value;
+        }
+    });
+});
+</script>
+
 <script>
 $(document).ready(function() {
     
@@ -846,14 +1549,36 @@ $(document).ready(function() {
 
     // Handle Present checkbox
     $(document).on('change', '.present-checkbox', function() {
-        const targetInput = $($(this).data('target'));
+        const targetId = $(this).data('target');
+        const targetField = $(targetId);
+        const hiddenFieldName = targetField.attr('name').replace('[date_to]', '[is_present]');
         
         if ($(this).is(':checked')) {
-            targetInput.data('previous-value', targetInput.val());
-            targetInput.val('Present').prop('disabled', true).prop('readonly', true);
+            targetField.val('Present').prop('readonly', true).addClass('bg-light');
+            
+            // Add hidden field
+            let hiddenField = $('input[name="' + hiddenFieldName + '"]');
+            if (hiddenField.length === 0) {
+                targetField.after('<input type="hidden" name="' + hiddenFieldName + '" value="1" class="present-hidden-field">');
+            } else {
+                hiddenField.val('1');
+            }
         } else {
-            const prevValue = targetInput.data('previous-value') || '';
-            targetInput.val(prevValue).prop('disabled', false).prop('readonly', false);
+            targetField.val('').prop('readonly', false).removeClass('bg-light');
+            $('input[name="' + hiddenFieldName + '"]').remove();
+        }
+    });
+
+    // Initialize on page load
+    $('.present-checkbox:checked').each(function() {
+        const targetId = $(this).data('target');
+        const targetField = $(targetId);
+        const hiddenFieldName = targetField.attr('name').replace('[date_to]', '[is_present]');
+        
+        targetField.val('Present').prop('readonly', true).addClass('bg-light');
+        
+        if ($('input[name="' + hiddenFieldName + '"]').length === 0) {
+            targetField.after('<input type="hidden" name="' + hiddenFieldName + '" value="1" class="present-hidden-field">');
         }
     });
 
@@ -1076,12 +1801,23 @@ $(document).ready(function() {
 
     // Handle "Does Not Apply" checkboxes for passport and alien number
     $(document).on('change', '.does-not-apply-checkbox', function() {
-        const target = $(this).data('target');
+        const targetId = $(this).data('target');
+        const targetField = $(targetId);
+        
         if ($(this).is(':checked')) {
-            $(target).val('N/A').prop('readonly', true);
+            targetField.data('original-value', targetField.val());
+            targetField.val('N/A').prop('readonly', true).addClass('bg-light');
         } else {
-            $(target).val('').prop('readonly', false);
+            const originalValue = targetField.data('original-value') || '';
+            targetField.val(originalValue).prop('readonly', false).removeClass('bg-light');
         }
+    });
+    
+    // Initialize on page load
+    $('.does-not-apply-checkbox:checked').each(function() {
+        const targetId = $(this).data('target');
+        const targetField = $(targetId);
+        targetField.val('N/A').prop('readonly', true).addClass('bg-light');
     });
 });
 </script>
