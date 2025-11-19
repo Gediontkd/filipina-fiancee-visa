@@ -137,6 +137,89 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_prev_spouse_first_name',
         'beneficiary_prev_spouse_last_name',
         'beneficiary_divorce_date',
+
+        // ========================================
+        // SPONSOR ADDITIONAL FIELDS
+        // ========================================
+        'sponsor_other_names',
+        'sponsor_a_number',
+        'sponsor_uscis_account',
+        'sponsor_citizenship_method',
+        'sponsor_certificate_number',
+        'sponsor_certificate_place',
+        'sponsor_certificate_date',
+        'sponsor_ethnicity',
+        'sponsor_race',
+        'sponsor_height_feet',
+        'sponsor_height_inches',
+        'sponsor_weight',
+        'sponsor_eye_color',
+        'sponsor_hair_color',
+        'sponsor_parent1_city_residence',
+        'sponsor_parent1_country_residence',
+        'sponsor_parent2_city_residence',
+        'sponsor_parent2_country_residence',
+        
+        // ========================================
+        // BENEFICIARY ADDITIONAL FIELDS
+        // ========================================
+        'beneficiary_other_names',
+        'beneficiary_ssn',
+        'beneficiary_uscis_account',
+        'beneficiary_petition_filed_before',
+        'beneficiary_passport_country',
+        'beneficiary_passport_expiration',
+        'beneficiary_daytime_phone',
+        'beneficiary_mobile_phone',
+        'beneficiary_intended_address_same',
+        'beneficiary_intended_address',
+        'beneficiary_intended_apt',
+        'beneficiary_intended_city',
+        'beneficiary_intended_state',
+        'beneficiary_intended_zip',
+        'beneficiary_ever_in_us',
+        'beneficiary_class_of_admission',
+        'beneficiary_i94_number',
+        'beneficiary_date_of_arrival',
+        'beneficiary_date_authorized_stay_expires',
+        'beneficiary_immigration_proceedings',
+        'beneficiary_proceedings_types',
+        'beneficiary_proceedings_city',
+        'beneficiary_proceedings_state',
+        'beneficiary_proceedings_date',
+        'beneficiary_employer_address_full',
+        'beneficiary_employer_apt',
+        'beneficiary_employer_city',
+        'beneficiary_employer_province',
+        'beneficiary_employer_postal',
+        'beneficiary_employer_country',
+        'beneficiary_employment_start_date',
+        'beneficiary_parent1_city_birth',
+        'beneficiary_parent1_city_residence',
+        'beneficiary_parent1_country_residence',
+        'beneficiary_parent2_city_birth',
+        'beneficiary_parent2_city_residence',
+        'beneficiary_parent2_country_residence',
+        
+        // ========================================
+        // RELATIONSHIP ADDITIONAL FIELDS
+        // ========================================
+        'never_lived_together',
+        'last_lived_together_address',
+        'last_lived_together_apt',
+        'last_lived_together_city',
+        'last_lived_together_state',
+        'last_lived_together_province',
+        'last_lived_together_postal',
+        'last_lived_together_country',
+        'last_lived_together_date_from',
+        'last_lived_together_date_to',
+        'beneficiary_application_location',
+        'beneficiary_uscis_office_city',
+        'beneficiary_uscis_office_state',
+        'beneficiary_consulate_city',
+        'beneficiary_consulate_province',
+        'beneficiary_consulate_country',
         
         'status',
         'submitted_at'
@@ -155,6 +238,28 @@ class SimplifiedSpouseVisaApplication extends Model
         'submitted_at' => 'datetime',
         'sponsor_annual_income' => 'decimal:2',
         'sponsor_times_married' => 'integer',
+
+        // Sponsor additional casts
+        'sponsor_certificate_date' => 'date',
+        'sponsor_other_names' => 'array',
+        'sponsor_race' => 'array',
+        'sponsor_height_feet' => 'integer',
+        'sponsor_height_inches' => 'integer',
+        'sponsor_weight' => 'integer',
+
+        // Beneficiary additional casts
+        'beneficiary_other_names' => 'array',
+        'beneficiary_passport_expiration' => 'date',
+        'beneficiary_date_of_arrival' => 'date',
+        'beneficiary_proceedings_date' => 'date',
+        'beneficiary_proceedings_types' => 'array',
+        'beneficiary_employment_start_date' => 'date',
+        'beneficiary_intended_address_same' => 'boolean',
+        
+        // Relationship additional casts
+        'never_lived_together' => 'boolean',
+        'last_lived_together_date_from' => 'date',
+        'last_lived_together_date_to' => 'date',
         
         // CRITICAL FIX: Only cast date_from as date, NOT date_to (can be "Present")
         'sponsor_mailing_date_from' => 'date',
