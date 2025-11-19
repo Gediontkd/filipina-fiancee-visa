@@ -373,93 +373,6 @@
         </div>
     </div>
 
-    <!-- Intended U.S. Address (I-130 Part 4, Item 12) -->
-<h5 class="mb-3 mt-4"><i class="fa fa-home me-2"></i>Intended Address in the United States</h5>
-<div class="alert alert-info">
-    <i class="fa fa-info-circle me-2"></i>
-    <strong>Note:</strong> This is where the beneficiary intends to live in the United States. If same as sponsor's address, you can check the box below.
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="form-group mb-3">
-            <div class="form-check">
-                {{ Form::checkbox('beneficiary_intended_address_same', 1, 
-                    optional($application)->beneficiary_intended_address_same ?? false, [
-                    'class' => 'form-check-input',
-                    'id' => 'beneficiary_intended_address_same'
-                ]) }}
-                <label class="form-check-label" for="beneficiary_intended_address_same">
-                    <strong>Same as sponsor's mailing address</strong>
-                </label>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="beneficiary_intended_address_section" 
-    style="display: {{ optional($application)->beneficiary_intended_address_same ? 'none' : 'block' }};">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="form-group mb-3">
-                {{ Form::label('beneficiary_intended_address', 'Street Address') }}
-                <span class="text-danger">*</span>
-                {{ Form::text('beneficiary_intended_address', optional($application)->beneficiary_intended_address ?? '', [
-                    'class' => 'form-control',
-                    'placeholder' => 'Street address in USA',
-                    'maxlength' => 100
-                ]) }}
-            </div>
-        </div>
-        <div class="col-md-4">
-            @include('components.apt-suite-floor', [
-                'name' => 'beneficiary_intended_apt',
-                'value' => optional($application)->beneficiary_intended_apt,
-                'required' => false
-            ])
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group mb-3">
-                {{ Form::label('beneficiary_intended_city', 'City') }}
-                <span class="text-danger">*</span>
-                {{ Form::text('beneficiary_intended_city', optional($application)->beneficiary_intended_city ?? '', [
-                    'class' => 'form-control',
-                    'placeholder' => 'Enter city',
-                    'maxlength' => 50
-                ]) }}
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group mb-3">
-                {{ Form::label('beneficiary_intended_state', 'State') }}
-                <span class="text-danger">*</span>
-                {{ Form::text('beneficiary_intended_state', optional($application)->beneficiary_intended_state ?? '', [
-                    'class' => 'form-control state-format',
-                    'placeholder' => 'CA',
-                    'pattern' => '[A-Z]{2}',
-                    'maxlength' => 2,
-                    'style' => 'text-transform: uppercase;'
-                ]) }}
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group mb-3">
-                {{ Form::label('beneficiary_intended_zip', 'ZIP Code') }}
-                <span class="text-danger">*</span>
-                {{ Form::text('beneficiary_intended_zip', optional($application)->beneficiary_intended_zip ?? '', [
-                    'class' => 'form-control zip-format',
-                    'placeholder' => '12345 or 12345-6789',
-                    'pattern' => '\d{5}(-\d{4})?',
-                    'maxlength' => 10
-                ]) }}
-            </div>
-        </div>
-    </div>
-</div>
-
     <div class="row">
         <div class="col-md-6">
             <div class="form-group mb-3">
@@ -566,6 +479,93 @@
             </div>
         </div>
     </div>
+
+        <!-- Intended U.S. Address (I-130 Part 4, Item 12) -->
+<h5 class="mb-3 mt-4"><i class="fa fa-home me-2"></i>Intended Address in the United States</h5>
+<div class="alert alert-info">
+    <i class="fa fa-info-circle me-2"></i>
+    <strong>Note:</strong> This is where the beneficiary intends to live in the United States. If same as sponsor's address, you can check the box below.
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group mb-3">
+            <div class="form-check">
+                {{ Form::checkbox('beneficiary_intended_address_same', 1, 
+                    optional($application)->beneficiary_intended_address_same ?? false, [
+                    'class' => 'form-check-input',
+                    'id' => 'beneficiary_intended_address_same'
+                ]) }}
+                <label class="form-check-label" for="beneficiary_intended_address_same">
+                    <strong>Same as sponsor's mailing address</strong>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="beneficiary_intended_address_section" 
+    style="display: {{ optional($application)->beneficiary_intended_address_same ? 'none' : 'block' }};">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group mb-3">
+                {{ Form::label('beneficiary_intended_address', 'Street Address') }}
+                <span class="text-danger">*</span>
+                {{ Form::text('beneficiary_intended_address', optional($application)->beneficiary_intended_address ?? '', [
+                    'class' => 'form-control',
+                    'placeholder' => 'Street address in USA',
+                    'maxlength' => 100
+                ]) }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            @include('components.apt-suite-floor', [
+                'name' => 'beneficiary_intended_apt',
+                'value' => optional($application)->beneficiary_intended_apt,
+                'required' => false
+            ])
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group mb-3">
+                {{ Form::label('beneficiary_intended_city', 'City') }}
+                <span class="text-danger">*</span>
+                {{ Form::text('beneficiary_intended_city', optional($application)->beneficiary_intended_city ?? '', [
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter city',
+                    'maxlength' => 50
+                ]) }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group mb-3">
+                {{ Form::label('beneficiary_intended_state', 'State') }}
+                <span class="text-danger">*</span>
+                {{ Form::text('beneficiary_intended_state', optional($application)->beneficiary_intended_state ?? '', [
+                    'class' => 'form-control state-format',
+                    'placeholder' => 'CA',
+                    'pattern' => '[A-Z]{2}',
+                    'maxlength' => 2,
+                    'style' => 'text-transform: uppercase;'
+                ]) }}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group mb-3">
+                {{ Form::label('beneficiary_intended_zip', 'ZIP Code') }}
+                <span class="text-danger">*</span>
+                {{ Form::text('beneficiary_intended_zip', optional($application)->beneficiary_intended_zip ?? '', [
+                    'class' => 'form-control zip-format',
+                    'placeholder' => '12345 or 12345-6789',
+                    'pattern' => '\d{5}(-\d{4})?',
+                    'maxlength' => 10
+                ]) }}
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Physical Address (shown if different) -->
     <div id="beneficiary_physical_address_section" 
