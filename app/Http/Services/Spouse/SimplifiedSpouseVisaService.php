@@ -108,6 +108,7 @@ class SimplifiedSpouseVisaService
                             'city' => $address['city'] ?? '',
                             'state' => $address['state'] ?? '',
                             'zip' => $address['zip'] ?? '',
+                            'country' => $address['country'] ?? '',
                             'date_from' => $address['date_from'] ?? '',
                             'date_to' => $dateToValue,
                         ];
