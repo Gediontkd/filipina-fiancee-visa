@@ -36,9 +36,9 @@ return new class extends Migration
             MODIFY COLUMN beneficiary_parent2_last_name TEXT NULL,
             MODIFY COLUMN beneficiary_parent2_country TEXT NULL,
             MODIFY COLUMN beneficiary_employer_name TEXT NULL,
-            MODIFY COLUMN beneficiary_employer_address TEXT NULL,
-            MODIFY COLUMN marriage_city TEXT NULL,
-            MODIFY COLUMN marriage_country TEXT NULL
+            MODIFY COLUMN beneficiary_employer_address_full TEXT NULL,
+            MODIFY COLUMN marriage_location_city TEXT NULL,
+            MODIFY COLUMN marriage_location_country TEXT NULL
         ');
     }
 
@@ -69,9 +69,9 @@ return new class extends Migration
             MODIFY COLUMN beneficiary_parent2_last_name VARCHAR(50) NULL,
             MODIFY COLUMN beneficiary_parent2_country VARCHAR(100) NULL,
             MODIFY COLUMN beneficiary_employer_name VARCHAR(100) NULL,
-            MODIFY COLUMN beneficiary_employer_address VARCHAR(100) NULL,
-            MODIFY COLUMN marriage_city VARCHAR(100) NULL,
-            MODIFY COLUMN marriage_country VARCHAR(100) NULL
+            MODIFY COLUMN beneficiary_employer_address_full VARCHAR(100) NULL,
+            MODIFY COLUMN marriage_location_city VARCHAR(100) NULL,
+            MODIFY COLUMN marriage_location_country VARCHAR(100) NULL
         ');
     }
 };

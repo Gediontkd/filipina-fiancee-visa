@@ -26,6 +26,18 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'sponsor_dob' => 'required|date|before:today',
             'sponsor_place_of_birth' => 'required|string|max:100',
             'sponsor_citizenship' => 'required|string|max:50',
+
+            // Sponsor Adoption Questions (NEW)
+            'sponsor_beneficiary_related_by_adoption' => 'required|in:yes,no,n/a',
+            'sponsor_gained_status_through_adoption' => 'required|in:yes,no',
+
+            // Sponsor Mailing/Physical Address Country (NEW)
+            'sponsor_mailing_country' => 'required|string|max:100',
+            'sponsor_country' => 'nullable|string|max:100',
+
+            // Beneficiary Parent Relationship (NEW)
+            'beneficiary_parent1_relationship' => 'required|string|max:50',
+            'beneficiary_parent2_relationship' => 'required|string|max:50',
             
             // SSN - Format: ###-##-####
             'sponsor_ssn' => [
@@ -229,14 +241,12 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'beneficiary_parent1_middle_name' => 'nullable|string|max:50',
             'beneficiary_parent1_last_name' => 'required|string|max:50',
             'beneficiary_parent1_dob' => 'required|date|before:beneficiary_dob',
-            'beneficiary_parent1_sex' => 'required|in:Male,Female',
             'beneficiary_parent1_country' => 'required|string|max:100',
             
             'beneficiary_parent2_first_name' => 'required|string|max:50',
             'beneficiary_parent2_middle_name' => 'nullable|string|max:50',
             'beneficiary_parent2_last_name' => 'required|string|max:50',
             'beneficiary_parent2_dob' => 'required|date|before:beneficiary_dob',
-            'beneficiary_parent2_sex' => 'required|in:Male,Female',
             'beneficiary_parent2_country' => 'required|string|max:100',
             
             // ============================================
@@ -368,13 +378,6 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'beneficiary_employer_country' => 'nullable|string|max:100',
             'beneficiary_employment_start_date' => 'nullable|date|before_or_equal:today',
             
-            // Parent Details
-            'beneficiary_parent1_city_birth' => 'required|string|max:100',
-            'beneficiary_parent1_city_residence' => 'required|string|max:100',
-            'beneficiary_parent1_country_residence' => 'required|string|max:100',
-            'beneficiary_parent2_city_birth' => 'required|string|max:100',
-            'beneficiary_parent2_city_residence' => 'required|string|max:100',
-            'beneficiary_parent2_country_residence' => 'required|string|max:100',
             
             // ========================================
             // RELATIONSHIP ADDITIONAL FIELDS
@@ -425,6 +428,12 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'sponsor_mailing_state.regex' => 'State must be 2 uppercase letters only',
             'sponsor_mailing_zip.required' => 'Sponsor mailing ZIP code is required',
             'sponsor_mailing_zip.regex' => 'ZIP must be 5 digits or 9 digits (12345 or 12345-6789)',
+
+            'sponsor_beneficiary_related_by_adoption.required' => 'Please indicate if related to beneficiary by adoption',
+            'sponsor_gained_status_through_adoption.required' => 'Please indicate if you gained status through adoption',
+            'sponsor_mailing_country.required' => 'Sponsor mailing country is required',
+            'beneficiary_parent1_relationship.required' => 'Parent 1 relationship is required',
+            'beneficiary_parent2_relationship.required' => 'Parent 2 relationship is required',
             
             // UPDATED: Apt validation messages
             'sponsor_mailing_apt.regex' => 'Apt/Suite/Floor must be in format: Apt:2B or Ste:123 or Flr:5A (max 6 characters, alphanumeric only)',
@@ -474,14 +483,12 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'beneficiary_parent1_last_name.required' => 'Parent 1 last name is required',
             'beneficiary_parent1_dob.required' => 'Parent 1 date of birth is required',
             'beneficiary_parent1_dob.before' => 'Parent 1 must be born before beneficiary',
-            'beneficiary_parent1_sex.required' => 'Parent 1 sex is required',
             'beneficiary_parent1_country.required' => 'Parent 1 country of birth is required',
             
             'beneficiary_parent2_first_name.required' => 'Parent 2 first name is required',
             'beneficiary_parent2_last_name.required' => 'Parent 2 last name is required',
             'beneficiary_parent2_dob.required' => 'Parent 2 date of birth is required',
             'beneficiary_parent2_dob.before' => 'Parent 2 must be born before beneficiary',
-            'beneficiary_parent2_sex.required' => 'Parent 2 sex is required',
             'beneficiary_parent2_country.required' => 'Parent 2 country of birth is required',
             
             // Relationship
@@ -518,12 +525,6 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'beneficiary_daytime_phone.required' => 'Daytime telephone number is required',
             'beneficiary_ever_in_us.required' => 'Please indicate if beneficiary was ever in the US',
             'beneficiary_immigration_proceedings.required' => 'Please indicate if beneficiary was in immigration proceedings',
-            'beneficiary_parent1_city_birth.required' => 'Parent 1 city of birth is required',
-            'beneficiary_parent1_city_residence.required' => 'Parent 1 city of residence is required',
-            'beneficiary_parent1_country_residence.required' => 'Parent 1 country of residence is required',
-            'beneficiary_parent2_city_birth.required' => 'Parent 2 city of birth is required',
-            'beneficiary_parent2_city_residence.required' => 'Parent 2 city of residence is required',
-            'beneficiary_parent2_country_residence.required' => 'Parent 2 country of residence is required',
             
             // Relationship
             'beneficiary_application_location.required' => 'Please specify where beneficiary will apply',

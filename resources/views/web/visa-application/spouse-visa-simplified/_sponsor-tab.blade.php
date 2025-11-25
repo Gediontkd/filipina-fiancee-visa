@@ -1,4 +1,5 @@
 {{-- FILE: resources/views/web/visa-application/spouse-visa-simplified/_sponsor-tab.blade.php --}}
+{{-- FIXED: Added adoption questions + Country field to addresses --}}
 
 <div class="sponsor-section">
     <h4 class="mb-4 border-bottom pb-2">
@@ -45,368 +46,432 @@
         </div>
     </div>
 
+    <!-- Adoption Questions (NEW) -->
+    <h5 class="mb-3 mt-4"><i class="fa fa-question-circle me-2"></i>Adoption Information</h5>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label>If the beneficiary is your brother/sister, are you related by adoption?</label>
+                <span class="text-danger">*</span>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        {{ Form::radio('sponsor_beneficiary_related_by_adoption', 'yes', 
+                            (optional($application)->sponsor_beneficiary_related_by_adoption ?? '') === 'yes', [
+                            'class' => 'form-check-input',
+                            'id' => 'sponsor_adoption_yes',
+                            'required' => true
+                        ]) }}
+                        <label class="form-check-label" for="sponsor_adoption_yes">Yes</label>
+                    </div>
+                    <div class="form-check">
+                        {{ Form::radio('sponsor_beneficiary_related_by_adoption', 'no', 
+                            (optional($application)->sponsor_beneficiary_related_by_adoption ?? 'no') === 'no', [
+                            'class' => 'form-check-input',
+                            'id' => 'sponsor_adoption_no'
+                        ]) }}
+                        <label class="form-check-label" for="sponsor_adoption_no">No</label>
+                    </div>
+                    <div class="form-check">
+                        {{ Form::radio('sponsor_beneficiary_related_by_adoption', 'n/a', 
+                            (optional($application)->sponsor_beneficiary_related_by_adoption ?? '') === 'n/a', [
+                            'class' => 'form-check-input',
+                            'id' => 'sponsor_adoption_na'
+                        ]) }}
+                        <label class="form-check-label" for="sponsor_adoption_na">N/A (Not siblings)</label>
+                    </div>
+                </div>
+                <small class="form-text text-muted">Select "N/A" if beneficiary is not your sibling</small>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label>Did you gain lawful permanent resident status or citizenship through adoption?</label>
+                <span class="text-danger">*</span>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        {{ Form::radio('sponsor_gained_status_through_adoption', 'yes', 
+                            (optional($application)->sponsor_gained_status_through_adoption ?? '') === 'yes', [
+                            'class' => 'form-check-input',
+                            'id' => 'sponsor_status_adoption_yes',
+                            'required' => true
+                        ]) }}
+                        <label class="form-check-label" for="sponsor_status_adoption_yes">Yes</label>
+                    </div>
+                    <div class="form-check">
+                        {{ Form::radio('sponsor_gained_status_through_adoption', 'no', 
+                            (optional($application)->sponsor_gained_status_through_adoption ?? 'no') === 'no', [
+                            'class' => 'form-check-input',
+                            'id' => 'sponsor_status_adoption_no'
+                        ]) }}
+                        <label class="form-check-label" for="sponsor_status_adoption_no">No</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Other Names Used (I-130 Part 2, Item 5) -->
-<h5 class="mb-3 mt-4"><i class="fa fa-user-tag me-2"></i>Other Names Used</h5>
-<div class="alert alert-info">
-    <i class="fa fa-info-circle me-2"></i>
-    <strong>Note:</strong> Provide all other names you have ever used, including aliases, maiden name, and nicknames. If none, you can skip this section.
-</div>
+    <h5 class="mb-3 mt-4"><i class="fa fa-user-tag me-2"></i>Other Names Used</h5>
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle me-2"></i>
+        <strong>Note:</strong> Provide all other names you have ever used, including aliases, maiden name, and nicknames. If none, you can skip this section.
+    </div>
 
-<div id="sponsor_other_names_container">
-    @php
-        $otherNames = optional($application)->sponsor_other_names ?? [];
-    @endphp
-    
-    @if(!empty($otherNames))
-        @foreach($otherNames as $index => $name)
-            <div class="card mb-3 other-name-item" data-index="{{ $index }}">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                    <strong>Other Name {{ $index + 1 }}</strong>
-                    <button type="button" class="btn btn-sm btn-danger remove-other-name" data-person="sponsor" data-index="{{ $index }}">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group mb-3">
-                                <label>Family Name (Last Name)</label>
-                                <input type="text" name="sponsor_other_names[{{ $index }}][last_name]" 
-                                    class="form-control" value="{{ $name['last_name'] ?? '' }}" maxlength="50">
+    <div id="sponsor_other_names_container">
+        @php
+            $otherNames = optional($application)->sponsor_other_names ?? [];
+        @endphp
+        
+        @if(!empty($otherNames))
+            @foreach($otherNames as $index => $name)
+                <div class="card mb-3 other-name-item" data-index="{{ $index }}">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <strong>Other Name {{ $index + 1 }}</strong>
+                        <button type="button" class="btn btn-sm btn-danger remove-other-name" data-person="sponsor" data-index="{{ $index }}">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label>Family Name (Last Name)</label>
+                                    <input type="text" name="sponsor_other_names[{{ $index }}][last_name]" 
+                                        class="form-control" value="{{ $name['last_name'] ?? '' }}" maxlength="50">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label>Given Name (First Name)</label>
+                                    <input type="text" name="sponsor_other_names[{{ $index }}][first_name]" 
+                                        class="form-control" value="{{ $name['first_name'] ?? '' }}" maxlength="50">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label>Middle Name</label>
+                                    <input type="text" name="sponsor_other_names[{{ $index }}][middle_name]" 
+                                        class="form-control" value="{{ $name['middle_name'] ?? '' }}" maxlength="50">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group mb-3">
-                                <label>Given Name (First Name)</label>
-                                <input type="text" name="sponsor_other_names[{{ $index }}][first_name]" 
-                                    class="form-control" value="{{ $name['first_name'] ?? '' }}" maxlength="50">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group mb-3">
-                                <label>Middle Name</label>
-                                <input type="text" name="sponsor_other_names[{{ $index }}][middle_name]" 
-                                    class="form-control" value="{{ $name['middle_name'] ?? '' }}" maxlength="50">
-                            </div>
-                        </div>
                     </div>
                 </div>
-            </div>
-        @endforeach
-    @endif
-    
-    <input type="hidden" name="sponsor_other_names_count" value="{{ count($otherNames) }}" id="sponsor_other_names_count">
-</div>
-
-<button type="button" class="btn btn-outline-secondary mb-4" id="addSponsorOtherName">
-    <i class="fa fa-plus me-2"></i>Add Other Name
-</button>
-
-<!-- Additional IDs -->
-<h5 class="mb-3 mt-4"><i class="fa fa-id-badge me-2"></i>Additional Identification Numbers</h5>
-<div class="row">
-    <div class="col-md-6">
-        <div class="form-group mb-3">
-            {{ Form::label('sponsor_a_number', 'Alien Registration Number (A-Number)') }}
-            <div class="input-group">
-                {{ Form::text('sponsor_a_number', optional($application)->sponsor_a_number ?? '', [
-                    'class' => 'form-control',
-                    'placeholder' => 'A12345678',
-                    'id' => 'sponsor_a_number',
-                    'maxlength' => 20
-                ]) }}
-            </div>
-            <div class="form-check mt-2">
-                {{ Form::checkbox('sponsor_a_number_na', 1, 
-                    (optional($application)->sponsor_a_number ?? '') === 'N/A', [
-                    'class' => 'form-check-input does-not-apply-checkbox',
-                    'data-target' => '#sponsor_a_number'
-                ]) }}
-                <label class="form-check-label">Does Not Apply</label>
-            </div>
-            <small class="form-text text-muted">If you have never been assigned an A-Number, check "Does Not Apply"</small>
-        </div>
+            @endforeach
+        @endif
+        
+        <input type="hidden" name="sponsor_other_names_count" value="{{ count($otherNames) }}" id="sponsor_other_names_count">
     </div>
-    <div class="col-md-6">
-        <div class="form-group mb-3">
-            {{ Form::label('sponsor_uscis_account', 'USCIS Online Account Number') }}
-            <div class="input-group">
-                {{ Form::text('sponsor_uscis_account', optional($application)->sponsor_uscis_account ?? '', [
-                    'class' => 'form-control',
-                    'placeholder' => 'USCIS Account Number',
-                    'id' => 'sponsor_uscis_account',
-                    'maxlength' => 20
-                ]) }}
-            </div>
-            <div class="form-check mt-2">
-                {{ Form::checkbox('sponsor_uscis_account_na', 1, 
-                    (optional($application)->sponsor_uscis_account ?? '') === 'N/A', [
-                    'class' => 'form-check-input does-not-apply-checkbox',
-                    'data-target' => '#sponsor_uscis_account'
-                ]) }}
-                <label class="form-check-label">Does Not Apply</label>
-            </div>
-            <small class="form-text text-muted">If you don't have a USCIS online account, check "Does Not Apply"</small>
-        </div>
-    </div>
-</div>
 
-<!-- Citizenship Details (I-130 Part 2, Items 36-41) -->
-<h5 class="mb-3 mt-4"><i class="fa fa-flag me-2"></i>Citizenship Details</h5>
-<div class="row">
-    <div class="col-md-12">
-        <div class="form-group mb-3">
-            <label>How did you acquire U.S. citizenship?</label>
-            <span class="text-danger">*</span>
-            <div class="d-flex flex-column gap-2">
-                <div class="form-check">
-                    {{ Form::radio('sponsor_citizenship_method', 'Birth in the United States', 
-                        (optional($application)->sponsor_citizenship_method ?? '') === 'Birth in the United States', [
-                        'class' => 'form-check-input',
-                        'id' => 'sponsor_citizenship_birth',
-                        'required' => true
-                    ]) }}
-                    <label class="form-check-label" for="sponsor_citizenship_birth">Birth in the United States</label>
-                </div>
-                <div class="form-check">
-                    {{ Form::radio('sponsor_citizenship_method', 'Naturalization', 
-                        (optional($application)->sponsor_citizenship_method ?? '') === 'Naturalization', [
-                        'class' => 'form-check-input',
-                        'id' => 'sponsor_citizenship_naturalization'
-                    ]) }}
-                    <label class="form-check-label" for="sponsor_citizenship_naturalization">Naturalization</label>
-                </div>
-                <div class="form-check">
-                    {{ Form::radio('sponsor_citizenship_method', 'Parents', 
-                        (optional($application)->sponsor_citizenship_method ?? '') === 'Parents', [
-                        'class' => 'form-check-input',
-                        'id' => 'sponsor_citizenship_parents'
-                    ]) }}
-                    <label class="form-check-label" for="sponsor_citizenship_parents">Through Parents</label>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    <button type="button" class="btn btn-outline-secondary mb-4" id="addSponsorOtherName">
+        <i class="fa fa-plus me-2"></i>Add Other Name
+    </button>
 
-<!-- Naturalization Certificate Details (shown if Naturalization or Parents selected) -->
-<div id="sponsor_naturalization_section" 
-    style="display: {{ in_array(optional($application)->sponsor_citizenship_method, ['Naturalization', 'Parents']) ? 'block' : 'none' }};">
-    <div class="card mb-3 bg-light">
-        <div class="card-body">
-            <h6 class="mb-3">Certificate of Naturalization or Citizenship Details</h6>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('sponsor_certificate_number', 'Certificate Number') }}
-                        {{ Form::text('sponsor_certificate_number', optional($application)->sponsor_certificate_number ?? '', [
-                            'class' => 'form-control',
-                            'placeholder' => 'Certificate number',
-                            'maxlength' => 50
-                        ]) }}
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('sponsor_certificate_place', 'Place of Issuance') }}
-                        {{ Form::text('sponsor_certificate_place', optional($application)->sponsor_certificate_place ?? '', [
-                            'class' => 'form-control',
-                            'placeholder' => 'City, State',
-                            'maxlength' => 100
-                        ]) }}
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group mb-3">
-                        {{ Form::label('sponsor_certificate_date', 'Date of Issuance') }}
-                        {{ Form::text('sponsor_certificate_date', optional($application)->sponsor_certificate_date ? optional($application)->sponsor_certificate_date->format('m/d/Y') : '', [
-                            'class' => 'form-control datePicker',
-                            'placeholder' => 'MM/DD/YYYY'
-                        ]) }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Biographic Information (I-130 Part 3) -->
-<h5 class="mb-3 mt-4"><i class="fa fa-user-circle me-2"></i>Biographic Information</h5>
-<div class="alert alert-info">
-    <i class="fa fa-info-circle me-2"></i>
-    <strong>Required by USCIS:</strong> The following biographic information is mandatory for all petitioners.
-</div>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="form-group mb-3">
-            <label>Ethnicity</label>
-            <span class="text-danger">*</span>
-            <div class="d-flex gap-3">
-                <div class="form-check">
-                    {{ Form::radio('sponsor_ethnicity', 'Hispanic or Latino', 
-                        (optional($application)->sponsor_ethnicity ?? '') === 'Hispanic or Latino', [
-                        'class' => 'form-check-input',
-                        'id' => 'sponsor_ethnicity_hispanic',
-                        'required' => true
-                    ]) }}
-                    <label class="form-check-label" for="sponsor_ethnicity_hispanic">Hispanic or Latino</label>
-                </div>
-                <div class="form-check">
-                    {{ Form::radio('sponsor_ethnicity', 'Not Hispanic or Latino', 
-                        (optional($application)->sponsor_ethnicity ?? '') === 'Not Hispanic or Latino', [
-                        'class' => 'form-check-input',
-                        'id' => 'sponsor_ethnicity_not'
-                    ]) }}
-                    <label class="form-check-label" for="sponsor_ethnicity_not">Not Hispanic or Latino</label>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="form-group mb-3">
-            <label>Race <small class="text-muted">(Select all that apply)</small></label>
-            <span class="text-danger">*</span>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-check">
-                        {{ Form::checkbox('sponsor_race[]', 'White', 
-                            in_array('White', optional($application)->sponsor_race ?? []), [
-                            'class' => 'form-check-input',
-                            'id' => 'sponsor_race_white'
-                        ]) }}
-                        <label class="form-check-label" for="sponsor_race_white">White</label>
-                    </div>
-                    <div class="form-check">
-                        {{ Form::checkbox('sponsor_race[]', 'Asian', 
-                            in_array('Asian', optional($application)->sponsor_race ?? []), [
-                            'class' => 'form-check-input',
-                            'id' => 'sponsor_race_asian'
-                        ]) }}
-                        <label class="form-check-label" for="sponsor_race_asian">Asian</label>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-check">
-                        {{ Form::checkbox('sponsor_race[]', 'Black or African American', 
-                            in_array('Black or African American', optional($application)->sponsor_race ?? []), [
-                            'class' => 'form-check-input',
-                            'id' => 'sponsor_race_black'
-                        ]) }}
-                        <label class="form-check-label" for="sponsor_race_black">Black or African American</label>
-                    </div>
-                    <div class="form-check">
-                        {{ Form::checkbox('sponsor_race[]', 'American Indian or Alaska Native', 
-                            in_array('American Indian or Alaska Native', optional($application)->sponsor_race ?? []), [
-                            'class' => 'form-check-input',
-                            'id' => 'sponsor_race_native'
-                        ]) }}
-                        <label class="form-check-label" for="sponsor_race_native">American Indian or Alaska Native</label>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-check">
-                        {{ Form::checkbox('sponsor_race[]', 'Native Hawaiian or Other Pacific Islander', 
-                            in_array('Native Hawaiian or Other Pacific Islander', optional($application)->sponsor_race ?? []), [
-                            'class' => 'form-check-input',
-                            'id' => 'sponsor_race_pacific'
-                        ]) }}
-                        <label class="form-check-label" for="sponsor_race_pacific">Native Hawaiian or Other Pacific Islander</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-3">
-        <div class="form-group mb-3">
-            <label>Height</label>
-            <span class="text-danger">*</span>
-            <div class="row">
-                <div class="col-6">
-                    {{ Form::number('sponsor_height_feet', optional($application)->sponsor_height_feet ?? '', [
+    <!-- Additional IDs -->
+    <h5 class="mb-3 mt-4"><i class="fa fa-id-badge me-2"></i>Additional Identification Numbers</h5>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                {{ Form::label('sponsor_a_number', 'Alien Registration Number (A-Number)') }}
+                <div class="input-group">
+                    {{ Form::text('sponsor_a_number', optional($application)->sponsor_a_number ?? '', [
                         'class' => 'form-control',
-                        'placeholder' => 'Feet',
-                        'required' => true,
-                        'min' => 0,
-                        'max' => 8
+                        'placeholder' => 'A12345678',
+                        'id' => 'sponsor_a_number',
+                        'maxlength' => 20
                     ]) }}
-                    <small class="form-text text-muted">Feet</small>
                 </div>
-                <div class="col-6">
-                    {{ Form::number('sponsor_height_inches', optional($application)->sponsor_height_inches ?? '', [
-                        'class' => 'form-control',
-                        'placeholder' => 'Inches',
-                        'required' => true,
-                        'min' => 0,
-                        'max' => 11
+                <div class="form-check mt-2">
+                    {{ Form::checkbox('sponsor_a_number_na', 1, 
+                        (optional($application)->sponsor_a_number ?? '') === 'N/A', [
+                        'class' => 'form-check-input does-not-apply-checkbox',
+                        'data-target' => '#sponsor_a_number'
                     ]) }}
-                    <small class="form-text text-muted">Inches</small>
+                    <label class="form-check-label">Does Not Apply</label>
+                </div>
+                <small class="form-text text-muted">If you have never been assigned an A-Number, check "Does Not Apply"</small>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                {{ Form::label('sponsor_uscis_account', 'USCIS Online Account Number') }}
+                <div class="input-group">
+                    {{ Form::text('sponsor_uscis_account', optional($application)->sponsor_uscis_account ?? '', [
+                        'class' => 'form-control',
+                        'placeholder' => 'USCIS Account Number',
+                        'id' => 'sponsor_uscis_account',
+                        'maxlength' => 20
+                    ]) }}
+                </div>
+                <div class="form-check mt-2">
+                    {{ Form::checkbox('sponsor_uscis_account_na', 1, 
+                        (optional($application)->sponsor_uscis_account ?? '') === 'N/A', [
+                        'class' => 'form-check-input does-not-apply-checkbox',
+                        'data-target' => '#sponsor_uscis_account'
+                    ]) }}
+                    <label class="form-check-label">Does Not Apply</label>
+                </div>
+                <small class="form-text text-muted">If you don't have a USCIS online account, check "Does Not Apply"</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Citizenship Details (I-130 Part 2, Items 36-41) -->
+    <h5 class="mb-3 mt-4"><i class="fa fa-flag me-2"></i>Citizenship Details</h5>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group mb-3">
+                <label>How did you acquire U.S. citizenship?</label>
+                <span class="text-danger">*</span>
+                <div class="d-flex flex-column gap-2">
+                    <div class="form-check">
+                        {{ Form::radio('sponsor_citizenship_method', 'Birth in the United States', 
+                            (optional($application)->sponsor_citizenship_method ?? '') === 'Birth in the United States', [
+                            'class' => 'form-check-input',
+                            'id' => 'sponsor_citizenship_birth',
+                            'required' => true
+                        ]) }}
+                        <label class="form-check-label" for="sponsor_citizenship_birth">Birth in the United States</label>
+                    </div>
+                    <div class="form-check">
+                        {{ Form::radio('sponsor_citizenship_method', 'Naturalization', 
+                            (optional($application)->sponsor_citizenship_method ?? '') === 'Naturalization', [
+                            'class' => 'form-check-input',
+                            'id' => 'sponsor_citizenship_naturalization'
+                        ]) }}
+                        <label class="form-check-label" for="sponsor_citizenship_naturalization">Naturalization</label>
+                    </div>
+                    <div class="form-check">
+                        {{ Form::radio('sponsor_citizenship_method', 'Parents', 
+                            (optional($application)->sponsor_citizenship_method ?? '') === 'Parents', [
+                            'class' => 'form-check-input',
+                            'id' => 'sponsor_citizenship_parents'
+                        ]) }}
+                        <label class="form-check-label" for="sponsor_citizenship_parents">Through Parents</label>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="form-group mb-3">
-            {{ Form::label('sponsor_weight', 'Weight (Pounds)') }}
-            <span class="text-danger">*</span>
-            {{ Form::number('sponsor_weight', optional($application)->sponsor_weight ?? '', [
-                'class' => 'form-control',
-                'placeholder' => 'Weight in lbs',
-                'required' => true,
-                'min' => 0,
-                'max' => 999
-            ]) }}
+
+    <!-- Naturalization Certificate Details (shown if Naturalization or Parents selected) -->
+    <div id="sponsor_naturalization_section" 
+        style="display: {{ in_array(optional($application)->sponsor_citizenship_method, ['Naturalization', 'Parents']) ? 'block' : 'none' }};">
+        <div class="card mb-3 bg-light">
+            <div class="card-body">
+                <h6 class="mb-3">Certificate of Naturalization or Citizenship Details</h6>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            {{ Form::label('sponsor_certificate_number', 'Certificate Number') }}
+                            {{ Form::text('sponsor_certificate_number', optional($application)->sponsor_certificate_number ?? '', [
+                                'class' => 'form-control',
+                                'placeholder' => 'Certificate number',
+                                'maxlength' => 50
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            {{ Form::label('sponsor_certificate_place', 'Place of Issuance') }}
+                            {{ Form::text('sponsor_certificate_place', optional($application)->sponsor_certificate_place ?? '', [
+                                'class' => 'form-control',
+                                'placeholder' => 'City, State',
+                                'maxlength' => 100
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            {{ Form::label('sponsor_certificate_date', 'Date of Issuance') }}
+                            {{ Form::text('sponsor_certificate_date', optional($application)->sponsor_certificate_date ? optional($application)->sponsor_certificate_date->format('m/d/Y') : '', [
+                                'class' => 'form-control datePicker',
+                                'placeholder' => 'MM/DD/YYYY'
+                            ]) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="form-group mb-3">
-            {{ Form::label('sponsor_eye_color', 'Eye Color') }}
-            <span class="text-danger">*</span>
-            {{ Form::select('sponsor_eye_color', [
-                '' => '-Select-',
-                'Black' => 'Black',
-                'Blue' => 'Blue',
-                'Brown' => 'Brown',
-                'Gray' => 'Gray',
-                'Green' => 'Green',
-                'Hazel' => 'Hazel',
-                'Maroon' => 'Maroon',
-                'Pink' => 'Pink',
-                'Unknown/Other' => 'Unknown/Other'
-            ], optional($application)->sponsor_eye_color ?? '', [
-                'class' => 'form-control',
-                'required' => true
-            ]) }}
+
+    <!-- Biographic Information (I-130 Part 3) -->
+    <h5 class="mb-3 mt-4"><i class="fa fa-user-circle me-2"></i>Biographic Information</h5>
+    <div class="alert alert-info">
+        <i class="fa fa-info-circle me-2"></i>
+        <strong>Required by USCIS:</strong> The following biographic information is mandatory for all petitioners.
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label>Ethnicity</label>
+                <span class="text-danger">*</span>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        {{ Form::radio('sponsor_ethnicity', 'Hispanic or Latino', 
+                            (optional($application)->sponsor_ethnicity ?? '') === 'Hispanic or Latino', [
+                            'class' => 'form-check-input',
+                            'id' => 'sponsor_ethnicity_hispanic',
+                            'required' => true
+                        ]) }}
+                        <label class="form-check-label" for="sponsor_ethnicity_hispanic">Hispanic or Latino</label>
+                    </div>
+                    <div class="form-check">
+                        {{ Form::radio('sponsor_ethnicity', 'Not Hispanic or Latino', 
+                            (optional($application)->sponsor_ethnicity ?? '') === 'Not Hispanic or Latino', [
+                            'class' => 'form-check-input',
+                            'id' => 'sponsor_ethnicity_not'
+                        ]) }}
+                        <label class="form-check-label" for="sponsor_ethnicity_not">Not Hispanic or Latino</label>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="form-group mb-3">
-            {{ Form::label('sponsor_hair_color', 'Hair Color') }}
-            <span class="text-danger">*</span>
-            {{ Form::select('sponsor_hair_color', [
-                '' => '-Select-',
-                'Bald (No hair)' => 'Bald (No hair)',
-                'Black' => 'Black',
-                'Blond' => 'Blond',
-                'Brown' => 'Brown',
-                'Gray' => 'Gray',
-                'Red' => 'Red',
-                'Sandy' => 'Sandy',
-                'White' => 'White',
-                'Unknown/Other' => 'Unknown/Other'
-            ], optional($application)->sponsor_hair_color ?? '', [
-                'class' => 'form-control',
-                'required' => true
-            ]) }}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group mb-3">
+                <label>Race <small class="text-muted">(Select all that apply)</small></label>
+                <span class="text-danger">*</span>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-check">
+                            {{ Form::checkbox('sponsor_race[]', 'White', 
+                                in_array('White', optional($application)->sponsor_race ?? []), [
+                                'class' => 'form-check-input',
+                                'id' => 'sponsor_race_white'
+                            ]) }}
+                            <label class="form-check-label" for="sponsor_race_white">White</label>
+                        </div>
+                        <div class="form-check">
+                            {{ Form::checkbox('sponsor_race[]', 'Asian', 
+                                in_array('Asian', optional($application)->sponsor_race ?? []), [
+                                'class' => 'form-check-input',
+                                'id' => 'sponsor_race_asian'
+                            ]) }}
+                            <label class="form-check-label" for="sponsor_race_asian">Asian</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check">
+                            {{ Form::checkbox('sponsor_race[]', 'Black or African American', 
+                                in_array('Black or African American', optional($application)->sponsor_race ?? []), [
+                                'class' => 'form-check-input',
+                                'id' => 'sponsor_race_black'
+                            ]) }}
+                            <label class="form-check-label" for="sponsor_race_black">Black or African American</label>
+                        </div>
+                        <div class="form-check">
+                            {{ Form::checkbox('sponsor_race[]', 'American Indian or Alaska Native', 
+                                in_array('American Indian or Alaska Native', optional($application)->sponsor_race ?? []), [
+                                'class' => 'form-check-input',
+                                'id' => 'sponsor_race_native'
+                            ]) }}
+                            <label class="form-check-label" for="sponsor_race_native">American Indian or Alaska Native</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check">
+                            {{ Form::checkbox('sponsor_race[]', 'Native Hawaiian or Other Pacific Islander', 
+                                in_array('Native Hawaiian or Other Pacific Islander', optional($application)->sponsor_race ?? []), [
+                                'class' => 'form-check-input',
+                                'id' => 'sponsor_race_pacific'
+                            ]) }}
+                            <label class="form-check-label" for="sponsor_race_pacific">Native Hawaiian or Other Pacific Islander</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group mb-3">
+                <label>Height</label>
+                <span class="text-danger">*</span>
+                <div class="row">
+                    <div class="col-6">
+                        {{ Form::number('sponsor_height_feet', optional($application)->sponsor_height_feet ?? '', [
+                            'class' => 'form-control',
+                            'placeholder' => 'Feet',
+                            'required' => true,
+                            'min' => 0,
+                            'max' => 8
+                        ]) }}
+                        <small class="form-text text-muted">Feet</small>
+                    </div>
+                    <div class="col-6">
+                        {{ Form::number('sponsor_height_inches', optional($application)->sponsor_height_inches ?? '', [
+                            'class' => 'form-control',
+                            'placeholder' => 'Inches',
+                            'required' => true,
+                            'min' => 0,
+                            'max' => 11
+                        ]) }}
+                        <small class="form-text text-muted">Inches</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group mb-3">
+                {{ Form::label('sponsor_weight', 'Weight (Pounds)') }}
+                <span class="text-danger">*</span>
+                {{ Form::number('sponsor_weight', optional($application)->sponsor_weight ?? '', [
+                    'class' => 'form-control',
+                    'placeholder' => 'Weight in lbs',
+                    'required' => true,
+                    'min' => 0,
+                    'max' => 999
+                ]) }}
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group mb-3">
+                {{ Form::label('sponsor_eye_color', 'Eye Color') }}
+                <span class="text-danger">*</span>
+                {{ Form::select('sponsor_eye_color', [
+                    '' => '-Select-',
+                    'Black' => 'Black',
+                    'Blue' => 'Blue',
+                    'Brown' => 'Brown',
+                    'Gray' => 'Gray',
+                    'Green' => 'Green',
+                    'Hazel' => 'Hazel',
+                    'Maroon' => 'Maroon',
+                    'Pink' => 'Pink',
+                    'Unknown/Other' => 'Unknown/Other'
+                ], optional($application)->sponsor_eye_color ?? '', [
+                    'class' => 'form-control',
+                    'required' => true
+                ]) }}
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group mb-3">
+                {{ Form::label('sponsor_hair_color', 'Hair Color') }}
+                <span class="text-danger">*</span>
+                {{ Form::select('sponsor_hair_color', [
+                    '' => '-Select-',
+                    'Bald (No hair)' => 'Bald (No hair)',
+                    'Black' => 'Black',
+                    'Blond' => 'Blond',
+                    'Brown' => 'Brown',
+                    'Gray' => 'Gray',
+                    'Red' => 'Red',
+                    'Sandy' => 'Sandy',
+                    'White' => 'White',
+                    'Unknown/Other' => 'Unknown/Other'
+                ], optional($application)->sponsor_hair_color ?? '', [
+                    'class' => 'form-control',
+                    'required' => true
+                ]) }}
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-4">
@@ -509,7 +574,7 @@
         </div>
     </div>
 
-    <!-- Mailing Address -->
+    <!-- Mailing Address (FIXED: Added Country field) -->
     <h5 class="mb-3 mt-4"><i class="fa fa-envelope me-2"></i>Mailing Address</h5>
     <div class="row">
         <div class="col-md-8">
@@ -534,7 +599,7 @@
     </div>
 
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="form-group mb-3">
                 {{ Form::label('sponsor_mailing_city', 'City') }}
                 <span class="text-danger">*</span>
@@ -546,7 +611,7 @@
                 ]) }}
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="form-group mb-3">
                 {{ Form::label('sponsor_mailing_state', 'State') }}
                 <span class="text-danger">*</span>
@@ -560,7 +625,7 @@
                 ]) }}
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="form-group mb-3">
                 {{ Form::label('sponsor_mailing_zip', 'ZIP Code') }}
                 <span class="text-danger">*</span>
@@ -570,6 +635,17 @@
                     'required' => true,
                     'pattern' => '\d{5}(-\d{4})?',
                     'maxlength' => 10
+                ]) }}
+            </div>
+        </div>
+        {{-- FIXED: Added Country field --}}
+        <div class="col-md-3">
+            <div class="form-group mb-3">
+                {{ Form::label('sponsor_mailing_country', 'Country') }}
+                <span class="text-danger">*</span>
+                {{ Form::select('sponsor_mailing_country', getAllCountry(), optional($application)->sponsor_mailing_country ?? 'US', [
+                    'class' => 'form-control',
+                    'required' => true
                 ]) }}
             </div>
         </div>
@@ -590,22 +666,18 @@
             </div>
         </div>
         <div class="col-md-6">
-    <div class="form-group mb-3">
-        {{ Form::label('sponsor_mailing_date_to', 'Date To') }}
-        <span class="text-danger">*</span>
-        
-        {{-- Display field showing PRESENT --}}
-        <div class="form-control" style="background-color: #e9ecef; cursor: default;">
-            PRESENT
+            <div class="form-group mb-3">
+                {{ Form::label('sponsor_mailing_date_to', 'Date To') }}
+                <span class="text-danger">*</span>
+                
+                <div class="form-control" style="background-color: #e9ecef; cursor: default;">
+                    PRESENT
+                </div>
+                
+                {{ Form::hidden('sponsor_mailing_date_to', '') }}
+                {{ Form::hidden('sponsor_mailing_present', 1) }}
+            </div>
         </div>
-        
-        {{-- Hidden date field (empty, not used) --}}
-        {{ Form::hidden('sponsor_mailing_date_to', '') }}
-        
-        {{-- Hidden checkbox that's always checked - this tells backend to save "Present" --}}
-        {{ Form::hidden('sponsor_mailing_present', 1) }}
-    </div>
-</div>
     </div>
 
     <!-- Same Address Question -->
@@ -636,7 +708,7 @@
         </div>
     </div>
 
-    <!-- Physical Address (shown if different) -->
+    <!-- Physical Address (FIXED: Added Country field) -->
     <div id="sponsor_physical_address_section" 
         style="display: {{ optional($application)->sponsor_same_address === false ? 'block' : 'none' }};">
         <h5 class="mb-3"><i class="fa fa-home me-2"></i>Physical Address</h5>
@@ -661,7 +733,7 @@
         </div>
         
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     {{ Form::label('sponsor_city', 'City') }}
                     {{ Form::text('sponsor_city', optional($application)->sponsor_city ?? '', [
@@ -671,7 +743,7 @@
                     ]) }}
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     {{ Form::label('sponsor_state', 'State') }}
                     {{ Form::text('sponsor_state', optional($application)->sponsor_state ?? '', [
@@ -683,7 +755,7 @@
                     ]) }}
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     {{ Form::label('sponsor_zip', 'ZIP Code') }}
                     {{ Form::text('sponsor_zip', optional($application)->sponsor_zip ?? '', [
@@ -691,6 +763,15 @@
                         'placeholder' => '12345 or 12345-6789',
                         'pattern' => '\d{5}(-\d{4})?',
                         'maxlength' => 10
+                    ]) }}
+                </div>
+            </div>
+            {{-- FIXED: Added Country field --}}
+            <div class="col-md-3">
+                <div class="form-group mb-3">
+                    {{ Form::label('sponsor_country', 'Country') }}
+                    {{ Form::select('sponsor_country', getAllCountry(), optional($application)->sponsor_country ?? 'US', [
+                        'class' => 'form-control'
                     ]) }}
                 </div>
             </div>
@@ -929,211 +1010,211 @@
     <h5 class="mb-3 mt-4"><i class="fa fa-users me-2"></i>Parents Information</h5>
     <p class="text-muted">Provide information about your biological or adoptive parents</p>
     
-<!-- Parent 1 -->
-<div class="card mb-3">
-    <div class="card-header bg-light">
-        <strong>Parent 1</strong>
+    <!-- Parent 1 -->
+    <div class="card mb-3">
+        <div class="card-header bg-light">
+            <strong>Parent 1</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent1_first_name', 'First Name') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('sponsor_parent1_first_name', optional($application)->sponsor_parent1_first_name ?? '', [
+                            'class' => 'form-control',
+                            'required' => true,
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent1_middle_name', 'Middle Name') }}
+                        {{ Form::text('sponsor_parent1_middle_name', optional($application)->sponsor_parent1_middle_name ?? '', [
+                            'class' => 'form-control',
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent1_last_name', 'Last Name') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('sponsor_parent1_last_name', optional($application)->sponsor_parent1_last_name ?? '', [
+                            'class' => 'form-control',
+                            'required' => true,
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent1_dob', 'Date of Birth') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('sponsor_parent1_dob', optional($application)->sponsor_parent1_dob ? optional($application)->sponsor_parent1_dob->format('m/d/Y') : '', [
+                            'class' => 'form-control datePicker',
+                            'placeholder' => 'MM/DD/YYYY',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent1_sex', 'Sex') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::select('sponsor_parent1_sex', [
+                            '' => '-Select-',
+                            'Male' => 'Male',
+                            'Female' => 'Female'
+                        ], optional($application)->sponsor_parent1_sex ?? '', [
+                            'class' => 'form-control',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent1_country', 'Country of Birth') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::select('sponsor_parent1_country', getAllCountry(), optional($application)->sponsor_parent1_country ?? '', [
+                            'class' => 'form-control',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent1_city_residence', 'City/Town of Residence') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('sponsor_parent1_city_residence', optional($application)->sponsor_parent1_city_residence ?? '', [
+                            'class' => 'form-control',
+                            'placeholder' => 'Current city of residence',
+                            'required' => true,
+                            'maxlength' => 100
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent1_country_residence', 'Country of Residence') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::select('sponsor_parent1_country_residence', getAllCountry(), optional($application)->sponsor_parent1_country_residence ?? '', [
+                            'class' => 'form-control',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent1_first_name', 'First Name') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('sponsor_parent1_first_name', optional($application)->sponsor_parent1_first_name ?? '', [
-                        'class' => 'form-control',
-                        'required' => true,
-                        'maxlength' => 50
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent1_middle_name', 'Middle Name') }}
-                    {{ Form::text('sponsor_parent1_middle_name', optional($application)->sponsor_parent1_middle_name ?? '', [
-                        'class' => 'form-control',
-                        'maxlength' => 50
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent1_last_name', 'Last Name') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('sponsor_parent1_last_name', optional($application)->sponsor_parent1_last_name ?? '', [
-                        'class' => 'form-control',
-                        'required' => true,
-                        'maxlength' => 50
-                    ]) }}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent1_dob', 'Date of Birth') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('sponsor_parent1_dob', optional($application)->sponsor_parent1_dob ? optional($application)->sponsor_parent1_dob->format('m/d/Y') : '', [
-                        'class' => 'form-control datePicker',
-                        'placeholder' => 'MM/DD/YYYY',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent1_sex', 'Sex') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('sponsor_parent1_sex', [
-                        '' => '-Select-',
-                        'Male' => 'Male',
-                        'Female' => 'Female'
-                    ], optional($application)->sponsor_parent1_sex ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent1_country', 'Country of Birth') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('sponsor_parent1_country', getAllCountry(), optional($application)->sponsor_parent1_country ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent1_city_residence', 'City/Town of Residence') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('sponsor_parent1_city_residence', optional($application)->sponsor_parent1_city_residence ?? '', [
-                        'class' => 'form-control',
-                        'placeholder' => 'Current city of residence',
-                        'required' => true,
-                        'maxlength' => 100
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent1_country_residence', 'Country of Residence') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('sponsor_parent1_country_residence', getAllCountry(), optional($application)->sponsor_parent1_country_residence ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Parent 2 -->
-<div class="card mb-3">
-    <div class="card-header bg-light">
-        <strong>Parent 2</strong>
+    <!-- Parent 2 -->
+    <div class="card mb-3">
+        <div class="card-header bg-light">
+            <strong>Parent 2</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent2_first_name', 'First Name') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('sponsor_parent2_first_name', optional($application)->sponsor_parent2_first_name ?? '', [
+                            'class' => 'form-control',
+                            'required' => true,
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent2_middle_name', 'Middle Name') }}
+                        {{ Form::text('sponsor_parent2_middle_name', optional($application)->sponsor_parent2_middle_name ?? '', [
+                            'class' => 'form-control',
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent2_last_name', 'Last Name') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('sponsor_parent2_last_name', optional($application)->sponsor_parent2_last_name ?? '', [
+                            'class' => 'form-control',
+                            'required' => true,
+                            'maxlength' => 50
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent2_dob', 'Date of Birth') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('sponsor_parent2_dob', optional($application)->sponsor_parent2_dob ? optional($application)->sponsor_parent2_dob->format('m/d/Y') : '', [
+                            'class' => 'form-control datePicker',
+                            'placeholder' => 'MM/DD/YYYY',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent2_sex', 'Sex') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::select('sponsor_parent2_sex', [
+                            '' => '-Select-',
+                            'Male' => 'Male',
+                            'Female' => 'Female'
+                        ], optional($application)->sponsor_parent2_sex ?? '', [
+                            'class' => 'form-control',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent2_country', 'Country of Birth') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::select('sponsor_parent2_country', getAllCountry(), optional($application)->sponsor_parent2_country ?? '', [
+                            'class' => 'form-control',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent2_city_residence', 'City/Town of Residence') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::text('sponsor_parent2_city_residence', optional($application)->sponsor_parent2_city_residence ?? '', [
+                            'class' => 'form-control',
+                            'placeholder' => 'Current city of residence',
+                            'required' => true,
+                            'maxlength' => 100
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        {{ Form::label('sponsor_parent2_country_residence', 'Country of Residence') }}
+                        <span class="text-danger">*</span>
+                        {{ Form::select('sponsor_parent2_country_residence', getAllCountry(), optional($application)->sponsor_parent2_country_residence ?? '', [
+                            'class' => 'form-control',
+                            'required' => true
+                        ]) }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent2_first_name', 'First Name') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('sponsor_parent2_first_name', optional($application)->sponsor_parent2_first_name ?? '', [
-                        'class' => 'form-control',
-                        'required' => true,
-                        'maxlength' => 50
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent2_middle_name', 'Middle Name') }}
-                    {{ Form::text('sponsor_parent2_middle_name', optional($application)->sponsor_parent2_middle_name ?? '', [
-                        'class' => 'form-control',
-                        'maxlength' => 50
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent2_last_name', 'Last Name') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('sponsor_parent2_last_name', optional($application)->sponsor_parent2_last_name ?? '', [
-                        'class' => 'form-control',
-                        'required' => true,
-                        'maxlength' => 50
-                    ]) }}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent2_dob', 'Date of Birth') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('sponsor_parent2_dob', optional($application)->sponsor_parent2_dob ? optional($application)->sponsor_parent2_dob->format('m/d/Y') : '', [
-                        'class' => 'form-control datePicker',
-                        'placeholder' => 'MM/DD/YYYY',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent2_sex', 'Sex') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('sponsor_parent2_sex', [
-                        '' => '-Select-',
-                        'Male' => 'Male',
-                        'Female' => 'Female'
-                    ], optional($application)->sponsor_parent2_sex ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent2_country', 'Country of Birth') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('sponsor_parent2_country', getAllCountry(), optional($application)->sponsor_parent2_country ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent2_city_residence', 'City/Town of Residence') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('sponsor_parent2_city_residence', optional($application)->sponsor_parent2_city_residence ?? '', [
-                        'class' => 'form-control',
-                        'placeholder' => 'Current city of residence',
-                        'required' => true,
-                        'maxlength' => 100
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    {{ Form::label('sponsor_parent2_country_residence', 'Country of Residence') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('sponsor_parent2_country_residence', getAllCountry(), optional($application)->sponsor_parent2_country_residence ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
     <!-- Employment Information - LOCKED until USCIS approval -->
     <h5 class="mb-3 mt-4"><i class="fa fa-briefcase me-2"></i>Employment Information</h5>
@@ -1245,6 +1326,7 @@ $(document).ready(function() {
     });
 });
 </script>
+
 <script>
 $(document).ready(function() {
     // Format SSN
@@ -1292,19 +1374,15 @@ $(document).ready(function() {
         this.value = this.value.toUpperCase().replace(/[^A-Z]/g, '');
     });
 
-    // ============================================
-    // FIX 1: Handle "Does Not Apply" Checkboxes
-    // ============================================
+    // Handle "Does Not Apply" Checkboxes
     $(document).on('change', '.does-not-apply-checkbox', function() {
         const targetId = $(this).data('target');
         const targetField = $(targetId);
         
         if ($(this).is(':checked')) {
-            // Store original value and set to N/A
             targetField.data('original-value', targetField.val());
             targetField.val('N/A').prop('readonly', true).addClass('bg-light');
         } else {
-            // Restore original value
             const originalValue = targetField.data('original-value') || '';
             targetField.val(originalValue).prop('readonly', false).removeClass('bg-light');
         }
@@ -1317,19 +1395,15 @@ $(document).ready(function() {
         targetField.val('N/A').prop('readonly', true).addClass('bg-light');
     });
 
-    // ============================================
-    // FIX 2: Handle "Present" Checkboxes for History
-    // ============================================
+    // Handle "Present" Checkboxes for History
     $(document).on('change', '.present-checkbox', function() {
         const targetId = $(this).data('target');
         const targetField = $(targetId);
         const hiddenFieldName = targetField.attr('name').replace('[date_to]', '[is_present]');
         
         if ($(this).is(':checked')) {
-            // Set value to "Present" and make readonly
             targetField.val('Present').prop('readonly', true).addClass('bg-light');
             
-            // Create or update hidden field to indicate Present
             let hiddenField = $('input[name="' + hiddenFieldName + '"]');
             if (hiddenField.length === 0) {
                 targetField.after('<input type="hidden" name="' + hiddenFieldName + '" value="1" class="present-hidden-field">');
@@ -1337,10 +1411,7 @@ $(document).ready(function() {
                 hiddenField.val('1');
             }
         } else {
-            // Clear value and make editable
             targetField.val('').prop('readonly', false).removeClass('bg-light');
-            
-            // Remove hidden field
             $('input[name="' + hiddenFieldName + '"]').remove();
         }
     });
@@ -1353,7 +1424,6 @@ $(document).ready(function() {
         
         targetField.val('Present').prop('readonly', true).addClass('bg-light');
         
-        // Add hidden field
         if ($('input[name="' + hiddenFieldName + '"]').length === 0) {
             targetField.after('<input type="hidden" name="' + hiddenFieldName + '" value="1" class="present-hidden-field">');
         }
