@@ -1066,16 +1066,16 @@
 
     <!-- Parents Information -->
     <h5 class="mb-3 mt-4"><i class="fa fa-users me-2"></i>Beneficiary's Parents Information</h5>
-    <p class="text-muted">Provide information about the beneficiary's biological or adoptive parents</p>
-    
-    <!-- Parent 1 -->
+<p class="text-muted">Provide information about the beneficiary's biological or adoptive parents</p>
+
+<!-- Parent 1 -->
 <div class="card mb-3">
     <div class="card-header bg-light">
         <strong>Parent 1</strong>
     </div>
     <div class="card-body">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     {{ Form::label('beneficiary_parent1_first_name', 'First Name') }}
                     <span class="text-danger">*</span>
@@ -1086,7 +1086,7 @@
                     ]) }}
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     {{ Form::label('beneficiary_parent1_middle_name', 'Middle Name') }}
                     {{ Form::text('beneficiary_parent1_middle_name', optional($application)->beneficiary_parent1_middle_name ?? '', [
@@ -1095,7 +1095,7 @@
                     ]) }}
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     {{ Form::label('beneficiary_parent1_last_name', 'Last Name') }}
                     <span class="text-danger">*</span>
@@ -1106,9 +1106,22 @@
                     ]) }}
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent1_relationship', 'Relationship') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent1_relationship', optional($application)->beneficiary_parent1_relationship ?? '', [
+                        'class' => 'form-control',
+                        'placeholder' => 'e.g., Mother, Father',
+                        'required' => true,
+                        'maxlength' => 50
+                    ]) }}
+                    <small class="form-text text-muted">e.g., Mother, Father, Adoptive Mother, etc.</small>
+                </div>
+            </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group mb-3">
                     {{ Form::label('beneficiary_parent1_dob', 'Date of Birth') }}
                     <span class="text-danger">*</span>
@@ -1119,61 +1132,11 @@
                     ]) }}
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent1_sex', 'Sex') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('beneficiary_parent1_sex', [
-                        '' => '-Select-',
-                        'Male' => 'Male',
-                        'Female' => 'Female'
-                    ], optional($application)->beneficiary_parent1_sex ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent1_city_birth', 'City/Town of Birth') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent1_city_birth', optional($application)->beneficiary_parent1_city_birth ?? '', [
-                        'class' => 'form-control',
-                        'placeholder' => 'Birth city',
-                        'required' => true,
-                        'maxlength' => 100
-                    ]) }}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group mb-3">
                     {{ Form::label('beneficiary_parent1_country', 'Country of Birth') }}
                     <span class="text-danger">*</span>
                     {{ Form::select('beneficiary_parent1_country', getAllCountry(), optional($application)->beneficiary_parent1_country ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent1_city_residence', 'City/Town of Residence') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent1_city_residence', optional($application)->beneficiary_parent1_city_residence ?? '', [
-                        'class' => 'form-control',
-                        'placeholder' => 'Current city',
-                        'required' => true,
-                        'maxlength' => 100
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent1_country_residence', 'Country of Residence') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('beneficiary_parent1_country_residence', getAllCountry(), optional($application)->beneficiary_parent1_country_residence ?? '', [
                         'class' => 'form-control',
                         'required' => true
                     ]) }}
@@ -1190,7 +1153,7 @@
     </div>
     <div class="card-body">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     {{ Form::label('beneficiary_parent2_first_name', 'First Name') }}
                     <span class="text-danger">*</span>
@@ -1201,7 +1164,7 @@
                     ]) }}
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     {{ Form::label('beneficiary_parent2_middle_name', 'Middle Name') }}
                     {{ Form::text('beneficiary_parent2_middle_name', optional($application)->beneficiary_parent2_middle_name ?? '', [
@@ -1210,7 +1173,7 @@
                     ]) }}
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group mb-3">
                     {{ Form::label('beneficiary_parent2_last_name', 'Last Name') }}
                     <span class="text-danger">*</span>
@@ -1221,9 +1184,22 @@
                     ]) }}
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="form-group mb-3">
+                    {{ Form::label('beneficiary_parent2_relationship', 'Relationship') }}
+                    <span class="text-danger">*</span>
+                    {{ Form::text('beneficiary_parent2_relationship', optional($application)->beneficiary_parent2_relationship ?? '', [
+                        'class' => 'form-control',
+                        'placeholder' => 'e.g., Mother, Father',
+                        'required' => true,
+                        'maxlength' => 50
+                    ]) }}
+                    <small class="form-text text-muted">e.g., Mother, Father, Adoptive Mother, etc.</small>
+                </div>
+            </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group mb-3">
                     {{ Form::label('beneficiary_parent2_dob', 'Date of Birth') }}
                     <span class="text-danger">*</span>
@@ -1234,61 +1210,11 @@
                     ]) }}
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent2_sex', 'Sex') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('beneficiary_parent2_sex', [
-                        '' => '-Select-',
-                        'Male' => 'Male',
-                        'Female' => 'Female'
-                    ], optional($application)->beneficiary_parent2_sex ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent2_city_birth', 'City/Town of Birth') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent2_city_birth', optional($application)->beneficiary_parent2_city_birth ?? '', [
-                        'class' => 'form-control',
-                        'placeholder' => 'Birth city',
-                        'required' => true,
-                        'maxlength' => 100
-                    ]) }}
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="form-group mb-3">
                     {{ Form::label('beneficiary_parent2_country', 'Country of Birth') }}
                     <span class="text-danger">*</span>
                     {{ Form::select('beneficiary_parent2_country', getAllCountry(), optional($application)->beneficiary_parent2_country ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent2_city_residence', 'City/Town of Residence') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent2_city_residence', optional($application)->beneficiary_parent2_city_residence ?? '', [
-                        'class' => 'form-control',
-                        'placeholder' => 'Current city',
-                        'required' => true,
-                        'maxlength' => 100
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent2_country_residence', 'Country of Residence') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('beneficiary_parent2_country_residence', getAllCountry(), optional($application)->beneficiary_parent2_country_residence ?? '', [
                         'class' => 'form-control',
                         'required' => true
                     ]) }}

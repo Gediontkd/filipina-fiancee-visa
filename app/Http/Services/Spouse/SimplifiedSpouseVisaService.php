@@ -212,6 +212,18 @@ class SimplifiedSpouseVisaService
             $applicationData = [
                 'user_id' => Auth::id(),
                 'submitted_app_id' => $data['submitted_app_id'],
+
+                // Sponsor Adoption Questions (NEW)
+                'sponsor_beneficiary_related_by_adoption' => $data['sponsor_beneficiary_related_by_adoption'] ?? null,
+                'sponsor_gained_status_through_adoption' => $data['sponsor_gained_status_through_adoption'] ?? null,
+
+                // Sponsor Mailing/Physical Address Country (NEW)
+                'sponsor_mailing_country' => $data['sponsor_mailing_country'] ?? 'US',
+                'sponsor_country' => $data['sponsor_country'] ?? 'US',
+
+                // Beneficiary Parent Relationship (NEW)
+                'beneficiary_parent1_relationship' => $data['beneficiary_parent1_relationship'] ?? null,
+                'beneficiary_parent2_relationship' => $data['beneficiary_parent2_relationship'] ?? null,
                 
                 // Sponsor Information
                 'sponsor_first_name' => $data['sponsor_first_name'] ?? null,
@@ -308,14 +320,12 @@ class SimplifiedSpouseVisaService
                 'beneficiary_parent1_middle_name' => $data['beneficiary_parent1_middle_name'] ?? null,
                 'beneficiary_parent1_last_name' => $data['beneficiary_parent1_last_name'] ?? null,
                 'beneficiary_parent1_dob' => $data['beneficiary_parent1_dob'] ?? null,
-                'beneficiary_parent1_sex' => $data['beneficiary_parent1_sex'] ?? null,
                 'beneficiary_parent1_country' => $data['beneficiary_parent1_country'] ?? null,
                 
                 'beneficiary_parent2_first_name' => $data['beneficiary_parent2_first_name'] ?? null,
                 'beneficiary_parent2_middle_name' => $data['beneficiary_parent2_middle_name'] ?? null,
                 'beneficiary_parent2_last_name' => $data['beneficiary_parent2_last_name'] ?? null,
                 'beneficiary_parent2_dob' => $data['beneficiary_parent2_dob'] ?? null,
-                'beneficiary_parent2_sex' => $data['beneficiary_parent2_sex'] ?? null,
                 'beneficiary_parent2_country' => $data['beneficiary_parent2_country'] ?? null,
                 
                 // Beneficiary Employment (optional)
@@ -400,12 +410,6 @@ class SimplifiedSpouseVisaService
                 'beneficiary_employer_postal' => $data['beneficiary_employer_postal'] ?? null,
                 'beneficiary_employer_country' => $data['beneficiary_employer_country'] ?? null,
                 'beneficiary_employment_start_date' => $data['beneficiary_employment_start_date'] ?? null,
-                'beneficiary_parent1_city_birth' => $data['beneficiary_parent1_city_birth'] ?? null,
-                'beneficiary_parent1_city_residence' => $data['beneficiary_parent1_city_residence'] ?? null,
-                'beneficiary_parent1_country_residence' => $data['beneficiary_parent1_country_residence'] ?? null,
-                'beneficiary_parent2_city_birth' => $data['beneficiary_parent2_city_birth'] ?? null,
-                'beneficiary_parent2_city_residence' => $data['beneficiary_parent2_city_residence'] ?? null,
-                'beneficiary_parent2_country_residence' => $data['beneficiary_parent2_country_residence'] ?? null,
                 
                 // ========================================
                 // RELATIONSHIP ADDITIONAL FIELDS
@@ -504,13 +508,9 @@ class SimplifiedSpouseVisaService
             
             // Beneficiary Parents (16 - added city info)
             'beneficiary_parent1_first_name', 'beneficiary_parent1_last_name',
-            'beneficiary_parent1_dob', 'beneficiary_parent1_sex', 'beneficiary_parent1_country',
-            'beneficiary_parent1_city_birth', 'beneficiary_parent1_city_residence',
-            'beneficiary_parent1_country_residence',
+            'beneficiary_parent1_dob', 'beneficiary_parent1_country',
             'beneficiary_parent2_first_name', 'beneficiary_parent2_last_name',
-            'beneficiary_parent2_dob', 'beneficiary_parent2_sex', 'beneficiary_parent2_country',
-            'beneficiary_parent2_city_birth', 'beneficiary_parent2_city_residence',
-            'beneficiary_parent2_country_residence',
+            'beneficiary_parent2_dob', 'beneficiary_parent2_country',
             
             // Relationship (7)
             'marriage_date', 'marriage_location_city', 'marriage_location_country',

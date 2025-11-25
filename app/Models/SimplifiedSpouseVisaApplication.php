@@ -104,7 +104,6 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_parent1_middle_name',
         'beneficiary_parent1_last_name',
         'beneficiary_parent1_dob',
-        'beneficiary_parent1_sex',
         'beneficiary_parent1_country',
         'beneficiary_parent2_first_name',
         'beneficiary_parent2_middle_name',
@@ -160,6 +159,17 @@ class SimplifiedSpouseVisaApplication extends Model
         'sponsor_parent2_city_residence',
         'sponsor_parent2_country_residence',
         
+        'sponsor_beneficiary_related_by_adoption',
+        'sponsor_gained_status_through_adoption',
+
+        // Sponsor Mailing/Physical Address Country (NEW)
+        'sponsor_mailing_country',
+        'sponsor_country',
+
+        // Beneficiary Parent Relationship (NEW) - replaces removed fields
+        'beneficiary_parent1_relationship',
+        'beneficiary_parent2_relationship',
+        
         // ========================================
         // BENEFICIARY ADDITIONAL FIELDS
         // ========================================
@@ -194,12 +204,7 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_employer_postal',
         'beneficiary_employer_country',
         'beneficiary_employment_start_date',
-        'beneficiary_parent1_city_birth',
-        'beneficiary_parent1_city_residence',
-        'beneficiary_parent1_country_residence',
-        'beneficiary_parent2_city_birth',
-        'beneficiary_parent2_city_residence',
-        'beneficiary_parent2_country_residence',
+        
         
         // ========================================
         // RELATIONSHIP ADDITIONAL FIELDS
@@ -323,9 +328,9 @@ class SimplifiedSpouseVisaApplication extends Model
             
             // Beneficiary Parents (10)
             'beneficiary_parent1_first_name', 'beneficiary_parent1_last_name',
-            'beneficiary_parent1_dob', 'beneficiary_parent1_sex', 'beneficiary_parent1_country',
+            'beneficiary_parent1_dob', 'beneficiary_parent1_country',
             'beneficiary_parent2_first_name', 'beneficiary_parent2_last_name',
-            'beneficiary_parent2_dob', 'beneficiary_parent2_sex', 'beneficiary_parent2_country',
+            'beneficiary_parent2_dob', 'beneficiary_parent2_country',
             
             // Marriage (6)
             'marriage_date', 'marriage_location_city', 'marriage_location_country',
