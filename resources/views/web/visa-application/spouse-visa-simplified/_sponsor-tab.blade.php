@@ -819,14 +819,14 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group mb-3">
                                     <label>City</label>
                                     <input type="text" name="sponsor_address_history[{{ $index }}][city]" 
                                         class="form-control" value="{{ $address['city'] ?? '' }}" maxlength="50">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group mb-3">
                                     <label>State</label>
                                     <input type="text" name="sponsor_address_history[{{ $index }}][state]" 
@@ -834,11 +834,23 @@
                                         maxlength="2" pattern="[A-Z]{2}" style="text-transform: uppercase;">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group mb-3">
                                     <label>ZIP Code</label>
                                     <input type="text" name="sponsor_address_history[{{ $index }}][zip]" 
                                         class="form-control zip-format" value="{{ $address['zip'] ?? '' }}" maxlength="10">
+                                </div>
+                            </div>
+                            {{-- FIXED: Added Country field --}}
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label>Country</label>
+                                    <select name="sponsor_address_history[{{ $index }}][country]" class="form-control">
+                                        <option value="">-Select-</option>
+                                        @foreach(getAllCountry() as $code => $name)
+                                            <option value="{{ $code }}" {{ ($address['country'] ?? '') == $code ? 'selected' : '' }}>{{ $name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -1443,11 +1455,18 @@ $(document).ready(function() {
         const count = parseInt($('#sponsor_address_history_count').val());
         const newIndex = count;
         
+        // Get country options
+        const countryOptions = @json(getAllCountry());
+        let countryOptionsHtml = '<option value="">-Select-</option>';
+        for (const [code, name] of Object.entries(countryOptions)) {
+            countryOptionsHtml += `<option value="${code}">${name}</option>`;
+        }
+        
         const html = `
             <div class="card mb-3 address-history-item" data-index="${newIndex}">
                 <div class="card-header bg-light d-flex justify-content-between">
                     <strong>Previous Address ${newIndex + 1}</strong>
-                    <button type="button" class="btn btn-sm btn-danger remove-address" data-index="${newIndex}">
+                    <button type="button" class="btn btn-sm btn-danger remove-address" data-person="sponsor" data-index="${newIndex}">
                         <i class="fa fa-trash"></i>
                     </button>
                 </div>
@@ -1489,23 +1508,31 @@ $(document).ready(function() {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group mb-3">
                                 <label>City</label>
                                 <input type="text" name="sponsor_address_history[${newIndex}][city]" class="form-control" maxlength="50">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group mb-3">
                                 <label>State</label>
                                 <input type="text" name="sponsor_address_history[${newIndex}][state]" 
                                     class="form-control state-format" maxlength="2" style="text-transform: uppercase;">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group mb-3">
                                 <label>ZIP Code</label>
                                 <input type="text" name="sponsor_address_history[${newIndex}][zip]" class="form-control zip-format" maxlength="10">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-3">
+                                <label>Country</label>
+                                <select name="sponsor_address_history[${newIndex}][country]" class="form-control">
+                                    ${countryOptionsHtml}
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -1545,6 +1572,7 @@ $(document).ready(function() {
 
     $(document).on('click', '.remove-address', function() {
         $(this).closest('.address-history-item').remove();
+        });
     });
 
     // Add employment history

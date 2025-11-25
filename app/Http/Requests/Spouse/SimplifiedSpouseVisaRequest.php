@@ -117,6 +117,7 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'sponsor_address_history.*.city' => 'required|string|max:50',
             'sponsor_address_history.*.state' => 'nullable|string|max:2',
             'sponsor_address_history.*.zip' => 'nullable|string|max:10',
+            'sponsor_address_history.*.country' => 'required|string|max:100',
             'sponsor_address_history.*.date_from' => 'required|date',
             'sponsor_address_history.*.date_to' => 'required',
             
@@ -428,6 +429,8 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'sponsor_mailing_state.regex' => 'State must be 2 uppercase letters only',
             'sponsor_mailing_zip.required' => 'Sponsor mailing ZIP code is required',
             'sponsor_mailing_zip.regex' => 'ZIP must be 5 digits or 9 digits (12345 or 12345-6789)',
+            'sponsor_address_history.*.country.required' => 'Country is required for each address in history',
+            'sponsor_address_history.*.country.max' => 'Country name cannot exceed 100 characters',
 
             'sponsor_beneficiary_related_by_adoption.required' => 'Please indicate if related to beneficiary by adoption',
             'sponsor_gained_status_through_adoption.required' => 'Please indicate if you gained status through adoption',
