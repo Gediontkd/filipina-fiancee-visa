@@ -1068,10 +1068,10 @@
     <h5 class="mb-3 mt-4"><i class="fa fa-users me-2"></i>Beneficiary's Parents Information</h5>
 <p class="text-muted">Provide information about the beneficiary's biological or adoptive parents</p>
 
-<!-- Parent 1 -->
+<!-- Person 1 -->
 <div class="card mb-3">
     <div class="card-header bg-light">
-        <strong>Parent 1</strong>
+        <strong>Person 1</strong>
     </div>
     <div class="card-body">
         <div class="row">
@@ -1146,10 +1146,10 @@
     </div>
 </div>
 
-<!-- Parent 2 -->
+<!-- Person 2 -->
 <div class="card mb-3">
     <div class="card-header bg-light">
-        <strong>Parent 2</strong>
+        <strong>Person 2</strong>
     </div>
     <div class="card-body">
         <div class="row">
