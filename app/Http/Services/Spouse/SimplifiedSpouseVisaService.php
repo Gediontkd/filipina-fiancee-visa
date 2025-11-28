@@ -160,6 +160,36 @@ class SimplifiedSpouseVisaService
                 }
             }
 
+            // Process sponsor previous marriages
+            $sponsorPrevMarriages = [];
+            if (isset($data['sponsor_previous_marriages_list'])) {
+                foreach ($data['sponsor_previous_marriages_list'] as $marriage) {
+                    if (!empty($marriage['first_name']) || !empty($marriage['last_name'])) {
+                        $sponsorPrevMarriages[] = [
+                            'first_name' => $marriage['first_name'] ?? '',
+                            'last_name' => $marriage['last_name'] ?? '',
+                            'date_ended' => $marriage['date_ended'] ?? '',
+                            'how_ended' => $marriage['how_ended'] ?? '',
+                        ];
+                    }
+                }
+            }
+
+            // Process beneficiary previous marriages
+            $beneficiaryPrevMarriages = [];
+            if (isset($data['beneficiary_previous_marriages_list'])) {
+                foreach ($data['beneficiary_previous_marriages_list'] as $marriage) {
+                    if (!empty($marriage['first_name']) || !empty($marriage['last_name'])) {
+                        $beneficiaryPrevMarriages[] = [
+                            'first_name' => $marriage['first_name'] ?? '',
+                            'last_name' => $marriage['last_name'] ?? '',
+                            'date_ended' => $marriage['date_ended'] ?? '',
+                            'how_ended' => $marriage['how_ended'] ?? '',
+                        ];
+                    }
+                }
+            }
+
             $beneficiaryEmploymentHistory = [];
             if (isset($data['beneficiary_employment_history'])) {
                 foreach ($data['beneficiary_employment_history'] as $index => $job) {
@@ -221,6 +251,10 @@ class SimplifiedSpouseVisaService
                 // Sponsor Mailing/Physical Address Country (NEW)
                 'sponsor_mailing_country' => $data['sponsor_mailing_country'] ?? 'US',
                 'sponsor_country' => $data['sponsor_country'] ?? 'US',
+
+                // Previous Marriages (multiple)
+                'sponsor_previous_marriages_list' => $sponsorPrevMarriages,
+                'beneficiary_previous_marriages_list' => $beneficiaryPrevMarriages,
 
                 // Beneficiary Parent Relationship (NEW)
                 'beneficiary_parent1_relationship' => $data['beneficiary_parent1_relationship'] ?? null,

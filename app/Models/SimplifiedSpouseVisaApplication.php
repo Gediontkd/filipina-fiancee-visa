@@ -137,6 +137,10 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_prev_spouse_last_name',
         'beneficiary_divorce_date',
 
+        // Previous Marriages (multiple entries)
+        'sponsor_previous_marriages_list',
+        'beneficiary_previous_marriages_list',
+
         // ========================================
         // SPONSOR ADDITIONAL FIELDS
         // ========================================
@@ -251,6 +255,9 @@ class SimplifiedSpouseVisaApplication extends Model
         'sponsor_height_feet' => 'integer',
         'sponsor_height_inches' => 'integer',
         'sponsor_weight' => 'integer',
+
+        'sponsor_previous_marriages_list' => 'array',
+        'beneficiary_previous_marriages_list' => 'array',
 
         // Beneficiary additional casts
         'beneficiary_other_names' => 'array',
