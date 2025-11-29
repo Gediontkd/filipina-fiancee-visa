@@ -273,6 +273,7 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_address_history' => 'array',
         'sponsor_employment_history' => 'array',
         'beneficiary_employment_history' => 'array',
+        'beneficiary_parents_list' => 'array',
     ];
 
     public function user()
