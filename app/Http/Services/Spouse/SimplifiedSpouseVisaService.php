@@ -528,6 +528,8 @@ class SimplifiedSpouseVisaService
             
             // Citizenship (2)
             'sponsor_citizenship_method',
+            'sponsor_beneficiary_related_by_adoption',
+            'sponsor_gained_status_through_adoption',
             
             // Sponsor Parents (14 - added residence info)
             'sponsor_parent1_first_name', 'sponsor_parent1_last_name',
@@ -570,6 +572,26 @@ class SimplifiedSpouseVisaService
         // Check race (must have at least one selected)
         if (!empty($application->sponsor_race) && is_array($application->sponsor_race) && count($application->sponsor_race) > 0) {
             $completedFields++;
+        }
+        $totalFields++;
+
+         // FIXED: Check beneficiary_parents_list (at least 2 parents required)
+        $beneficiaryParents = $application->beneficiary_parents_list ?? [];
+        if (is_array($beneficiaryParents) && count($beneficiaryParents) >= 2) {
+            $validParents = 0;
+            foreach ($beneficiaryParents as $parent) {
+                // Check if parent has all required fields
+                if (!empty($parent['first_name']) && 
+                    !empty($parent['last_name']) && 
+                    !empty($parent['dob']) && 
+                    !empty($parent['country'])) {
+                    $validParents++;
+                }
+            }
+            
+            if ($validParents >= 2) {
+                $completedFields++;
+            }
         }
         $totalFields++;
 
