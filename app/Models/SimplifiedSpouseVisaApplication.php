@@ -98,19 +98,11 @@ class SimplifiedSpouseVisaApplication extends Model
         'beneficiary_mailing_date_from',
         'beneficiary_mailing_date_to',
         'beneficiary_same_address',
+
+        'beneficiary_parents_list',
         
         // Beneficiary Parents
-        'beneficiary_parent1_first_name',
-        'beneficiary_parent1_middle_name',
-        'beneficiary_parent1_last_name',
-        'beneficiary_parent1_dob',
-        'beneficiary_parent1_country',
-        'beneficiary_parent2_first_name',
-        'beneficiary_parent2_middle_name',
-        'beneficiary_parent2_last_name',
-        'beneficiary_parent2_dob',
         'beneficiary_parent2_sex',
-        'beneficiary_parent2_country',
         
         // Beneficiary History
         'beneficiary_address_history',
@@ -169,10 +161,6 @@ class SimplifiedSpouseVisaApplication extends Model
         // Sponsor Mailing/Physical Address Country (NEW)
         'sponsor_mailing_country',
         'sponsor_country',
-
-        // Beneficiary Parent Relationship (NEW) - replaces removed fields
-        'beneficiary_parent1_relationship',
-        'beneficiary_parent2_relationship',
         
         // ========================================
         // BENEFICIARY ADDITIONAL FIELDS
@@ -334,10 +322,7 @@ class SimplifiedSpouseVisaApplication extends Model
             'beneficiary_place_of_birth', 'beneficiary_citizenship',
             
             // Beneficiary Parents (10)
-            'beneficiary_parent1_first_name', 'beneficiary_parent1_last_name',
-            'beneficiary_parent1_dob', 'beneficiary_parent1_country',
-            'beneficiary_parent2_first_name', 'beneficiary_parent2_last_name',
-            'beneficiary_parent2_dob', 'beneficiary_parent2_country',
+            'beneficiary_parents_list',
             
             // Marriage (6)
             'marriage_date', 'marriage_location_city', 'marriage_location_country',
