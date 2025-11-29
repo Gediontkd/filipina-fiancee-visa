@@ -526,12 +526,12 @@ class SimplifiedSpouseVisaService
             'sponsor_ethnicity', 'sponsor_height_feet', 'sponsor_height_inches',
             'sponsor_weight', 'sponsor_eye_color', 'sponsor_hair_color',
             
-            // Citizenship (2)
+            // Citizenship (3)
             'sponsor_citizenship_method',
             'sponsor_beneficiary_related_by_adoption',
             'sponsor_gained_status_through_adoption',
             
-            // Sponsor Parents (14 - added residence info)
+            // Sponsor Parents (14)
             'sponsor_parent1_first_name', 'sponsor_parent1_last_name',
             'sponsor_parent1_dob', 'sponsor_parent1_sex', 'sponsor_parent1_country',
             'sponsor_parent1_city_residence', 'sponsor_parent1_country_residence',
@@ -546,12 +546,6 @@ class SimplifiedSpouseVisaService
             'beneficiary_place_of_birth', 'beneficiary_citizenship',
             'beneficiary_petition_filed_before',
             'beneficiary_ever_in_us',
-            
-            // Beneficiary Parents (16 - added city info)
-            'beneficiary_parent1_first_name', 'beneficiary_parent1_last_name',
-            'beneficiary_parent1_dob', 'beneficiary_parent1_country',
-            'beneficiary_parent2_first_name', 'beneficiary_parent2_last_name',
-            'beneficiary_parent2_dob', 'beneficiary_parent2_country',
             
             // Relationship (7)
             'marriage_date', 'marriage_location_city', 'marriage_location_country',
