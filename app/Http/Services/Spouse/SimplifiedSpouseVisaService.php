@@ -575,26 +575,6 @@ class SimplifiedSpouseVisaService
         }
         $totalFields++;
 
-         // FIXED: Check beneficiary_parents_list (at least 2 parents required)
-        $beneficiaryParents = $application->beneficiary_parents_list ?? [];
-        if (is_array($beneficiaryParents) && count($beneficiaryParents) >= 2) {
-            $validParents = 0;
-            foreach ($beneficiaryParents as $parent) {
-                // Check if parent has all required fields
-                if (!empty($parent['first_name']) && 
-                    !empty($parent['last_name']) && 
-                    !empty($parent['dob']) && 
-                    !empty($parent['country'])) {
-                    $validParents++;
-                }
-            }
-            
-            if ($validParents >= 2) {
-                $completedFields++;
-            }
-        }
-        $totalFields++;
-
         // Check immigration proceedings details (conditional)
         if ($application->beneficiary_immigration_proceedings === 'no') {
             $completedFields++; // Auto-complete if no proceedings

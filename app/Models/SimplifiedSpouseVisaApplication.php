@@ -322,9 +322,6 @@ class SimplifiedSpouseVisaApplication extends Model
             'beneficiary_mailing_city', 'beneficiary_mailing_country', 'beneficiary_dob',
             'beneficiary_place_of_birth', 'beneficiary_citizenship',
             
-            // Beneficiary Parents (10)
-            'beneficiary_parents_list',
-            
             // Marriage (6)
             'marriage_date', 'marriage_location_city', 'marriage_location_country',
             'sponsor_times_married', 'sponsor_previous_marriages', 'beneficiary_previous_marriages'
