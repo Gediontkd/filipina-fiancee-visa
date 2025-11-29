@@ -1064,165 +1064,172 @@
         <strong>Incomplete:</strong> Your employment history must cover at least five full years.
     </div>
 
-    <!-- Parents Information -->
-    <h5 class="mb-3 mt-4"><i class="fa fa-users me-2"></i>Beneficiary's Parents Information</h5>
-<p class="text-muted">Provide information about the beneficiary's biological or adoptive parents</p>
-
-<!-- Person 1 -->
-<div class="card mb-3">
-    <div class="card-header bg-light">
-        <strong>Person 1</strong>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent1_first_name', 'First Name') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent1_first_name', optional($application)->beneficiary_parent1_first_name ?? '', [
-                        'class' => 'form-control',
-                        'required' => true,
-                        'maxlength' => 50
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent1_middle_name', 'Middle Name') }}
-                    {{ Form::text('beneficiary_parent1_middle_name', optional($application)->beneficiary_parent1_middle_name ?? '', [
-                        'class' => 'form-control',
-                        'maxlength' => 50
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent1_last_name', 'Last Name') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent1_last_name', optional($application)->beneficiary_parent1_last_name ?? '', [
-                        'class' => 'form-control',
-                        'required' => true,
-                        'maxlength' => 50
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent1_relationship', 'Relationship') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent1_relationship', optional($application)->beneficiary_parent1_relationship ?? '', [
-                        'class' => 'form-control',
-                        'placeholder' => 'e.g., Mother, Father',
-                        'required' => true,
-                        'maxlength' => 50
-                    ]) }}
-                    <small class="form-text text-muted">e.g., Mother, Father, Adoptive Mother, etc.</small>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent1_dob', 'Date of Birth') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent1_dob', optional($application)->beneficiary_parent1_dob ? optional($application)->beneficiary_parent1_dob->format('m/d/Y') : '', [
-                        'class' => 'form-control datePicker',
-                        'placeholder' => 'MM/DD/YYYY',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent1_country', 'Country of Birth') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('beneficiary_parent1_country', getAllCountry(), optional($application)->beneficiary_parent1_country ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Parents Information (FIXED: Now supports multiple entries) -->
+<h5 class="mb-3 mt-4"><i class="fa fa-users me-2"></i>Beneficiary's Parents Information</h5>
+<div class="alert alert-info">
+    <i class="fa fa-info-circle me-2"></i>
+    <strong>Note:</strong> Provide information about the beneficiary's biological or adoptive parents. You can add multiple parents/guardians.
 </div>
 
-<!-- Person 2 -->
-<div class="card mb-3">
-    <div class="card-header bg-light">
-        <strong>Person 2</strong>
-    </div>
-    <div class="card-body">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent2_first_name', 'First Name') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent2_first_name', optional($application)->beneficiary_parent2_first_name ?? '', [
-                        'class' => 'form-control',
-                        'required' => true,
-                        'maxlength' => 50
-                    ]) }}
+<div id="beneficiary_parents_container">
+    @php
+        $beneficiaryParents = optional($application)->beneficiary_parents_list ?? [];
+    @endphp
+    
+    @if(!empty($beneficiaryParents))
+        @foreach($beneficiaryParents as $index => $parent)
+            <div class="card mb-3 parent-item" data-index="{{ $index }}">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <strong>Person {{ $index + 1 }}</strong>
+                    <button type="button" class="btn btn-sm btn-danger remove-parent" 
+                        data-person="beneficiary" data-index="{{ $index }}">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group mb-3">
+                                <label>First Name <span class="text-danger">*</span></label>
+                                <input type="text" name="beneficiary_parents_list[{{ $index }}][first_name]" 
+                                    class="form-control" value="{{ $parent['first_name'] ?? '' }}" 
+                                    maxlength="50" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-3">
+                                <label>Middle Name</label>
+                                <input type="text" name="beneficiary_parents_list[{{ $index }}][middle_name]" 
+                                    class="form-control" value="{{ $parent['middle_name'] ?? '' }}" 
+                                    maxlength="50">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-3">
+                                <label>Last Name <span class="text-danger">*</span></label>
+                                <input type="text" name="beneficiary_parents_list[{{ $index }}][last_name]" 
+                                    class="form-control" value="{{ $parent['last_name'] ?? '' }}" 
+                                    maxlength="50" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-3">
+                                <label>Relationship <span class="text-danger">*</span></label>
+                                <input type="text" name="beneficiary_parents_list[{{ $index }}][relationship]" 
+                                    class="form-control" value="{{ $parent['relationship'] ?? '' }}" 
+                                    placeholder="e.g., Mother, Father" maxlength="50" required>
+                                <small class="form-text text-muted">Mother, Father, Adoptive Parent, etc.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Date of Birth <span class="text-danger">*</span></label>
+                                <input type="text" name="beneficiary_parents_list[{{ $index }}][dob]" 
+                                    class="form-control datePicker" value="{{ $parent['dob'] ?? '' }}" 
+                                    placeholder="MM/DD/YYYY" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Country of Birth <span class="text-danger">*</span></label>
+                                <select name="beneficiary_parents_list[{{ $index }}][country]" 
+                                    class="form-control" required>
+                                    <option value="">-Select Country-</option>
+                                    @foreach(getAllCountry() as $code => $name)
+                                        <option value="{{ $code }}" 
+                                            {{ ($parent['country'] ?? '') == $code ? 'selected' : '' }}>
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent2_middle_name', 'Middle Name') }}
-                    {{ Form::text('beneficiary_parent2_middle_name', optional($application)->beneficiary_parent2_middle_name ?? '', [
-                        'class' => 'form-control',
-                        'maxlength' => 50
-                    ]) }}
+        @endforeach
+    @else
+        {{-- Show at least 2 parents by default --}}
+        @for($i = 0; $i < 2; $i++)
+            <div class="card mb-3 parent-item" data-index="{{ $i }}">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <strong>Person {{ $i + 1 }}</strong>
+                    @if($i >= 2)
+                        <button type="button" class="btn btn-sm btn-danger remove-parent" 
+                            data-person="beneficiary" data-index="{{ $i }}">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    @endif
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group mb-3">
+                                <label>First Name <span class="text-danger">*</span></label>
+                                <input type="text" name="beneficiary_parents_list[{{ $i }}][first_name]" 
+                                    class="form-control" maxlength="50" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-3">
+                                <label>Middle Name</label>
+                                <input type="text" name="beneficiary_parents_list[{{ $i }}][middle_name]" 
+                                    class="form-control" maxlength="50">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-3">
+                                <label>Last Name <span class="text-danger">*</span></label>
+                                <input type="text" name="beneficiary_parents_list[{{ $i }}][last_name]" 
+                                    class="form-control" maxlength="50" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group mb-3">
+                                <label>Relationship <span class="text-danger">*</span></label>
+                                <input type="text" name="beneficiary_parents_list[{{ $i }}][relationship]" 
+                                    class="form-control" placeholder="e.g., Mother, Father" 
+                                    maxlength="50" required>
+                                <small class="form-text text-muted">Mother, Father, Adoptive Parent, etc.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Date of Birth <span class="text-danger">*</span></label>
+                                <input type="text" name="beneficiary_parents_list[{{ $i }}][dob]" 
+                                    class="form-control datePicker" placeholder="MM/DD/YYYY" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Country of Birth <span class="text-danger">*</span></label>
+                                <select name="beneficiary_parents_list[{{ $i }}][country]" 
+                                    class="form-control" required>
+                                    <option value="">-Select Country-</option>
+                                    @foreach(getAllCountry() as $code => $name)
+                                        <option value="{{ $code }}">{{ $name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent2_last_name', 'Last Name') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent2_last_name', optional($application)->beneficiary_parent2_last_name ?? '', [
-                        'class' => 'form-control',
-                        'required' => true,
-                        'maxlength' => 50
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent2_relationship', 'Relationship') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent2_relationship', optional($application)->beneficiary_parent2_relationship ?? '', [
-                        'class' => 'form-control',
-                        'placeholder' => 'e.g., Mother, Father',
-                        'required' => true,
-                        'maxlength' => 50
-                    ]) }}
-                    <small class="form-text text-muted">e.g., Mother, Father, Adoptive Mother, etc.</small>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent2_dob', 'Date of Birth') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::text('beneficiary_parent2_dob', optional($application)->beneficiary_parent2_dob ? optional($application)->beneficiary_parent2_dob->format('m/d/Y') : '', [
-                        'class' => 'form-control datePicker',
-                        'placeholder' => 'MM/DD/YYYY',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    {{ Form::label('beneficiary_parent2_country', 'Country of Birth') }}
-                    <span class="text-danger">*</span>
-                    {{ Form::select('beneficiary_parent2_country', getAllCountry(), optional($application)->beneficiary_parent2_country ?? '', [
-                        'class' => 'form-control',
-                        'required' => true
-                    ]) }}
-                </div>
-            </div>
-        </div>
-    </div>
+        @endfor
+    @endif
+    
+    <input type="hidden" name="beneficiary_parents_count" 
+        value="{{ count($beneficiaryParents) > 0 ? count($beneficiaryParents) : 2 }}" 
+        id="beneficiary_parents_count">
 </div>
+
+<button type="button" class="btn btn-outline-secondary mb-4" id="addBeneficiaryParent">
+    <i class="fa fa-plus me-2"></i>Add Another Person/Guardian
+</button>
 
     <!-- Current Employment Information (I-130 Part 4, Items 51-52) -->
 <h5 class="mb-3 mt-4"><i class="fa fa-briefcase me-2"></i>Current Employment Information</h5>
@@ -1745,5 +1752,104 @@ $(document).ready(function() {
         const targetField = $(targetId);
         targetField.val('N/A').prop('readonly', true).addClass('bg-light');
     });
+});
+
+// ============================================
+// BENEFICIARY PARENTS (Multiple entries)
+// ============================================
+
+// Add beneficiary parent
+$('#addBeneficiaryParent').on('click', function() {
+    const count = parseInt($('#beneficiary_parents_count').val());
+    const newIndex = count;
+    
+    const countryOptions = @json(getAllCountry());
+    let countryOptionsHtml = '<option value="">-Select Country-</option>';
+    for (const [code, name] of Object.entries(countryOptions)) {
+        countryOptionsHtml += `<option value="${code}">${name}</option>`;
+    }
+    
+    const html = `
+        <div class="card mb-3 parent-item" data-index="${newIndex}">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <strong>Person ${newIndex + 1}</strong>
+                <button type="button" class="btn btn-sm btn-danger remove-parent" 
+                    data-person="beneficiary" data-index="${newIndex}">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group mb-3">
+                            <label>First Name <span class="text-danger">*</span></label>
+                            <input type="text" name="beneficiary_parents_list[${newIndex}][first_name]" 
+                                class="form-control" maxlength="50" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group mb-3">
+                            <label>Middle Name</label>
+                            <input type="text" name="beneficiary_parents_list[${newIndex}][middle_name]" 
+                                class="form-control" maxlength="50">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group mb-3">
+                            <label>Last Name <span class="text-danger">*</span></label>
+                            <input type="text" name="beneficiary_parents_list[${newIndex}][last_name]" 
+                                class="form-control" maxlength="50" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group mb-3">
+                            <label>Relationship <span class="text-danger">*</span></label>
+                            <input type="text" name="beneficiary_parents_list[${newIndex}][relationship]" 
+                                class="form-control" placeholder="e.g., Mother, Father" 
+                                maxlength="50" required>
+                            <small class="form-text text-muted">Mother, Father, Adoptive Parent, etc.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label>Date of Birth <span class="text-danger">*</span></label>
+                            <input type="text" name="beneficiary_parents_list[${newIndex}][dob]" 
+                                class="form-control datePicker" placeholder="MM/DD/YYYY" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label>Country of Birth <span class="text-danger">*</span></label>
+                            <select name="beneficiary_parents_list[${newIndex}][country]" 
+                                class="form-control" required>
+                                ${countryOptionsHtml}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    $('#beneficiary_parents_container').append(html);
+    $('#beneficiary_parents_count').val(newIndex + 1);
+    
+    // Reinitialize datepickers
+    $('.datePicker').datepicker({ format: 'mm/dd/yyyy', autoclose: true });
+});
+
+// Remove beneficiary parent
+$(document).on('click', '.remove-parent[data-person="beneficiary"]', function() {
+    const parentCount = $('.parent-item').length;
+    
+    // Require at least 2 parents
+    if (parentCount <= 2) {
+        alert('You must have at least 2 parents listed.');
+        return;
+    }
+    
+    $(this).closest('.parent-item').remove();
 });
 </script>

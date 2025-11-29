@@ -238,17 +238,14 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             // ============================================
             // BENEFICIARY PARENTS - REQUIRED
             // ============================================
-            'beneficiary_parent1_first_name' => 'required|string|max:50',
-            'beneficiary_parent1_middle_name' => 'nullable|string|max:50',
-            'beneficiary_parent1_last_name' => 'required|string|max:50',
-            'beneficiary_parent1_dob' => 'required|date|before:beneficiary_dob',
-            'beneficiary_parent1_country' => 'required|string|max:100',
-            
-            'beneficiary_parent2_first_name' => 'required|string|max:50',
-            'beneficiary_parent2_middle_name' => 'nullable|string|max:50',
-            'beneficiary_parent2_last_name' => 'required|string|max:50',
-            'beneficiary_parent2_dob' => 'required|date|before:beneficiary_dob',
-            'beneficiary_parent2_country' => 'required|string|max:100',
+            // Beneficiary Parents (multiple entries)
+            'beneficiary_parents_list' => 'required|array|min:2',
+            'beneficiary_parents_list.*.first_name' => 'required|string|max:50',
+            'beneficiary_parents_list.*.middle_name' => 'nullable|string|max:50',
+            'beneficiary_parents_list.*.last_name' => 'required|string|max:50',
+            'beneficiary_parents_list.*.relationship' => 'required|string|max:50',
+            'beneficiary_parents_list.*.dob' => 'required|date|before:beneficiary_dob',
+            'beneficiary_parents_list.*.country' => 'required|string|max:100',
             
             // ============================================
             // BENEFICIARY EMPLOYMENT - OPTIONAL
@@ -277,6 +274,21 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'beneficiary_prev_spouse_first_name' => 'nullable|string|max:50',
             'beneficiary_prev_spouse_last_name' => 'nullable|string|max:50',
             'beneficiary_divorce_date' => 'nullable|date|before:marriage_date',
+
+            // ========================================
+            // PREVIOUS MARRIAGES LISTS (MULTIPLE ENTRIES) - ADD THIS
+            // ========================================
+            'sponsor_previous_marriages_list' => 'nullable|array',
+            'sponsor_previous_marriages_list.*.first_name' => 'required|string|max:50',
+            'sponsor_previous_marriages_list.*.last_name' => 'required|string|max:50',
+            'sponsor_previous_marriages_list.*.date_ended' => 'nullable|date|before:marriage_date',
+            'sponsor_previous_marriages_list.*.how_ended' => 'nullable|in:Divorce,Annulment,Death of Spouse',
+            
+            'beneficiary_previous_marriages_list' => 'nullable|array',
+            'beneficiary_previous_marriages_list.*.first_name' => 'required|string|max:50',
+            'beneficiary_previous_marriages_list.*.last_name' => 'required|string|max:50',
+            'beneficiary_previous_marriages_list.*.date_ended' => 'nullable|date|before:marriage_date',
+            'beneficiary_previous_marriages_list.*.how_ended' => 'nullable|in:Divorce,Annulment,Death of Spouse',
 
             // ========================================
             // SPONSOR ADDITIONAL FIELDS
@@ -437,6 +449,15 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'sponsor_mailing_country.required' => 'Sponsor mailing country is required',
             'beneficiary_parent1_relationship.required' => 'Parent 1 relationship is required',
             'beneficiary_parent2_relationship.required' => 'Parent 2 relationship is required',
+
+            // Previous Marriages Lists
+            'sponsor_previous_marriages_list.*.first_name.required' => 'Previous spouse first name is required',
+            'sponsor_previous_marriages_list.*.last_name.required' => 'Previous spouse last name is required',
+            'sponsor_previous_marriages_list.*.date_ended.before' => 'Previous marriage must have ended before current marriage',
+            
+            'beneficiary_previous_marriages_list.*.first_name.required' => 'Previous spouse first name is required',
+            'beneficiary_previous_marriages_list.*.last_name.required' => 'Previous spouse last name is required',
+            'beneficiary_previous_marriages_list.*.date_ended.before' => 'Previous marriage must have ended before current marriage',
             
             // UPDATED: Apt validation messages
             'sponsor_mailing_apt.regex' => 'Apt/Suite/Floor must be in format: Apt:2B or Ste:123 or Flr:5A (max 6 characters, alphanumeric only)',

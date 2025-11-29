@@ -239,6 +239,23 @@ class SimplifiedSpouseVisaService
                 }
             }
 
+            // Process beneficiary parents
+            $beneficiaryParents = [];
+            if (isset($data['beneficiary_parents_list'])) {
+                foreach ($data['beneficiary_parents_list'] as $parent) {
+                    if (!empty($parent['first_name']) || !empty($parent['last_name'])) {
+                        $beneficiaryParents[] = [
+                            'first_name' => $parent['first_name'] ?? '',
+                            'middle_name' => $parent['middle_name'] ?? '',
+                            'last_name' => $parent['last_name'] ?? '',
+                            'relationship' => $parent['relationship'] ?? '',
+                            'dob' => $parent['dob'] ?? '',
+                            'country' => $parent['country'] ?? '',
+                        ];
+                    }
+                }
+            }
+
             // Prepare application data
             $applicationData = [
                 'user_id' => Auth::id(),
@@ -252,13 +269,12 @@ class SimplifiedSpouseVisaService
                 'sponsor_mailing_country' => $data['sponsor_mailing_country'] ?? 'US',
                 'sponsor_country' => $data['sponsor_country'] ?? 'US',
 
+                // Beneficiary Parents (multiple)
+                'beneficiary_parents_list' => $beneficiaryParents,
+
                 // Previous Marriages (multiple)
                 'sponsor_previous_marriages_list' => $sponsorPrevMarriages,
                 'beneficiary_previous_marriages_list' => $beneficiaryPrevMarriages,
-
-                // Beneficiary Parent Relationship (NEW)
-                'beneficiary_parent1_relationship' => $data['beneficiary_parent1_relationship'] ?? null,
-                'beneficiary_parent2_relationship' => $data['beneficiary_parent2_relationship'] ?? null,
                 
                 // Sponsor Information
                 'sponsor_first_name' => $data['sponsor_first_name'] ?? null,
@@ -349,19 +365,7 @@ class SimplifiedSpouseVisaService
                 // Beneficiary History
                 'beneficiary_address_history' => $beneficiaryAddressHistory,
                 'beneficiary_employment_history' => $beneficiaryEmploymentHistory,
-                
-                // Beneficiary Parents
-                'beneficiary_parent1_first_name' => $data['beneficiary_parent1_first_name'] ?? null,
-                'beneficiary_parent1_middle_name' => $data['beneficiary_parent1_middle_name'] ?? null,
-                'beneficiary_parent1_last_name' => $data['beneficiary_parent1_last_name'] ?? null,
-                'beneficiary_parent1_dob' => $data['beneficiary_parent1_dob'] ?? null,
-                'beneficiary_parent1_country' => $data['beneficiary_parent1_country'] ?? null,
-                
-                'beneficiary_parent2_first_name' => $data['beneficiary_parent2_first_name'] ?? null,
-                'beneficiary_parent2_middle_name' => $data['beneficiary_parent2_middle_name'] ?? null,
-                'beneficiary_parent2_last_name' => $data['beneficiary_parent2_last_name'] ?? null,
-                'beneficiary_parent2_dob' => $data['beneficiary_parent2_dob'] ?? null,
-                'beneficiary_parent2_country' => $data['beneficiary_parent2_country'] ?? null,
+
                 
                 // Beneficiary Employment (optional)
                 'beneficiary_employment_status' => $data['beneficiary_employment_status'] ?? null,
