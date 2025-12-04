@@ -295,8 +295,14 @@ Route::group(['middleware' => ['auth', 'application']], function() {
             Route::post('/previous-and-continue', 'previousOrContinue')->name('combinedPreviousOrContinue');
         });
 
-    // Drop Box
-    Route::resource('drop-box', DropBoxController::class);
+    // Drop Box Routes
+    Route::prefix('drop-box')->name('drop-box.')->group(function() {
+        Route::get('/', [DropBoxController::class, 'index'])->name('index');
+        Route::get('/{id}', [DropBoxController::class, 'show'])->name('show');
+        Route::post('/store', [DropBoxController::class, 'store'])->name('store');
+        Route::delete('/{id}', [DropBoxController::class, 'destroy'])->name('destroy');
+        Route::get('/download/{id}', [DropBoxController::class, 'download'])->name('download');
+    });
 });
 
 /*
@@ -315,6 +321,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
         Route::post('/monitoring/changes/{change}/mark-read', 'markAsRead')->name('monitoring.mark-read');
         Route::get('/monitoring/mark-all-read', 'markAllAsRead')->name('monitoring.mark-all-read');
     });
+
+    // User Document Management Routes
+    Route::get('/users/{user}/documents', [AdminUserController::class, 'documents'])
+        ->name('users.documents');
+    
+    Route::post('/documents/{document}/verify', [AdminUserController::class, 'verifyDocument'])
+        ->name('documents.verify');
 
     // PDF Generation for Admin
     Route::get('/applications/{application}/generate-pdf', 

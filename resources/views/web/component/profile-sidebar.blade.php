@@ -11,7 +11,7 @@
     <ul>
         <li class="sideitem {{ Request::segment(1) == 'drop-box' ? 'active' : '' }}">
             <a href="{{ route('drop-box.index') }}">
-                <i class="fab fa-dropbox"></i><span>Dropbox</span>            
+                <i class="fab fa-dropbox"></i><span>Document Upload</span>            
             </a>
         </li>
         <li class="sideitem {{ Request::segment(1) == 'messages' ? 'active' : '' }}">
