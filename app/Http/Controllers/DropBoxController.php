@@ -1,10 +1,11 @@
 <?php
-// app/Http/Controllers/DropBoxController.php
+// app/Http/Controllers/DropBoxController.php - UPDATED TO USE DATABASE
 
 namespace App\Http\Controllers;
 
 use App\Models\DropBox;
-use App\Config\DocumentRequirements;
+use App\Models\DocumentCategory;
+use App\Models\DocumentType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -14,16 +15,21 @@ use Illuminate\Support\Str;
 class DropBoxController extends Controller
 {
     /**
-     * Display document upload page with requirements
+     * Display document upload page with requirements FROM DATABASE
      */
     public function index()
     {
         $user = Auth::user();
         $visaType = $this->getVisaTypeFromUser($user);
 
-        // Get document requirements for user's visa type
-        $requirements = DocumentRequirements::getRequirements($visaType);
-        $availableVisaTypes = DocumentRequirements::getAvailableVisaTypes();
+        // Get document categories and types from database
+        $categories = DocumentCategory::forVisaType($visaType)
+            ->active()
+            ->with(['activeDocumentTypes' => function($query) {
+                $query->ordered();
+            }])
+            ->ordered()
+            ->get();
 
         // Get uploaded documents grouped by category
         $uploadedDocuments = DropBox::where('user_id', Auth::id())
@@ -32,10 +38,19 @@ class DropBoxController extends Controller
             ->groupBy('document_category');
 
         // Calculate completion status
-        $completionStats = $this->calculateCompletionStats($requirements, $uploadedDocuments);
+        $completionStats = $this->calculateCompletionStats($categories, $uploadedDocuments);
+
+        $availableVisaTypes = [
+            'fiance' => 'K-1 Fiancé(e) Visa',
+            'spouse' => 'CR-1/IR-1 Spousal Visa',
+            'child' => 'CR-2/IR-2 Child Visa',
+            'adjustment' => 'Adjustment of Status (I-485)',
+            'roc' => 'Removal of Conditions (I-751)',
+            'naturalization' => 'Naturalization (N-400)',
+        ];
 
         return view('web.user.dropbox.index', compact(
-            'requirements',
+            'categories',
             'uploadedDocuments',
             'visaType',
             'availableVisaTypes',
@@ -120,7 +135,7 @@ class DropBoxController extends Controller
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Validation failed: ' . implode(', ', $e->errors()),
+                'message' => 'Validation failed: ' . implode(', ', $e->validator->errors()->all()),
             ], 422);
 
         } catch (\Exception $e) {
@@ -215,7 +230,7 @@ class DropBoxController extends Controller
             'fiance' => 'fiance',
             'spouse' => 'spouse',
             'adjustment' => 'adjustment',
-            'combined' => 'spouse', // Default to spouse for combined
+            'combined' => 'spouse',
         ];
 
         return $visaTypeMap[$user->chosen_application] ?? 'spouse';
@@ -224,24 +239,24 @@ class DropBoxController extends Controller
     /**
      * Calculate document completion statistics
      */
-    private function calculateCompletionStats(array $requirements, $uploadedDocuments): array
+    private function calculateCompletionStats($categories, $uploadedDocuments): array
     {
         $totalRequired = 0;
         $totalUploaded = 0;
         $categoryStats = [];
 
-        foreach ($requirements as $categoryKey => $category) {
+        foreach ($categories as $category) {
             $categoryRequired = 0;
             $categoryUploaded = 0;
 
-            foreach ($category['documents'] as $doc) {
-                if ($doc['required']) {
+            foreach ($category->activeDocumentTypes as $docType) {
+                if ($docType->is_required) {
                     $categoryRequired++;
                     $totalRequired++;
 
                     // Check if this document type has been uploaded
-                    $uploaded = isset($uploadedDocuments[$categoryKey]) 
-                        ? $uploadedDocuments[$categoryKey]->where('document_type', $doc['id'])->count()
+                    $uploaded = isset($uploadedDocuments[$category->category_key])
+                        ? $uploadedDocuments[$category->category_key]->where('document_type', $docType->type_key)->count()
                         : 0;
 
                     if ($uploaded > 0) {
@@ -251,10 +266,10 @@ class DropBoxController extends Controller
                 }
             }
 
-            $categoryStats[$categoryKey] = [
+            $categoryStats[$category->category_key] = [
                 'required' => $categoryRequired,
                 'uploaded' => $categoryUploaded,
-                'percentage' => $categoryRequired > 0 
+                'percentage' => $categoryRequired > 0
                     ? round(($categoryUploaded / $categoryRequired) * 100, 1)
                     : 100,
             ];
@@ -263,7 +278,7 @@ class DropBoxController extends Controller
         return [
             'total_required' => $totalRequired,
             'total_uploaded' => $totalUploaded,
-            'overall_percentage' => $totalRequired > 0 
+            'overall_percentage' => $totalRequired > 0
                 ? round(($totalUploaded / $totalRequired) * 100, 1)
                 : 100,
             'categories' => $categoryStats,

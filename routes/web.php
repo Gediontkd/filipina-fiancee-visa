@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\ApplicationController;
 use App\Http\Controllers\Admin\MonitoringController;
 use App\Http\Controllers\Admin\MessageController as AdminMessageController;
 use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
+use App\Http\Controllers\Admin\DocumentManagementController;
 
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ImmigrationNewsController;
@@ -322,12 +323,26 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
         Route::get('/monitoring/mark-all-read', 'markAllAsRead')->name('monitoring.mark-all-read');
     });
 
-    // User Document Management Routes
-    Route::get('/users/{user}/documents', [AdminUserController::class, 'documents'])
-        ->name('users.documents');
+    // Document Management Routes
+    Route::prefix('documents/management')->name('documents.management.')->group(function() {
+        Route::get('/', [DocumentManagementController::class, 'index'])->name('index');
+        Route::get('/visa-type/{visaType}', [DocumentManagementController::class, 'showVisaType'])->name('visa-type');
+        
+        // Category Management
+        Route::post('/categories', [DocumentManagementController::class, 'storeCategory'])->name('categories.store');
+        Route::put('/categories/{category}', [DocumentManagementController::class, 'updateCategory'])->name('categories.update');
+        Route::delete('/categories/{category}', [DocumentManagementController::class, 'destroyCategory'])->name('categories.destroy');
+        Route::post('/categories/reorder', [DocumentManagementController::class, 'reorderCategories'])->name('categories.reorder');
+        
+        // Document Type Management
+        Route::post('/document-types', [DocumentManagementController::class, 'storeDocumentType'])->name('document-types.store');
+        Route::put('/document-types/{documentType}', [DocumentManagementController::class, 'updateDocumentType'])->name('document-types.update');
+        Route::delete('/document-types/{documentType}', [DocumentManagementController::class, 'destroyDocumentType'])->name('document-types.destroy');
+        Route::post('/document-types/reorder', [DocumentManagementController::class, 'reorderDocumentTypes'])->name('document-types.reorder');
+    });
     
-    Route::post('/documents/{document}/verify', [AdminUserController::class, 'verifyDocument'])
-        ->name('documents.verify');
+    // View User Documents
+    Route::get('/users/{user}/documents', [DocumentManagementController::class, 'viewUserDocuments'])->name('users.documents');
 
     // PDF Generation for Admin
     Route::get('/applications/{application}/generate-pdf', 
