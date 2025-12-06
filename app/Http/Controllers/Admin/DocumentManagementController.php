@@ -10,10 +10,20 @@ use App\Models\DropBox;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class DocumentManagementController extends Controller
 {
+    /**
+     * Get the authenticated admin ID
+     */
+    protected function getAdminId(): ?int
+    {
+        // Try 'admin' guard first, fall back to default 'web' guard
+        return Auth::guard('admin')->id() ?? Auth::id();
+    }
+
     /**
      * Display document management dashboard
      */
@@ -79,49 +89,56 @@ class DocumentManagementController extends Controller
             $category = DocumentCategory::create($request->all());
 
             Log::info('Document category created', [
-                'admin_id' => auth()->id(),
+                'admin_id' => $this->getAdminId(),
                 'category_id' => $category->id,
             ]);
 
             return redirect()->back()->with('success', 'Category created successfully!');
         } catch (\Exception $e) {
-            Log::error('Failed to create category', ['error' => $e->getMessage()]);
+            Log::error('Failed to create category', [
+                'admin_id' => $this->getAdminId(),
+                'error' => $e->getMessage()
+            ]);
             return redirect()->back()->with('error', 'Failed to create category.');
         }
     }
 
     /**
- * Update category - FIXED to handle unchecked checkboxes
- */
-public function updateCategory(Request $request, DocumentCategory $category)
-{
-    $request->validate([
-        'category_label' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'sort_order' => 'nullable|integer',
-    ]);
-
-    try {
-        // IMPORTANT: Handle checkbox explicitly
-        $category->update([
-            'category_label' => $request->category_label,
-            'description' => $request->description,
-            'sort_order' => $request->sort_order ?? 0,
-            'is_active' => $request->has('is_active'), // Will be true if checked, false if not
+     * Update category - FIXED to handle unchecked checkboxes
+     */
+    public function updateCategory(Request $request, DocumentCategory $category)
+    {
+        $request->validate([
+            'category_label' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'sort_order' => 'nullable|integer',
         ]);
 
-        Log::info('Document category updated', [
-            'admin_id' => auth()->id(),
-            'category_id' => $category->id,
-            'is_active' => $category->is_active,
-        ]);
+        try {
+            // IMPORTANT: Handle checkbox explicitly
+            // Checkboxes don't send data when unchecked
+            $category->update([
+                'category_label' => $request->category_label,
+                'description' => $request->description,
+                'sort_order' => $request->sort_order ?? 0,
+                'is_active' => $request->has('is_active'), // Will be true if checked, false if not
+            ]);
 
-        return redirect()->back()->with('success', 'Category updated successfully!');
-    } catch (\Exception $e) {
-        Log::error('Failed to update category', ['error' => $e->getMessage()]);
-        return redirect()->back()->with('error', 'Failed to update category.');
+            Log::info('Document category updated', [
+                'admin_id' => $this->getAdminId(),
+                'category_id' => $category->id,
+                'is_active' => $category->is_active,
+            ]);
+
+            return redirect()->back()->with('success', 'Category updated successfully!');
+        } catch (\Exception $e) {
+            Log::error('Failed to update category', [
+                'admin_id' => $this->getAdminId(),
+                'error' => $e->getMessage()
+            ]);
+            return redirect()->back()->with('error', 'Failed to update category.');
+        }
     }
-}
 
     /**
      * Delete category
@@ -139,13 +156,16 @@ public function updateCategory(Request $request, DocumentCategory $category)
             $category->delete();
 
             Log::info('Document category deleted', [
-                'admin_id' => auth()->id(),
+                'admin_id' => $this->getAdminId(),
                 'category_id' => $category->id,
             ]);
 
             return redirect()->back()->with('success', 'Category deleted successfully!');
         } catch (\Exception $e) {
-            Log::error('Failed to delete category', ['error' => $e->getMessage()]);
+            Log::error('Failed to delete category', [
+                'admin_id' => $this->getAdminId(),
+                'error' => $e->getMessage()
+            ]);
             return redirect()->back()->with('error', 'Failed to delete category.');
         }
     }
@@ -171,10 +191,18 @@ public function updateCategory(Request $request, DocumentCategory $category)
 
             DB::commit();
 
+            Log::info('Categories reordered', [
+                'admin_id' => $this->getAdminId(),
+                'count' => count($request->categories),
+            ]);
+
             return response()->json(['success' => true, 'message' => 'Categories reordered successfully!']);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to reorder categories', ['error' => $e->getMessage()]);
+            Log::error('Failed to reorder categories', [
+                'admin_id' => $this->getAdminId(),
+                'error' => $e->getMessage()
+            ]);
             return response()->json(['success' => false, 'message' => 'Failed to reorder categories.'], 500);
         }
     }
@@ -199,56 +227,62 @@ public function updateCategory(Request $request, DocumentCategory $category)
             $documentType = DocumentType::create($request->all());
 
             Log::info('Document type created', [
-                'admin_id' => auth()->id(),
+                'admin_id' => $this->getAdminId(),
                 'document_type_id' => $documentType->id,
             ]);
 
             return redirect()->back()->with('success', 'Document type created successfully!');
         } catch (\Exception $e) {
-            Log::error('Failed to create document type', ['error' => $e->getMessage()]);
+            Log::error('Failed to create document type', [
+                'admin_id' => $this->getAdminId(),
+                'error' => $e->getMessage()
+            ]);
             return redirect()->back()->with('error', 'Failed to create document type.');
         }
     }
 
-   /**
- * Update document type - FIXED to handle unchecked checkboxes
- */
-public function updateDocumentType(Request $request, DocumentType $documentType)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'instructions' => 'nullable|string',
-        'sort_order' => 'nullable|integer',
-    ]);
-
-    try {
-        // IMPORTANT: Handle checkboxes explicitly
-        // Checkboxes don't send data when unchecked, so we need to set them manually
-        $documentType->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'instructions' => $request->instructions,
-            'is_required' => $request->has('is_required'), // Will be true if checked, false if not
-            'allow_multiple' => $request->has('allow_multiple'), // Will be true if checked, false if not
-            'is_active' => $request->has('is_active'), // Will be true if checked, false if not
-            'sort_order' => $request->sort_order ?? 0,
+    /**
+     * Update document type - FIXED to handle unchecked checkboxes
+     */
+    public function updateDocumentType(Request $request, DocumentType $documentType)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'instructions' => 'nullable|string',
+            'sort_order' => 'nullable|integer',
         ]);
 
-        Log::info('Document type updated', [
-            'admin_id' => auth()->id(),
-            'document_type_id' => $documentType->id,
-            'is_required' => $documentType->is_required,
-            'allow_multiple' => $documentType->allow_multiple,
-            'is_active' => $documentType->is_active,
-        ]);
+        try {
+            // IMPORTANT: Handle checkboxes explicitly
+            // Checkboxes don't send data when unchecked, so we need to set them manually
+            $documentType->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'instructions' => $request->instructions,
+                'is_required' => $request->has('is_required'), // Will be true if checked, false if not
+                'allow_multiple' => $request->has('allow_multiple'), // Will be true if checked, false if not
+                'is_active' => $request->has('is_active'), // Will be true if checked, false if not
+                'sort_order' => $request->sort_order ?? 0,
+            ]);
 
-        return redirect()->back()->with('success', 'Document type updated successfully!');
-    } catch (\Exception $e) {
-        Log::error('Failed to update document type', ['error' => $e->getMessage()]);
-        return redirect()->back()->with('error', 'Failed to update document type.');
+            Log::info('Document type updated', [
+                'admin_id' => $this->getAdminId(),
+                'document_type_id' => $documentType->id,
+                'is_required' => $documentType->is_required,
+                'allow_multiple' => $documentType->allow_multiple,
+                'is_active' => $documentType->is_active,
+            ]);
+
+            return redirect()->back()->with('success', 'Document type updated successfully!');
+        } catch (\Exception $e) {
+            Log::error('Failed to update document type', [
+                'admin_id' => $this->getAdminId(),
+                'error' => $e->getMessage()
+            ]);
+            return redirect()->back()->with('error', 'Failed to update document type.');
+        }
     }
-}
 
     /**
      * Delete document type
@@ -266,13 +300,16 @@ public function updateDocumentType(Request $request, DocumentType $documentType)
             $documentType->delete();
 
             Log::info('Document type deleted', [
-                'admin_id' => auth()->id(),
+                'admin_id' => $this->getAdminId(),
                 'document_type_id' => $documentType->id,
             ]);
 
             return redirect()->back()->with('success', 'Document type deleted successfully!');
         } catch (\Exception $e) {
-            Log::error('Failed to delete document type', ['error' => $e->getMessage()]);
+            Log::error('Failed to delete document type', [
+                'admin_id' => $this->getAdminId(),
+                'error' => $e->getMessage()
+            ]);
             return redirect()->back()->with('error', 'Failed to delete document type.');
         }
     }
@@ -298,10 +335,18 @@ public function updateDocumentType(Request $request, DocumentType $documentType)
 
             DB::commit();
 
+            Log::info('Document types reordered', [
+                'admin_id' => $this->getAdminId(),
+                'count' => count($request->document_types),
+            ]);
+
             return response()->json(['success' => true, 'message' => 'Document types reordered successfully!']);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to reorder document types', ['error' => $e->getMessage()]);
+            Log::error('Failed to reorder document types', [
+                'admin_id' => $this->getAdminId(),
+                'error' => $e->getMessage()
+            ]);
             return response()->json(['success' => false, 'message' => 'Failed to reorder document types.'], 500);
         }
     }

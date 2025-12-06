@@ -17,6 +17,15 @@ use ZipArchive;
 class UploadedDocumentsController extends Controller
 {
     /**
+     * Get the authenticated admin ID
+     */
+    protected function getAdminId(): ?int
+    {
+        // Try 'admin' guard first, fall back to default 'web' guard
+        return Auth::guard('admin')->id() ?? Auth::id();
+    }
+
+    /**
      * Display all uploaded documents dashboard
      */
     public function index(Request $request)
@@ -137,13 +146,25 @@ class UploadedDocumentsController extends Controller
      */
     public function preview($id)
     {
-        $document = DropBox::with('user')->findOrFail($id);
+        try {
+            $document = DropBox::with('user')->findOrFail($id);
 
-        if (!$document->fileExists()) {
-            return back()->with('error', 'File not found on server.');
+            // Check if file exists using the model method
+            if (!$document->fileExists()) {
+                return back()->with('error', 'File not found on server.');
+            }
+
+            return view('admin.documents.uploaded.preview', compact('document'));
+            
+        } catch (\Exception $e) {
+            Log::error('Document preview failed', [
+                'admin_id' => $this->getAdminId(),
+                'document_id' => $id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to preview document.');
         }
-
-        return view('admin.documents.uploaded.preview', compact('document'));
     }
 
     /**
@@ -161,7 +182,7 @@ class UploadedDocumentsController extends Controller
             }
 
             Log::info('Admin downloaded document', [
-                'admin_id' => Auth::id(),
+                'admin_id' => $this->getAdminId(),
                 'document_id' => $id,
                 'user_id' => $document->user_id,
             ]);
@@ -172,7 +193,7 @@ class UploadedDocumentsController extends Controller
             );
         } catch (\Exception $e) {
             Log::error('Admin document download failed', [
-                'admin_id' => Auth::id(),
+                'admin_id' => $this->getAdminId(),
                 'document_id' => $id,
                 'error' => $e->getMessage(),
             ]);
@@ -188,10 +209,13 @@ class UploadedDocumentsController extends Controller
     {
         try {
             $document = DropBox::findOrFail($id);
-            $document->markAsVerified(Auth::id());
+            $adminId = $this->getAdminId();
+
+            // Mark as verified with admin ID
+            $document->markAsVerified($adminId);
 
             Log::info('Document verified by admin', [
-                'admin_id' => Auth::id(),
+                'admin_id' => $adminId,
                 'document_id' => $id,
                 'user_id' => $document->user_id,
             ]);
@@ -202,14 +226,15 @@ class UploadedDocumentsController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Document verification failed', [
-                'admin_id' => Auth::id(),
+                'admin_id' => $this->getAdminId(),
                 'document_id' => $id,
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Verification failed'
+                'message' => 'Verification failed: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -226,16 +251,18 @@ class UploadedDocumentsController extends Controller
 
         try {
             $count = 0;
+            $adminId = $this->getAdminId();
+
             foreach ($request->document_ids as $id) {
                 $document = DropBox::find($id);
                 if ($document && !$document->is_verified) {
-                    $document->markAsVerified(Auth::id());
+                    $document->markAsVerified($adminId);
                     $count++;
                 }
             }
 
             Log::info('Bulk document verification', [
-                'admin_id' => Auth::id(),
+                'admin_id' => $adminId,
                 'count' => $count,
             ]);
 
@@ -245,13 +272,13 @@ class UploadedDocumentsController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Bulk verification failed', [
-                'admin_id' => Auth::id(),
+                'admin_id' => $this->getAdminId(),
                 'error' => $e->getMessage(),
             ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Bulk verification failed'
+                'message' => 'Bulk verification failed: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -264,16 +291,14 @@ class UploadedDocumentsController extends Controller
         try {
             $document = DropBox::findOrFail($id);
             
-            // Delete physical file
-            if (Storage::disk('public')->exists('dropbox/' . $document->name)) {
-                Storage::disk('public')->delete('dropbox/' . $document->name);
-            }
+            // Delete physical file using the model method
+            $document->deleteFile();
 
             $userId = $document->user_id;
             $document->delete();
 
             Log::info('Admin deleted user document', [
-                'admin_id' => Auth::id(),
+                'admin_id' => $this->getAdminId(),
                 'document_id' => $id,
                 'user_id' => $userId,
             ]);
@@ -281,7 +306,7 @@ class UploadedDocumentsController extends Controller
             return back()->with('success', 'Document deleted successfully.');
         } catch (\Exception $e) {
             Log::error('Admin document deletion failed', [
-                'admin_id' => Auth::id(),
+                'admin_id' => $this->getAdminId(),
                 'document_id' => $id,
                 'error' => $e->getMessage(),
             ]);
@@ -315,32 +340,40 @@ class UploadedDocumentsController extends Controller
                 return back()->with('error', 'Failed to create ZIP file.');
             }
 
+            $addedFiles = 0;
             foreach ($documents as $document) {
-                $filePath = storage_path('app/public/dropbox/' . $document->name);
+                $filePath = $document->getAbsoluteFilePath();
+                
                 if (file_exists($filePath)) {
                     // Add file with organized folder structure
-                    $zipPath = $document->document_category . '/' . $document->original_filename;
+                    $zipPath = ($document->document_category ?: 'Uncategorized') . '/' . $document->original_filename;
                     $zip->addFile($filePath, $zipPath);
+                    $addedFiles++;
                 }
             }
 
             $zip->close();
 
+            if ($addedFiles === 0) {
+                @unlink($zipFilePath);
+                return back()->with('error', 'No physical files found to download.');
+            }
+
             Log::info('Admin downloaded user document package', [
-                'admin_id' => Auth::id(),
+                'admin_id' => $this->getAdminId(),
                 'user_id' => $user->id,
-                'document_count' => $documents->count(),
+                'document_count' => $addedFiles,
             ]);
 
             return response()->download($zipFilePath, $zipFileName)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
             Log::error('User document package download failed', [
-                'admin_id' => Auth::id(),
+                'admin_id' => $this->getAdminId(),
                 'user_id' => $user->id,
                 'error' => $e->getMessage(),
             ]);
 
-            return back()->with('error', 'Failed to create document package.');
+            return back()->with('error', 'Failed to create document package: ' . $e->getMessage());
         }
     }
 
