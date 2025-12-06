@@ -228,23 +228,117 @@
                 </div>
             </div>
 
+            <!-- Document Statistics (PART 3) -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Document Statistics</h3>
+                
+                @php
+                    $userDocuments = \App\Models\DropBox::where('user_id', $user->id);
+                    $totalDocs = $userDocuments->count();
+                    $verifiedDocs = (clone $userDocuments)->where('is_verified', true)->count();
+                    $unverifiedDocs = (clone $userDocuments)->where('is_verified', false)->count();
+                    $totalSize = $userDocuments->sum('file_size');
+                    
+                    // Helper function to format bytes
+                    function formatBytes($bytes) {
+                        if ($bytes == 0) return '0 B';
+                        $units = ['B', 'KB', 'MB', 'GB'];
+                        $i = 0;
+                        while ($bytes > 1024 && $i < count($units) - 1) {
+                            $bytes /= 1024;
+                            $i++;
+                        }
+                        return round($bytes, 2) . ' ' . $units[$i];
+                    }
+                @endphp
+                
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-500">Total Documents:</span>
+                        <span class="text-sm font-medium text-gray-900">{{ $totalDocs }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-500">Verified:</span>
+                        <span class="text-sm font-medium text-green-600">{{ $verifiedDocs }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-500">Pending Verification:</span>
+                        <span class="text-sm font-medium text-yellow-600">{{ $unverifiedDocs }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-500">Total Size:</span>
+                        <span class="text-sm font-medium text-gray-900">{{ formatBytes($totalSize) }}</span>
+                    </div>
+                </div>
+                
+                @if($totalDocs > 0)
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <a href="{{ route('admin.documents.uploaded.user-documents', $user) }}" 
+                           class="text-sm text-blue-600 hover:text-blue-800">
+                            View all documents →
+                        </a>
+                    </div>
+                @endif
+            </div>
+
             <!-- Quick Actions -->
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                 
                 <div class="space-y-3">
+                    @php
+                        // Calculate document counts for this user
+                        $userDocCount = \App\Models\DropBox::where('user_id', $user->id)->count();
+                        $unverifiedUserDocs = \App\Models\DropBox::where('user_id', $user->id)
+                            ->where('is_verified', false)
+                            ->count();
+                    @endphp
+                    
+                    {{-- View User Documents Button --}}
+                    <a href="{{ route('admin.documents.uploaded.user-documents', $user) }}" 
+                       class="block w-full text-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
+                        <i class="fas fa-file-alt mr-2"></i>View Documents
+                        
+                        {{-- Show total document count if any exist --}}
+                        @if($userDocCount > 0)
+                            <span class="ml-2 bg-purple-800 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                {{ $userDocCount }}
+                            </span>
+                        @endif
+                        
+                        {{-- Show unverified count as a warning badge --}}
+                        @if($unverifiedUserDocs > 0)
+                            <span class="ml-1 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                {{ $unverifiedUserDocs }} pending
+                            </span>
+                        @endif
+                    </a>
+                    
+                    {{-- Download User Documents Package (only show if documents exist) --}}
+                    @if($userDocCount > 0)
+                        <a href="{{ route('admin.documents.uploaded.download-package', $user) }}" 
+                           class="block w-full text-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                            <i class="fas fa-download mr-2"></i>Download All Documents (ZIP)
+                        </a>
+                    @endif
+                    
+                    {{-- Edit User Button --}}
                     <a href="{{ route('admin.users.edit', $user) }}" 
                        class="block w-full text-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
                         <i class="fas fa-edit mr-2"></i>Edit User
                     </a>
                     
+                    {{-- Delete User Button (only if no applications) --}}
                     @if($user->userSubmittedApplications->count() == 0)
                         <button onclick="confirmDelete({{ $user->id }}, '{{ $user->name }}')" 
                                 class="block w-full text-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
                             <i class="fas fa-trash mr-2"></i>Delete User
                         </button>
                     @else
-                        <div class="text-xs text-gray-500 text-center">
+                        <div class="text-xs text-gray-500 text-center p-2">
                             Cannot delete user with submitted applications
                         </div>
                     @endif
@@ -293,24 +387,32 @@
 
 @push('scripts')
 <script>
+    /**
+     * Display the delete confirmation modal for a user
+     * @param {number} userId - The ID of the user to delete
+     * @param {string} userName - The name of the user to delete
+     */
     function confirmDelete(userId, userName) {
         document.getElementById('delete-user-name').textContent = userName;
         document.getElementById('delete-form').action = `/admin/users/${userId}`;
         document.getElementById('delete-modal').classList.remove('hidden');
     }
 
+    /**
+     * Close the delete confirmation modal
+     */
     function closeDeleteModal() {
         document.getElementById('delete-modal').classList.add('hidden');
     }
 
-    // Close modal on ESC key
+    // Close modal on ESC key press
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeDeleteModal();
         }
     });
 
-    // Close modal on backdrop click
+    // Close modal when clicking on the backdrop
     document.getElementById('delete-modal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeDeleteModal();

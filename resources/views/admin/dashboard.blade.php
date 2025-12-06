@@ -7,7 +7,7 @@
 @section('content')
 <div class="space-y-6">
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <!-- Total Users -->
         <div class="bg-white p-6 rounded-lg shadow">
             <div class="flex items-center">
@@ -79,6 +79,27 @@
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-500">Rejected</p>
                     <p class="text-2xl font-bold text-gray-900">{{ number_format($stats['rejected_applications']) }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Uploaded Documents (PART 4) -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-file-upload text-purple-600"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Uploaded Documents</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ number_format(\App\Models\DropBox::count()) }}</p>
+                    @php
+                        $pendingVerification = \App\Models\DropBox::where('is_verified', false)->count();
+                    @endphp
+                    @if($pendingVerification > 0)
+                        <p class="text-xs text-red-600 mt-1">{{ $pendingVerification }} pending verification</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -192,49 +213,49 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-<tbody class="bg-white divide-y divide-gray-200">
-    @foreach($recent_applications as $application)
-        <tr>
-            <td class="px-6 py-4 whitespace-nowrap">
-                @if($application->user)
-                    <div class="text-sm font-medium text-gray-900">{{ $application->user->name }}</div>
-                    <div class="text-sm text-gray-500">{{ $application->user->email }}</div>
-                @else
-                    <div class="text-sm text-gray-500 italic">User Not Found</div>
-                @endif
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {{ $application->visaApplication?->name ?? 'N/A' }}
-                </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-                @php
-                    $status_colors = [
-                        'pending' => 'bg-yellow-100 text-yellow-800',
-                        'under_review' => 'bg-blue-100 text-blue-800',
-                        'approved' => 'bg-green-100 text-green-800',
-                        'rejected' => 'bg-red-100 text-red-800'
-                    ];
-                    $status = $application->status ?? 'pending';
-                @endphp
-                
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $status_colors[$status] ?? 'bg-gray-100 text-gray-800' }}">
-                    {{ ucfirst(str_replace('_', ' ', $status)) }}
-                </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ $application->created_at->diffForHumans() }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <a href="{{ route('admin.applications.show', $application) }}" 
-                   class="text-blue-600 hover:text-blue-900">
-                    <i class="fas fa-eye mr-1"></i>View
-                </a>
-            </td>
-        </tr>
-    @endforeach
-</tbody>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @foreach($recent_applications as $application)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($application->user)
+                                        <div class="text-sm font-medium text-gray-900">{{ $application->user->name }}</div>
+                                        <div class="text-sm text-gray-500">{{ $application->user->email }}</div>
+                                    @else
+                                        <div class="text-sm text-gray-500 italic">User Not Found</div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        {{ $application->visaApplication?->name ?? 'N/A' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @php
+                                        $status_colors = [
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'under_review' => 'bg-blue-100 text-blue-800',
+                                            'approved' => 'bg-green-100 text-green-800',
+                                            'rejected' => 'bg-red-100 text-red-800'
+                                        ];
+                                        $status = $application->status ?? 'pending';
+                                    @endphp
+                                    
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $status_colors[$status] ?? 'bg-gray-100 text-gray-800' }}">
+                                        {{ ucfirst(str_replace('_', ' ', $status)) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $application->created_at->diffForHumans() }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a href="{{ route('admin.applications.show', $application) }}" 
+                                       class="text-blue-600 hover:text-blue-900">
+                                        <i class="fas fa-eye mr-1"></i>View
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             @else
                 <div class="p-8 text-center text-gray-500">

@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\MonitoringController;
 use App\Http\Controllers\Admin\MessageController as AdminMessageController;
 use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Http\Controllers\Admin\DocumentManagementController;
+use App\Http\Controllers\Admin\UploadedDocumentsController;
 
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ImmigrationNewsController;
@@ -343,6 +344,30 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
     
     // View User Documents
     Route::get('/users/{user}/documents', [DocumentManagementController::class, 'viewUserDocuments'])->name('users.documents');
+
+    // Uploaded Documents Management Routes
+    Route::prefix('documents/uploaded')->name('documents.uploaded.')->group(function() {
+        // Main dashboard
+        Route::get('/', [UploadedDocumentsController::class, 'index'])->name('index');
+        
+        // User-specific documents
+        Route::get('/user/{user}', [UploadedDocumentsController::class, 'userDocuments'])->name('user-documents');
+        
+        // Document actions
+        Route::get('/{id}/preview', [UploadedDocumentsController::class, 'preview'])->name('preview');
+        Route::get('/{id}/download', [UploadedDocumentsController::class, 'download'])->name('download');
+        Route::post('/{id}/verify', [UploadedDocumentsController::class, 'verify'])->name('verify');
+        Route::delete('/{id}', [UploadedDocumentsController::class, 'destroy'])->name('destroy');
+        
+        // Bulk actions
+        Route::post('/bulk-verify', [UploadedDocumentsController::class, 'bulkVerify'])->name('bulk-verify');
+        
+        // User package download
+        Route::get('/user/{user}/download-package', [UploadedDocumentsController::class, 'downloadUserPackage'])->name('download-package');
+        
+        // Statistics
+        Route::get('/statistics', [UploadedDocumentsController::class, 'statisticsByVisaType'])->name('statistics');
+    });
 
     // PDF Generation for Admin
     Route::get('/applications/{application}/generate-pdf', 
