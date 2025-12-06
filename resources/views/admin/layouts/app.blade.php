@@ -56,6 +56,12 @@
                     Applications
                 </a>
 
+                <!-- NEW: Document Management Link -->
+                <a href="{{ route('admin.documents.management.index') }}" class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.documents.management.*') ? 'active' : '' }}">
+                    <i class="fas fa-folder-open mr-3"></i>
+                    Document Management
+                </a>
+
                 <a href="{{ route('admin.monitoring.index') }}" class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.monitoring.*') ? 'active' : '' }}">
                     <i class="fas fa-search mr-3"></i>
                     Change Monitoring
@@ -65,6 +71,20 @@
                     @if($unreadCount > 0)
                         <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
                             {{ $unreadCount }}
+                        </span>
+                    @endif
+                </a>
+
+                <!-- Messages Link (Optional) -->
+                <a href="{{ route('admin.messages.index') }}" class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
+                    <i class="fas fa-comments mr-3"></i>
+                    Messages
+                    @php
+                        $unreadMsgCount = \App\Models\Message::where('sender_type', 'user')->where('is_read', false)->count();
+                    @endphp
+                    @if($unreadMsgCount > 0)
+                        <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                            {{ $unreadMsgCount }}
                         </span>
                     @endif
                 </a>

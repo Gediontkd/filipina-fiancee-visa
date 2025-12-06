@@ -1,4 +1,4 @@
-{{-- resources/views/web/user/dropbox/index.blade.php --}}
+{{-- resources/views/web/user/dropbox/index.blade.php - UPDATED FOR DATABASE --}}
 @extends('web.layout.master')
 
 @section('content')
@@ -49,21 +49,24 @@
                     </div>
                 </div>
 
-                {{-- Document Requirements by Category --}}
-                @foreach($requirements as $categoryKey => $category)
+                {{-- Document Requirements by Category (FROM DATABASE) --}}
+                @foreach($categories as $category)
                     <div class="card mb-3">
                         <div class="card-header p-3">
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">
-                                    <i class="fa fa-folder-open me-2"></i>{{ $category['label'] }}
+                                    <i class="fa fa-folder-open me-2"></i>{{ $category->category_label }}
                                 </h5>
-                                @if(isset($completionStats['categories'][$categoryKey]))
-                                    <span class="badge {{ $completionStats['categories'][$categoryKey]['percentage'] >= 100 ? 'bg-success' : 'bg-secondary' }}">
-                                        {{ $completionStats['categories'][$categoryKey]['uploaded'] }} / 
-                                        {{ $completionStats['categories'][$categoryKey]['required'] }} Complete
+                                @if(isset($completionStats['categories'][$category->category_key]))
+                                    <span class="badge {{ $completionStats['categories'][$category->category_key]['percentage'] >= 100 ? 'bg-success' : 'bg-secondary' }}">
+                                        {{ $completionStats['categories'][$category->category_key]['uploaded'] }} / 
+                                        {{ $completionStats['categories'][$category->category_key]['required'] }} Complete
                                     </span>
                                 @endif
                             </div>
+                            @if($category->description)
+                                <p class="text-muted mb-0 mt-2"><small>{{ $category->description }}</small></p>
+                            @endif
                         </div>
                         <div class="card-body p-3">
                             <div class="table-responsive">
@@ -77,24 +80,31 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($category['documents'] as $doc)
+                                        @foreach($category->activeDocumentTypes as $docType)
                                             @php
-                                                $uploadedDocs = isset($uploadedDocuments[$categoryKey]) 
-                                                    ? $uploadedDocuments[$categoryKey]->where('document_type', $doc['id'])
+                                                $uploadedDocs = isset($uploadedDocuments[$category->category_key]) 
+                                                    ? $uploadedDocuments[$category->category_key]->where('document_type', $docType->type_key)
                                                     : collect();
                                                 $isUploaded = $uploadedDocs->count() > 0;
                                             @endphp
                                             <tr>
                                                 <td>
-                                                    <strong>{{ $doc['name'] }}</strong>
-                                                    @if($doc['required'])
+                                                    <strong>{{ $docType->name }}</strong>
+                                                    @if($docType->is_required)
                                                         <span class="badge bg-danger ms-2">Required</span>
                                                     @else
                                                         <span class="badge bg-secondary ms-2">Optional</span>
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <small class="text-muted">{{ $doc['description'] }}</small>
+                                                    <small class="text-muted">{{ $docType->description }}</small>
+                                                    @if($docType->instructions)
+                                                        <div class="mt-1">
+                                                            <small class="text-info">
+                                                                <i class="fa fa-lightbulb me-1"></i>{{ $docType->instructions }}
+                                                            </small>
+                                                        </div>
+                                                    @endif
                                                 </td>
                                                 <td class="text-center">
                                                     @if($isUploaded)
@@ -113,14 +123,14 @@
                                                 <td class="text-center">
                                                     @if($isUploaded)
                                                         <button type="button" 
-                                                                class="btn btn-sm btn-info" 
-                                                                onclick="viewUploadedDocuments('{{ $categoryKey }}', '{{ $doc['id'] }}', '{{ $doc['name'] }}')">
+                                                                class="btn btn-sm btn-info mb-1" 
+                                                                onclick="viewUploadedDocuments('{{ $category->category_key }}', '{{ $docType->type_key }}', '{{ $docType->name }}')">
                                                             <i class="fa fa-eye"></i> View
                                                         </button>
                                                     @endif
                                                     <button type="button" 
                                                             class="btn btn-sm btn-primary" 
-                                                            onclick="openUploadModal('{{ $visaType }}', '{{ $categoryKey }}', '{{ $doc['id'] }}', '{{ $doc['name'] }}', {{ $doc['multiple'] ? 'true' : 'false' }})">
+                                                            onclick="openUploadModal('{{ $visaType }}', '{{ $category->category_key }}', '{{ $docType->type_key }}', '{{ $docType->name }}', {{ $docType->allow_multiple ? 'true' : 'false' }})">
                                                         <i class="fa fa-upload"></i> Upload
                                                     </button>
                                                 </td>
@@ -155,7 +165,7 @@
     </div>
 </section>
 
-{{-- Upload Modal --}}
+{{-- Upload Modal (Same as before) --}}
 <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
