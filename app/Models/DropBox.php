@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class DropBox extends Model
 {
@@ -154,19 +155,86 @@ class DropBox extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Methods
+    | File Management Methods
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Check if physical file exists on disk
+     */
+    public function fileExists(): bool
+    {
+        $filePath = 'dropbox/' . $this->name;
+        return Storage::disk('public')->exists($filePath);
+    }
+
+    /**
+     * Get the full file path
+     */
+    public function getFilePath(): string
+    {
+        return 'dropbox/' . $this->name;
+    }
+
+    /**
+     * Get the absolute file path on server
+     */
+    public function getAbsoluteFilePath(): string
+    {
+        return storage_path('app/public/dropbox/' . $this->name);
+    }
+
+    /**
+     * Delete physical file from storage
+     */
+    public function deleteFile(): bool
+    {
+        $filePath = $this->getFilePath();
+        
+        if (Storage::disk('public')->exists($filePath)) {
+            return Storage::disk('public')->delete($filePath);
+        }
+        
+        return false;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Verification Methods
     |--------------------------------------------------------------------------
     */
 
     /**
      * Mark document as verified
+     * 
+     * @param int|null $adminId - The admin ID who verified the document
+     * @return void
      */
-    public function markAsVerified(int $adminId): void
+    public function markAsVerified(?int $adminId = null): void
     {
-        $this->update([
+        // Only set verified_by if adminId is provided and not null
+        $updateData = [
             'is_verified' => true,
             'verified_at' => now(),
-            'verified_by' => $adminId,
+        ];
+
+        // Only include verified_by if we have a valid admin ID
+        if ($adminId !== null) {
+            $updateData['verified_by'] = $adminId;
+        }
+
+        $this->update($updateData);
+    }
+
+    /**
+     * Mark document as unverified
+     */
+    public function markAsUnverified(): void
+    {
+        $this->update([
+            'is_verified' => false,
+            'verified_at' => null,
+            'verified_by' => null,
         ]);
     }
 
@@ -177,6 +245,12 @@ class DropBox extends Model
     {
         return $this->is_verified;
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | File Type Helper Methods
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Get file extension
@@ -204,24 +278,53 @@ class DropBox extends Model
     }
 
     /**
-     * Get icon class for file type
+     * Check if file is document (Word, Excel, etc.)
+     */
+    public function isDocument(): bool
+    {
+        $docExtensions = ['doc', 'docx', 'xls', 'xlsx', 'txt', 'rtf'];
+        return in_array(strtolower($this->getExtension()), $docExtensions);
+    }
+
+    /**
+     * Get icon class for file type (Font Awesome)
      */
     public function getIconClass(): string
     {
         $extension = strtolower($this->getExtension());
 
         $iconMap = [
-            'pdf' => 'fa-file-pdf text-danger',
-            'doc' => 'fa-file-word text-primary',
-            'docx' => 'fa-file-word text-primary',
-            'xls' => 'fa-file-excel text-success',
-            'xlsx' => 'fa-file-excel text-success',
-            'jpg' => 'fa-file-image text-info',
-            'jpeg' => 'fa-file-image text-info',
-            'png' => 'fa-file-image text-info',
-            'gif' => 'fa-file-image text-info',
+            'pdf' => 'fa-file-pdf text-red-600',
+            'doc' => 'fa-file-word text-blue-600',
+            'docx' => 'fa-file-word text-blue-600',
+            'xls' => 'fa-file-excel text-green-600',
+            'xlsx' => 'fa-file-excel text-green-600',
+            'jpg' => 'fa-file-image text-purple-600',
+            'jpeg' => 'fa-file-image text-purple-600',
+            'png' => 'fa-file-image text-purple-600',
+            'gif' => 'fa-file-image text-purple-600',
+            'txt' => 'fa-file-alt text-gray-600',
         ];
 
-        return $iconMap[$extension] ?? 'fa-file text-secondary';
+        return $iconMap[$extension] ?? 'fa-file text-gray-600';
+    }
+
+    /**
+     * Get a human-readable mime type description
+     */
+    public function getMimeTypeDescription(): string
+    {
+        $descriptions = [
+            'application/pdf' => 'PDF Document',
+            'image/jpeg' => 'JPEG Image',
+            'image/png' => 'PNG Image',
+            'image/gif' => 'GIF Image',
+            'application/msword' => 'Word Document',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'Word Document',
+            'application/vnd.ms-excel' => 'Excel Spreadsheet',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'Excel Spreadsheet',
+        ];
+
+        return $descriptions[$this->mime_type] ?? 'Unknown File Type';
     }
 }
