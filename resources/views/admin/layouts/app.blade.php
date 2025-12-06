@@ -41,55 +41,87 @@
             </div>
             
             <nav class="p-4 space-y-2">
-                <a href="{{ route('admin.dashboard') }}" class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <!-- Dashboard -->
+                <a href="{{ route('admin.dashboard') }}" 
+                   class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-chart-bar mr-3"></i>
                     Dashboard
                 </a>
                 
-                <a href="{{ route('admin.users.index') }}" class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                <!-- User Management -->
+                <a href="{{ route('admin.users.index') }}" 
+                   class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                     <i class="fas fa-users mr-3"></i>
                     User Management
                 </a>
                 
-                <a href="{{ route('admin.applications.index') }}" class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.applications.*') ? 'active' : '' }}">
+                <!-- Applications -->
+                <a href="{{ route('admin.applications.index') }}" 
+                   class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.applications.*') ? 'active' : '' }}">
                     <i class="fas fa-file-alt mr-3"></i>
                     Applications
                 </a>
 
-                <!-- NEW: Document Management Link -->
-                <a href="{{ route('admin.documents.management.index') }}" class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.documents.management.*') ? 'active' : '' }}">
-                    <i class="fas fa-folder-open mr-3"></i>
-                    Document Management
+                <!-- Uploaded Documents (NEW) -->
+                <a href="{{ route('admin.documents.uploaded.index') }}" 
+                   class="sidebar-link flex items-center justify-between px-3 py-2 text-blue-100 rounded-lg {{ request()->is('admin/documents/uploaded*') ? 'active' : '' }}">
+                    <div class="flex items-center">
+                        <i class="fas fa-file-upload mr-3"></i>
+                        <span>Uploaded Documents</span>
+                    </div>
+                    @php
+                        $unverifiedCount = \App\Models\DropBox::where('is_verified', false)->count();
+                    @endphp
+                    @if($unverifiedCount > 0)
+                        <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                            {{ $unverifiedCount }}
+                        </span>
+                    @endif
                 </a>
 
-                <a href="{{ route('admin.monitoring.index') }}" class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.monitoring.*') ? 'active' : '' }}">
-                    <i class="fas fa-search mr-3"></i>
-                    Change Monitoring
+                <!-- Document Settings (NEW) -->
+                <a href="{{ route('admin.documents.management.index') }}" 
+                   class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->is('admin/documents/management*') ? 'active' : '' }}">
+                    <i class="fas fa-cog mr-3"></i>
+                    <span>Document Settings</span>
+                </a>
+
+                <!-- Change Monitoring -->
+                <a href="{{ route('admin.monitoring.index') }}" 
+                   class="sidebar-link flex items-center justify-between px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.monitoring.*') ? 'active' : '' }}">
+                    <div class="flex items-center">
+                        <i class="fas fa-search mr-3"></i>
+                        <span>Change Monitoring</span>
+                    </div>
                     @php
                         $unreadCount = \App\Models\MonitoringChange::unread()->count();
                     @endphp
                     @if($unreadCount > 0)
-                        <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                        <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
                             {{ $unreadCount }}
                         </span>
                     @endif
                 </a>
 
-                <!-- Messages Link (Optional) -->
-                <a href="{{ route('admin.messages.index') }}" class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
-                    <i class="fas fa-comments mr-3"></i>
-                    Messages
+                <!-- Messages -->
+                <a href="{{ route('admin.messages.index') }}" 
+                   class="sidebar-link flex items-center justify-between px-3 py-2 text-blue-100 rounded-lg {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
+                    <div class="flex items-center">
+                        <i class="fas fa-comments mr-3"></i>
+                        <span>Messages</span>
+                    </div>
                     @php
                         $unreadMsgCount = \App\Models\Message::where('sender_type', 'user')->where('is_read', false)->count();
                     @endphp
                     @if($unreadMsgCount > 0)
-                        <span class="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                        <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
                             {{ $unreadMsgCount }}
                         </span>
                     @endif
                 </a>
             </nav>
             
+            <!-- Admin Profile & Logout (Bottom) -->
             <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-700">
                 <div class="text-blue-100 text-sm mb-2">
                     {{ Auth::guard('admin')->user()->name }}
