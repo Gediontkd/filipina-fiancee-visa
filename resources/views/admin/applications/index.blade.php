@@ -125,19 +125,33 @@
                         @foreach($applications as $application)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-8 w-8">
-                                            <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                                                <span class="text-xs font-medium text-gray-600">
-                                                    {{ substr($application->user->name, 0, 2) }}
-                                                </span>
+                                    @if($application->user)
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-8 w-8">
+                                                <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                                    <span class="text-xs font-medium text-gray-600">
+                                                        {{ strtoupper(substr($application->user->name, 0, 2)) }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="ml-3">
+                                                <div class="text-sm font-medium text-gray-900">{{ $application->user->name }}</div>
+                                                <div class="text-sm text-gray-500">{{ $application->user->email }}</div>
                                             </div>
                                         </div>
-                                        <div class="ml-3">
-                                            <div class="text-sm font-medium text-gray-900">{{ $application->user->name }}</div>
-                                            <div class="text-sm text-gray-500">{{ $application->user->email }}</div>
+                                    @else
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-8 w-8">
+                                                <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                                                    <i class="fas fa-user-slash text-red-600 text-xs"></i>
+                                                </div>
+                                            </div>
+                                            <div class="ml-3">
+                                                <div class="text-sm font-medium text-red-600">User Deleted</div>
+                                                <div class="text-sm text-gray-500">ID: {{ $application->user_id ?? 'N/A' }}</div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -182,11 +196,17 @@
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         
-                                        <button onclick="showStatusModal({{ $application->id }}, '{{ $application->status }}', '{{ addslashes($application->admin_notes ?? '') }}')" 
-                                                class="text-green-600 hover:text-green-900 transition-colors"
-                                                title="Update Status">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
+                                        @if($application->user)
+                                            <button onclick="showStatusModal({{ $application->id }}, '{{ $application->status }}', '{{ addslashes($application->admin_notes ?? '') }}')" 
+                                                    class="text-green-600 hover:text-green-900 transition-colors"
+                                                    title="Update Status">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        @else
+                                            <span class="text-gray-400" title="Cannot edit - user deleted">
+                                                <i class="fas fa-ban"></i>
+                                            </span>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
