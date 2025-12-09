@@ -40,17 +40,11 @@ class DropBox extends Model
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Document belongs to user
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Document verified by admin
-     */
     public function verifiedBy()
     {
         return $this->belongsTo(Admin::class, 'verified_by');
@@ -63,11 +57,13 @@ class DropBox extends Model
     */
 
     /**
-     * Get full file URL
+     * Get full file URL using Laravel's Storage facade
+     * This properly handles the storage disk configuration
      */
     public function getFileUrlAttribute(): string
     {
-        return url('storage/dropbox/' . $this->attributes['name']);
+        // Use Storage::url() for proper URL generation
+        return Storage::disk('public')->url('dropbox/' . $this->attributes['name']);
     }
 
     /**
@@ -101,7 +97,6 @@ class DropBox extends Model
             'petitioner_income' => 'Income Proof',
             'beneficiary_birth_certificate' => 'Birth Certificate',
             'beneficiary_passport_photo' => 'Passport Photo',
-            // Add more as needed
         ];
 
         return $labels[$this->document_type] ?? ucfirst(str_replace('_', ' ', $this->document_type));
@@ -113,41 +108,26 @@ class DropBox extends Model
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Scope for documents by visa type
-     */
     public function scopeByVisaType(Builder $query, string $visaType): Builder
     {
         return $query->where('visa_type', $visaType);
     }
 
-    /**
-     * Scope for documents by category
-     */
     public function scopeByCategory(Builder $query, string $category): Builder
     {
         return $query->where('document_category', $category);
     }
 
-    /**
-     * Scope for documents by type
-     */
     public function scopeByDocumentType(Builder $query, string $type): Builder
     {
         return $query->where('document_type', $type);
     }
 
-    /**
-     * Scope for verified documents
-     */
     public function scopeVerified(Builder $query): Builder
     {
         return $query->where('is_verified', true);
     }
 
-    /**
-     * Scope for unverified documents
-     */
     public function scopeUnverified(Builder $query): Builder
     {
         return $query->where('is_verified', false);
@@ -169,7 +149,7 @@ class DropBox extends Model
     }
 
     /**
-     * Get the full file path
+     * Get the relative file path (for storage operations)
      */
     public function getFilePath(): string
     {
@@ -204,21 +184,13 @@ class DropBox extends Model
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Mark document as verified
-     * 
-     * @param int|null $adminId - The admin ID who verified the document
-     * @return void
-     */
     public function markAsVerified(?int $adminId = null): void
     {
-        // Only set verified_by if adminId is provided and not null
         $updateData = [
             'is_verified' => true,
             'verified_at' => now(),
         ];
 
-        // Only include verified_by if we have a valid admin ID
         if ($adminId !== null) {
             $updateData['verified_by'] = $adminId;
         }
@@ -226,9 +198,6 @@ class DropBox extends Model
         $this->update($updateData);
     }
 
-    /**
-     * Mark document as unverified
-     */
     public function markAsUnverified(): void
     {
         $this->update([
@@ -238,9 +207,6 @@ class DropBox extends Model
         ]);
     }
 
-    /**
-     * Check if document is verified
-     */
     public function isVerified(): bool
     {
         return $this->is_verified;
@@ -252,43 +218,28 @@ class DropBox extends Model
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Get file extension
-     */
     public function getExtension(): string
     {
         return pathinfo($this->name, PATHINFO_EXTENSION);
     }
 
-    /**
-     * Check if file is PDF
-     */
     public function isPdf(): bool
     {
         return strtolower($this->getExtension()) === 'pdf';
     }
 
-    /**
-     * Check if file is image
-     */
     public function isImage(): bool
     {
         $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
         return in_array(strtolower($this->getExtension()), $imageExtensions);
     }
 
-    /**
-     * Check if file is document (Word, Excel, etc.)
-     */
     public function isDocument(): bool
     {
         $docExtensions = ['doc', 'docx', 'xls', 'xlsx', 'txt', 'rtf'];
         return in_array(strtolower($this->getExtension()), $docExtensions);
     }
 
-    /**
-     * Get icon class for file type (Font Awesome)
-     */
     public function getIconClass(): string
     {
         $extension = strtolower($this->getExtension());
@@ -309,9 +260,6 @@ class DropBox extends Model
         return $iconMap[$extension] ?? 'fa-file text-gray-600';
     }
 
-    /**
-     * Get a human-readable mime type description
-     */
     public function getMimeTypeDescription(): string
     {
         $descriptions = [
