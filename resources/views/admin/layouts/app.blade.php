@@ -1,4 +1,4 @@
-{{-- resources/views/admin/layouts/app.blade.php --}}
+{{-- resources/views/admin/layouts/app.blade.php (UPDATED VERSION) --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -16,6 +16,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Alpine.js for messaging panel -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
     <style>
         .sidebar-link.active {
             @apply bg-blue-700 text-white;
@@ -23,6 +26,14 @@
         
         .sidebar-link:hover {
             @apply bg-blue-700 text-white;
+        }
+
+        /* Messaging panel styles */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     </style>
 </head>
@@ -62,7 +73,7 @@
                     Applications
                 </a>
 
-                <!-- Uploaded Documents (NEW) -->
+                <!-- Uploaded Documents -->
                 <a href="{{ route('admin.documents.uploaded.index') }}" 
                    class="sidebar-link flex items-center justify-between px-3 py-2 text-blue-100 rounded-lg {{ request()->is('admin/documents/uploaded*') ? 'active' : '' }}">
                     <div class="flex items-center">
@@ -79,7 +90,7 @@
                     @endif
                 </a>
 
-                <!-- Document Settings (NEW) -->
+                <!-- Document Settings -->
                 <a href="{{ route('admin.documents.management.index') }}" 
                    class="sidebar-link flex items-center px-3 py-2 text-blue-100 rounded-lg {{ request()->is('admin/documents/management*') ? 'active' : '' }}">
                     <i class="fas fa-cog mr-3"></i>
@@ -111,10 +122,10 @@
                         <span>Messages</span>
                     </div>
                     @php
-                        $unreadMsgCount = \App\Models\Message::where('sender_type', 'user')->where('is_read', false)->count();
+                        $unreadMsgCount = \App\Models\Message::where('sender_type', 'user')->whereNull('read_at')->count();
                     @endphp
                     @if($unreadMsgCount > 0)
-                        <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                        <span class="unread-count inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
                             {{ $unreadMsgCount }}
                         </span>
                     @endif
@@ -149,6 +160,9 @@
                     </div>
                     
                     <div class="flex items-center space-x-4">
+                        <!-- Global Messaging Panel Component -->
+                        <x-messaging-panel userType="admin" />
+                        
                         <span class="text-sm text-gray-500 hidden sm:block">
                             {{ now()->format('M j, Y') }}
                         </span>

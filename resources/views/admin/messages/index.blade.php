@@ -1,4 +1,4 @@
-{{-- resources/views/admin/messages/index.blade.php --}}
+{{-- resources/views/admin/messages/index.blade.php (ENHANCED VERSION) --}}
 @extends('admin.layouts.app')
 
 @section('title', 'Messages')
@@ -74,6 +74,19 @@
             </div>
             
             <div class="flex space-x-3 mt-4 sm:mt-0">
+                <!-- Bulk Actions (shown when messages are selected) -->
+                <div id="bulk-actions" class="hidden">
+                    <span id="selected-count" class="text-sm text-gray-600 mr-3"></span>
+                    <button onclick="bulkMarkAsRead()" 
+                            class="inline-flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors mr-2">
+                        <i class="fas fa-check-double mr-2"></i>Mark Read
+                    </button>
+                    <button onclick="bulkDelete()" 
+                            class="inline-flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors">
+                        <i class="fas fa-trash mr-2"></i>Delete
+                    </button>
+                </div>
+                
                 <a href="{{ route('admin.messages.mark-all-read') }}" 
                    class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
                     <i class="fas fa-check-double mr-2"></i>Mark All Read
@@ -161,6 +174,14 @@
                     <div class="p-6 hover:bg-gray-50 {{ $message->isRead() ? '' : 'bg-blue-50' }}">
                         <div class="flex items-start justify-between">
                             <div class="flex items-start space-x-4 flex-1">
+                                <!-- Checkbox for bulk selection -->
+                                <div class="flex-shrink-0 pt-1">
+                                    <input type="checkbox" 
+                                           class="message-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
+                                           value="{{ $message->id }}"
+                                           onchange="updateBulkActions()">
+                                </div>
+
                                 <!-- Avatar -->
                                 <div class="flex-shrink-0">
                                     <div class="w-10 h-10 {{ $message->isFromAdmin() ? 'bg-purple-100' : 'bg-blue-100' }} rounded-full flex items-center justify-center">
@@ -245,6 +266,9 @@
 
 @push('scripts')
 <script>
+    /**
+     * Mark single message as read
+     */
     function markAsRead(messageId) {
         fetch(`/admin/messages/${messageId}/mark-read`, {
             method: 'POST',
@@ -264,6 +288,106 @@
         .catch(error => {
             console.error('Error:', error);
             alert('Failed to mark message as read');
+        });
+    }
+
+    /**
+     * Update bulk actions visibility based on selected checkboxes
+     */
+    function updateBulkActions() {
+        const checkboxes = document.querySelectorAll('.message-checkbox:checked');
+        const bulkActionsDiv = document.getElementById('bulk-actions');
+        const selectedCount = document.getElementById('selected-count');
+        
+        if (checkboxes.length > 0) {
+            bulkActionsDiv.classList.remove('hidden');
+            selectedCount.textContent = `${checkboxes.length} selected`;
+        } else {
+            bulkActionsDiv.classList.add('hidden');
+        }
+    }
+
+    /**
+     * Get selected message IDs
+     */
+    function getSelectedMessageIds() {
+        const checkboxes = document.querySelectorAll('.message-checkbox:checked');
+        return Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    /**
+     * Bulk mark messages as read
+     */
+    function bulkMarkAsRead() {
+        const messageIds = getSelectedMessageIds();
+        
+        if (messageIds.length === 0) {
+            alert('Please select messages first');
+            return;
+        }
+
+        if (!confirm(`Mark ${messageIds.length} message(s) as read?`)) {
+            return;
+        }
+
+        fetch('/admin/messages/bulk-mark-read', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ message_ids: messageIds })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || 'Failed to mark messages as read');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to mark messages as read');
+        });
+    }
+
+    /**
+     * Bulk delete messages
+     */
+    function bulkDelete() {
+        const messageIds = getSelectedMessageIds();
+        
+        if (messageIds.length === 0) {
+            alert('Please select messages first');
+            return;
+        }
+
+        if (!confirm(`Are you sure you want to delete ${messageIds.length} message(s)? This action cannot be undone.`)) {
+            return;
+        }
+
+        fetch('/admin/messages/bulk-delete', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ message_ids: messageIds })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || 'Failed to delete messages');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to delete messages');
         });
     }
 </script>

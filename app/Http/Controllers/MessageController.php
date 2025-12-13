@@ -302,4 +302,56 @@ class MessageController extends Controller
             return back()->with('error', 'Unable to load compose form: ' . $e->getMessage());
         }
     }
+
+    /**
+ * Get panel data for messaging component (AJAX)
+ * Returns recent messages for the slide-out panel
+ */
+public function getPanelData(Request $request)
+{
+    try {
+        $user = Auth::user();
+        
+        // Get recent messages (last 20)
+        $messages = Message::where('user_id', $user->id)
+            ->with(['admin', 'application.visaApplication'])
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
+            ->get()
+            ->map(function($message) {
+                return [
+                    'id' => $message->id,
+                    'user_id' => $message->user_id,
+                    'application_id' => $message->application_id,
+                    'sender_type' => $message->sender_type,
+                    'sender_name' => $message->sender_name,
+                    'subject' => $message->subject,
+                    'message_preview' => Str::limit($message->message, 100),
+                    'read_at' => $message->read_at,
+                    'formatted_date' => $message->created_at->diffForHumans(),
+                    'priority' => $message->priority,
+                    'has_attachments' => $message->hasAttachments(),
+                    'attachment_count' => $message->attachment_count,
+                    'application_name' => $message->application->visaApplication->name ?? null,
+                ];
+            });
+
+        $unreadCount = Message::where('user_id', $user->id)
+            ->where('sender_type', 'admin')
+            ->whereNull('read_at')
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'messages' => $messages,
+            'unread_count' => $unreadCount
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to load messages'
+        ], 500);
+    }
+}
 }

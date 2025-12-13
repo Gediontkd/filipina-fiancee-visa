@@ -316,4 +316,120 @@ class MessageController extends Controller
 
         return response()->json(['unread_count' => $count]);
     }
+
+    /**
+ * Get panel data for admin messaging component (AJAX)
+ * Returns recent messages from users for the slide-out panel
+ */
+public function getPanelData(Request $request)
+{
+    try {
+        // Get recent messages from users (last 20)
+        $messages = Message::where('sender_type', 'user')
+            ->with(['user', 'application.visaApplication'])
+            ->orderBy('created_at', 'desc')
+            ->limit(20)
+            ->get()
+            ->map(function($message) {
+                return [
+                    'id' => $message->id,
+                    'user_id' => $message->user_id,
+                    'application_id' => $message->application_id,
+                    'sender_type' => $message->sender_type,
+                    'sender_name' => $message->user ? $message->user->name : 'Unknown User',
+                    'subject' => $message->subject,
+                    'message_preview' => Str::limit($message->message, 100),
+                    'read_at' => $message->read_at,
+                    'formatted_date' => $message->created_at->diffForHumans(),
+                    'priority' => $message->priority,
+                    'has_attachments' => $message->hasAttachments(),
+                    'attachment_count' => $message->attachment_count,
+                    'application_name' => $message->application->visaApplication->name ?? null,
+                ];
+            });
+
+        $unreadCount = Message::where('sender_type', 'user')
+            ->whereNull('read_at')
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'messages' => $messages,
+            'unread_count' => $unreadCount
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Admin panel data error: ' . $e->getMessage());
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to load messages'
+        ], 500);
+    }
+}
+
+/**
+ * Bulk mark messages as read (Admin only)
+ */
+public function bulkMarkAsRead(Request $request)
+{
+    try {
+        $request->validate([
+            'message_ids' => 'required|array',
+            'message_ids.*' => 'exists:messages,id'
+        ]);
+
+        $count = Message::whereIn('id', $request->message_ids)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "{$count} messages marked as read"
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to mark messages as read'
+        ], 500);
+    }
+}
+
+/**
+ * Bulk delete messages (Admin only)
+ */
+public function bulkDelete(Request $request)
+{
+    try {
+        $request->validate([
+            'message_ids' => 'required|array',
+            'message_ids.*' => 'exists:messages,id'
+        ]);
+
+        $messages = Message::whereIn('id', $request->message_ids)->get();
+        
+        // Delete attachments from storage
+        foreach ($messages as $message) {
+            if ($message->hasAttachments()) {
+                foreach ($message->attachments as $attachment) {
+                    \Storage::disk('public')->delete($attachment['path']);
+                }
+            }
+        }
+
+        $count = Message::whereIn('id', $request->message_ids)->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => "{$count} messages deleted"
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to delete messages'
+        ], 500);
+    }
+}
 }

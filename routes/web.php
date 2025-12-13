@@ -172,6 +172,10 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         Route::post('/{message}/mark-read', [MessageController::class, 'markAsRead'])->name('mark-read');
         Route::get('/unread-count', [MessageController::class, 'getUnreadCount'])->name('unread-count');
         Route::get('/{message}/attachment/{index}', [MessageController::class, 'downloadAttachment'])->name('download-attachment');
+
+        // NEW: Panel data endpoint for AJAX
+        Route::get('/panel-data', [MessageController::class, 'getPanelData'])
+            ->name('panel-data');
     });
 
     // Application Submission Routes
@@ -416,6 +420,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
             Route::get('/unread-count', 'getUnreadCount')->name('unread-count');
             Route::get('/{message}/attachment/{index}', 'downloadAttachment')->name('download-attachment');
             Route::delete('/{message}', 'destroy')->name('destroy');
+
+            // NEW: Panel data endpoint for AJAX
+            Route::get('/panel-data', 'getPanelData')->name('panel-data');
+            
+            // NEW: Bulk action routes
+            Route::post('/bulk-mark-read', 'bulkMarkAsRead')->name('bulk-mark-read');
+            Route::post('/bulk-delete', 'bulkDelete')->name('bulk-delete');
         });
 
         // Document Management
