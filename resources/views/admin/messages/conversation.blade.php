@@ -66,8 +66,8 @@
         <!-- Messages List -->
         <div class="max-h-96 overflow-y-auto p-6 space-y-4" id="messages-container">
             @forelse($messages as $message)
-                <div class="flex {{ $message->isFromAdmin() ? 'justify-end' : 'justify-start' }}">
-                    <div class="max-w-xs lg:max-w-md {{ $message->isFromAdmin() ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900' }} rounded-lg p-4">
+                <div class="mb-4">
+                    <div class="w-full {{ $message->isFromAdmin() ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900' }} rounded-lg p-4">
                         <!-- Message Header -->
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center space-x-2">

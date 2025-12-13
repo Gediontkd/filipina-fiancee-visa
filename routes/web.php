@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\MessageController as AdminMessageController;
 use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Http\Controllers\Admin\DocumentManagementController;
 use App\Http\Controllers\Admin\UploadedDocumentsController;
+use App\Http\Controllers\Admin\UserPdfStoreController;
 
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ImmigrationNewsController;
@@ -345,6 +346,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
         Route::delete('/document-types/{documentType}', [DocumentManagementController::class, 'destroyDocumentType'])->name('document-types.destroy');
         Route::post('/document-types/reorder', [DocumentManagementController::class, 'reorderDocumentTypes'])->name('document-types.reorder');
     });
+
+    Route::group(['prefix' => 'user-pdf-store', 'as' => 'user-pdf-store.'], function() {
+    Route::get('/', [App\Http\Controllers\Admin\UserPdfStoreController::class, 'index'])->name('index');
+    Route::get('/user/{userId}/pdfs', [App\Http\Controllers\Admin\UserPdfStoreController::class, 'getUserPdfs'])->name('user-pdfs');
+    Route::post('/upload', [App\Http\Controllers\Admin\UserPdfStoreController::class, 'upload'])->name('upload');
+    Route::delete('/delete', [App\Http\Controllers\Admin\UserPdfStoreController::class, 'delete'])->name('delete');
+    Route::get('/download/{userId}/{filename}', [App\Http\Controllers\Admin\UserPdfStoreController::class, 'download'])->name('download');
+});
     
     // View User Documents
     Route::get('/users/{user}/documents', [DocumentManagementController::class, 'viewUserDocuments'])->name('users.documents');
