@@ -21,6 +21,8 @@
 		<script type="text/javascript">
 			var _baseURL = '{{ url('/') }}';		
 		</script>
+		<!-- Alpine.js for messaging panel -->
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 	</head>
 	<body>		
 		@include('web.layout.header')
