@@ -28,11 +28,12 @@
                 @endif
             </a>
         </li>
-        <li class="sideitem {{ Request::segment(1) == 'mail' ? 'active' : '' }}">
+        <!-- TODO: This is Removed and i dont need it -->
+        <!-- <li class="sideitem {{ Request::segment(1) == 'mail' ? 'active' : '' }}">
             <a href="{{ route('mails') }}">
                 <i class="fa fa-envelope-open"></i><span>Mail</span>            
             </a>
-        </li>
+        </li> -->
         <li class="sideitem {{ Request::segment(2) == 'progress' ? 'active' : '' }}">
             <a href="{{ route('user.page', 'progress') }}">
                 <i class="fa fa-file-alt"></i><span>Progress</span>            
