@@ -69,8 +69,8 @@
                     <div class="card-body p-0" style="max-height: 500px; overflow-y: auto;" id="messages-container">
                         @forelse($messages as $message)
                             <div class="p-3 border-bottom">
-                                <div class="d-flex {{ $message->isFromUser() ? 'justify-content-end' : 'justify-content-start' }}">
-                                    <div class="message-bubble {{ $message->isFromUser() ? 'user-message' : 'admin-message' }}" style="max-width: 75%;">
+                                <div class="w-100">
+                                    <div class="message-bubble {{ $message->isFromUser() ? 'user-message' : 'admin-message' }}" style="width: 100%;">
                                         <!-- Message Header -->
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <div class="d-flex align-items-center">
@@ -207,17 +207,15 @@
     background-color: #007bff;
     color: white;
     padding: 15px;
-    border-radius: 15px 15px 5px 15px;
-    margin-left: 20px;
+    border-radius: 15px;
 }
 
 .admin-message {
     background-color: #f8f9fa;
     color: #333;
     padding: 15px;
-    border-radius: 15px 15px 15px 5px;
+    border-radius: 15px;
     border: 1px solid #dee2e6;
-    margin-right: 20px;
 }
 
 .user-message .text-primary {

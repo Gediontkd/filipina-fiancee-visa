@@ -62,12 +62,24 @@ class ApplicationController extends Controller
     {
         $application->load(['user', 'visaApplication', 'reviewer']);
 
+        // Get unread message count (messages from user that admin hasn't read)
         $unreadMessageCount = \App\Models\Message::where('application_id', $application->id)
             ->where('sender_type', 'user')
             ->where('is_read', false)
             ->count();
+        
+        // Get total message count for this application
+        $messageCount = \App\Models\Message::where('application_id', $application->id)->count();
+        
+        // Get document count (if you have documents stored in the application)
+        $documentCount = $application->documents ? count($application->documents) : 0;
 
-        return view('admin.applications.show', compact('application', 'unreadMessageCount'));
+        return view('admin.applications.show', compact(
+            'application', 
+            'unreadMessageCount',
+            'messageCount',
+            'documentCount'
+        ));
     }
 
     /**

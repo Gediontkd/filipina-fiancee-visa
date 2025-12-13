@@ -1,4 +1,4 @@
-{{-- resources/views/admin/messages/index.blade.php (ENHANCED VERSION) --}}
+{{-- resources/views/admin/messages/index.blade.php --}}
 @extends('admin.layouts.app')
 
 @section('title', 'Messages')
@@ -235,7 +235,7 @@
                                     <i class="fas fa-comments mr-1"></i>View
                                 </a>
                                 
-                                @if(!$message->isRead())
+                                @if(!$message->isRead() && !$message->isFromAdmin())
                                     <button onclick="markAsRead({{ $message->id }})" 
                                             class="inline-flex items-center px-3 py-1 bg-green-100 hover:bg-green-200 text-green-700 text-sm rounded-lg transition-colors">
                                         <i class="fas fa-check mr-1"></i>Mark Read
