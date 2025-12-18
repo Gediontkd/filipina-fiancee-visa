@@ -334,10 +334,6 @@
                                 class="w-full inline-flex items-center justify-center px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-lg transition-colors">
                             <i class="fas fa-file-pdf mr-2"></i>Generate PDF Package
                         </button>
-                        <div class="text-xs text-gray-600 text-center">
-                            <i class="fas fa-check-circle text-green-600 mr-1"></i>
-                            {{ $pdfStatus['pdf_count'] }} PDF file(s) ready
-                        </div>
                     @else
                         <div class="w-full px-4 py-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg text-sm">
                             <i class="fas fa-clock mr-2"></i>{{ $pdfStatus['message'] }}
