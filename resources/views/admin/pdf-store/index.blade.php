@@ -102,7 +102,7 @@
                     <input type="file" id="pdf-files" accept=".pdf" multiple class="hidden">
                     <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
                     <p class="text-lg font-medium text-gray-700 mb-2">Drop PDF files here or click to browse</p>
-                    <p class="text-sm text-gray-500 mb-4">You can upload multiple PDF files at once (Max 10MB per file)</p>
+                    <p class="text-sm text-gray-500 mb-4">You can upload multiple PDF files at once (Max 100MB per file)</p>
                     <button type="button" onclick="document.getElementById('pdf-files').click()" 
                             class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
                         <i class="fas fa-upload mr-2"></i>Select Files
