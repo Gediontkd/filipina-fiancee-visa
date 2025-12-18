@@ -59,7 +59,7 @@
                     
                     @if($pdfStatus['can_generate'])
                         <button onclick="generateUserPdf()" id="user-pdf-btn-1" class="btn btn-danger">
-                            <i class="fa fa-file-pdf me-2"></i>Download PDF Package
+                            <i class="fa fa-file-pdf me-2"></i>Generate PDF Package
                         </button>
                     @else
                         <div class="alert alert-warning mb-0">
