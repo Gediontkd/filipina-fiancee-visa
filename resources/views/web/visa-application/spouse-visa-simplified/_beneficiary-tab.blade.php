@@ -1068,7 +1068,7 @@
 <h5 class="mb-3 mt-4"><i class="fa fa-users me-2"></i>Beneficiary's Parents Information</h5>
 <div class="alert alert-info">
     <i class="fa fa-info-circle me-2"></i>
-    <strong>Note:</strong> Provide information about the beneficiary's biological or adoptive parents. You can add multiple parents/guardians.
+    <strong>Note:</strong> Provide information about the beneficiary’s biological or adoptive parents and children. Details for the father, mother, sons, and daughters are required.
 </div>
 
 <div id="beneficiary_parents_container">
