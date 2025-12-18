@@ -25,7 +25,7 @@
             @if($pdfStatus['can_generate'])
                 <button onclick="generateAdminPdf()" id="admin-pdf-btn"
                         class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors">
-                    <i class="fas fa-file-pdf mr-2"></i>Download PDF Package
+                    <i class="fas fa-file-pdf mr-2"></i>Generate PDF Package
                 </button>
             @else
                 <button disabled
@@ -332,7 +332,7 @@
                     @if($pdfStatus['can_generate'])
                         <button onclick="generateAdminPdf()" id="admin-pdf-btn-2"
                                 class="w-full inline-flex items-center justify-center px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-lg transition-colors">
-                            <i class="fas fa-file-pdf mr-2"></i>Download PDF Package
+                            <i class="fas fa-file-pdf mr-2"></i>Generate PDF Package
                         </button>
                         <div class="text-xs text-gray-600 text-center">
                             <i class="fas fa-check-circle text-green-600 mr-1"></i>
