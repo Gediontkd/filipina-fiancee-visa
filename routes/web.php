@@ -409,6 +409,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
             'index', 'show', 'edit', 'update', 'destroy'
         ]);
 
+        // Instant login as user
+        Route::post('/login-as-user/{user}', [AuthController::class, 'loginAsUser'])
+            ->name('login-as-user');
+
         // Application Management
         Route::controller(ApplicationController::class)->group(function() {
             Route::get('/applications', 'index')->name('applications.index');

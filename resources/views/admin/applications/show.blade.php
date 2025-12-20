@@ -34,6 +34,16 @@
                     <i class="fas fa-file-pdf mr-2"></i>Package Not Ready
                 </button>
             @endif
+
+            <!-- Instant Login Button -->
+        <form method="POST" action="{{ route('admin.login-as-user', $application->user) }}" 
+            onsubmit="return confirm('Login as {{ $application->user->name }}?\n\nThis will log you out of the admin panel.');">
+            @csrf
+            <button type="submit"
+                    class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors">
+                <i class="fas fa-user-secret mr-2"></i>Login as User
+            </button>
+        </form>
             
             <a href="{{ route('admin.applications.form-data', $application) }}"
                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">

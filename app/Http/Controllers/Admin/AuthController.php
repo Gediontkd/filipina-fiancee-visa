@@ -66,4 +66,38 @@ class AuthController extends Controller
         return redirect()->route('admin.login')
             ->with('success', 'You have been logged out successfully.');
     }
+
+    /**
+ * Admin instant login to user account
+ */
+public function loginAsUser(Request $request, User $user)
+{
+    $admin = Auth::guard('admin')->user();
+    
+    // Log this action for security audit
+    \Log::info('Admin login as user', [
+        'admin_id' => $admin->id,
+        'admin_email' => $admin->email,
+        'user_id' => $user->id,
+        'user_email' => $user->email,
+        'ip' => $request->ip(),
+        'timestamp' => now()
+    ]);
+    
+    // Store admin ID in session to allow returning to admin panel
+    session(['admin_viewing_as_user' => true]);
+    session(['original_admin_id' => $admin->id]);
+    
+    // Logout from admin guard
+    Auth::guard('admin')->logout();
+    
+    // Login as the user
+    Auth::login($user, true);
+    
+    // Regenerate session for security
+    $request->session()->regenerate();
+    
+    return redirect()->route('user.page', ['page' => 'progress'])
+        ->with('success', 'You are now viewing as ' . $user->name);
+}
 }
