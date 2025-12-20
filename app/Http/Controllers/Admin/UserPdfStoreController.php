@@ -111,7 +111,7 @@ class UserPdfStoreController extends Controller
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'pdf_files' => 'required',
-            'pdf_files.*' => 'required|file|mimes:pdf|max:102400' // 100MB max per file
+            'pdf_files.*' => 'required|file|mimes:pdf|max:302400' // 300MB max per file
         ]);
 
         if ($validator->fails()) {
