@@ -36,14 +36,10 @@
             @endif
 
             <!-- Instant Login Button -->
-        <form method="POST" action="{{ route('admin.login-as-user', $application->user) }}" 
-            onsubmit="return confirm('Login as {{ $application->user->name }}?\n\nThis will log you out of the admin panel.');">
-            @csrf
-            <button type="submit"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors">
-                <i class="fas fa-user-secret mr-2"></i>Login as User
-            </button>
-        </form>
+        <button type="button" onclick="loginAsUser({{ $application->user->id }}, '{{ $application->user->name }}')"
+                class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors">
+            <i class="fas fa-user-secret mr-2"></i>Login as User
+        </button>
             
             <a href="{{ route('admin.applications.form-data', $application) }}"
                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
@@ -455,6 +451,34 @@
                 }
             }, 3000);
         }, 500);
+    }
+
+    // Login as user function (opens in new tab)
+    function loginAsUser(userId, userName) {
+        if (!confirm(`Login as ${userName}?\n\nThis will open a new tab and you'll be logged in as this user.`)) {
+            return;
+        }
+
+        // Create a hidden form
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/login-as-user/${userId}`;
+        form.target = '_blank'; // Open in new tab
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        // Append form to body and submit
+        document.body.appendChild(form);
+        form.submit();
+        
+        // Clean up
+        setTimeout(() => document.body.removeChild(form), 100);
     }
 
     // Status Modal functions

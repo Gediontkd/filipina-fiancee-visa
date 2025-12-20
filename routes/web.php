@@ -411,7 +411,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
 
         // Instant login as user
         Route::post('/login-as-user/{user}', [AuthController::class, 'loginAsUser'])
-            ->name('login-as-user');
+            ->name('login-as-user')
+            ->where('user', '[0-9]+');
 
         // Application Management
         Route::controller(ApplicationController::class)->group(function() {

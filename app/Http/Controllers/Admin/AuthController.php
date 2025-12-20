@@ -68,36 +68,77 @@ class AuthController extends Controller
     }
 
     /**
- * Admin instant login to user account
- */
-public function loginAsUser(Request $request, User $user)
-{
-    $admin = Auth::guard('admin')->user();
-    
-    // Log this action for security audit
-    \Log::info('Admin login as user', [
-        'admin_id' => $admin->id,
-        'admin_email' => $admin->email,
-        'user_id' => $user->id,
-        'user_email' => $user->email,
-        'ip' => $request->ip(),
-        'timestamp' => now()
-    ]);
-    
-    // Store admin ID in session to allow returning to admin panel
-    session(['admin_viewing_as_user' => true]);
-    session(['original_admin_id' => $admin->id]);
-    
-    // Logout from admin guard
-    Auth::guard('admin')->logout();
-    
-    // Login as the user
-    Auth::login($user, true);
-    
-    // Regenerate session for security
-    $request->session()->regenerate();
-    
-    return redirect()->route('user.page', ['page' => 'progress'])
-        ->with('success', 'You are now viewing as ' . $user->name);
-}
+     * Admin instant login to user account
+     */
+    public function loginAsUser(Request $request, $userId) // Changed parameter
+    {
+        // Find user by ID
+        $user = User::findOrFail($userId);
+        $admin = Auth::guard('admin')->user();
+        
+        // Log this action for security audit
+        \Log::info('Admin login as user', [
+            'admin_id' => $admin->id,
+            'admin_email' => $admin->email,
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'ip' => $request->ip(),
+            'timestamp' => now()
+        ]);
+        
+        // Store admin ID in session to allow returning to admin panel
+        session(['admin_viewing_as_user' => true]);
+        session(['original_admin_id' => $admin->id]);
+        
+        // Logout from admin guard
+        Auth::guard('admin')->logout();
+        
+        // Login as the user
+        Auth::login($user, true);
+        
+        // Regenerate session for security
+        $request->session()->regenerate();
+        
+        return redirect()->route('user.page', ['page' => 'progress'])
+            ->with('success', 'You are now viewing as ' . $user->name);
+    }
+
+    /**
+     * Return from user view back to admin
+     */
+    public function returnFromUser(Request $request)
+    {
+        if (!session('admin_viewing_as_user') || !session('original_admin_id')) {
+            return redirect()->route('login')->with('error', 'Invalid session');
+        }
+        
+        $adminId = session('original_admin_id');
+        $admin = Admin::find($adminId);
+        
+        if (!$admin) {
+            return redirect()->route('login')->with('error', 'Admin account not found');
+        }
+        
+        // Log return action
+        \Log::info('Admin returning from user view', [
+            'admin_id' => $admin->id,
+            'was_viewing_user' => Auth::id(),
+            'timestamp' => now()
+        ]);
+        
+        // Logout from user account
+        Auth::logout();
+        
+        // Login back as admin
+        Auth::guard('admin')->login($admin, true);
+        
+        // Clear session flags
+        session()->forget(['admin_viewing_as_user', 'original_admin_id']);
+        
+        // Regenerate session
+        $request->session()->regenerate();
+        
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Returned to admin panel');
+    }
 }
