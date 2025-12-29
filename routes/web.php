@@ -414,6 +414,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function() {
             ->name('login-as-user')
             ->where('user', '[0-9]+');
 
+        // Show confirmation page for login as user
+        Route::get('/login-as-user/{user}', function($userId) {
+            $user = User::findOrFail($userId);
+            return view('admin.auth.login-as-user-confirm', compact('user'));
+        })->name('login-as-user.confirm');
+
         // Application Management
         Route::controller(ApplicationController::class)->group(function() {
             Route::get('/applications', 'index')->name('applications.index');
