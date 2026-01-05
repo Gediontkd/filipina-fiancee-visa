@@ -1850,6 +1850,9 @@ $(document).on('click', '.remove-parent[data-person="beneficiary"]', function() 
         return;
     }
     
-    $(this).closest('.parent-item').remove();
+    // Confirmation dialog
+    if (confirm('Please confirm that you want to delete this section? This action cannot be undone.')) {
+        $(this).closest('.parent-item').remove();
+    }
 });
 </script>
