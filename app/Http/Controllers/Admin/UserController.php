@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -21,12 +22,13 @@ class UserController extends Controller
      */
     protected function getAdminId(): ?int
     {
-        // Try 'admin' guard first, fall back to default 'web' guard
         return Auth::guard('admin')->id() ?? Auth::id();
     }
 
     /**
-     * Display users list
+     * Display users list with card-based grid
+     * 
+     * UPDATED: Added sorting option, improved query structure
      */
     public function index(Request $request)
     {
@@ -55,10 +57,17 @@ class UserController extends Controller
                 $query->whereDate('created_at', '<=', $request->date_to);
             }
 
+            // NEW: Sorting options
+            $sort = $request->get('sort', 'newest');
+            match ($sort) {
+                'oldest' => $query->oldest(),
+                'name' => $query->orderBy('name'),
+                default => $query->latest(),
+            };
+
             $users = $query->withCount('userSubmittedApplications')
-                ->orderBy('created_at', 'desc')
                 ->paginate(15)
-                ->appends($request->all());
+                ->withQueryString(); // UPDATED: Better pagination with query string
 
             $application_types = User::select('chosen_application')
                 ->whereNotNull('chosen_application')
@@ -69,26 +78,52 @@ class UserController extends Controller
             return view('admin.users.index', compact('users', 'application_types'));
 
         } catch (\Exception $e) {
+            Log::error('Failed to load users list', ['error' => $e->getMessage()]);
             return back()->with('error', 'Unable to load users: ' . $e->getMessage());
         }
     }
 
     /**
-     * Show user details
+     * Show user workspace - COMPLETELY UPDATED
+     * 
+     * This is now the central hub for all user management.
+     * Loads all data needed for the tabbed workspace interface.
      */
     public function show(User $user)
     {
         try {
+            // Load all relationships needed for the workspace tabs
             $user->load([
-                'userSubmittedApplications',
+                // For Applications Tab
+                'userSubmittedApplications' => function ($query) {
+                    $query->with(['visaApplication', 'reviewer'])
+                          ->orderBy('created_at', 'desc');
+                },
+                
+                // For Documents Tab
+                'dropboxFiles' => function ($query) {
+                    $query->orderBy('created_at', 'desc');
+                },
+                
+                // For Messages Tab
+                'messages' => function ($query) {
+                    $query->with('application')
+                          ->orderBy('created_at', 'desc');
+                },
+                
+                // Legacy step data (if still needed)
                 'fianceVisaSteps',
                 'spouseVisaSteps',
-                'adjustmentVisaSteps'
+                'adjustmentVisaSteps',
             ]);
 
             return view('admin.users.show', compact('user'));
 
         } catch (\Exception $e) {
+            Log::error('Failed to load user workspace', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
             return back()->with('error', 'Unable to load user details: ' . $e->getMessage());
         }
     }
@@ -102,22 +137,33 @@ class UserController extends Controller
     }
 
     /**
-     * Update user
+     * Update user - UPDATED with image handling
      */
     public function update(Request $request, User $user)
     {
         try {
-            $request->validate([
+            $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
+                'phone' => 'nullable|string|max:20',
                 'chosen_application' => 'nullable|string',
                 'password' => 'nullable|min:8|confirmed',
+                'image' => 'nullable|image|max:2048', // NEW: Image validation
             ]);
 
-            $data = $request->only(['name', 'email', 'chosen_application']);
+            $data = $request->only(['name', 'email', 'phone', 'chosen_application']);
             
             if ($request->filled('password')) {
                 $data['password'] = Hash::make($request->password);
+            }
+
+            // NEW: Handle image upload
+            if ($request->hasFile('image')) {
+                // Delete old image if exists
+                if ($user->image) {
+                    Storage::disk('public')->delete($user->image);
+                }
+                $data['image'] = $request->file('image')->store('users', 'public');
             }
 
             $user->update($data);
@@ -126,19 +172,33 @@ class UserController extends Controller
                 ->with('success', 'User updated successfully.');
 
         } catch (\Exception $e) {
+            Log::error('Failed to update user', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
             return back()->with('error', 'Unable to update user: ' . $e->getMessage());
         }
     }
 
     /**
-     * Delete user
+     * Delete user - UPDATED to handle image deletion
      */
     public function destroy(User $user)
     {
         try {
-            // Check if user has submitted applications
-            if ($user->userSubmittedApplications()->count() > 0) {
-                return back()->with('error', 'Cannot delete user with submitted applications.');
+            // NOTE: Removed the check that prevented deletion if user has applications
+            // Applications will remain with user_id but show "Deleted User" in UI
+            
+            // Delete user image if exists
+            if ($user->image) {
+                Storage::disk('public')->delete($user->image);
+            }
+
+            // Delete user's dropbox files from storage
+            foreach ($user->dropboxFiles as $file) {
+                if ($file->file_path) {
+                    Storage::disk('public')->delete($file->file_path);
+                }
             }
 
             $user->delete();
@@ -147,29 +207,29 @@ class UserController extends Controller
                 ->with('success', 'User deleted successfully.');
 
         } catch (\Exception $e) {
+            Log::error('Failed to delete user', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
             return back()->with('error', 'Unable to delete user: ' . $e->getMessage());
         }
     }
 
     /**
-     * Show user documents
+     * Show user documents - kept for backward compatibility
+     * (The new workspace has documents in a tab, but this route still works)
      */
     public function documents(User $user)
     {
         try {
-            // Get visa type from user
             $visaType = $this->getVisaTypeFromUser($user);
-            
-            // Get document requirements
             $requirements = DocumentRequirements::getRequirements($visaType);
             
-            // Get uploaded documents grouped by category
             $uploadedDocuments = DropBox::where('user_id', $user->id)
                 ->orderBy('created_at', 'DESC')
                 ->get()
                 ->groupBy('document_category');
             
-            // Calculate completion stats
             $completionStats = $this->calculateCompletionStats($requirements, $uploadedDocuments);
             
             return view('admin.users.documents', compact(
@@ -185,7 +245,6 @@ class UserController extends Controller
                 'user_id' => $user->id,
                 'error' => $e->getMessage()
             ]);
-            
             return back()->with('error', 'Failed to load documents.');
         }
     }
@@ -199,7 +258,6 @@ class UserController extends Controller
             $document = DropBox::findOrFail($documentId);
             $adminId = $this->getAdminId();
             
-            // Mark as verified with admin ID
             $document->markAsVerified($adminId);
             
             Log::info('Document verified by admin', [
@@ -218,7 +276,6 @@ class UserController extends Controller
                 'admin_id' => $this->getAdminId(),
                 'document_id' => $documentId,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
             ]);
             
             return response()->json([
@@ -236,12 +293,18 @@ class UserController extends Controller
         $visaTypeMap = [
             'fiancee' => 'fiance',
             'fiance' => 'fiance',
+            'fiancee visa' => 'fiance',
+            'fiance visa' => 'fiance',
             'spouse' => 'spouse',
+            'spouse visa' => 'spouse',
             'adjustment' => 'adjustment',
+            'adjustment of status' => 'adjustment',
             'combined' => 'spouse',
+            'combined cr1 aos' => 'spouse',
         ];
         
-        return $visaTypeMap[$user->chosen_application] ?? 'spouse';
+        $chosenApp = strtolower($user->chosen_application ?? '');
+        return $visaTypeMap[$chosenApp] ?? 'spouse';
     }
 
     /**
@@ -262,7 +325,6 @@ class UserController extends Controller
                     $categoryRequired++;
                     $totalRequired++;
                     
-                    // Check if this document type has been uploaded
                     $uploaded = isset($uploadedDocuments[$categoryKey])
                         ? $uploadedDocuments[$categoryKey]->where('document_type', $doc['id'])->count()
                         : 0;
