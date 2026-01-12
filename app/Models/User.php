@@ -78,6 +78,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(SimplifiedAosApplication::class);
     }
+    
 
     /*
     |--------------------------------------------------------------------------
@@ -105,6 +106,23 @@ class User extends Authenticatable
         return $this->hasMany(Message::class)
             ->where('sender_type', 'admin')
             ->whereNull('read_at');
+    }
+
+    /**
+     * User's uploaded documents (DropBox files)
+     * Required for admin workspace documents tab
+     */
+    public function dropboxFiles()
+    {
+        return $this->hasMany(DropBox::class);
+    }
+
+    /**
+     * Alias for dropboxFiles (for compatibility)
+     */
+    public function uploadedDocuments()
+    {
+        return $this->dropboxFiles();
     }
 
     /*

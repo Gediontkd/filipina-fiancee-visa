@@ -1,319 +1,264 @@
 {{-- resources/views/admin/applications/index.blade.php --}}
 @extends('admin.layouts.app')
-
-@section('title', 'Application Management')
-@section('page-title', 'Application Management')
+@section('title', 'Applications')
+@section('page-title', 'Applications')
 
 @section('content')
 <div class="space-y-6">
-    <!-- Header with Search and Filters -->
-    <div class="bg-white p-6 rounded-lg shadow">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-            <div>
-                <h3 class="text-lg font-medium text-gray-900">Submitted Applications</h3>
-                <p class="text-sm text-gray-500 mt-1">Total: {{ $applications->total() }} applications</p>
-            </div>
-            
-            <div class="flex space-x-3 mt-4 sm:mt-0">
-                <a href="{{ route('admin.applications.export') }}" 
-                   class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
-                    <i class="fas fa-download mr-2"></i>Export CSV
-                </a>
-            </div>
-        </div>
-
-        <!-- Search and Filter Form -->
-        <form method="GET" action="{{ route('admin.applications.index') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <!-- Search -->
-            <div class="col-span-1 sm:col-span-2 lg:col-span-1">
-                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                <div class="relative">
-                    <input type="text" 
-                           id="search" 
-                           name="search" 
-                           value="{{ request('search') }}"
-                           placeholder="User name or email..."
-                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-search text-gray-400"></i>
-                    </div>
+    <!-- Stats Row -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        @php
+            $pending = $applications->where('status', 'pending')->count();
+            $review = $applications->where('status', 'under_review')->count();
+            $approved = $applications->where('status', 'approved')->count();
+            $rejected = $applications->where('status', 'rejected')->count();
+        @endphp
+        <a href="{{ route('admin.applications.index', ['status' => 'pending']) }}"
+           class="bg-white rounded-xl border border-slate-200 p-4 hover:border-amber-300 hover:shadow-md transition-all {{ request('status') === 'pending' ? 'ring-2 ring-amber-400' : '' }}">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-2xl font-bold text-amber-600">{{ $pending }}</p>
+                    <p class="text-xs text-slate-500">Pending</p>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
+                    <i class="fas fa-clock text-amber-500"></i>
                 </div>
             </div>
+        </a>
+        <a href="{{ route('admin.applications.index', ['status' => 'under_review']) }}"
+           class="bg-white rounded-xl border border-slate-200 p-4 hover:border-blue-300 hover:shadow-md transition-all {{ request('status') === 'under_review' ? 'ring-2 ring-blue-400' : '' }}">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-2xl font-bold text-blue-600">{{ $review }}</p>
+                    <p class="text-xs text-slate-500">Under Review</p>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+                    <i class="fas fa-search text-blue-500"></i>
+                </div>
+            </div>
+        </a>
+        <a href="{{ route('admin.applications.index', ['status' => 'approved']) }}"
+           class="bg-white rounded-xl border border-slate-200 p-4 hover:border-emerald-300 hover:shadow-md transition-all {{ request('status') === 'approved' ? 'ring-2 ring-emerald-400' : '' }}">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-2xl font-bold text-emerald-600">{{ $approved }}</p>
+                    <p class="text-xs text-slate-500">Approved</p>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center">
+                    <i class="fas fa-check text-emerald-500"></i>
+                </div>
+            </div>
+        </a>
+        <a href="{{ route('admin.applications.index', ['status' => 'rejected']) }}"
+           class="bg-white rounded-xl border border-slate-200 p-4 hover:border-red-300 hover:shadow-md transition-all {{ request('status') === 'rejected' ? 'ring-2 ring-red-400' : '' }}">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-2xl font-bold text-red-600">{{ $rejected }}</p>
+                    <p class="text-xs text-slate-500">Rejected</p>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+                    <i class="fas fa-times text-red-500"></i>
+                </div>
+            </div>
+        </a>
+    </div>
 
-            <!-- Application Type Filter -->
+    <!-- Filters -->
+    <div class="bg-white rounded-xl border border-slate-200 p-5">
+        <form method="GET" action="{{ route('admin.applications.index') }}" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div class="md:col-span-2">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" name="search" value="{{ request('search') }}"
+                           placeholder="Search user name or email..."
+                           class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
             <div>
-                <label for="application_type" class="block text-sm font-medium text-gray-700 mb-1">Visa Type</label>
-                <select id="application_type" 
-                        name="application_type"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option value="">All Types</option>
+                <select name="application_type" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                    <option value="">All Visa Types</option>
                     @foreach($visa_applications as $visa)
-                        <option value="{{ $visa }}" {{ request('application_type') == $visa ? 'selected' : '' }}>
-                            {{ $visa }}
-                        </option>
+                        <option value="{{ $visa }}" {{ request('application_type') == $visa ? 'selected' : '' }}>{{ $visa }}</option>
                     @endforeach
                 </select>
             </div>
-
-            <!-- Status Filter -->
             <div>
-                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select id="status" 
-                        name="status"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <select name="status" class="w-full px-3 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
                     <option value="">All Statuses</option>
                     @foreach($statuses as $status)
-                        <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                            {{ ucfirst(str_replace('_', ' ', $status)) }}
-                        </option>
+                        <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>{{ ucfirst(str_replace('_',' ',$status)) }}</option>
                     @endforeach
                 </select>
             </div>
-
-            <!-- Date From -->
-            <div>
-                <label for="date_from" class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
-                <input type="date" 
-                       id="date_from" 
-                       name="date_from" 
-                       value="{{ request('date_from') }}"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <!-- Date To -->
-            <div>
-                <label for="date_to" class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
-                <input type="date" 
-                       id="date_to" 
-                       name="date_to" 
-                       value="{{ request('date_to') }}"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-            </div>
-
-            <!-- Filter Actions -->
-            <div class="col-span-1 sm:col-span-2 lg:col-span-5 flex flex-col sm:flex-row gap-3 pt-4">
-                <button type="submit" 
-                        class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
-                    <i class="fas fa-search mr-2"></i>Filter
+            <div class="flex space-x-2">
+                <button type="submit" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium">
+                    <i class="fas fa-filter mr-2"></i>Filter
                 </button>
-                
-                <a href="{{ route('admin.applications.index') }}" 
-                   class="inline-flex items-center justify-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors">
-                    <i class="fas fa-times mr-2"></i>Clear
+                <a href="{{ route('admin.applications.index') }}" class="px-4 py-2.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 text-sm">
+                    <i class="fas fa-times"></i>
                 </a>
             </div>
         </form>
     </div>
 
-    <!-- Applications Table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="overflow-x-auto">
-            @if($applications->count() > 0)
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Application Type</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reviewed</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($applications as $application)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @if($application->user)
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-8 w-8">
-                                                <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-                                                    <span class="text-xs font-medium text-gray-600">
-                                                        {{ strtoupper(substr($application->user->name, 0, 2)) }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="ml-3">
-                                                <div class="text-sm font-medium text-gray-900">{{ $application->user->name }}</div>
-                                                <div class="text-sm text-gray-500">{{ $application->user->email }}</div>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-8 w-8">
-                                                <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
-                                                    <i class="fas fa-user-slash text-red-600 text-xs"></i>
-                                                </div>
-                                            </div>
-                                            <div class="ml-3">
-                                                <div class="text-sm font-medium text-red-600">User Deleted</div>
-                                                <div class="text-sm text-gray-500">ID: {{ $application->user_id ?? 'N/A' }}</div>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        {{ $application->visaApplication->name ?? 'N/A' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    @php
-                                        $status_colors = [
-                                            'pending' => 'bg-yellow-100 text-yellow-800',
-                                            'under_review' => 'bg-blue-100 text-blue-800',
-                                            'approved' => 'bg-green-100 text-green-800',
-                                            'rejected' => 'bg-red-100 text-red-800'
-                                        ];
-                                        $status = $application->status ?? 'pending';
-                                    @endphp
-                                    
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $status_colors[$status] ?? 'bg-gray-100 text-gray-800' }}">
-                                        {{ ucfirst(str_replace('_', ' ', $status)) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">
-                                    {{ $application->transaction_id ? substr($application->transaction_id, 0, 10) . '...' : 'N/A' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <div>{{ $application->created_at->format('M j, Y') }}</div>
-                                    <div class="text-xs">{{ $application->created_at->diffForHumans() }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    @if($application->reviewed_at)
-                                        <div>{{ $application->reviewed_at->format('M j, Y') }}</div>
-                                        <div class="text-xs">{{ $application->reviewer->name ?? 'N/A' }}</div>
-                                    @else
-                                        <span class="text-gray-400">Not reviewed</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex items-center space-x-3">
-                                        <a href="{{ route('admin.applications.show', $application) }}" 
-                                           class="text-blue-600 hover:text-blue-900 transition-colors"
-                                           title="View Details">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        
-                                        @if($application->user)
-                                            <button onclick="showStatusModal({{ $application->id }}, '{{ $application->status }}', '{{ addslashes($application->admin_notes ?? '') }}')" 
-                                                    class="text-green-600 hover:text-green-900 transition-colors"
-                                                    title="Update Status">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                        @else
-                                            <span class="text-gray-400" title="Cannot edit - user deleted">
-                                                <i class="fas fa-ban"></i>
-                                            </span>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @else
-                <div class="p-8 text-center text-gray-500">
-                    <i class="fas fa-file-alt text-4xl mb-4"></i>
-                    <p class="text-lg mb-2">No applications found</p>
-                    <p class="text-sm">Try adjusting your search filters</p>
-                </div>
-            @endif
-        </div>
+    <!-- Results -->
+    <div class="flex items-center justify-between">
+        <p class="text-sm text-slate-500">
+            Showing <span class="font-medium text-slate-700">{{ $applications->count() }}</span> of 
+            <span class="font-medium text-slate-700">{{ $applications->total() }}</span> applications
+        </p>
+        <a href="{{ route('admin.applications.export') }}" class="text-sm text-blue-600 hover:text-blue-700">
+            <i class="fas fa-download mr-1"></i>Export CSV
+        </a>
+    </div>
 
-        <!-- Pagination -->
+    <!-- Applications Table -->
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        @if($applications->count() > 0)
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-slate-50 text-xs font-medium text-slate-500 uppercase">
+                    <tr>
+                        <th class="px-5 py-3 text-left">User</th>
+                        <th class="px-5 py-3 text-left">Visa Type</th>
+                        <th class="px-5 py-3 text-left">Status</th>
+                        <th class="px-5 py-3 text-left">Submitted</th>
+                        <th class="px-5 py-3 text-left">Reviewed</th>
+                        <th class="px-5 py-3 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    @foreach($applications as $app)
+                    <tr class="hover:bg-slate-50 group">
+                        <td class="px-5 py-4">
+                            @if($app->user)
+                            <a href="{{ route('admin.users.show', $app->user) }}" class="flex items-center space-x-3 hover:text-blue-600">
+                                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-sm font-medium">
+                                    {{ strtoupper(substr($app->user->name, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-800 group-hover:text-blue-600">{{ $app->user->name }}</p>
+                                    <p class="text-xs text-slate-500">{{ $app->user->email }}</p>
+                                </div>
+                            </a>
+                            @else
+                            <div class="flex items-center space-x-3">
+                                <div class="w-9 h-9 rounded-full bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-user-slash text-red-500 text-xs"></i>
+                                </div>
+                                <span class="text-sm text-slate-400 italic">Deleted User</span>
+                            </div>
+                            @endif
+                        </td>
+                        <td class="px-5 py-4">
+                            <span class="text-sm text-slate-700">{{ $app->visaApplication?->name ?? 'N/A' }}</span>
+                        </td>
+                        <td class="px-5 py-4">
+                            @php $sc = ['pending'=>'bg-amber-50 text-amber-700','under_review'=>'bg-blue-50 text-blue-700','approved'=>'bg-emerald-50 text-emerald-700','rejected'=>'bg-red-50 text-red-700']; @endphp
+                            <span class="inline-flex px-2.5 py-1 text-xs font-medium rounded-full {{ $sc[$app->status] ?? 'bg-slate-100 text-slate-600' }}">
+                                {{ ucfirst(str_replace('_',' ',$app->status ?? 'pending')) }}
+                            </span>
+                        </td>
+                        <td class="px-5 py-4 text-sm text-slate-500">
+                            <div>{{ $app->created_at->format('M j, Y') }}</div>
+                            <div class="text-xs text-slate-400">{{ $app->created_at->diffForHumans() }}</div>
+                        </td>
+                        <td class="px-5 py-4 text-sm text-slate-500">
+                            @if($app->reviewed_at)
+                                <div>{{ $app->reviewed_at->format('M j, Y') }}</div>
+                                <div class="text-xs text-slate-400">by {{ $app->reviewer?->name ?? 'Admin' }}</div>
+                            @else
+                                <span class="text-slate-400">—</span>
+                            @endif
+                        </td>
+                        <td class="px-5 py-4 text-right">
+                            <div class="flex items-center justify-end space-x-2">
+                                <a href="{{ route('admin.applications.show', $app) }}" 
+                                   class="p-2 text-slate-400 hover:text-blue-600" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                @if($app->user)
+                                <button onclick="openStatusModal({{ $app->id }}, '{{ $app->status }}', `{{ addslashes($app->admin_notes ?? '') }}`)"
+                                        class="p-2 text-slate-400 hover:text-emerald-600" title="Update Status">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
         @if($applications->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200">
-                {{ $applications->links() }}
+        <div class="px-5 py-4 border-t border-slate-200">
+            {{ $applications->links() }}
+        </div>
+        @endif
+        @else
+        <div class="px-6 py-12 text-center">
+            <div class="w-16 h-16 mx-auto mb-4 bg-slate-100 rounded-full flex items-center justify-center">
+                <i class="fas fa-file-lines text-slate-400 text-2xl"></i>
             </div>
+            <h3 class="text-lg font-medium text-slate-800 mb-1">No applications found</h3>
+            <p class="text-sm text-slate-500">Try adjusting your search filters</p>
+        </div>
         @endif
     </div>
 </div>
 
 <!-- Status Update Modal -->
 <div id="status-modal" class="fixed inset-0 z-50 hidden">
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-lg max-w-md w-full p-6">
-            <div class="flex items-center mb-4">
-                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                    <i class="fas fa-edit text-blue-600 text-xl"></i>
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <i class="fas fa-edit text-blue-600"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Update Application Status</h3>
-                    <p class="text-sm text-gray-500">Change status and add notes</p>
+                    <h3 class="font-semibold text-slate-800">Update Status</h3>
+                    <p class="text-sm text-slate-500">Change application status</p>
                 </div>
             </div>
-            
             <form id="status-form" method="POST">
-                @csrf
-                @method('PATCH')
-                
-                <div class="mb-4">
-                    <label for="status-select" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                    <select id="status-select" 
-                            name="status"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="pending">Pending</option>
-                        <option value="under_review">Under Review</option>
-                        <option value="approved">Approved</option>
-                        <option value="rejected">Rejected</option>
-                    </select>
+                @csrf @method('PATCH')
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                        <select id="status-select" name="status" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                            <option value="pending">Pending</option>
+                            <option value="under_review">Under Review</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Notes</label>
+                        <textarea id="admin-notes" name="admin_notes" rows="3" 
+                                  class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                  placeholder="Add notes..."></textarea>
+                    </div>
                 </div>
-                
-                <div class="mb-6">
-                    <label for="admin-notes" class="block text-sm font-medium text-gray-700 mb-2">Admin Notes</label>
-                    <textarea id="admin-notes" 
-                              name="admin_notes" 
-                              rows="4" 
-                              placeholder="Add any notes about this application..."
-                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-                </div>
-                
-                <div class="flex justify-end space-x-3">
-                    <button type="button" 
-                            onclick="closeStatusModal()" 
-                            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
-                        Cancel
-                    </button>
-                    
-                    <button type="submit" 
-                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                        Update Status
-                    </button>
+                <div class="flex space-x-3 mt-6">
+                    <button type="button" onclick="closeStatusModal()" 
+                            class="flex-1 px-4 py-2.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 font-medium">Cancel</button>
+                    <button type="submit" class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">Update</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
 @endsection
 
 @push('scripts')
 <script>
-    function showStatusModal(applicationId, currentStatus, currentNotes) {
-        document.getElementById('status-form').action = `/admin/applications/${applicationId}/status`;
-        document.getElementById('status-select').value = currentStatus;
-        document.getElementById('admin-notes').value = currentNotes;
-        document.getElementById('status-modal').classList.remove('hidden');
-    }
-
-    function closeStatusModal() {
-        document.getElementById('status-modal').classList.add('hidden');
-    }
-
-    // Close modal on ESC key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeStatusModal();
-        }
-    });
-
-    // Close modal on backdrop click
-    document.getElementById('status-modal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeStatusModal();
-        }
-    });
+function openStatusModal(id, status, notes) {
+    document.getElementById('status-form').action = `/admin/applications/${id}/status`;
+    document.getElementById('status-select').value = status;
+    document.getElementById('admin-notes').value = notes;
+    document.getElementById('status-modal').classList.remove('hidden');
+}
+function closeStatusModal() { document.getElementById('status-modal').classList.add('hidden'); }
+document.addEventListener('keydown', e => e.key === 'Escape' && closeStatusModal());
 </script>
 @endpush

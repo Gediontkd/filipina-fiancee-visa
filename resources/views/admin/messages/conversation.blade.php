@@ -1,242 +1,160 @@
 {{-- resources/views/admin/messages/conversation.blade.php --}}
 @extends('admin.layouts.app')
-
-@section('title', 'Conversation')
-@section('page-title', 'Message Conversation')
+@section('title', 'Conversation with ' . $user->name)
+@section('page-title')
+    <div class="flex items-center space-x-3">
+        <a href="{{ route('admin.messages.index') }}" class="text-slate-400 hover:text-slate-600">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <span>Conversation</span>
+    </div>
+@endsection
 
 @section('content')
-<div class="max-w-4xl mx-auto space-y-6">
+<div class="h-[calc(100vh-180px)] flex flex-col">
     <!-- Header -->
-    <div class="flex items-center justify-between">
-        <div>
-            <a href="{{ route('admin.messages.index') }}" 
-               class="inline-flex items-center text-blue-600 hover:text-blue-800 mb-2">
-                <i class="fas fa-arrow-left mr-2"></i>Back to Messages
-            </a>
-            <h1 class="text-2xl font-bold text-gray-900">Conversation with {{ $user->name }}</h1>
-            <p class="text-gray-600">
-                Application: {{ $application->visaApplication->name ?? 'N/A' }} #{{ $application->id }} | 
-                Email: {{ $user->email }}
-            </p>
-        </div>
-        
-        <div class="flex space-x-3">
-            <a href="{{ route('admin.applications.show', $application) }}" 
-               class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors">
-                <i class="fas fa-file-alt mr-2"></i>View Application
-            </a>
-        </div>
-    </div>
-
-    <!-- Application Info Card -->
-    <div class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Application Information</h3>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-            <div>
-                <span class="font-medium text-gray-500">Type:</span>
-                <p>{{ $application->visaApplication->name ?? 'N/A' }}</p>
+    <div class="bg-white rounded-t-xl border border-slate-200 border-b-0 p-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <a href="{{ route('admin.users.show', $user) }}" class="flex items-center space-x-3 hover:opacity-80">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-medium">
+                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-slate-800">{{ $user->name }}</h3>
+                        <p class="text-xs text-slate-500">{{ $user->email }}</p>
+                    </div>
+                </a>
             </div>
-            <div>
-                <span class="font-medium text-gray-500">Status:</span>
-                <p>{{ ucfirst(str_replace('_', ' ', $application->status)) }}</p>
-            </div>
-            <div>
-                <span class="font-medium text-gray-500">Submitted:</span>
-                <p>{{ $application->created_at->format('M j, Y') }}</p>
-            </div>
-            <div>
-                <span class="font-medium text-gray-500">Transaction:</span>
-                <p>{{ $application->transaction_id ?? 'N/A' }}</p>
+            <div class="flex items-center space-x-2">
+                <span class="px-3 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded-full">
+                    {{ $application->visaApplication?->name ?? 'Application' }} #{{ $application->id }}
+                </span>
+                <a href="{{ route('admin.users.show', $user) }}" 
+                   class="px-3 py-1.5 text-sm bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200">
+                    <i class="fas fa-folder-open mr-1"></i>Workspace
+                </a>
             </div>
         </div>
     </div>
 
     <!-- Messages Container -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <div class="bg-gray-50 px-6 py-4 border-b">
-            <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-gray-900">Messages ({{ $messages->count() }})</h3>
-                <button onclick="toggleComposeForm()" 
-                        class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
-                    <i class="fas fa-reply mr-2"></i>Send Message
-                </button>
-            </div>
-        </div>
-
-        <!-- Messages List -->
-        <div class="max-h-96 overflow-y-auto p-6 space-y-4" id="messages-container">
-            @forelse($messages as $message)
-                <div class="mb-4">
-                    <div class="w-full {{ $message->isFromAdmin() ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-900' }} rounded-lg p-4">
-                        <!-- Message Header -->
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-xs font-medium {{ $message->isFromAdmin() ? 'text-blue-100' : 'text-gray-600' }}">
-                                    {{ $message->sender_name }}
-                                </span>
-                                @if($message->priority === 'high')
-                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                                        High
-                                    </span>
-                                @endif
-                                @if($message->is_important)
-                                    <i class="fas fa-exclamation-triangle text-red-400"></i>
-                                @endif
-                            </div>
-                            <span class="text-xs {{ $message->isFromAdmin() ? 'text-blue-100' : 'text-gray-500' }}">
-                                {{ $message->created_at->format('M j, g:i A') }}
-                            </span>
-                        </div>
-
-                        <!-- Subject (if different from previous) -->
-                        @if($loop->first || $message->subject !== $messages[$loop->index - 1]->subject)
-                            <h4 class="text-sm font-semibold mb-2 {{ $message->isFromAdmin() ? 'text-blue-100' : 'text-gray-700' }}">
-                                {{ $message->subject }}
-                            </h4>
-                        @endif
-
-                        <!-- Message Content -->
-                        <div class="text-sm whitespace-pre-wrap">{{ $message->message }}</div>
-
+    <div id="messages-container" class="flex-1 overflow-y-auto bg-slate-50 border-x border-slate-200 p-4 space-y-4">
+        @forelse($messages as $message)
+        <div class="flex {{ $message->sender_type === 'admin' ? 'justify-end' : 'justify-start' }}">
+            <div class="max-w-[70%] {{ $message->sender_type === 'admin' ? 'order-2' : '' }}">
+                <!-- Avatar -->
+                @if($message->sender_type !== 'admin')
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user text-blue-600 text-xs"></i>
+                    </div>
+                @else
+                <div class="flex items-start space-x-3 flex-row-reverse">
+                    <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user-shield text-purple-600 text-xs"></i>
+                    </div>
+                @endif
+                    <div class="{{ $message->sender_type === 'admin' ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200' }} rounded-2xl px-4 py-3 shadow-sm">
+                        <!-- Subject -->
+                        <p class="text-xs {{ $message->sender_type === 'admin' ? 'text-blue-200' : 'text-slate-500' }} mb-1">
+                            {{ $message->subject }}
+                        </p>
+                        <!-- Message -->
+                        <p class="text-sm whitespace-pre-wrap">{{ $message->message }}</p>
+                        
                         <!-- Attachments -->
-                        @if($message->hasAttachments())
-                            <div class="mt-3 pt-3 border-t {{ $message->isFromAdmin() ? 'border-blue-500' : 'border-gray-300' }}">
-                                <p class="text-xs {{ $message->isFromAdmin() ? 'text-blue-100' : 'text-gray-600' }} mb-2">
-                                    <i class="fas fa-paperclip mr-1"></i>Attachments:
-                                </p>
-                                <div class="space-y-1">
-                                    @foreach($message->attachments as $index => $attachment)
-                                        <a href="{{ route('admin.messages.download-attachment', [$message, $index]) }}" 
-                                           class="block text-xs {{ $message->isFromAdmin() ? 'text-blue-100 hover:text-white' : 'text-blue-600 hover:text-blue-800' }} underline">
-                                            {{ $attachment['original_name'] }}
-                                            <span class="text-xs">({{ round($attachment['size'] / 1024) }} KB)</span>
-                                        </a>
-                                    @endforeach
-                                </div>
+                        @if($message->attachments && count($message->attachments) > 0)
+                        <div class="mt-3 pt-3 border-t {{ $message->sender_type === 'admin' ? 'border-blue-500' : 'border-slate-100' }}">
+                            <p class="text-xs {{ $message->sender_type === 'admin' ? 'text-blue-200' : 'text-slate-500' }} mb-2">
+                                <i class="fas fa-paperclip mr-1"></i>{{ count($message->attachments) }} attachment(s)
+                            </p>
+                            <div class="space-y-1">
+                                @foreach($message->attachments as $index => $attachment)
+                                <a href="{{ route('admin.messages.download-attachment', [$message->id, $index]) }}"
+                                   class="flex items-center space-x-2 text-xs {{ $message->sender_type === 'admin' ? 'text-blue-100 hover:text-white' : 'text-blue-600 hover:text-blue-700' }}">
+                                    <i class="fas fa-download"></i>
+                                    <span>{{ basename($attachment) }}</span>
+                                </a>
+                                @endforeach
                             </div>
+                        </div>
                         @endif
-                    </div>
-                </div>
-            @empty
-                <div class="text-center py-8 text-gray-500">
-                    <i class="fas fa-comments text-4xl mb-4"></i>
-                    <p>No messages in this conversation yet.</p>
-                    <p class="text-sm">Start the conversation by sending a message below.</p>
-                </div>
-            @endforelse
-        </div>
-
-        <!-- Compose Form -->
-        <div id="compose-form" class="border-t bg-gray-50 p-6 hidden">
-            <form action="{{ route('admin.messages.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="user_id" value="{{ $user->id }}">
-                <input type="hidden" name="application_id" value="{{ $application->id }}">
-
-                <div class="space-y-4">
-                    <!-- Subject -->
-                    <div>
-                        <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-                        <input type="text" 
-                               id="subject" 
-                               name="subject" 
-                               required
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                               placeholder="Enter message subject">
-                    </div>
-
-                    <!-- Message -->
-                    <div>
-                        <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                        <textarea id="message" 
-                                  name="message" 
-                                  rows="4" 
-                                  required
-                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  placeholder="Type your message here..."></textarea>
-                    </div>
-
-                    <!-- Priority and Options -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="priority" class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                            <select id="priority" 
-                                    name="priority" 
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="low">Low</option>
-                                <option value="normal" selected>Normal</option>
-                                <option value="high">High</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="flex items-center mt-6">
-                                <input type="checkbox" name="is_important" value="1" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                                <span class="ml-2 text-sm text-gray-700">Mark as important</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- File Attachments -->
-                    <div>
-                        <label for="attachments" class="block text-sm font-medium text-gray-700 mb-1">
-                            Attachments (optional)
-                        </label>
-                        <input type="file" 
-                               id="attachments" 
-                               name="attachments[]" 
-                               multiple
-                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">
-                            Max 10MB per file. Allowed: PDF, DOC, DOCX, JPG, PNG, TXT
+                        
+                        <!-- Timestamp -->
+                        <p class="text-xs {{ $message->sender_type === 'admin' ? 'text-blue-200' : 'text-slate-400' }} mt-2">
+                            {{ $message->created_at->format('M j, g:i A') }}
                         </p>
                     </div>
+                </div>
+            </div>
+        </div>
+        @empty
+        <div class="flex items-center justify-center h-full">
+            <div class="text-center">
+                <div class="w-16 h-16 mx-auto mb-4 bg-slate-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-comments text-slate-400 text-2xl"></i>
+                </div>
+                <p class="text-slate-500">No messages yet</p>
+                <p class="text-sm text-slate-400">Start the conversation below</p>
+            </div>
+        </div>
+        @endforelse
+    </div>
 
-                    <!-- Submit Buttons -->
-                    <div class="flex items-center justify-end space-x-3">
-                        <button type="button" 
-                                onclick="toggleComposeForm()" 
-                                class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors">
-                            Cancel
-                        </button>
-                        <button type="submit" 
-                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                            <i class="fas fa-paper-plane mr-2"></i>Send Message
+    <!-- Reply Form -->
+    <div class="bg-white rounded-b-xl border border-slate-200 border-t-0 p-4">
+        <form method="POST" action="{{ route('admin.messages.store') }}" enctype="multipart/form-data" class="space-y-3">
+            @csrf
+            <input type="hidden" name="user_id" value="{{ $user->id }}">
+            <input type="hidden" name="application_id" value="{{ $application->id }}">
+            
+            <div class="flex items-start space-x-3">
+                <div class="flex-1 space-y-3">
+                    <input type="text" name="subject" required placeholder="Subject..."
+                           class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    
+                    <textarea name="message" rows="3" required placeholder="Type your message..."
+                              class="w-full px-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <label class="cursor-pointer flex items-center space-x-2 text-sm text-slate-500 hover:text-slate-700">
+                                <i class="fas fa-paperclip"></i>
+                                <span>Attach files</span>
+                                <input type="file" name="attachments[]" multiple class="hidden">
+                            </label>
+                            <select name="priority" class="px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                                <option value="normal">Normal</option>
+                                <option value="high">High Priority</option>
+                                <option value="low">Low Priority</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium transition-colors">
+                            <i class="fas fa-paper-plane mr-2"></i>Send
                         </button>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>
 @endsection
 
 @push('scripts')
 <script>
-    function toggleComposeForm() {
-        const form = document.getElementById('compose-form');
-        form.classList.toggle('hidden');
-        
-        if (!form.classList.contains('hidden')) {
-            document.getElementById('subject').focus();
-            scrollToBottom();
-        }
+// Scroll to bottom on load
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('messages-container');
+    container.scrollTop = container.scrollHeight;
+});
+
+// Show selected files
+document.querySelector('input[type="file"]')?.addEventListener('change', function() {
+    const label = this.previousElementSibling;
+    if (this.files.length > 0) {
+        label.innerHTML = `<i class="fas fa-paperclip"></i> ${this.files.length} file(s) selected`;
     }
-
-    function scrollToBottom() {
-        const container = document.getElementById('messages-container');
-        container.scrollTop = container.scrollHeight;
-    }
-
-    // Auto-scroll to bottom on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        scrollToBottom();
-    });
-
-    // Auto-refresh messages every 30 seconds
-    setInterval(() => {
-        // You could implement auto-refresh here if needed
-        // location.reload();
-    }, 30000);
+});
 </script>
 @endpush
