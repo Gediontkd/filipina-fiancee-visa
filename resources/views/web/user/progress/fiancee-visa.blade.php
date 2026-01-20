@@ -9,9 +9,28 @@
     </div>
     <div class="card-body p-3">
         @php
-            $fianceeSponsor = \App\Models\FianceVisaStep::where('user_id', Auth::id())->first();
-            $fianceeAlien = \App\Models\FianceAlien::where('user_id', Auth::id())->first();
-            $fianceeChildren = \App\Models\FianceAlienChildren::where('user_id', Auth::id())->first();
+            // Check actual submitted steps (where form data is stored)
+            $sponsorCount = \App\Models\FianceVisaSubmittedStep::where('user_id', Auth::id())
+                ->where('type', 'sponsor')
+                ->count();
+            
+            $alienCount = \App\Models\FianceVisaSubmittedStep::where('user_id', Auth::id())
+                ->where('type', 'alien')
+                ->count();
+            
+            $childrenCount = \App\Models\FianceVisaSubmittedStep::where('user_id', Auth::id())
+                ->where('type', 'alien-children')
+                ->count();
+            
+            // Calculate individual section progress
+            $sponsorProgress = min(100, ($sponsorCount / 10) * 100);
+            $alienProgress = min(100, ($alienCount / 21) * 100);
+            $childrenProgress = min(100, ($childrenCount / 5) * 100);
+            
+            // Get latest update timestamp
+            $lastUpdate = \App\Models\FianceVisaSubmittedStep::where('user_id', Auth::id())
+                ->latest('updated_at')
+                ->first();
         @endphp
 
         <div class="row mb-4">
@@ -20,47 +39,91 @@
                 <div class="progress" style="height: 30px;">
                     <div class="progress-bar progress-bar-striped {{ $overAll >= 100 ? 'bg-success' : 'bg-info' }}" 
                         role="progressbar" 
-                        style="width: {{ $overAll }}%" 
+                        style="width: {{ number_format($overAll, 1) }}%" 
                         aria-valuenow="{{ $overAll }}" 
                         aria-valuemin="0" 
                         aria-valuemax="100">
-                        <strong>{{ $overAll }}%</strong>
+                        <strong>{{ number_format($overAll, 1) }}%</strong>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card border-{{ $fianceeSponsor ? 'success' : 'secondary' }}">
+            {{-- Sponsor Section --}}
+            <div class="col-md-4 mb-3">
+                <div class="card border-{{ $sponsorCount > 0 ? 'success' : 'secondary' }} h-100">
                     <div class="card-body p-3 text-center">
-                        <i class="fa fa-user fa-2x mb-2 text-{{ $fianceeSponsor ? 'success' : 'muted' }}"></i>
+                        <i class="fa fa-user fa-2x mb-2 text-{{ $sponsorCount > 0 ? 'success' : 'muted' }}"></i>
                         <h6>Sponsor (Petitioner)</h6>
-                        <span class="badge bg-{{ $fianceeSponsor ? 'success' : 'secondary' }}">
-                            {{ $fianceeSponsor ? 'Started' : 'Not Started' }}
+                        <span class="badge bg-{{ $sponsorCount > 0 ? 'success' : 'secondary' }} mb-2">
+                            {{ $sponsorCount > 0 ? 'In Progress' : 'Not Started' }}
                         </span>
+                        @if($sponsorCount > 0)
+                            <div class="progress mt-2" style="height: 20px;">
+                                <div class="progress-bar" 
+                                    role="progressbar" 
+                                    style="width: {{ number_format($sponsorProgress, 1) }}%"
+                                    aria-valuenow="{{ $sponsorProgress }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                    {{ number_format($sponsorProgress, 0) }}%
+                                </div>
+                            </div>
+                            <small class="text-muted d-block mt-1">{{ $sponsorCount }}/10 steps</small>
+                        @endif
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card border-{{ $fianceeAlien ? 'success' : 'secondary' }}">
+
+            {{-- Alien Section --}}
+            <div class="col-md-4 mb-3">
+                <div class="card border-{{ $alienCount > 0 ? 'success' : 'secondary' }} h-100">
                     <div class="card-body p-3 text-center">
-                        <i class="fa fa-user-friends fa-2x mb-2 text-{{ $fianceeAlien ? 'success' : 'muted' }}"></i>
+                        <i class="fa fa-user-friends fa-2x mb-2 text-{{ $alienCount > 0 ? 'success' : 'muted' }}"></i>
                         <h6>Alien (Beneficiary)</h6>
-                        <span class="badge bg-{{ $fianceeAlien ? 'success' : 'secondary' }}">
-                            {{ $fianceeAlien ? 'Started' : 'Not Started' }}
+                        <span class="badge bg-{{ $alienCount > 0 ? 'success' : 'secondary' }} mb-2">
+                            {{ $alienCount > 0 ? 'In Progress' : 'Not Started' }}
                         </span>
+                        @if($alienCount > 0)
+                            <div class="progress mt-2" style="height: 20px;">
+                                <div class="progress-bar" 
+                                    role="progressbar" 
+                                    style="width: {{ number_format($alienProgress, 1) }}%"
+                                    aria-valuenow="{{ $alienProgress }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                    {{ number_format($alienProgress, 0) }}%
+                                </div>
+                            </div>
+                            <small class="text-muted d-block mt-1">{{ $alienCount }}/21 steps</small>
+                        @endif
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card border-{{ $fianceeChildren ? 'success' : 'secondary' }}">
+
+            {{-- Children Section --}}
+            <div class="col-md-4 mb-3">
+                <div class="card border-{{ $childrenCount > 0 ? 'success' : 'secondary' }} h-100">
                     <div class="card-body p-3 text-center">
-                        <i class="fa fa-child fa-2x mb-2 text-{{ $fianceeChildren ? 'success' : 'muted' }}"></i>
+                        <i class="fa fa-child fa-2x mb-2 text-{{ $childrenCount > 0 ? 'success' : 'muted' }}"></i>
                         <h6>Children (Optional)</h6>
-                        <span class="badge bg-{{ $fianceeChildren ? 'success' : 'secondary' }}">
-                            {{ $fianceeChildren ? 'Started' : 'Not Started' }}
+                        <span class="badge bg-{{ $childrenCount > 0 ? 'success' : 'secondary' }} mb-2">
+                            {{ $childrenCount > 0 ? 'In Progress' : 'Not Started' }}
                         </span>
+                        @if($childrenCount > 0)
+                            <div class="progress mt-2" style="height: 20px;">
+                                <div class="progress-bar" 
+                                    role="progressbar" 
+                                    style="width: {{ number_format($childrenProgress, 1) }}%"
+                                    aria-valuenow="{{ $childrenProgress }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                    {{ number_format($childrenProgress, 0) }}%
+                                </div>
+                            </div>
+                            <small class="text-muted d-block mt-1">{{ $childrenCount }}/5 steps</small>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -71,11 +134,11 @@
                 <i class="fa fa-edit me-2"></i>Continue Application
             </a>
             
-            @if($fianceeSponsor && $fianceeSponsor->updated_at)
+            @if($lastUpdate)
                 <p class="text-muted mt-2 mb-0">
                     <small>
                         <i class="fa fa-save me-1"></i>
-                        Last saved: {{ $fianceeSponsor->updated_at->diffForHumans() }}
+                        Last saved: {{ $lastUpdate->updated_at->diffForHumans() }}
                     </small>
                 </p>
             @endif
