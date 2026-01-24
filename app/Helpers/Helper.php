@@ -1,0 +1,378 @@
+<?php
+
+function getLanguage()
+{
+	\App::setLocale(\Session::get('locale'));
+}
+
+function getCountryPhoneCode()
+{
+	$countries = App\Models\Country::select('name', 'phonecode')->get();
+	$countryPhoneCodes = [];
+	$countryPhoneCodes ['']= '-Select Country-';
+	foreach ($countries as $country)
+	{
+		$countryPhoneCodes [$country->name.' (+'.$country->phonecode.')']= $country->name.' (+'.$country->phonecode.')';
+	}
+	return $countryPhoneCodes;
+}
+
+function getAllCountry($na = '')
+{
+	$countries = App\Models\Country::select('id', 'name')->get();
+	$countryName = [];
+	$countryName ['']= '-Select Country-';
+	if (!empty($na)) {
+		$countryName ['N/A']= 'N/A';
+	}
+	foreach ($countries as $country)
+	{
+		$countryName [$country->id]= $country->name;
+	}
+	return $countryName;
+}
+
+function getAllCountryForSponsor($na = '')
+{
+	$countries = App\Models\Country::select('id', 'name')->get();
+	$countryName = [];
+	$countryName ['']= '-Select Country-';
+	$countryName['231'] = 'United States';
+	if ($na != '') {
+		$countryName ['N/A']= 'N/A';
+	}
+	foreach ($countries as $country)
+	{
+		$countryName [$country->id]= $country->name;
+	}
+	return $countryName;
+}
+
+function getAllUsStates($na='')
+{
+	$states = App\Models\State::where('country_id', 231)->select('id', 'name')->get();
+	$statesName = [];	
+	
+	if (!empty($na)) {
+		$statesName ['N/A']= 'N/A';
+	}
+	$statesName ['']= '-Select State-';	
+	foreach ($states as $state)
+	{
+		$statesName [$state->id]= $state->name;
+	}
+	return $statesName;
+}
+
+function getEmbassyCountries()
+{
+	$countries = App\Models\Country::select('id', 'name')
+		->where('is_embassy', '1')
+		->get();
+	$countryName = [];
+	$countryName ['']= '-Select Country-';
+	foreach ($countries as $country)
+	{
+		$countryName [$country->id]= ucfirst($country->name);
+	}
+	return $countryName;
+}
+
+function apartmentSuiteOrFloor($na='')
+{	
+	if (!empty($na)) {
+		$options =[
+			'N/A' => 'N/A',
+			'Apartment' => 'Apartment',
+			'Suite' => 'Suite',
+			'Floor' => 'Floor',
+		];
+	} else {
+		$options = [
+			'' => 'Select', 
+			'Apartment' => 'Apartment',
+			'Suite' => 'Suite',
+			'Floor' => 'Floor',
+		];	
+	}
+	
+	return $options;
+}
+
+function getCountry()
+{
+	return App\Models\Country::select('id', 'name')->get();
+}
+
+function getAllVisaType()
+{	
+	return [
+		'' => 'Select visa type',
+		'H-1B1 SPECIALTY OCCUPATION' => 'H-1B1 SPECIALTY OCCUPATION',
+		'H-1B2 DoD SPECIALTY' => 'H-1B2 DoD SPECIALTY',
+		'H-1B3 FASHION MODEL' => 'H-1B3 FASHION MODEL',
+		'H-1B4 UNIQUE PGM ARTIST-ENT' => 'H-1B4 UNIQUE PGM ARTIST-ENT',
+		'H-1B5 ALIEN ATHLETE' => 'H-1B5 ALIEN ATHLETE',
+		'1BS - SUPPORT PERSON OF H-1' => '1BS - SUPPORT PERSON OF H-1',
+		'A1 - AMBASSADOR, DIPLOMAT' => 'A1 - AMBASSADOR, DIPLOMAT',
+		'A2 - OTHER DIPLOMATIC OFFICIALS' => 'A2 - OTHER DIPLOMATIC OFFICIALS',
+		'A3 - ATTENDANTS OF A-1, A-2' => 'A3 - ATTENDANTS OF A-1, A-2',
+		'AS - ASYLUM' => 'AS - ASYLUM',
+		'ASD - ASYLUM STATUS DENIED' => 'ASD - ASYLUM STATUS DENIED',
+		'AW - RAW APPLIED FOR AT A PORT' => 'AW - RAW APPLIED FOR AT A PORT',
+		'B1 - TEMPORARY VISITOR FOR BUSINESS' => 'B1 - TEMPORARY VISITOR FOR BUSINESS',
+		'B1/B2 - TEMP VISITOR BUSINESS/PLEASURE' => 'B1/B2 - TEMP VISITOR BUSINESS/PLEASURE',
+		'B1A - NI PERSNL-DOM SRVANT OF NI EMP' => 'B1A - NI PERSNL-DOM SRVANT OF NI EMP',
+		'B1B - NI DOMESTIC SERVANT OF USC' => 'B1B - NI DOMESTIC SERVANT OF USC',
+		'B1C - NI EMPLOYED BY FOREIGN AIRLINE' => 'B1C - NI EMPLOYED BY FOREIGN AIRLINE',
+		'B1D - NI - MISSIONARIES' => 'B1D - NI - MISSIONARIES',
+		'B2 - TEMPORARY VISITOR FOR PLEASURE' => 'B2 - TEMPORARY VISITOR FOR PLEASURE',
+		'BE - BERING STRAIT ENTRIES' => 'BE - BERING STRAIT ENTRIES',
+		'C1 - ALIEN IN TRANSIT THROUGH U.S.' => 'C1 - ALIEN IN TRANSIT THROUGH U.S.',
+		'C2 - ALIEN IN TRANSIT TO UN HQ' => 'C2 - ALIEN IN TRANSIT TO UN HQ',
+		'C3 - FRN GOV OFF IN TRANSIT THRU US' => 'C3 - FRN GOV OFF IN TRANSIT THRU US',
+		'C4 - TRANSIT WITHOUT A VISA' => 'C4 - TRANSIT WITHOUT A VISA',
+		'FROM CANADA WITHOUT VISA' => 'FROM CANADA WITHOUT VISA',
+		'CC - CUBAN MASS MIGRATION PROJECT' => 'CC - CUBAN MASS MIGRATION PROJECT',
+		'CH - PAROLEE (HUMANITARIAN-HQ AUTH)' => 'CH - PAROLEE (HUMANITARIAN-HQ AUTH)',
+		'CP - PAROLEE (PUBLIC INT-HQ AUTH)' => 'CP - PAROLEE (PUBLIC INT-HQ AUTH)',
+		'CW1 - PRINCIPAL TRANSITIONAL WORKERS' => 'CW1 - PRINCIPAL TRANSITIONAL WORKERS',
+		'CW2 - DEPENDENT OF CW1' => 'CW2 - DEPENDENT OF CW1',
+		'D1 - ALIEN CREW DEPART SAME VESSEL' => 'D1 - ALIEN CREW DEPART SAME VESSEL',
+		'D2 - ALIEN CREW DEPART OTHER VESSEL' => 'D2 - ALIEN CREW DEPART OTHER VESSEL',
+		'DA - ADVANCE PAROLE (DISTRICT AUTH)' => 'DA - ADVANCE PAROLE (DISTRICT AUTH)',
+		'DE - PAROLEE (DEFERRED INSPECTION)' => 'DE - PAROLEE (DEFERRED INSPECTION)',
+		'DT - PAROLEE (DISTRICT-POE AUTH)' => 'DT - PAROLEE (DISTRICT-POE AUTH)',
+		'DX - CREW ARRIVING DETAINED ON SHIP' => 'DX - CREW ARRIVING DETAINED ON SHIP',
+		'E1 - TREATY TRADER-SPOUSE-CHILDREN' => 'E1 - TREATY TRADER-SPOUSE-CHILDREN',
+		'E2 - TREATY INVESTOR-SPOUSE-CHILD' => 'E2 - TREATY INVESTOR-SPOUSE-CHILD',
+		'E2C - CNMI INVESTOR' => 'E2C - CNMI INVESTOR',
+		'E3 - AUSTRALIA FREE TRADE AGREEMENT' => 'E3 - AUSTRALIA FREE TRADE AGREEMENT',
+		'EAO - EMPLOYMENT ADVISORY OPTION' => 'EAO - EMPLOYMENT ADVISORY OPTION',
+		'EWI - ENTRY WITHOUT INSPECTION' => 'EWI - ENTRY WITHOUT INSPECTION',
+		'F1 - STUDENT - ACADEMIC' => 'F1 - STUDENT - ACADEMIC',
+		'F2 - SPOUSE-CHILD OF F-1' => 'F2 - SPOUSE-CHILD OF F-1',
+		'FSM - CFA ADM FED STATES MICRONESIA' => 'FSM - CFA ADM FED STATES MICRONESIA',
+		'FUG - FAMILY UNITY GRANTED' => 'FUG - FAMILY UNITY GRANTED',
+		'G1 - PRINICPAL REP. FOREIGN GOVT' => 'G1 - PRINICPAL REP. FOREIGN GOVT',
+		'G2 - OTHER REP FOREIGN GOVT' => 'G2 - OTHER REP FOREIGN GOVT',
+		'G3 - REP NON-RECOGNIZED FOREIGN GOV' => 'G3 - REP NON-RECOGNIZED FOREIGN GOV',
+		'G4 - OFFICER-EMPLOYEE INTL. ORG.' => 'G4 - OFFICER-EMPLOYEE INTL. ORG.',
+		'G5 - ATTENDANTS OF G1, G2, G3, G4' => 'G5 - ATTENDANTS OF G1, G2, G3, G4',
+		'GB - VISITOR WITHOUT A VISA 15 DAYS' => 'GB - VISITOR WITHOUT A VISA 15 DAYS',
+		'GT - VISITOR WITHOUT A VISA 15 DAYS' => 'GT - VISITOR WITHOUT A VISA 15 DAYS',
+		'H1 - ALIEN OF DIST MERIT &amp; ABILITY' => 'H1 - ALIEN OF DIST MERIT &amp; ABILITY',
+		'H1A - REGISTERED NURSE' => 'H1A - REGISTERED NURSE',
+		'H1B - SPECIALTY OCCUPATION' => 'H1B - SPECIALTY OCCUPATION',
+		'H1C - NURSE RELIEF' => 'H1C - NURSE RELIEF',
+		'H2 - TEMPORARY LABOR CERTIFICATION' => 'H2 - TEMPORARY LABOR CERTIFICATION',
+		'H2A - TEMPORARY AGRICULTURAL WORKER' => 'H2A - TEMPORARY AGRICULTURAL WORKER',
+		'H2B - TEMPORARY NON-AG WORKER' => 'H2B - TEMPORARY NON-AG WORKER',
+		'H2R - RET(H2B)WRKR NOT SUBJECT TO CAP' => 'H2R - RET(H2B)WRKR NOT SUBJECT TO CAP',
+		'H3 - ALIEN TRAINEE' => 'H3 - ALIEN TRAINEE',
+		'H3A - TRAINEE' => 'H3A - TRAINEE',
+		'H3B - SPECIAL EDUCATION TRAINING' => 'H3B - SPECIAL EDUCATION TRAINING',
+		'H4 - SPS OR CHLD OF H1, H2, H3 OR H2R' => 'H4 - SPS OR CHLD OF H1, H2, H3 OR H2R',
+		'HSC - FREE TRADE H1B1' => 'HSC - FREE TRADE H1B1',
+		'I - FOREIGN PRESS' => 'I - FOREIGN PRESS',
+		'IMM - IMMIGRANT' => 'IMM - IMMIGRANT',
+		'IN - INDEFINITE PAROLE' => 'IN - INDEFINITE PAROLE',
+		'J1 - EXCHANGE VISITOR - OTHERS' => 'J1 - EXCHANGE VISITOR - OTHERS',
+		'J1S - EXCHANGE VISITOR - STUDENT' => 'J1S - EXCHANGE VISITOR - STUDENT',
+		'J2 - SPOUSE-CHILD OF J-1' => 'J2 - SPOUSE-CHILD OF J-1',
+		'J2S - SPOUSE-CHILD OF J-1S' => 'J2S - SPOUSE-CHILD OF J-1S',
+		'K1 - ALIEN FIANCE(E) OF USC' => 'K1 - ALIEN FIANCE(E) OF USC',
+		'K2 - CHILD OF K1' => 'K2 - CHILD OF K1',
+		'K3 - SPOUSE OF USC' => 'K3 - SPOUSE OF USC',
+		'K4 - CHILD OF USC' => 'K4 - CHILD OF USC',
+		'L1 - INTRA-COMPANY TRANSFEREE' => 'L1 - INTRA-COMPANY TRANSFEREE',
+		'L1A - MANAGER OR EXECUTIVE' => 'L1A - MANAGER OR EXECUTIVE',
+		'L1B - SPECIALIZED KNOWLEDGE ALIEN' => 'L1B - SPECIALIZED KNOWLEDGE ALIEN',
+		'L2 - SPOUSE-CHILD OF L-1' => 'L2 - SPOUSE-CHILD OF L-1',
+		'LZ - BLANKET L PETITION' => 'LZ - BLANKET L PETITION',
+		'M1 - STUDENT - VOCATIONAL-NON-ACAD.' => 'M1 - STUDENT - VOCATIONAL-NON-ACAD.',
+		'1">M2 - SPOUSE-CHILD OF M-1' => '1">M2 - SPOUSE-CHILD OF M-1',
+		'MIS - CFA ADM REP MARSHALL ISLANDS' => 'MIS - CFA ADM REP MARSHALL ISLANDS',
+		'ML - PAROLEE-MEDICAL, LEGAL, HUMAN' => 'ML - PAROLEE-MEDICAL, LEGAL, HUMAN',
+		'N1 - PRINCIPAL REP. OF NATO MEMBER' => 'N1 - PRINCIPAL REP. OF NATO MEMBER',
+		'N2 - OTHER REP. OF NATO MEMBER' => 'N2 - OTHER REP. OF NATO MEMBER',
+		'N3 - CLERICAL STAFF FOR N-1, N-2' => 'N3 - CLERICAL STAFF FOR N-1, N-2',
+		'N4 - OFFICIALS OF NATO' => 'N4 - OFFICIALS OF NATO',
+		'N5 - EXPERTS EMPLOYED BY NATO' => 'N5 - EXPERTS EMPLOYED BY NATO',
+		'N6 - CIVILIAN COMPONENT OF NATO' => 'N6 - CIVILIAN COMPONENT OF NATO',
+		'N7 - ATTENDANTS OF N-1 THROUGH N-6' => 'N7 - ATTENDANTS OF N-1 THROUGH N-6',
+		'N8 - PARENT OF SPEC IMMIGRANT CHILD' => 'N8 - PARENT OF SPEC IMMIGRANT CHILD',
+		'N9 - SPOUSE-CHILD OF N8' => 'N9 - SPOUSE-CHILD OF N8',
+		'O1 - ALIEN W-EXTRAORDINARY ABILITY' => 'O1 - ALIEN W-EXTRAORDINARY ABILITY',
+		'O1A - EXTRAORDINARY ALIEN - NON-ARTS' => 'O1A - EXTRAORDINARY ALIEN - NON-ARTS',
+		'O1B - EXTRAORDINARY ALIEN IN ARTS' => 'O1B - EXTRAORDINARY ALIEN IN ARTS',
+		'O2 - ACCOMPANYING ALINE TO O1' => 'O2 - ACCOMPANYING ALINE TO O1',
+		'O3 - SPOUSE-CHILD OF O-1, O-2' => 'O3 - SPOUSE-CHILD OF O-1, O-2',
+		'OP - PAROLEE (OVERSEAS AUTHORIZED)' => 'OP - PAROLEE (OVERSEAS AUTHORIZED)',
+		'P1 - ATHLETE OR ENTERTAINER' => 'P1 - ATHLETE OR ENTERTAINER',
+		'P1A - ALIEN WITH ATHLETIC EVENT' => 'P1A - ALIEN WITH ATHLETIC EVENT',
+		'P1B - ALIEN WITH ENTERTAINMENT GROUP' => 'P1B - ALIEN WITH ENTERTAINMENT GROUP',
+		'P1S - SUPPORT PERSON OF P-1' => 'P1S - SUPPORT PERSON OF P-1',
+		'P2 - EXCHANGE ARTIST-ENTERTAINER' => 'P2 - EXCHANGE ARTIST-ENTERTAINER',
+		'P2S - SUPPORT PERSON OF P-2' => 'P2S - SUPPORT PERSON OF P-2',
+		'P3 - UNIQUE PGM ARTIST-ENTERTAINER' => 'P3 - UNIQUE PGM ARTIST-ENTERTAINER',
+		'P3S - SUPPORT PERSON OF P-3' => 'P3S - SUPPORT PERSON OF P-3',
+		'P4 - SPOUSE-CHILD OF P-1, P-2, P-3' => 'P4 - SPOUSE-CHILD OF P-1, P-2, P-3',
+		'PAL - CFA ADMISSION PALAU' => 'PAL - CFA ADMISSION PALAU',
+		'PAR - PAROLEE' => 'PAR - PAROLEE',
+		'PI - PACIFIC ISLANDER' => 'PI - PACIFIC ISLANDER',
+		'Q1 - INTL CULTURAL XCHG VISITORS' => 'Q1 - INTL CULTURAL XCHG VISITORS',
+		'Q2 - IRISH PEACE PROCESS PARTICPNTS' => 'Q2 - IRISH PEACE PROCESS PARTICPNTS',
+		'Q3 - SPOUSE-CHILD OF Q2' => 'Q3 - SPOUSE-CHILD OF Q2',
+		'R1 - RELIGIOUS OCCUPATION' => 'R1 - RELIGIOUS OCCUPATION',
+		'R2 - SPOUSE-CHILD OF R-1' => 'R2 - SPOUSE-CHILD OF R-1',
+		'RE - REFUGEE' => 'RE - REFUGEE',
+		'RE5 - HAITIAN W-GRANTED REFUGEE STAT' => 'RE5 - HAITIAN W-GRANTED REFUGEE STAT',
+		'RW - RAW APPLIED FOR AT A US CO' => 'RW - RAW APPLIED FOR AT A US CO',
+		'S1 - SPECIAL AGRICUTURAL WORKER' => 'S1 - SPECIAL AGRICUTURAL WORKER',
+		'S2 - SPECIAL AGRICULTURAL WORKER' => 'S2 - SPECIAL AGRICULTURAL WORKER',
+		'S9 - EMERGENCY FARM WORKER' => 'S9 - EMERGENCY FARM WORKER',
+		'SDF - SUSPECTED DOCUMENT FRAUD' => 'SDF - SUSPECTED DOCUMENT FRAUD',
+		'ST - STOWAWAY' => 'ST - STOWAWAY',
+		'TRAFK">T1 - VICTIM OF SEVERE FORM OF TRAFK' => 'TRAFK">T1 - VICTIM OF SEVERE FORM OF TRAFK',
+		'T1">T2 - SPOUSE OF T1' => 'T1">T2 - SPOUSE OF T1',
+		'T3 - CHILD OF T1' => 'T3 - CHILD OF T1',
+		'T4 - PARENT OF T1' => 'T4 - PARENT OF T1',
+		'T5 - UNMARRIED UNDER 18 SIBLG T1 NI' => 'T5 - UNMARRIED UNDER 18 SIBLG T1 NI',
+		'TB - SPOUSE OR CHILD OF CAN. FR' => 'TB - SPOUSE OR CHILD OF CAN. FR',
+		'TC - CANADIAN FREE TRADE AGREEMENT' => 'TC - CANADIAN FREE TRADE AGREEMENT',
+		'TD - NAFTA DEPENDENT' => 'TD - NAFTA DEPENDENT',
+		'TN1 - NAFTA PRINCIPAL (CANADA)' => 'TN1 - NAFTA PRINCIPAL (CANADA)',
+		'TN2 - NAFTA PRINCIPAL (MEXICO)' => 'TN2 - NAFTA PRINCIPAL (MEXICO)',
+		'TWO - TRANSIT WITHOUT A VISA' => 'TWO - TRANSIT WITHOUT A VISA',
+		'U1 - VICTIM OF CRIMINAL ACTIVITY' => 'U1 - VICTIM OF CRIMINAL ACTIVITY',
+		'U2 - SPOUSE OF U1' => 'U2 - SPOUSE OF U1',
+		'U3 - CHILD OF U1' => 'U3 - CHILD OF U1',
+		'U4 - PARENT OF U1' => 'U4 - PARENT OF U1',
+		'U5 - UNMARRIED UNDER 18 SIBLG U1 NI' => 'U5 - UNMARRIED UNDER 18 SIBLG U1 NI',
+		'V1 - SPOUSE OF LPR' => 'V1 - SPOUSE OF LPR',
+		'V2 - CHILD OF LPR' => 'V2 - CHILD OF LPR',
+		'V3 - CHILD OF V2' => 'V3 - CHILD OF V2',
+		'WB - VISITOR FOR BUSINESS - VWPP' => 'WB - VISITOR FOR BUSINESS - VWPP',
+		'WD - WITHDRAWL (I-275)' => 'WD - WITHDRAWL (I-275)',
+		'WT - VISITOR FOR PLEASURE - VWPP' => 'WT - VISITOR FOR PLEASURE - VWPP',
+		'WT/WB VISA WAIVER PROGRAM' => 'WT/WB VISA WAIVER PROGRAM',
+		'X - EOIR' => 'X - EOIR',
+	];
+}
+
+function getAOSVisaTypes()
+{
+    return [
+        '' => 'Select Current Visa Type (Common Visa Types for AOS)',
+        
+        // K Visas
+        'K1 - ALIEN FIANCE(E) OF USC' => 'K1 – Fiancé(e) of U.S. Citizen',
+        'K2 - CHILD OF K1' => 'K2 – Child of K1',
+        
+        // Tourist Visas
+        'B1 - TEMPORARY VISITOR FOR BUSINESS' => 'B1 – Visitor for Business',
+        'B2 - TEMPORARY VISITOR FOR PLEASURE' => 'B2 – Visitor for Pleasure',
+        
+        // Visa Waiver Program (VWP)
+        'WT - VISITOR FOR PLEASURE - VWPP' => 'WT – Visitor for Pleasure (VWP)',
+        'WB - VISITOR FOR BUSINESS - VWPP' => 'WB – Visitor for Business (VWP)',
+        
+        // Academic / Exchange Cases
+        'F1 - STUDENT - ACADEMIC' => 'F1 – Student (Academic)',
+        'F2 - SPOUSE-CHILD OF F-1' => 'F2 – Spouse or Child of F1',
+        'J1 - EXCHANGE VISITOR - OTHERS' => 'J1 – Exchange Visitor',
+        'J2 - SPOUSE-CHILD OF J-1' => 'J2 – Spouse or Child of J1',
+    ];
+}
+
+/**
+ * Determine application route based on user's chosen application
+ * Returns the route name the user should be redirected to
+ * 
+ * @return string|null Route name or null if no application chosen
+ */
+function applicationRoute()
+{
+    $user = App\Models\User::select('chosen_application', 'application_route')
+        ->where('id', Auth::id())
+        ->first();
+    
+    // If application_route is set, use it
+    if (!empty($user->application_route)) {
+        return $user->application_route;
+    }
+    
+    // Map chosen_application to route names
+    $routeMap = [
+        'fiancee' => 'fianceSponsorApplication',
+        'spouse' => 'spouse-visa-simplified.index',  // Simplified Spouse Visa
+        'adjustment' => 'aos-simplified.index',      // UPDATED: Simplified AOS
+        'combined' => 'combinedCr1AosApplication'
+    ];
+    
+    return $routeMap[$user->chosen_application] ?? null;
+}
+
+/**
+ * Get list of US states for form dropdowns (Simplified Spouse Visa)
+ * Returns array of state names for US sponsor address
+ * 
+ * @return array
+ */
+function getUsStates()
+{
+    return [
+        '' => '-Select State-',
+        'AL' => 'Alabama',
+        'AK' => 'Alaska',
+        'AZ' => 'Arizona',
+        'AR' => 'Arkansas',
+        'CA' => 'California',
+        'CO' => 'Colorado',
+        'CT' => 'Connecticut',
+        'DE' => 'Delaware',
+        'FL' => 'Florida',
+        'GA' => 'Georgia',
+        'HI' => 'Hawaii',
+        'ID' => 'Idaho',
+        'IL' => 'Illinois',
+        'IN' => 'Indiana',
+        'IA' => 'Iowa',
+        'KS' => 'Kansas',
+        'KY' => 'Kentucky',
+        'LA' => 'Louisiana',
+        'ME' => 'Maine',
+        'MD' => 'Maryland',
+        'MA' => 'Massachusetts',
+        'MI' => 'Michigan',
+        'MN' => 'Minnesota',
+        'MS' => 'Mississippi',
+        'MO' => 'Missouri',
+        'MT' => 'Montana',
+        'NE' => 'Nebraska',
+        'NV' => 'Nevada',
+        'NH' => 'New Hampshire',
+        'NJ' => 'New Jersey',
+        'NM' => 'New Mexico',
+        'NY' => 'New York',
+        'NC' => 'North Carolina',
+        'ND' => 'North Dakota',
+        'OH' => 'Ohio',
+        'OK' => 'Oklahoma',
+        'OR' => 'Oregon',
+        'PA' => 'Pennsylvania',
+        'RI' => 'Rhode Island',
+        'SC' => 'South Carolina',
+        'SD' => 'South Dakota',
+        'TN' => 'Tennessee',
+        'TX' => 'Texas',
+        'UT' => 'Utah',
+        'VT' => 'Vermont',
+        'VA' => 'Virginia',
+        'WA' => 'Washington',
+        'WV' => 'West Virginia',
+        'WI' => 'Wisconsin',
+        'WY' => 'Wyoming'
+    ];
+}

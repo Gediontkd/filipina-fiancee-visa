@@ -1,0 +1,36 @@
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+.env
+.env.backup
+.env.production
+.env.local
+.phpunit.result.cache
+npm-debug.log
+yarn-error.log
+*.log
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.swp
+*.swo
+database_backup.sql
+ffv-project.tar.gz
+
+# Ignore all user PDF folders but keep the structure
+/resources/views/pdf/*
+!/resources/views/pdf/.gitkeep
+
+# Keep individual user folders tracked but ignore their contents
+/resources/views/pdf/user_*/*
+!/resources/views/pdf/user_*/.gitkeep
+
+# Ignore temporary merged PDF files
+/storage/app/temp/*.pdf
+/storage/app/temp/*.json
+
+# Keep temp directory structure
+!/storage/app/temp/.gitkeep
