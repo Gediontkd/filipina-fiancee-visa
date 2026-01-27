@@ -127,9 +127,8 @@
                 <div class="card mb-3 other-name-item" data-index="{{ $index }}">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <strong>Other Name {{ $index + 1 }}</strong>
-                        <button type="button" class="btn btn-sm btn-danger remove-other-name" data-person="sponsor" data-index="{{ $index }}">
-                            <i class="fa fa-trash"></i>
-                        </button>
+                       <button type="button" class="btn btn-sm btn-danger remove-other-name" data-person="sponsor" data-index="{{ $index }}">
+    Exit </button>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -394,28 +393,60 @@
                 <span class="text-danger">*</span>
                 <div class="row">
                     <div class="col-6">
-                        {{ Form::number('sponsor_height_feet', optional($application)->sponsor_height_feet ?? '', [
-                            'class' => 'form-control',
+                        {{ Form::text('sponsor_height_feet', optional($application)->sponsor_height_feet ?? '', [
+                            'class' => 'form-control height-feet',
                             'placeholder' => 'Feet',
                             'required' => true,
-                            'min' => 0,
-                            'max' => 8
+                            'id' => 'sponsor_height_feet'
                         ]) }}
                         <small class="form-text text-muted">Feet</small>
                     </div>
                     <div class="col-6">
                         {{ Form::number('sponsor_height_inches', optional($application)->sponsor_height_inches ?? '', [
-                            'class' => 'form-control',
+                            'class' => 'form-control height-inches',
                             'placeholder' => 'Inches',
                             'required' => true,
                             'min' => 0,
-                            'max' => 11
+                            'id' => 'sponsor_height_inches'
                         ]) }}
                         <small class="form-text text-muted">Inches</small>
                     </div>
                 </div>
             </div>
         </div>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const feetInput = document.getElementById('sponsor_height_feet');
+            const incInput = document.getElementById('sponsor_height_inches');
+
+            // Handle decimal feet (e.g. 5.5 -> 5' 6")
+            feetInput.addEventListener('blur', function() {
+                const val = parseFloat(this.value);
+                if (!isNaN(val) && val % 1 !== 0) {
+                    const feet = Math.floor(val);
+                    const inches = Math.round((val - feet) * 12);
+                    
+                    feetInput.value = feet;
+                    incInput.value = inches;
+                }
+            });
+
+            // Handle total inches (e.g. 70 -> 5' 10")
+            incInput.addEventListener('blur', function() {
+                const val = parseInt(this.value);
+                if (!isNaN(val) && val >= 12) {
+                    const feet = Math.floor(val / 12);
+                    const inches = val % 12;
+                    
+                    // Only update if feet is empty or 0 to avoid overwriting existing valid data
+                    // actually, if they type 70 in inches, they almost certainly mean total height
+                    feetInput.value = feet;
+                    incInput.value = inches;
+                }
+            });
+        });
+        </script>
         <div class="col-md-3">
             <div class="form-group mb-3">
                 {{ Form::label('sponsor_weight', 'Weight (Pounds)') }}
@@ -1573,8 +1604,6 @@ $(document).ready(function() {
     $(document).on('click', '.remove-address', function() {
         $(this).closest('.address-history-item').remove();
         });
-    });
-
     // Add employment history
     $('#addSponsorEmployment').on('click', function() {
         const count = parseInt($('#sponsor_employment_history_count').val());

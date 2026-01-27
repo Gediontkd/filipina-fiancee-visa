@@ -153,6 +153,13 @@
                     'label' => 'Requirements',
                     'active' => request()->is('admin/documents/management*')
                 ])
+                @include('admin.partials.nav-item', [
+                  'route' => 'admin.user-pdf-store.index',
+                  'icon' => 'fa-file-pdf',
+                  'label' => 'User PDF Store',
+                  'active' => request()->is('admin/user-pdf-store*')
+                  ])
+
 
                 <div class="pt-4 pb-2">
                     <p class="px-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Communication</p>

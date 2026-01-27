@@ -88,7 +88,8 @@
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
+                },
+                credentials: 'same-origin'
             });
 
             const data = await response.json();

@@ -30,7 +30,6 @@
                 @endif
             </div>
         </div>
-
         <div class="text-center">
             {{-- ALWAYS VISIBLE BUTTON --}}
             <button 

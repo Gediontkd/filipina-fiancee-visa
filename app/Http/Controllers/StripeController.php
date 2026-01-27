@@ -1,6 +1,4 @@
 <?php
-// FILE: app/Http/Controllers/StripeController.php
-// FIXED: Auto-submit application after successful payment
 
 namespace App\Http\Controllers;
 
@@ -123,10 +121,7 @@ class StripeController extends Controller
         }
     }
 
-    /**
-     * Payment success callback
-     * FIXED: Auto-submit application after payment
-     */
+    
     public function success(Request $request)
     {
         try {

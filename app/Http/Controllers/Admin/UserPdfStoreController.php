@@ -108,21 +108,33 @@ class UserPdfStoreController extends Controller
      */
     public function upload(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
-            'pdf_files' => 'required',
-            'pdf_files.*' => 'required|file|mimes:pdf|max:302400' // 300MB max per file
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         try {
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required|exists:users,id',
+                'pdf_files' => 'required',
+                'pdf_files.*' => 'required|file|max:302400'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Manual check for PDF extension if fileinfo is missing
+            $files = $request->file('pdf_files');
+            foreach ($files as $file) {
+                $ext = strtolower($file->getClientOriginalExtension());
+                if ($ext !== 'pdf') {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Only PDF files are allowed. File "' . $file->getClientOriginalName() . '" is not a PDF.'
+                    ], 422);
+                }
+            }
+
             $userId = $request->user_id;
             $userPdfPath = $this->getUserPdfPath($userId);
 
@@ -130,18 +142,15 @@ class UserPdfStoreController extends Controller
             if (!File::exists($userPdfPath)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'User PDF folder does not exist. Please contact system administrator.'
+                    'message' => 'User PDF folder does not exist.'
                 ], 404);
             }
 
             $uploadedFiles = [];
-            $files = $request->file('pdf_files');
-
             foreach ($files as $file) {
                 $originalName = $file->getClientOriginalName();
                 $filename = $this->generateUniqueFilename($userPdfPath, $originalName);
                 
-                // Move file to user folder
                 $file->move($userPdfPath, $filename);
                 
                 $uploadedFiles[] = [
@@ -154,8 +163,7 @@ class UserPdfStoreController extends Controller
 
             Log::info('PDFs uploaded', [
                 'user_id' => $userId,
-                'count' => count($uploadedFiles),
-                'admin_id' => auth()->id()
+                'count' => count($uploadedFiles)
             ]);
 
             return response()->json([
@@ -168,12 +176,18 @@ class UserPdfStoreController extends Controller
         } catch (\Exception $e) {
             Log::error('PDF upload failed', [
                 'user_id' => $request->user_id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
+
+            $message = 'Upload failed: ' . $e->getMessage();
+            if (strpos($e->getMessage(), 'fileinfo') !== false) {
+                $message = 'Upload failed: The PHP "fileinfo" extension is not enabled on the server. Please enable it in php.ini.';
+            }
 
             return response()->json([
                 'success' => false,
-                'message' => 'Upload failed: ' . $e->getMessage()
+                'message' => $message
             ], 500);
         }
     }

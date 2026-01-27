@@ -41,10 +41,12 @@ class ProfileController extends Controller
         $user = Auth::user();
         
         // Get submitted application
-    $submission = UserSubmittedApplication::where('user_id', Auth::id())
-        ->where('status', 'pending')
-        ->with('visaApplication')
-        ->first();
+   $submission = UserSubmittedApplication::where('user_id', Auth::id())
+    ->whereIn('status', ['pending', 'submitted', 'under_review', 'approved', 'rejected'])
+    ->with('visaApplication')
+    ->latest()
+    ->first();
+
     
     // Initialize progress variables
     $sponsorTotal = 0;

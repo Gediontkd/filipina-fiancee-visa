@@ -328,7 +328,8 @@
         fetch('/admin/user-pdf-store/upload', {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
             },
             body: formData
         })
@@ -351,7 +352,7 @@
         .catch(error => {
             console.error('Upload error:', error);
             progressDiv.classList.add('hidden');
-            showNotification('Upload failed', 'error');
+            showNotification('Upload failed. Please check server logs or ensure php_fileinfo extension is enabled.', 'error');
         });
     }
 

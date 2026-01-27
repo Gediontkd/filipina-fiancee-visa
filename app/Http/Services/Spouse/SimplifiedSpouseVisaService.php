@@ -25,6 +25,27 @@ class SimplifiedSpouseVisaService
             // CRITICAL FIX: Force "Present" for mailing addresses BEFORE processing
             $data = $request->all();
 
+            Log::info('SimplifiedSpouseVisaService::saveApplication - Data received', [
+                'user_id' => Auth::id(),
+                'sponsor_first_name' => $data['sponsor_first_name'] ?? 'MISSING',
+                'count' => count($data)
+            ]);
+
+            // Fix empty dates being passed as "" which fails date casting
+            $dateFields = [
+                'sponsor_dob', 'sponsor_parent1_dob', 'sponsor_parent2_dob', 'marriage_date',
+                'sponsor_divorce_date', 'beneficiary_dob', 'beneficiary_passport_expiration',
+                'beneficiary_date_of_arrival', 'beneficiary_proceedings_date', 
+                'beneficiary_employment_start_date', 'last_lived_together_date_from',
+                'last_lived_together_date_to', 'sponsor_mailing_date_from', 'beneficiary_mailing_date_from'
+            ];
+
+            foreach ($dateFields as $dateField) {
+                if (isset($data[$dateField]) && $data[$dateField] === '') {
+                    $data[$dateField] = null;
+                }
+            }
+
             unset($data['beneficiary_passport_na']);
             unset($data['beneficiary_alien_number_na']);
             unset($data['sponsor_mailing_present']);
