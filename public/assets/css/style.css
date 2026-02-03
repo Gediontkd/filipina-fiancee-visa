@@ -1,5 +1,3 @@
-public/assets/css/style.css
-@import "https://use.fontawesome.com/releases/v5.7.2/css/all.css";
 @import "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900";
 @import "https://fonts.googleapis.com/css?family=Noto+Sans+TC:300,400,500,700,900";
 
@@ -300,23 +298,7 @@ select.selectpicker option {
     font-weight: 700;
 }
 
-#back-top {
-    display: none;
-    width: 40px;
-    height: 45px;
-    position: fixed;
-    z-index: 99;
-    bottom: 20px;
-    right: 30px;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    background-image: url(../img/back-to-top.png);
-    background-repeat: no-repeat;
-    background-position: 50% 48%;
-    background-color: rgba(35, 35, 35, 0.65);
-    transition: all 250ms linear;
-}
+
 
 .mb-20 {
     margin-bottom: 20px;
@@ -1098,7 +1080,8 @@ span.subheading {
     width: 100%;
     background: url(../img/Couple-Holding-Hands.jpg) no-repeat;
     background-size: cover;
-    background-position: 55% 30%;  /* CHANGED: Pull back to show more sunset */
+    background-position: 55% 30%;
+    /* CHANGED: Pull back to show more sunset */
     position: relative;
     z-index: 1;
 }
@@ -1110,7 +1093,8 @@ span.subheading {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.40);  /* CHANGED: Lighter overlay to show warmth */
+    background: rgba(0, 0, 0, 0.40);
+    /* CHANGED: Lighter overlay to show warmth */
     z-index: -1;
 }
 
@@ -1677,7 +1661,8 @@ ul.list-resourses li:after {
     border-left: 3px solid transparent;
 }
 
-.myaccount .dashboard-nav ul li a {
+.myaccount .dashboard-nav ul li a,
+.myaccount .dashboard-nav ul li button {
     display: inline-block;
     width: 100%;
     text-decoration: none;
@@ -1686,15 +1671,22 @@ ul.list-resourses li:after {
     color: #333;
     font-size: 16px;
     font-weight: 400;
+    border: none;
+    text-align: left;
+    background: inherit;
+    transition: all 0.3s ease;
 }
 
 .myaccount .dashboard-nav ul>li.sideitem.active,
 .myaccount .dashboard-nav ul>li.sideitem:hover {
     background: #0038A9;
+    color: #fff;
 }
 
 .myaccount .dashboard-nav ul>li.sideitem.active>a,
-.myaccount .dashboard-nav ul>li.sideitem:hover>a {
+.myaccount .dashboard-nav ul>li.sideitem:hover>a,
+.myaccount .dashboard-nav ul>li.sideitem.active button,
+.myaccount .dashboard-nav ul>li.sideitem:hover button {
     color: #fff;
     border-left: 3px solid #d86a5f;
 }
@@ -1703,7 +1695,8 @@ ul.list-resourses li:after {
     border-bottom: none;
 }
 
-.myaccount .dashboard-nav ul>li.sideitem>a i {
+.myaccount .dashboard-nav ul>li.sideitem>a i,
+.myaccount .dashboard-nav ul>li.sideitem button i {
     /* color: #ccc; */
     margin-right: 9px;
     min-width: 16px
@@ -2056,11 +2049,6 @@ ul.inbox-pagination li {
     border-bottom-color: transparent;
 }
 
-.mypetition.myaccount #progressbar.progessbar2 li span img {
-    height: 20px;
-    filter: brightness(0) invert(1);
-}
-
 .mypetition.myaccount #progressbar.progessbar2 li span {
     width: 38px;
     height: 38px;
@@ -2072,9 +2060,24 @@ ul.inbox-pagination li {
     margin-right: 10px;
 }
 
+.mypetition.myaccount #progressbar.progessbar2 li span i {
+    color: #fff;
+    font-size: 18px;
+}
+
+.mypetition.myaccount #progressbar.progessbar2 li span img {
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+.mypetition.myaccount #progressbar.progessbar2 li.active span i,
+.mypetition.myaccount #progressbar.progessbar2 li:hover span i {
+    color: #0038A9;
+}
+
 .mypetition.myaccount #progressbar.progessbar2 li.active span img,
 .mypetition.myaccount #progressbar.progessbar2 li:hover span img {
-    filter: initial;
+    filter: invert(16%) sepia(89%) saturate(4051%) hue-rotate(222deg) brightness(88%) contrast(106%);
 }
 
 .mypetition.myaccount #progressbar.progessbar2 li.active span,
@@ -2560,19 +2563,7 @@ header#myHeader li.nav-item.phone_nav a:active {
     display: none;
 }
 
-.myaccount .dashboard-nav ul li button {
-    display: inline-block;
-    width: 100%;
-    text-decoration: none;
-    position: relative;
-    padding: 12px 30px 12px 15px;
-    color: #333;
-    font-size: 16px;
-    font-weight: 400;
-    border: none;
-    text-align: left;
-    background: inherit;
-}
+/* Removed redundant button definition to avoid conflicts with shared styles above */
 
 
 .aboutus_right_img .about-img-block:before {
@@ -2749,9 +2740,8 @@ p.jumbotron {
     color: #000;
 }
 
-p.jumbotron strong
-{
-    color:#C91326
+p.jumbotron strong {
+    color: #C91326
 }
 
 /* Add this to your main style.css or create a new modern-styles.css file */
@@ -2993,12 +2983,19 @@ p.jumbotron strong
 }
 
 @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
         transform: translateX(-50%) translateY(0);
     }
+
     40% {
         transform: translateX(-50%) translateY(-10px);
     }
+
     60% {
         transform: translateX(-50%) translateY(-5px);
     }
@@ -3481,21 +3478,21 @@ p.jumbotron strong
     .hero-title {
         font-size: 2.5rem;
     }
-    
+
     .comparison-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .vs-divider {
         transform: rotate(90deg);
         margin: 1rem 0;
     }
-    
+
     .hero-stats {
         gap: 2rem;
     }
-    
+
     .cta-title {
         font-size: 2rem;
     }
@@ -3506,36 +3503,36 @@ p.jumbotron strong
         min-height: auto;
         padding: 4rem 0;
     }
-    
+
     .hero-title {
         font-size: 2rem;
     }
-    
+
     .hero-subtitle {
         font-size: 1rem;
     }
-    
+
     .service-buttons {
         flex-direction: column;
     }
-    
+
     .service-btn {
         width: 100%;
     }
-    
+
     .hero-stats {
         flex-direction: column;
         gap: 1rem;
     }
-    
+
     .pricing-card.featured {
         transform: none;
     }
-    
+
     .section-title-modern {
         font-size: 1.75rem;
     }
-    
+
     .process-card {
         margin-bottom: 2rem;
     }
@@ -3585,7 +3582,7 @@ p.jumbotron strong
     .btn-primary-gradient {
         border: 2px solid currentColor;
     }
-    
+
     .pricing-card {
         border: 2px solid currentColor;
     }
@@ -3603,19 +3600,34 @@ p.jumbotron strong
 
 /* Print styles */
 @media print {
+
     .hero-overlay,
     .scroll-indicator,
     .play-button,
     video {
         display: none;
     }
-    
+
     .banner-home-modern {
         min-height: auto;
         background: none;
     }
-    
+
     .hero-content {
         color: black;
+    }
+}
+
+/* Mobile Button Stacking */
+@media (max-width: 767px) {
+    .step-wizard .btn {
+        display: block;
+        width: 100%;
+        margin-left: 0 !important;
+        margin-bottom: 15px;
+    }
+
+    .step-wizard .btn:last-child {
+        margin-bottom: 0;
     }
 }

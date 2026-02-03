@@ -21,10 +21,13 @@ class FianceSponsorService
         DB::beginTransaction();
 
         try {
-            // Get all request data
-            $requestData = $request->all();
+            // Get all request data and filter out any File objects
+            // PHP cannot serialize File objects, which causes a 500 error
+            $requestData = array_filter($request->all(), function($value) {
+                return !($value instanceof \Illuminate\Http\UploadedFile);
+            });
             
-            // If waiver_document_path exists, ensure it's included
+            // If waiver_document_path was added by controller, ensure it's in the filtered data
             if ($request->has('waiver_document_path')) {
                 $requestData['waiver_document_path'] = $request->waiver_document_path;
             }

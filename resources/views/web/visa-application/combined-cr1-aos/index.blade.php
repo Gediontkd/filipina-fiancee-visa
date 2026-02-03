@@ -27,7 +27,7 @@
                                             data-form="{{ $combinedStep->slug }}"
                                             data-name="{{ $combinedStep->name }}">
                                             <span>
-                                                <img src='{{ asset("assets/img/$combinedStep->icon") }}'/>
+                                                <i class="fa {{ $combinedStep->icon }}"></i>
                                             </span>
                                             <strong class="{{ $combinedStep->slug }}">
                                                 {{ $combinedStep->name }}

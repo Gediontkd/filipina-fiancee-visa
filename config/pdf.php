@@ -74,7 +74,7 @@ return [
         /**
          * Admin email address to receive submission notifications
          */
-        'admin_email' => env('ADMIN_EMAIL', 'gediondaniel454@gmail.com'),
+        'admin_email' => env('ADMIN_EMAIL', 'Sam684751@gmail.com'),
 
         /**
          * Enable email notifications for new submissions

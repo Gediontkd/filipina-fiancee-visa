@@ -299,6 +299,20 @@ Route::group(['middleware' => ['auth', 'application']], function() {
         ->group(function () {
             Route::get('/application', 'application')->name('combinedCr1AosApplication');
             Route::post('/petitioner-name', 'petitionerName')->name('combinedPetitionerName');
+            Route::post('/petitioner-contact', 'petitionerContact')->name('combinedPetitionerContact');
+            Route::post('/petitioner-birth', 'petitionerBirth')->name('combinedPetitionerBirth');
+            Route::post('/petitioner-status', 'petitionerStatus')->name('combinedPetitionerStatus');
+            Route::post('/petitioner-address', 'petitionerAddress')->name('combinedPetitionerAddress');
+            Route::post('/petitioner-employment', 'petitionerEmployment')->name('combinedPetitionerEmployment');
+            Route::post('/spouse-name', 'spouseName')->name('combinedSpouseName');
+            Route::post('/spouse-birth', 'spouseBirth')->name('combinedSpouseBirth');
+            Route::post('/spouse-entry', 'spouseEntry')->name('combinedSpouseEntry');
+            Route::post('/spouse-address', 'spouseAddress')->name('combinedSpouseAddress');
+            Route::post('/marriage-details', 'marriageDetails')->name('combinedMarriageDetails');
+            Route::post('/relationship-story', 'relationshipStory')->name('combinedRelationshipStory');
+            Route::post('/aos-questions-1', 'aosQuestions1')->name('combinedAosQuestions1');
+            Route::post('/aos-questions-2', 'aosQuestions2')->name('combinedAosQuestions2');
+            Route::post('/work-authorization', 'workAuthorization')->name('combinedWorkAuthorization');
             Route::post('/previous-and-continue', 'previousOrContinue')->name('combinedPreviousOrContinue');
         });
 

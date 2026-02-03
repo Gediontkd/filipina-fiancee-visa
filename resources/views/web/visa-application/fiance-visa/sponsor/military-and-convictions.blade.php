@@ -75,19 +75,19 @@
                         <label>If you were being battered or subjected to extreme cruelty by your spouse, parent, or adult child at the time of your conviction, check all of the following that apply to you:</label>
                         <div class="radiogroup mt-3">
                             <label class="custom-control mb-0 ">
-                                {{ Form::checkbox('battered', 'self-defense', @$step->detail['battered'] == 'self-defense' ? true : '', [
+                                {{ Form::checkbox('battered[]', 'self-defense', is_array(@$step->detail['battered']) && in_array('self-defense', $step->detail['battered']) ? true : '', [
                                     'class' => 'custom-control-input'
                                 ]) }}
                                 <span class="custom-control-label"></span> I was acting in self-defense
                             </label> <br>
                             <label class="custom-control mb-0 ">
-                                {{ Form::checkbox('battered', 'own-protection', @$step->detail['battered'] == 'own-protection' ? true : '', [
+                                {{ Form::checkbox('battered[]', 'own-protection', is_array(@$step->detail['battered']) && in_array('own-protection', $step->detail['battered']) ? true : '', [
                                     'class' => 'custom-control-input'
                                 ]) }}
                                 <span class="custom-control-label"></span> I violated a protection order issued for my own protection.
                             </label> <br>
                             <label class="custom-control mb-0 ">
-                                {{ Form::checkbox('battered', 'extreme-cruelty', @$step->detail['battered'] == 'extreme-cruelty' ? true : '', [
+                                {{ Form::checkbox('battered[]', 'extreme-cruelty', is_array(@$step->detail['battered']) && in_array('extreme-cruelty', $step->detail['battered']) ? true : '', [
                                     'class' => 'custom-control-input'
                                 ]) }}
                                 <span class="custom-control-label"></span> I committed, was arrested for, was convicted of, or plead guilty to committing a crime that did not result in serious bodily injury, and there was a connection between the crime committed and my having been battered or subjected to extreme cruelty.
@@ -265,7 +265,7 @@
                 violence: {
                     required: true,
                 },
-                battered: {
+                'battered[]': {
                     required: true,
                 },
                 // battered2: {
@@ -294,8 +294,8 @@
                 },
             },
             errorPlacement: function (error, element) {
-                if (element.attr("name") == "protection" || element.attr("name") == "violence" || element.attr("name") == "battered" || element.attr("name") == "battered2" || element.attr("name") == "battered3" || element.attr("name") == "manslaughter" || element.attr("name") == "convictions" || element.attr("name") == "drug_related" || element.attr("name") == "specified_offense" || element.attr("name") == "member_of_us") {
-                    error.appendTo($("."+element.attr("name")));
+                if (element.attr("name") == "protection" || element.attr("name") == "violence" || element.attr("name") == "battered[]" || element.attr("name") == "manslaughter" || element.attr("name") == "convictions" || element.attr("name") == "drug_related" || element.attr("name") == "specified_offense" || element.attr("name") == "member_of_us") {
+                    error.appendTo($("." + element.attr("name").replace('[]', '')));
                 } else {
                     error.insertAfter(element);
                 }               

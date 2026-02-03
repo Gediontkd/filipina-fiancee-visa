@@ -326,8 +326,7 @@
                         var hasExisting = $('input[name="existing_waiver_document"]').length > 0;
                         // Only require if waiver situation selected AND no existing file
                         return (situation === 'situation1' || situation === 'situation2' || situation === 'situation3') && !hasExisting;
-                    },
-                    extension: "pdf|doc|docx"
+                    }
                 },
                 alien_fname1: {
                     required: true,
@@ -424,8 +423,7 @@
                i_129F: "Please choose option!",                                                                   
                situation: "Please choose option!",
                waiver_document: {
-                   required: "Please upload a waiver explanation document!",
-                   extension: "Only PDF, DOC, or DOCX files are allowed!"
+                   required: "Please upload a waiver explanation document!"
                },                                             
                alien_fname1: "Please enter name!",                                                              
                alien_mname1: "Please enter name!",                                                              

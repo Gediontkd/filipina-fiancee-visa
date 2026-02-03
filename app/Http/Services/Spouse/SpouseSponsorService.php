@@ -18,7 +18,10 @@ class SpouseSponsorService
         DB::beginTransaction();
 
         try {
-            $requestData = $request->all();
+            // Filter out any File objects before serialization (prevents 500 error)
+            $requestData = array_filter($request->all(), function($value) {
+                return !($value instanceof \Illuminate\Http\UploadedFile);
+            });
             
             $data = [
                 'user_id' => Auth::id(),

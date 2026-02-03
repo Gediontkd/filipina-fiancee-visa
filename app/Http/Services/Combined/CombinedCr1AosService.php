@@ -17,11 +17,16 @@ class CombinedCr1AosService
         DB::beginTransaction();
         
         try {
+            // Filter out any File objects (prevents serialization issues)
+            $requestData = array_filter($request->all(), function($value) {
+                return !($value instanceof \Illuminate\Http\UploadedFile);
+            });
+
             $data = [
                 'user_id' => Auth::id(),
                 'submitted_app_id' => $request->submitted_app_id,
                 'step' => $request->name,
-                'detail' => serialize($request->all()),
+                'detail' => $requestData,
             ];
 
             $step = CombinedCr1AosSubmittedStep::updateOrCreate([
@@ -54,6 +59,9 @@ class CombinedCr1AosService
                 ->first();
 
             DB::commit();
+            
+            // Fix: If next step not found (not visited yet), return null or handle it
+            // Ideally, we want to return the submitted step if it exists, otherwise null
             return $nextStepId;
             
         } catch (\Exception $e) {
@@ -67,6 +75,9 @@ class CombinedCr1AosService
 
     public function next($id)
     {
-        return CombinedCr1AosSubmittedStep::where('id', $id)->first();
+        if (!$id) {
+            return new CombinedCr1AosSubmittedStep();
+        }
+        return CombinedCr1AosSubmittedStep::where('id', $id)->first() ?? new CombinedCr1AosSubmittedStep();
     }
 }

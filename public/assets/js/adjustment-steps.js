@@ -1,52 +1,58 @@
-$(document).on('change', '.doesNotApply', function(){
+$(document).on('change', '.doesNotApply', function () {
     var field = $(this).data('field');
     if ($(this).is(':checked') == true) {
-        $('.'+field).val('N/A');
-        $('.'+field).attr('disabled','disabled');
+        $('.' + field).val('N/A');
+        $('.' + field).attr('disabled', 'disabled');
     } else {
-        $('.'+field).val('');
-        $('.'+field).removeAttr('disabled');
+        $('.' + field).val('');
+        $('.' + field).removeAttr('disabled');
     }
 })
-function datePicker()
-{
-    $(function(){
-        $(".datePicker").datepicker();
+function datePicker() {
+    $(function () {
+        $(".datePicker").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "c-100:c+10"
+        });
     });
 
-    $(function(){
+    $(function () {
         $(".dateOfBirth").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "c-100:c+0",
             maxDate: new Date()
         });
-    }); 
+    });
 
-    $(function(){
+    $(function () {
         $(".disablePastDate").datepicker({
             minDate: 0
         });
-    }); 
+    });
 }
 
 /* =====Visa Info Start====== */
-$(document).on('click', '.addCountryBtn', function(){
+$(document).on('click', '.addCountryBtn', function () {
     var index = $('.appendCountry > .countryForm').length + 1;
     $('.appendCountry').append(addAnotherCountry(index));
     if (index == 2) {
         $(this).addClass('d-none');
     }
-});      
+});
 
-$(document).on('click', '.removeCountry', function(){
+$(document).on('click', '.removeCountry', function () {
     var index = $('.appendCountry > .countryForm').length;
     $(this).parent().parent().remove();
     if (index <= 2) {
         $('.addCountryBtn').removeClass('d-none');
-    }           
+    }
 });
 /* =====Visa Info End====== */
 
 /* =====Civil Status Step Start====== */
-$(document).on('change', '.priorSpouse', function(){
+$(document).on('change', '.priorSpouse', function () {
     if ($(this).val() == 'yes') {
         $('.priorSpouseSec').show();
         $('.appendPriorSpouse').append(priorSpouseHtml(1));
@@ -57,7 +63,7 @@ $(document).on('change', '.priorSpouse', function(){
     }
 });
 
-$(document).on('click', '.addPriorSpouse', function(){
+$(document).on('click', '.addPriorSpouse', function () {
     var index = $('.appendPriorSpouse > .priorSpouseForm').length + 1;
     datePicker();
     $('.appendPriorSpouse').append(priorSpouseHtml(index));
@@ -66,7 +72,7 @@ $(document).on('click', '.addPriorSpouse', function(){
     }
 });
 
-$(document).on('click', '.removePriorSpouse', function(){
+$(document).on('click', '.removePriorSpouse', function () {
     var index = $('appendPriorSpouse > .priorSpouseForm').length;
     $(this).parent().parent().remove();
     if (index <= 2) {
@@ -76,7 +82,7 @@ $(document).on('click', '.removePriorSpouse', function(){
 /* =====Civil Status Step End====== */
 
 /* =====Child Step Start====== */
-$(document).on('change', '.haveChild', function(){
+$(document).on('change', '.haveChild', function () {
     if ($(this).val() == 'yes') {
         $('.addChildernSec').show();
         $('.appendChildern').append(addChildernHtml(1));
@@ -87,7 +93,7 @@ $(document).on('change', '.haveChild', function(){
     }
 });
 
-$(document).on('click', '.addChildern', function(){
+$(document).on('click', '.addChildern', function () {
     var index = $('.appendChildern > .addChildernForm').length + 1;
     datePicker();
     $('.appendChildern').append(addChildernHtml(index));
@@ -96,7 +102,7 @@ $(document).on('click', '.addChildern', function(){
     }
 });
 
-$(document).on('click', '.removeChildern', function(){
+$(document).on('click', '.removeChildern', function () {
     var index = $('appendChildern > .addChildernForm').length;
     $(this).parent().parent().remove();
     if (index <= 5) {
@@ -106,7 +112,7 @@ $(document).on('click', '.removeChildern', function(){
 /* =====Child Step End====== */
 
 /* =====Affiliation Step Start====== */
-$(document).on('change', '.affiliation', function(){
+$(document).on('change', '.affiliation', function () {
     if ($(this).val() == 'yes') {
         $('.affiliationSec').show();
         $('.appendAffiliation').append(addChildernHtml(1));
@@ -117,7 +123,7 @@ $(document).on('change', '.affiliation', function(){
     }
 });
 
-$(document).on('click', '.addAffiliation', function(){
+$(document).on('click', '.addAffiliation', function () {
     var index = $('.appendAffiliation > .addAffiliationForm').length + 1;
     datePicker();
     $('.appendAffiliation').append(addChildernHtml(index));
@@ -126,7 +132,7 @@ $(document).on('click', '.addAffiliation', function(){
     }
 });
 
-$(document).on('click', '.removeAffiliation', function(){
+$(document).on('click', '.removeAffiliation', function () {
     var index = $('appendAffiliation > .addAffiliationForm').length;
     $(this).parent().parent().remove();
     if (index <= 6) {

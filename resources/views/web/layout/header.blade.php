@@ -247,7 +247,7 @@
                                 </div>
                                 <span>{{ Auth::user()->name }}</span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <ul class="dropdown-menu" aria-labelledby="userDropdown">
                                 <li>
                                     <a class="dropdown-item" href="{{ route('user.page', 'progress') }}">
                                         <i class="fas fa-user"></i> My Profile
@@ -272,12 +272,12 @@
                     @else
                         <li class="nav-item ms-2">
                             <a href="{{ route('login') }}" class="btn btn-outline-light btn-sm">
-                                {{ __('message.login') }}
+                                <span>{{ __('message.login') }}</span>
                             </a>
                         </li>
                         <li class="nav-item ms-2">
                             <a href="{{ route('register') }}" class="btn btn-primary btn-sm btn-get-started">
-                                Start Application
+                                <span>Start Application</span>
                             </a>
                         </li>
                     @endif
@@ -370,6 +370,9 @@ header .navbar.header_px20 {
 .dropdown-menu-two-column {
     min-width: 600px;
     max-width: 600px;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin-top: 10px !important;
 }
 
 .dropdown-grid {
@@ -800,6 +803,61 @@ header .navbar.header_px20 {
     outline: 3px solid #667eea;
     outline-offset: 3px;
     box-shadow: 0 0 0 6px rgba(102, 126, 234, 0.2);
+}
+
+/* User Dropdown Fixes */
+.user-dropdown {
+    position: relative !important;
+}
+
+.user-dropdown .dropdown-menu {
+    right: 0 !important;
+    left: auto !important;
+    transform: none !important;
+    top: 100% !important;
+    margin-top: 10px !important;
+    min-width: 220px;
+    border-radius: 12px;
+    padding: 0.5rem 0;
+}
+
+.user-dropdown .dropdown-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding: 0.75rem 1rem !important;
+    gap: 12px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+.user-dropdown .dropdown-item i {
+    width: 20px !important;
+    text-align: center !important;
+    font-size: 1.1rem !important;
+}
+
+.user-dropdown .dropdown-item:hover {
+    transform: none !important;
+    background-color: rgba(102, 126, 234, 0.1) !important;
+}
+
+.user-dropdown .logout-btn {
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding: 0.75rem 1rem !important;
+    gap: 12px !important;
+}
+
+.user-dropdown .logout-btn:hover {
+    background-color: rgba(102, 126, 234, 0.1) !important;
 }
 
 /* High Performance Animation */

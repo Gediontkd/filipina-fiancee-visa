@@ -21,11 +21,16 @@ class FianceAlienService
         DB::beginTransaction();
 
         try {
+            // Filter out any File objects before serialization (prevents 500 error)
+            $requestData = array_filter($request->all(), function($value) {
+                return !($value instanceof \Illuminate\Http\UploadedFile);
+            });
+
             $data = [
                 'user_id' => Auth::id(),
                 'submitted_app_id' => $request->submitted_app_id,
                 'step' => $request->name,
-                'detail' => serialize($request->all()),
+                'detail' => serialize($requestData),
                 'type' => $request->type,
             ];
 

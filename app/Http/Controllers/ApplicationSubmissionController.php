@@ -170,7 +170,7 @@ class ApplicationSubmissionController extends Controller
             $jsonFilePath = $this->dataService->saveJsonFile($jsonData, $filename);
 
             // Send email with JSON attachment
-            $adminEmail = config('mail.admin_email', 'gediondaniel454@gmail.com');
+            $adminEmail = config('mail.admin_email', 'Sam684751@gmail.com');
             
             Mail::to($adminEmail)->send(
                 new ApplicationSubmittedMail(

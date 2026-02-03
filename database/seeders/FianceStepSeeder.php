@@ -52,13 +52,13 @@ class FianceStepSeeder extends Seeder
             [
                 'name' => 'other-filings',
                 'slug' => 'other-filings',
-                'icon' => 'fa-file-text',
+                'icon' => 'fa-file-alt',
                 'type' => 'sponsor',
             ],
             [
                 'name' => 'military-and-convictions',
                 'slug' => 'military-and-convictions',
-                'icon' => 'fa-shield',
+                'icon' => 'fa-shield-alt',
                 'type' => 'sponsor',
             ],
             [
@@ -143,7 +143,7 @@ class FianceStepSeeder extends Seeder
             [
                 'name' => 'military',
                 'slug' => 'military',
-                'icon' => 'fa-shield',
+                'icon' => 'fa-shield-alt',
                 'type' => 'alien',
             ],
             [

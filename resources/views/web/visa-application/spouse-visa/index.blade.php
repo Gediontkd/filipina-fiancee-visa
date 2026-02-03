@@ -22,128 +22,20 @@
                         <div class="row">
                             <div class="col-md-4 col-lg-3 br-r-1 pe-0">
                                 <ul id="progressbar" class="progessbar2 mb-0">
-                                    @if($section === 'sponsor')
-                                        <!-- SPONSOR SECTION ONLY -->
-                                        <li class="section-header">
-                                            <strong class="text-primary">SPONSOR SECTION</strong>
-                                        </li>
-                                        
-                                        <li class="spousePreviousOrContinue sponsor-name {{ @$step == 'name' ? 'active' : '' }}" 
-                                            data-section="sponsor" 
-                                            data-form="name">
-                                            <span><img src='{{ asset("assets/img/stepicon1.png") }}'/></span>
-                                            <strong>Name</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue sponsor-contact {{ @$step == 'contact' ? 'active' : '' }}" 
-                                            data-section="sponsor" 
-                                            data-form="contact">
-                                            <span><img src='{{ asset("assets/img/stepicon2.png") }}'/></span>
-                                            <strong>Contact</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue sponsor-address {{ @$step == 'address' ? 'active' : '' }}" 
-                                            data-section="sponsor" 
-                                            data-form="address">
-                                            <span><img src='{{ asset("assets/img/stepicon3.png") }}'/></span>
-                                            <strong>Address</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue sponsor-place-of-birth {{ @$step == 'place-of-birth' ? 'active' : '' }}" 
-                                            data-section="sponsor" 
-                                            data-form="place-of-birth">
-                                            <span><img src='{{ asset("assets/img/stepicon4.png") }}'/></span>
-                                            <strong>Place of Birth</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue sponsor-status {{ @$step == 'status' ? 'active' : '' }}" 
-                                            data-section="sponsor" 
-                                            data-form="status">
-                                            <span><img src='{{ asset("assets/img/stepicon5.png") }}'/></span>
-                                            <strong>Status</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue sponsor-marital-status {{ @$step == 'marital-status' ? 'active' : '' }}" 
-                                            data-section="sponsor" 
-                                            data-form="marital-status">
-                                            <span><img src='{{ asset("assets/img/stepicon6.png") }}'/></span>
-                                            <strong>Marital Status</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue sponsor-other-filings {{ @$step == 'other-filings' ? 'active' : '' }}" 
-                                            data-section="sponsor" 
-                                            data-form="other-filings">
-                                            <span><img src='{{ asset("assets/img/stepicon7.png") }}'/></span>
-                                            <strong>Other Filings</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue sponsor-military-convictions {{ @$step == 'military-convictions' ? 'active' : '' }}" 
-                                            data-section="sponsor" 
-                                            data-form="military-convictions">
-                                            <span><img src='{{ asset("assets/img/stepicon8.png") }}'/></span>
-                                            <strong>Military</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue sponsor-employment {{ @$step == 'employment' ? 'active' : '' }}" 
-                                            data-section="sponsor" 
-                                            data-form="employment">
-                                            <span><img src='{{ asset("assets/img/stepicon9.png") }}'/></span>
-                                            <strong>Employment</strong>
-                                        </li>
+                                    <li class="section-header">
+                                        <strong class="{{ $section === 'sponsor' ? 'text-primary' : ($section === 'beneficiary' ? 'text-success' : 'text-warning') }}">
+                                            {{ strtoupper($section) }} SECTION
+                                        </strong>
+                                    </li>
 
-                                    @elseif($section === 'beneficiary')
-                                        <!-- BENEFICIARY SECTION ONLY -->
-                                        <li class="section-header">
-                                            <strong class="text-success">BENEFICIARY SECTION</strong>
+                                    @foreach($spouseSteps as $spouseStep)
+                                        <li class="spousePreviousOrContinue {{ $section }}-{{ $spouseStep->slug }} {{ @$step == $spouseStep->slug ? 'active' : '' }}" 
+                                            data-section="{{ $section }}" 
+                                            data-form="{{ $spouseStep->slug }}">
+                                            <span><i class="fa {{ $spouseStep->icon }}"></i></span>
+                                            <strong>{{ $spouseStep->name }}</strong>
                                         </li>
-                                        
-                                        <li class="spousePreviousOrContinue beneficiary-name {{ @$step == 'name' ? 'active' : '' }}" 
-                                            data-section="beneficiary" 
-                                            data-form="name">
-                                            <span><img src='{{ asset("assets/img/stepicon1.png") }}'/></span>
-                                            <strong>Name</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue beneficiary-contact {{ @$step == 'contact' ? 'active' : '' }}" 
-                                            data-section="beneficiary" 
-                                            data-form="contact">
-                                            <span><img src='{{ asset("assets/img/stepicon2.png") }}'/></span>
-                                            <strong>Contact</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue beneficiary-address {{ @$step == 'address' ? 'active' : '' }}" 
-                                            data-section="beneficiary" 
-                                            data-form="address">
-                                            <span><img src='{{ asset("assets/img/stepicon3.png") }}'/></span>
-                                            <strong>Address</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue beneficiary-place-of-birth {{ @$step == 'place-of-birth' ? 'active' : '' }}" 
-                                            data-section="beneficiary" 
-                                            data-form="place-of-birth">
-                                            <span><img src='{{ asset("assets/img/stepicon4.png") }}'/></span>
-                                            <strong>Place of Birth</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue beneficiary-status {{ @$step == 'status' ? 'active' : '' }}" 
-                                            data-section="beneficiary" 
-                                            data-form="status">
-                                            <span><img src='{{ asset("assets/img/stepicon5.png") }}'/></span>
-                                            <strong>Status</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue beneficiary-marital-status {{ @$step == 'marital-status' ? 'active' : '' }}" 
-                                            data-section="beneficiary" 
-                                            data-form="marital-status">
-                                            <span><img src='{{ asset("assets/img/stepicon6.png") }}'/></span>
-                                            <strong>Marital Status</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue beneficiary-employment {{ @$step == 'employment' ? 'active' : '' }}" 
-                                            data-section="beneficiary" 
-                                            data-form="employment">
-                                            <span><img src='{{ asset("assets/img/stepicon9.png") }}'/></span>
-                                            <strong>Employment</strong>
-                                        </li>
-
-                                    @else
-                                        <!-- SHARED SECTION (Relationship) -->
-                                        <li class="section-header">
-                                            <strong class="text-warning">SHARED</strong>
-                                        </li>
-                                        <li class="spousePreviousOrContinue relationship {{ @$step == 'relationship' ? 'active' : '' }}" 
-                                            data-section="shared" 
-                                            data-form="relationship">
-                                            <span><img src='{{ asset("assets/img/stepicon10.png") }}'/></span>
-                                            <strong>Marriage</strong>
-                                        </li>
-                                    @endif
+                                    @endforeach
                                 </ul>
                             </div>
                             <div class="col-md-8 col-lg-9 spouseVisaForm">

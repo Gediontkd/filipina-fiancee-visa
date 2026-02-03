@@ -333,36 +333,36 @@
                             <div class="form-group">
                                 <label>What type of proceeding was it? Check all that apply</label>
                                 <div class="radiogroup">
-                                    <label class="custom-control custom-radio mb-0 ms-3">
-                                        {{ Form::radio("type_of_proceeding", 'Removal', @$step->detail["type_of_proceeding"] == 'Removal' ? true : '', [
+                                    <label class="custom-control mb-0 ms-3">
+                                        {{ Form::checkbox("type_of_proceeding[]", 'Removal', is_array(@$step->detail["type_of_proceeding"]) && in_array('Removal', $step->detail["type_of_proceeding"]) ? true : '', [
                                                 'class' => 'custom-control-input immigrationProceedings',
                                             ])
                                         }}
                                         <span class="custom-control-label"></span> Removal
                                     </label><br>
-                                    <label class="custom-control custom-radio mb-0 ms-3">
-                                        {{ Form::radio("type_of_proceeding", 'ExclusionDeportation', @$step->detail["type_of_proceeding"] == 'ExclusionDeportation' ? true : '', [
+                                    <label class="custom-control mb-0 ms-3">
+                                        {{ Form::checkbox("type_of_proceeding[]", 'ExclusionDeportation', is_array(@$step->detail["type_of_proceeding"]) && in_array('ExclusionDeportation', $step->detail["type_of_proceeding"]) ? true : '', [
                                                 'class' => 'custom-control-input immigrationProceedings',
                                             ]) 
                                         }}
                                         <span class="custom-control-label"></span> Exclusion/Deportation
                                     </label> <br>
-                                    <label class="custom-control custom-radio mb-0 ms-3">
-                                        {{ Form::radio("type_of_proceeding", 'Rescission', @$step->detail["type_of_proceeding"] == 'Rescission' ? true : '', [
+                                    <label class="custom-control mb-0 ms-3">
+                                        {{ Form::checkbox("type_of_proceeding[]", 'Rescission', is_array(@$step->detail["type_of_proceeding"]) && in_array('Rescission', $step->detail["type_of_proceeding"]) ? true : '', [
                                                 'class' => 'custom-control-input immigrationProceedings',
                                             ]) 
                                         }}
                                         <span class="custom-control-label"></span> Rescission
                                     </label> <br>
-                                    <label class="custom-control custom-radio mb-0 ms-3">
-                                        {{ Form::radio("type_of_proceeding", 'Judicial Proceedings', @$step->detail["type_of_proceeding"] == 'Judicial Proceedings' ? true : '', [
+                                    <label class="custom-control mb-0 ms-3">
+                                        {{ Form::checkbox("type_of_proceeding[]", 'Judicial Proceedings', is_array(@$step->detail["type_of_proceeding"]) && in_array('Judicial Proceedings', $step->detail["type_of_proceeding"]) ? true : '', [
                                                 'class' => 'custom-control-input immigrationProceedings',
                                             ]) 
                                         }}
                                         <span class="custom-control-label"></span> Judicial Proceedings (choose this option if none of the others apply)
 
                                     </label>                                   
-                                    <div class="immigration_proceedings"></div>
+                                    <div class="type_of_proceeding"></div>
                                     <p>Attach to your petition a copy of the official documentation relating to this proceeding.</p>
                                 </div>
                             </div>  
@@ -580,7 +580,7 @@
                 exact_date: {
                     required: true,
                 },
-                type_of_proceeding: {
+                'type_of_proceeding[]': {
                     required: true,
                 },
                 m_first_name: {
@@ -594,8 +594,8 @@
                 },
             },
             errorPlacement: function (error, element) {
-                if (element.attr("name") == "beneficiary" || element.attr("name") == "child_address" || element.attr("name") == "alien_beneficiary" || element.attr("name") == "under_and_joining" || element.attr("name") == "traveling_to_us" || element.attr("name") == "immigration_proceedings" || element.attr("name") == "type_of_proceeding") {
-                    error.appendTo($("."+element.attr("name")));
+                if (element.attr("name") == "beneficiary" || element.attr("name") == "child_address" || element.attr("name") == "alien_beneficiary" || element.attr("name") == "under_and_joining" || element.attr("name") == "traveling_to_us" || element.attr("name") == "immigration_proceedings" || element.attr("name") == "type_of_proceeding[]") {
+                    error.appendTo($("."+(element.attr("name").replace('[]', ''))));
                 } else {
                     error.insertAfter(element);
                 }

@@ -10,5 +10,9 @@ class CombinedCr1AosSubmittedStep extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'step'];
+    protected $fillable = ['user_id', 'submitted_app_id', 'step', 'detail'];
+
+    protected $casts = [
+        'detail' => 'array',
+    ];
 }

@@ -62,6 +62,160 @@ class CombinedCr1AosController extends Controller
         ]);
     }
 
+    public function petitionerContact(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.petitioner-birth', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function petitionerBirth(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.petitioner-status', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function petitionerStatus(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.petitioner-address', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function petitionerAddress(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.petitioner-employment', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function petitionerEmployment(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.spouse-name', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function spouseName(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.spouse-birth', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function spouseBirth(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.spouse-entry', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function spouseEntry(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.spouse-address', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function spouseAddress(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.marriage-details', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function marriageDetails(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.relationship-story', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function relationshipStory(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.aos-questions-1', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function aosQuestions1(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.aos-questions-2', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function aosQuestions2(Request $request, CombinedCr1AosService $service)
+    {
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'data' => view('web.visa-application.combined-cr1-aos.work-authorization', [
+                'step' => $service->next($step)
+            ])->render(),
+        ]);
+    }
+
+    public function workAuthorization(Request $request, CombinedCr1AosService $service)
+    {
+        // This is the final step
+        $step = $service->create($request);
+        return response()->json([
+            'status' => true,
+            'message' => 'Application Completed Successfully',
+            // No data/view to return, frontend will redirect
+        ]);
+    }
+
     // Add more step handlers as needed...
 
     public function previousOrContinue(Request $request)

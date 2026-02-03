@@ -49,8 +49,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div class="radiogroup">
-                                    <label class="custom-control custom-radio mb-0 ">
-                                        {{ Form::radio('proceed_type', 'removal', @$step->detail['proceed_type'] == 'removal' ? true : '', [
+                                    <label class="custom-control mb-0 ">
+                                        {{ Form::checkbox('proceed_type[]', 'removal', is_array(@$step->detail['proceed_type']) && in_array('removal', $step->detail['proceed_type']) ? true : '', [
                                             'class' => 'custom-control-input'
                                         ]) }}
                                         <span class="custom-control-label"></span> Removal
@@ -61,8 +61,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div class="radiogroup">
-                                    <label class="custom-control custom-radio mb-0 ">
-                                        {{ Form::radio('proceed_type', 'exclusion_deportation', @$step->detail['proceed_type'] == 'exclusion_deportation' ? true : '', [
+                                    <label class="custom-control mb-0 ">
+                                        {{ Form::checkbox('proceed_type[]', 'exclusion_deportation', is_array(@$step->detail['proceed_type']) && in_array('exclusion_deportation', $step->detail['proceed_type']) ? true : '', [
                                             'class' => 'custom-control-input'
                                         ]) }}
                                         <span class="custom-control-label"></span> Exclusion/Deportation
@@ -73,8 +73,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div class="radiogroup">
-                                    <label class="custom-control custom-radio mb-0 ">
-                                        {{ Form::radio('proceed_type', 'rescission', @$step->detail['proceed_type'] == 'rescission' ? true : '', [
+                                    <label class="custom-control mb-0 ">
+                                        {{ Form::checkbox('proceed_type[]', 'rescission', is_array(@$step->detail['proceed_type']) && in_array('rescission', $step->detail['proceed_type']) ? true : '', [
                                             'class' => 'custom-control-input'
                                         ]) }}
                                         <span class="custom-control-label"></span> Rescission
@@ -85,8 +85,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div class="radiogroup">
-                                    <label class="custom-control custom-radio mb-0 ">
-                                        {{ Form::radio('proceed_type', 'judicial_proceed', @$step->detail['proceed_type'] == 'judicial_proceed' ? true : '', [
+                                    <label class="custom-control mb-0 ">
+                                        {{ Form::checkbox('proceed_type[]', 'judicial_proceed', is_array(@$step->detail['proceed_type']) && in_array('judicial_proceed', $step->detail['proceed_type']) ? true : '', [
                                             'class' => 'custom-control-input'
                                         ]) }}
                                         <span class="custom-control-label"></span> Judicial Proceedings (choose this option if none of the others apply)
@@ -145,7 +145,7 @@
                 estimate_date: {
                     required: true,
                 },
-                proceed_type: {
+                'proceed_type[]': {
                     required: true,
                 },       
             },
@@ -156,8 +156,8 @@
                proceed_type: "Please choose option!",               
             },
             errorPlacement: function (error, element) {
-                if (element.attr("name") == "immigration_proceed" || element.attr("name") == "proceed_type") {
-                    error.appendTo($("."+element.attr("name")));
+                if (element.attr("name") == "immigration_proceed" || element.attr("name") == "proceed_type[]") {
+                    error.appendTo($("."+(element.attr("name").replace('[]', ''))));
                 } else {
                     error.insertAfter(element);
                 }

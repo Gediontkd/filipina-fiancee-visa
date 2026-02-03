@@ -28,9 +28,9 @@
                                             data-form="{{ $adjustmentStep->slug }}"
                                             data-name="{{ $adjustmentStep->full_name }}"
                                         >
-                                        	<span>
-                                        		<img src='{{ asset("assets/img/$adjustmentStep->icon") }}'/>
-                                        	</span>
+                                         	<span>
+                                                <i class="fa {{ $adjustmentStep->icon }}"></i>
+                                         	</span>
                                         	<strong class="{{ $adjustmentStep->full_name }}">
                                                 {{ $adjustmentStep->name }}
                                             </strong>
