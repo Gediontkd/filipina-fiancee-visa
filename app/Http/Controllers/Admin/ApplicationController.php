@@ -65,7 +65,7 @@ class ApplicationController extends Controller
         // Get unread message count (messages from user that admin hasn't read)
         $unreadMessageCount = \App\Models\Message::where('application_id', $application->id)
             ->where('sender_type', 'user')
-            ->where('is_read', false)
+            ->whereNull('read_at')
             ->count();
         
         // Get total message count for this application
@@ -111,7 +111,7 @@ class ApplicationController extends Controller
             'status' => $request->status,
             'admin_notes' => $request->admin_notes,
             'reviewed_at' => now(),
-            'reviewed_by' => Auth::id(),
+            'reviewed_by' => Auth::guard('admin')->id(),
         ]);
 
         return redirect()

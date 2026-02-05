@@ -298,26 +298,6 @@ class SponsorController extends Controller
         return $getState;
     }
 
-    // public function getState(Request $request)
-    // {
-    //     $states = State::where('country_id', $request->countryId)->pluck('name');
-    //     if (isset($request->state) && $request->state == 'N/A') {
-    //         $states = collect($states)->prepend('N/A');
-    //     }
-
-    //     $options = [
-    //         '<option value="">-Select State-</option>'
-    //     ];
-
-    //     foreach ($states as $state) {
-    //         $selected = isset($request->state) && $state == $request->state ? 'selected' : '';
-    //         $options[] = sprintf('<option %s value="%s">%s</option>', $selected, $state, $state);
-    //     }
-
-    //     return implode('', $options);
-    // }
-
-
     public function getCities(Request $request)
     {
         $cities = EmbassyCity::where('parent_id', $request->countryId)->pluck('name');
@@ -325,7 +305,7 @@ class SponsorController extends Controller
         
         foreach ($cities as $city) {
             $selected = isset($request->selected) && $city == $request->selected ? 'selected' : '';
-            $getCity .= "<option $selected value=\"$city\">$city</option>";
+            $getCity .= sprintf('<option %s value="%s">%s</option>', $selected, $city, $city);
         }
         
         return $getCity;

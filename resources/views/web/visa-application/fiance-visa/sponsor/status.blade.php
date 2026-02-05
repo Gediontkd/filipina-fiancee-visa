@@ -39,20 +39,20 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         {{ Form::label("height_feet", "Feet") }}
-                        {{ Form::text("height_feet", @$step->detail['height_feet'], ['class' => 'form-control', 'placeholder' => "Enter Feet"]) }}
+                        {{ Form::number("height_feet", @$step->detail['height_feet'], ['class' => 'form-control', 'placeholder' => "Enter Feet", 'step' => '0.1', 'id' => 'fiance_height_feet']) }}
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         {{ Form::label("height_inches", "Inches") }}
-                        {{ Form::text("height_inches", @$step->detail['height_inches'], ['class' => 'form-control', 'placeholder' => "Enter Inches"]) }}
+                        {{ Form::number("height_inches", @$step->detail['height_inches'], ['class' => 'form-control', 'placeholder' => "Enter Inches", 'step' => '0.1', 'id' => 'fiance_height_inches']) }}
                     </div>
                 </div>
                 <h6>Weight</h6>
                 <div class="col-md-12">
                     <div class="form-group">
                         {{ Form::label("weight_pound", "Pounds") }}
-                        {{ Form::text("weight_pound", @$step->detail['weight_pound'], ['class' => 'form-control', 'placeholder' => "Enter Pounds"]) }}
+                        {{ Form::number("weight_pound", @$step->detail['weight_pound'], ['class' => 'form-control', 'placeholder' => "Enter Pounds", 'step' => '0.1']) }}
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -373,6 +373,37 @@
                     }
                 });
                return false;
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const feetInput = document.getElementById('fiance_height_feet');
+            const incInput = document.getElementById('fiance_height_inches');
+
+            if (feetInput && incInput) {
+                // Handle decimal feet (e.g. 5.5 -> 5' 6")
+                feetInput.addEventListener('blur', function() {
+                    const val = parseFloat(this.value);
+                    if (!isNaN(val) && val % 1 !== 0) {
+                        const feet = Math.floor(val);
+                        const inches = parseFloat(((val - feet) * 12).toFixed(1));
+                        
+                        feetInput.value = feet;
+                        incInput.value = inches;
+                    }
+                });
+
+                // Handle total inches (e.g. 70 -> 5' 10")
+                incInput.addEventListener('blur', function() {
+                    const val = parseFloat(this.value);
+                    if (!isNaN(val) && val >= 12) {
+                        const feet = Math.floor(val / 12);
+                        const inches = parseFloat((val % 12).toFixed(1));
+                        
+                        feetInput.value = feet;
+                        incInput.value = inches;
+                    }
+                });
             }
         });
     </script>   

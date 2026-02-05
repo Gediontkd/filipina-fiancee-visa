@@ -830,6 +830,7 @@ header .navbar.header_px20 {
     gap: 12px !important;
     margin: 0 !important;
     border-radius: 0 !important;
+    color: #333 !important;
 }
 
 .user-dropdown .dropdown-item i {
@@ -841,12 +842,13 @@ header .navbar.header_px20 {
 .user-dropdown .dropdown-item:hover {
     transform: none !important;
     background-color: rgba(102, 126, 234, 0.1) !important;
+    color: #333 !important;
 }
 
 .user-dropdown .logout-btn {
     width: 100%;
     border: none;
-    background: transparent;
+    background:  rgba(102, 126, 234, 0.1) !important;
     cursor: pointer;
     display: flex !important;
     align-items: center !important;
@@ -854,10 +856,13 @@ header .navbar.header_px20 {
     text-align: left !important;
     padding: 0.75rem 1rem !important;
     gap: 12px !important;
+    color: #333 !important;
 }
 
 .user-dropdown .logout-btn:hover {
+    transform: none !important;
     background-color: rgba(102, 126, 234, 0.1) !important;
+    color: #333 !important;
 }
 
 /* High Performance Animation */

@@ -314,9 +314,9 @@ class SimplifiedSpouseVisaRequest extends FormRequest
             'sponsor_ethnicity' => 'required|in:Hispanic or Latino,Not Hispanic or Latino',
             'sponsor_race' => 'required|array|min:1',
             'sponsor_race.*' => 'in:White,Asian,Black or African American,American Indian or Alaska Native,Native Hawaiian or Other Pacific Islander',
-            'sponsor_height_feet' => 'required|integer|min:0|max:8',
-            'sponsor_height_inches' => 'required|integer|min:0|max:11',
-            'sponsor_weight' => 'required|integer|min:0|max:999',
+            'sponsor_height_feet' => 'required|numeric|min:0|max:8',
+            'sponsor_height_inches' => 'required|numeric|min:0|max:11.99',
+            'sponsor_weight' => 'required|numeric|min:0|max:999',
             'sponsor_eye_color' => 'required|string|max:30',
             'sponsor_hair_color' => 'required|string|max:30',
             

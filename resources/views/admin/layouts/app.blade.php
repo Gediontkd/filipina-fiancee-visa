@@ -32,52 +32,56 @@
         .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 
         @media print {
-            /* 1. Reset Global Layout */
+            /* 1. Global Reset & Professional Layout */
+            @page {
+                margin: 0; /* Hides browser default header (title/date) and footer (URL/pages) */
+            }
+
             html, body {
                 height: auto !important;
                 min-height: auto !important;
                 overflow: visible !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                background-color: white !important;
             }
 
-            /* 2. Hide Non-Printable Elements */
-            aside, header, [x-show="sidebarOpen"], 
-            button, .no-print { 
-                display: none !important; 
+            body {
+                padding: 0.75in !important; /* Visual margin for the ACTUAL content */
             }
 
-            /* 3. Force Main Content to Expand and Kill Full-Height Constraints */
+            /* Force all layout containers to block to prevent flex-related page breaks */
             .flex, .flex-col, .h-full, .min-h-screen, 
             .overflow-hidden, .overflow-y-auto, 
-            main, div {
+            main, body > div.flex, .flex-1 {
                 display: block !important;
                 height: auto !important;
-                min-height: 0 !important; /* CRITICAL FIX: Overrides 100vh constraints */
+                min-height: 0 !important;
                 overflow: visible !important;
                 position: static !important;
-            }
-
-            /* 4. Reset Specific Layout Containers */
-            /* We need to specifically target the layout structure */
-            body > div.flex {
-                display: block !important;
-            }
-
-            main {
                 width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                box-shadow: none !important;
             }
 
-            /* 5. Pagination & Spacing */
-            /* Ensure sections don't break awkwardly */
+            /* 2. Hide Non-Printable Elements - MUST BE AFTER LAYOUT RESETS */
+            aside, header, [x-show="sidebarOpen"], 
+            button, .no-print, .phpdebugbar,
+            .phpdebugbar-openhandler, .phpdebugbar-body,
+            [role="navigation"], .lg\:static {
+                display: none !important;
+                height: 0 !important;
+                width: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
+            }
+
+            /* 3. Spacing & Branding */
             .bg-white, .rounded-lg, .shadow {
                 box-shadow: none !important;
-                border: 1px solid #ddd !important; /* Add light border for clarity */
+                border: 1px solid #eee !important;
                 margin-bottom: 20px !important;
-                /* break-inside: avoid;  <-- REMOVE THIS to stop forced page breaks */
             }
 
             h3, h4, h5 {

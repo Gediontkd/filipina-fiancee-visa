@@ -48,7 +48,6 @@ class PdfGenerationController extends Controller
                 $status = PdfControlHelper::checkPdfStatus($user->id);
                 return back()->with('error', $status['message']);
             }
-
             // All checks passed - Generate PDF
             $this->pdfService->setUserId($user->id);
             $pdfCount = $this->pdfService->getPdfCount();

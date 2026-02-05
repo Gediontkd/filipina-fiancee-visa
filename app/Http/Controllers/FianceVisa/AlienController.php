@@ -335,10 +335,10 @@ class AlienController extends Controller
     public function getState(Request $request)
     {
         $states = State::where('country_id', $request->countryId)->pluck('name');
-        // $getState = '';
         $getState = '<option value="">-Select State-</option>';
         foreach ($states as $state) {
-            $getState .= '<option value='.$state.'>'.$state.'</option>';
+            $selected = isset($request->state) && $state == $request->state ? 'selected' : '';
+            $getState .= sprintf('<option %s value="%s">%s</option>', $selected, $state, $state);
         }
         return $getState;
     }
@@ -346,9 +346,10 @@ class AlienController extends Controller
     public function getCities(Request $request)
     {
         $cities = EmbassyCity::where('parent_id', $request->countryId)->pluck('name');
-        $getCity = '<option value="">-Select State-</option>';
+        $getCity = '<option value="">-Select City-</option>';
         foreach ($cities as $city) {
-            $getCity .= '<option value='.$city.'>'.$city.'</option>';
+            $selected = isset($request->selected) && $city == $request->selected ? 'selected' : '';
+            $getCity .= sprintf('<option %s value="%s">%s</option>', $selected, $city, $city);
         }
         return $getCity;
     }

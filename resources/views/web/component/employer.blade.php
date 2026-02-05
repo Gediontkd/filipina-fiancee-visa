@@ -42,7 +42,7 @@
     <div class="col-md-6">
         <div class="form-group">
             @php
-                if (isset($step->detail["employerAptSteFlr$index"])) {
+                if (isset($step) && isset($step->detail["employerAptSteFlr$index"])) {
                     $aptsteflr = [
                         'N/A' => 'N/A',
                         'Apt' => 'Apt',
@@ -183,7 +183,7 @@
                 <span class="required">*</span>
             @endif
             {{ Form::text("employement_end_date$index", $endDateValue, [
-                'class' => "form-control dateOfBirth endDate employementEndDate$index $disEndDate",
+                'class' => "form-control dateOfBirth endDate employementEndDate employementEndDate$index $disEndDate",
                 'data-index' => "$index",
                 'placeholder' => 'Enter Date',
                 'disabled' => $isPresentChecked

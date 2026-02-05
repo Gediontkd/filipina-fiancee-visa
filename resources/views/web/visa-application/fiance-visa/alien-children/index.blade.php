@@ -86,5 +86,16 @@
             }
         });
     });    
+
+    // Global scroll fix for AJAX form updates
+    $(document).ajaxSuccess(function(event, xhr, settings, data) {
+        // Check if the request was to a fiance-alien-child route and was successful
+        if (settings.url.indexOf('fiance-alien-child') !== -1 && (data.status === true || data.status === "true")) {
+            console.log('Fiance Alien Child AJAX success detected, scrolling to top...');
+            $('html, body').animate({
+                scrollTop: $(".fianceAlienChildrenForm").offset().top - 100
+            }, 300);
+        }
+    });
 </script>	
 @endsection

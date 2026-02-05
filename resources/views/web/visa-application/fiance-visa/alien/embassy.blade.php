@@ -17,7 +17,7 @@
                         {{ Form::label('country', "Embassy Country") }}
                         <span class="required">*</span>
                         {{ Form::select('embassy_country', getAllCountry(), @$step->detail['embassy_country'], [
-                            'class' => 'form-control countryId'
+                            'class' => 'form-control embassy_country'
                         ]) }}                       
                     </div>
                 </div>
@@ -336,20 +336,43 @@
             });
         }  
 
-        function getCity(countryId, selected='')
-        {
-            $.ajax({                
-                type: 'get',
-                url: "{{ route('getCities') }}",
-                data: {
-                    countryId: countryId,
-                    selected: selected,
-                },
-                success: function(data) {
-                    $('.cities').html(data);                    
-                }
-            });
-        }        
+        function getCity(countryId, selected='') {
+        if (!countryId) {
+            $('.cities').html('<option value="">-Select City-</option>');
+            return;
+        }
+        $.ajax({                
+            type: 'get',
+            url: "{{ route('getCities') }}",
+            data: {
+                countryId: countryId,
+                selected: selected,
+            },
+            success: function(data) {
+                $('.cities').html(data);                    
+            }
+        });
+    }
+
+    $(document).on('change', '.embassy_country', function(){
+        var countryId = $(this).val();
+        getCity(countryId);
+    });
+
+    $(document).ready(function(){
+        var embassyCity = $('.embassyCity').val();
+        var countryId = $('.embassy_country').val();
+        
+        getState(231);
+        
+        if (countryId) {
+            getCity(countryId, embassyCity);
+        }
+    });
+
+    $(document).on('change', '.countryId', function(){
+        getState($(this).val());
+    });
 
         $("#fianceAlienEmbassy").validate({
             rules: {

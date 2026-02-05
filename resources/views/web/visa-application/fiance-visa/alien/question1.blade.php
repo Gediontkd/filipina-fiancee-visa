@@ -116,7 +116,7 @@
                     </div>
                 </div>
                 <div class="col-md-12 medicalExaminationSec" style="display: {{ @$step->detail['medical_examination'] == 'no' ? 'block' : 'none' }};">
-                    {{ Form::label('explain_medical_examination', 'Explain why you answered "Yes" to this question and provide details.') }}
+                    {{ Form::label('explain_medical_examination', 'Explain why you answered "No" to this question and provide details.') }}
                     <span class="required">*</span>
                     {{ Form::textarea('explain_medical_examination', @$step->detail['explain_medical_examination'], ['class' => 'form-control', 'rows' => 4]) }}
                 </div>

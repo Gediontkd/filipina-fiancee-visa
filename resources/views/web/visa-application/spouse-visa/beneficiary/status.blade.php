@@ -16,14 +16,14 @@
                     <div class="form-group">
                     	{{ Form::label('feet', "Feet") }}
                         <span class="required">*</span>
-    					{{ Form::text('feet', @$step->detail['feet'], ['class' => 'form-control', 'placeholder' => 'Enter Feet']) }}        
+    					{{ Form::number('feet', @$step->detail['feet'], ['class' => 'form-control', 'placeholder' => 'Enter Feet', 'step' => '0.1', 'id' => 'spouse_height_feet']) }}        
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         {{ Form::label('inches', "Inches") }}
                         <span class="required">*</span>
-                        {{ Form::text('inches', @$step->detail['inches'], ['class' => 'form-control', 'placeholder' => 'Enter Inches']) }}        
+                        {{ Form::number('inches', @$step->detail['inches'], ['class' => 'form-control', 'placeholder' => 'Enter Inches', 'step' => '0.1', 'id' => 'spouse_height_inches']) }}        
                     </div>
                 </div>
                 <h5>Weight</h5>
@@ -31,7 +31,7 @@
                     <div class="form-group">
                         {{ Form::label('pounds', "Pounds") }}
                         <span class="required">*</span>
-                        {{ Form::text('pounds', @$step->detail['pounds'], ['class' => 'form-control', 'placeholder' => 'Enter Pounds']) }}        
+                        {{ Form::number('pounds', @$step->detail['pounds'], ['class' => 'form-control', 'placeholder' => 'Enter Pounds', 'step' => '0.1']) }}        
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -353,6 +353,37 @@
     });
     return false;
 }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const feetInput = document.getElementById('spouse_height_feet');
+            const incInput = document.getElementById('spouse_height_inches');
+
+            if (feetInput && incInput) {
+                // Handle decimal feet (e.g. 5.5 -> 5' 6")
+                feetInput.addEventListener('blur', function() {
+                    const val = parseFloat(this.value);
+                    if (!isNaN(val) && val % 1 !== 0) {
+                        const feet = Math.floor(val);
+                        const inches = parseFloat(((val - feet) * 12).toFixed(1));
+                        
+                        feetInput.value = feet;
+                        incInput.value = inches;
+                    }
+                });
+
+                // Handle total inches (e.g. 70 -> 5' 10")
+                incInput.addEventListener('blur', function() {
+                    const val = parseFloat(this.value);
+                    if (!isNaN(val) && val >= 12) {
+                        const feet = Math.floor(val / 12);
+                        const inches = parseFloat((val % 12).toFixed(1));
+                        
+                        feetInput.value = feet;
+                        incInput.value = inches;
+                    }
+                });
+            }
         });
     </script>                    
 </div>

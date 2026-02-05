@@ -127,8 +127,9 @@
                 <div class="card mb-3 other-name-item" data-index="{{ $index }}">
                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <strong>Other Name {{ $index + 1 }}</strong>
-                       <button type="button" class="btn btn-sm btn-danger remove-other-name" data-person="sponsor" data-index="{{ $index }}">
-    Exit </button>
+                        <button type="button" class="btn btn-sm btn-danger remove-other-name" data-person="sponsor" data-index="{{ $index }}">
+                            <i class="fa fa-trash"></i>
+                        </button>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -393,11 +394,12 @@
                 <span class="text-danger">*</span>
                 <div class="row">
                     <div class="col-6">
-                        {{ Form::text('sponsor_height_feet', optional($application)->sponsor_height_feet ?? '', [
+                        {{ Form::number('sponsor_height_feet', optional($application)->sponsor_height_feet ?? '', [
                             'class' => 'form-control height-feet',
                             'placeholder' => 'Feet',
                             'required' => true,
-                            'id' => 'sponsor_height_feet'
+                            'id' => 'sponsor_height_feet',
+                            'step' => '0.1'
                         ]) }}
                         <small class="form-text text-muted">Feet</small>
                     </div>
@@ -407,7 +409,8 @@
                             'placeholder' => 'Inches',
                             'required' => true,
                             'min' => 0,
-                            'id' => 'sponsor_height_inches'
+                            'id' => 'sponsor_height_inches',
+                            'step' => '0.1'
                         ]) }}
                         <small class="form-text text-muted">Inches</small>
                     </div>
@@ -425,7 +428,7 @@
                 const val = parseFloat(this.value);
                 if (!isNaN(val) && val % 1 !== 0) {
                     const feet = Math.floor(val);
-                    const inches = Math.round((val - feet) * 12);
+                    const inches = parseFloat(((val - feet) * 12).toFixed(1));
                     
                     feetInput.value = feet;
                     incInput.value = inches;
@@ -434,10 +437,10 @@
 
             // Handle total inches (e.g. 70 -> 5' 10")
             incInput.addEventListener('blur', function() {
-                const val = parseInt(this.value);
+                const val = parseFloat(this.value);
                 if (!isNaN(val) && val >= 12) {
                     const feet = Math.floor(val / 12);
-                    const inches = val % 12;
+                    const inches = parseFloat((val % 12).toFixed(1));
                     
                     // Only update if feet is empty or 0 to avoid overwriting existing valid data
                     // actually, if they type 70 in inches, they almost certainly mean total height
@@ -456,7 +459,8 @@
                     'placeholder' => 'Weight in lbs',
                     'required' => true,
                     'min' => 0,
-                    'max' => 999
+                    'max' => 999,
+                    'step' => '0.1'
                 ]) }}
             </div>
         </div>

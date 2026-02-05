@@ -18,7 +18,7 @@ class AdjustmentVisaSubmittedStep extends Model
 
     public function getDetailAttribute()
     {
-        return unserialize($this->attributes['detail']);
+        return isset($this->attributes['detail']) ? unserialize($this->attributes['detail']) : [];
     }
 
     public function getCreatedAtAttribute()

@@ -240,9 +240,9 @@ class SimplifiedSpouseVisaApplication extends Model
         'sponsor_certificate_date' => 'date',
         'sponsor_other_names' => 'array',
         'sponsor_race' => 'array',
-        'sponsor_height_feet' => 'integer',
-        'sponsor_height_inches' => 'integer',
-        'sponsor_weight' => 'integer',
+        'sponsor_height_feet' => 'decimal:1',
+        'sponsor_height_inches' => 'decimal:1',
+        'sponsor_weight' => 'decimal:1',
 
         'sponsor_previous_marriages_list' => 'array',
         'beneficiary_previous_marriages_list' => 'array',

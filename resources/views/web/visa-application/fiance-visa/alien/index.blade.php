@@ -89,5 +89,16 @@
             }
         });
     });    
+
+    // Global scroll fix for AJAX form updates
+    $(document).ajaxSuccess(function(event, xhr, settings, data) {
+        // Check if the request was to a fiance-alien route and was successful
+        if (settings.url.indexOf('fiance-alien') !== -1 && (data.status === true || data.status === "true")) {
+            console.log('Fiance Alien AJAX success detected, scrolling to top...');
+            $('html, body').animate({
+                scrollTop: $(".fianceVisaForm").offset().top - 100
+            }, 300);
+        }
+    });
 </script>	
 @endsection

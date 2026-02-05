@@ -17,6 +17,21 @@
         if (is_bool($value)) {
             return $value ? 'Yes' : 'No';
         }
+
+        // Handle file paths (specifically waiver documents)
+        if (is_string($value) && (strpos($value, 'waiver_documents/') === 0 || preg_match('/\.(pdf|jpg|jpeg|png|doc|docx)$/i', $value))) {
+            $url = asset('storage/' . $value);
+            $icon = 'fa-file';
+            if (strpos($value, '.pdf') !== false) $icon = 'fa-file-pdf';
+            if (preg_match('/\.(jpg|jpeg|png)$/i', $value)) $icon = 'fa-file-image';
+            
+            return '<a href="' . $url . '" target="_blank" class="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded border border-blue-200 transition-colors no-print">
+                        <i class="fas ' . $icon . ' mr-2"></i>
+                        <span>View Document (' . basename($value) . ')</span>
+                    </a>
+                    <span class="hidden print:inline text-gray-500 italic">[Document: ' . basename($value) . ']</span>';
+        }
+
         return $value;
     }
 @endphp
@@ -24,7 +39,7 @@
 @section('content')
 <div class="space-y-6">
     <!-- Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between no-print">
         <div>
             <a href="{{ route('admin.applications.show', $application) }}"
                class="inline-flex items-center text-blue-600 hover:text-blue-800 mb-2">

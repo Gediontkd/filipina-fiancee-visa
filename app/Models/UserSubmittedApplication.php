@@ -27,6 +27,7 @@ class UserSubmittedApplication extends Model
 
     protected $casts = [
         'reviewed_at' => 'datetime',
+        'submitted_at' => 'datetime',
     ];
 
     public function getApplicationAttribute()

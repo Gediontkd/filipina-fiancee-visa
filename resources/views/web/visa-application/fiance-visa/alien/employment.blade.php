@@ -15,7 +15,7 @@
                 @include('web.component.employer', ['index' => 1, 'data' => @$step->detail])
                 @endif
                 @if (!empty(@$step->detail['employer1']))
-                @for ($i = 1; $i <= 5; $i++) @if (isset($step->detail["employer$i"]))
+                @for ($i = 1; $i <= 5; $i++) @if (isset($step) && isset($step->detail["employer$i"]))
                     @include('web.component.employer', ['index' => $i, 'data' => @$step->detail])
                     @endif
                     @endfor
@@ -283,22 +283,37 @@
             datePicker();
             var dIndex = field.data('index');
             var startDate = new Date($('.beganDate' + dIndex).val());
-            var endDate = new Date(field.val());
+            
+            // Handle "Present" value
+            var endDateValue = field.val();
+            var endDate;
+            
+            if (endDateValue === 'Present' || $('#present_date_checkbox').is(':checked')) {
+                endDate = new Date(); // Use current date
+            } else {
+                endDate = new Date(endDateValue);
+            }
+            
             var yearDiff = endDate.getFullYear() - startDate.getFullYear();
-           
+            
             if (endDate.getMonth() < startDate.getMonth() || (endDate.getMonth() === startDate.getMonth() && endDate
                     .getDate() < startDate.getDate())) {
                 yearDiff--;
             }
-    
-            var lastEndDate = new Date($('.endDate').val());
+            
+            var lastEndDate;
+            if ($('#present_date_checkbox').is(':checked')) {
+                lastEndDate = new Date();
+            } else {
+                lastEndDate = new Date($('.endDate').val());
+            }
             
             var monthDiff = lastEndDate.getMonth() - startDate.getMonth();
     
             if (monthDiff < 0) {
                 monthDiff += 12; // Adjust months to be positive
             }
-            var existsRemaingYears =  endDate.getFullYear() - startDate.getFullYear();
+            
             var existsRemaingYears = parseInt($('.remaingYears' + dIndex).val());
             if (existsRemaingYears && existsRemaingYears > 0) {
                 yearDiff = existsRemaingYears - yearDiff;
@@ -411,6 +426,14 @@
 
         $(document).ready(function () {
             getState($('.countryId').val());
+
+            // Handle "Present?" checkbox on page load
+            if ($('input[name=present_date]').is(':checked')) {
+                console.log('Present is checked on load');
+                $('.employementEndDate1').prop('disabled', true);
+                $('.employementEndDate1').val('Present');
+                $('.employementEndDate1').addClass('disableDatePicker');
+            }
         });
 
         $(document).on('change', '.countryId', function () {
@@ -430,6 +453,30 @@
                 }
             });
         }
+
+        $(document).on('change', 'input[name=present_date]', function() {
+            var isChecked = $(this).is(':checked');
+            console.log('Present checkbox changed:', isChecked);
+            var endDateInput = $('.employementEndDate1');
+            
+            if (isChecked) {
+                endDateInput.val('Present');
+                endDateInput.prop('disabled', true);
+                endDateInput.addClass('disableDatePicker');
+                
+                // Clear validation error
+                var validator = $("#fianceAlienEmployment").validate();
+                validator.element(endDateInput);
+                $('label[for="employement_end_date1"].error').hide();
+                
+                // Trigger employment history calculation
+                employerForm1(endDateInput);
+            } else {
+                endDateInput.val('');
+                endDateInput.prop('disabled', false);
+                endDateInput.removeClass('disableDatePicker');
+            }
+        });
 
         $("#fianceAlienEmployment").validate({
             rules: {
@@ -470,7 +517,13 @@
                     required: true,
                 },
                 employement_end_date1: {
-                    required: true,
+                    required: {
+                        depends: function(element) {
+                            var isPresentChecked = $('input[name=present_date]').is(':checked');
+                            console.log('Validation check for end date, present checked:', isPresentChecked);
+                            return !isPresentChecked;
+                        }
+                    }
                 },
                 full_name_of_employer2: {
                     required: true,
@@ -706,7 +759,19 @@
             },
             submitHandler: function (form) {
                 $('#fianceAlienEmploymentBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
+                
+                // Temporarily re-enable end date field for serialization if it's "Present"
+                var wasDisabled = $('.employementEndDate1').prop('disabled');
+                if (wasDisabled) {
+                    $('.employementEndDate1').prop('disabled', false);
+                }
+                
                 var serializedData = $(form).serialize();
+                
+                // Re-disable it if it was disabled
+                if (wasDisabled) {
+                    $('.employementEndDate1').prop('disabled', true);
+                }
                 $.ajax({
                     headers: {
                         'X-CSRF-Token': $('input[name="_token"]').val()

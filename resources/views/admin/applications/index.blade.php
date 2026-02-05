@@ -160,8 +160,13 @@
                             </span>
                         </td>
                         <td class="px-5 py-4 text-sm text-slate-500">
-                            <div>{{ $app->created_at->format('M j, Y') }}</div>
-                            <div class="text-xs text-slate-400">{{ $app->created_at->diffForHumans() }}</div>
+                            @if($app->submitted_at)
+                                <div>{{ $app->submitted_at->format('M j, Y') }}</div>
+                                <div class="text-xs text-slate-400">{{ $app->submitted_at->diffForHumans() }}</div>
+                            @else
+                                <div>{{ $app->created_at->format('M j, Y') }}</div>
+                                <div class="text-xs text-slate-400">{{ $app->created_at->diffForHumans() }}</div>
+                            @endif
                         </td>
                         <td class="px-5 py-4 text-sm text-slate-500">
                             @if($app->reviewed_at)

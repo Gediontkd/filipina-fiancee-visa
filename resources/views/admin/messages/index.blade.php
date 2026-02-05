@@ -130,7 +130,7 @@
                             <span class="px-1.5 py-0.5 text-xs bg-red-100 text-red-700 rounded">High</span>
                         @endif
                         @if(!$message->read_at && $message->sender_type === 'user')
-                            <span class="px-1.5 py-0.5 text-xs bg-amber-100 text-amber-700 rounded">Unread</span>
+                            <span class="px-2 py-0.5 text-xs font-semibold bg-red-500 text-white rounded-full">Unread</span>
                         @endif
                     </div>
                     <p class="text-sm font-medium text-slate-700">{{ $message->subject }}</p>
