@@ -167,18 +167,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (form && submitBtn) {
         form.addEventListener('submit', function(e) {
-            // Confirm submission
             const isUpdate = {{ $existingSubmission ? 'true' : 'false' }};
-            const confirmMessage = isUpdate 
-                ? 'Are you sure you want to update and resubmit your application?' 
-                : 'Are you sure you want to submit your application?';
-                
-            if (!confirm(confirmMessage)) {
-                e.preventDefault();
-                return false;
-            }
             
-            // Show loading state
+            // Show toast notification instead of browser confirm
+            toastr.info(isUpdate ? 'Updating your application...' : 'Submitting your application...', 'Processing', {
+                timeOut: 5000,
+                progressBar: true
+            });
+            
+            // Show loading state on button
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin me-2"></i>' + 
                 (isUpdate ? 'Updating...' : 'Submitting...');

@@ -590,11 +590,52 @@ class SimplifiedSpouseVisaService
         }
         $totalFields++;
 
+        // Add mailing dates (required per UI *)
+        $mailingDates = ['sponsor_mailing_date_from', 'beneficiary_mailing_date_from'];
+        $totalFields += count($mailingDates);
+        foreach ($mailingDates as $dateField) {
+            if (!empty($application->$dateField)) {
+                $completedFields++;
+            }
+        }
+
         // Check immigration proceedings details (conditional)
         if ($application->beneficiary_immigration_proceedings === 'no') {
             $completedFields++; // Auto-complete if no proceedings
+        } elseif ($application->beneficiary_immigration_proceedings === 'yes') {
+            // Check if details are filled
+            $hasCity = !empty($application->beneficiary_proceedings_city);
+            $hasState = !empty($application->beneficiary_proceedings_state);
+            $hasDate = !empty($application->beneficiary_proceedings_date);
+            $hasTypes = !empty($application->beneficiary_proceedings_types) && 
+                       is_array($application->beneficiary_proceedings_types) && 
+                       count($application->beneficiary_proceedings_types) > 0;
+            
+            if ($hasCity && $hasState && $hasDate && $hasTypes) {
+                $completedFields++;
+            }
         }
         $totalFields++;
+
+        // Intended Address (conditional)
+        $totalFields++; // For the 'beneficiary_intended_address_same' toggle
+        if (!empty($application->beneficiary_intended_address_same)) {
+            $completedFields++; // Consider complete if same as sponsor
+        } else {
+            // Check if address fields are filled
+            $intendedFields = ['beneficiary_intended_address', 'beneficiary_intended_city', 'beneficiary_intended_state', 'beneficiary_intended_zip'];
+            $allFilled = true;
+            foreach ($intendedFields as $f) {
+                if (empty($application->$f)) {
+                    $allFilled = false;
+                    break;
+                }
+            }
+            if ($allFilled) {
+                $completedFields++;
+            }
+        }
+
 
         // Check history (4 fields)
         $historyCriteria = [

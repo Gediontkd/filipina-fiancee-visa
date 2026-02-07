@@ -104,6 +104,16 @@ function getCountry()
 	return App\Models\Country::select('id', 'name')->get();
 }
 
+function getCountries($na = '')
+{
+    $countries = App\Models\Country::orderBy('name')->pluck('name', 'name')->toArray();
+    $list = ['' => '-Select Country-'];
+    if (!empty($na)) {
+        $list['N/A'] = 'N/A';
+    }
+    return $list + $countries;
+}
+
 function getAllVisaType()
 {	
 	return [

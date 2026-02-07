@@ -20,6 +20,7 @@
 		<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 		<link rel="icon" href="{{ asset('assets/img/favicon.png') }}" sizes="16x16" type="image/png">
 		<link href="{{ asset('assets/css/toastr.css') }}" rel="stylesheet" />
+		@yield('customStyle')
 		<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
 		<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 		<script src="{{ asset('assets/js/jquery.validate.min.js') }}"></script>

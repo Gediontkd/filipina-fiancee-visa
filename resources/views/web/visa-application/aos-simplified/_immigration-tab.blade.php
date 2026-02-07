@@ -121,73 +121,40 @@
             </div>
         </div>
     </div>
-
-    <!-- Marital Status -->
-    <h5 class="mb-3 mt-4"><i class="fa fa-ring me-2"></i>Marital Status</h5>
     <div class="row">
         <div class="col-md-6">
             <div class="form-group mb-3">
-                {{ Form::label('marital_status', 'Current Marital Status') }}
+                {{ Form::label('status_at_last_entry', 'Status at Last Entry') }}
                 <span class="text-danger">*</span>
-                {{ Form::select('marital_status', [
-                    '' => '-Select Status-',
-                    'Single' => 'Single',
-                    'Married' => 'Married',
-                    'Divorced' => 'Divorced',
-                    'Widowed' => 'Widowed',
-                    'Separated' => 'Legally Separated'
-                ], optional($application)->marital_status ?? '', [
+                {{ Form::text('status_at_last_entry', optional($application)->status_at_last_entry ?? '', [
                     'class' => 'form-control',
-                    'required' => true,
-                    'id' => 'marital_status'
+                    'placeholder' => 'e.g., K-1 Fiance, B-2 Tourist, Parolee',
+                    'required' => true
                 ]) }}
+                <small class="text-muted">Type of visa/status you used to enter the U.S. most recently.</small>
             </div>
         </div>
-    </div>
-
-    <div class="row" id="marriage_info" style="display: {{ (optional($application)->marital_status ?? '') === 'Married' ? 'block' : 'none' }};">
         <div class="col-md-6">
             <div class="form-group mb-3">
-                {{ Form::label('marriage_date', 'Date of Marriage') }}
-                {{ Form::text('marriage_date', optional($application)->marriage_date ? optional($application)->marriage_date->format('m/d/Y') : '', [
+                {{ Form::label('i94_expiration_date', 'I-94 Expiration Date') }}
+                {{ Form::text('i94_expiration_date', optional($application)->i94_expiration_date ? optional($application)->i94_expiration_date->format('m/d/Y') : '', [
                     'class' => 'form-control datePicker',
                     'placeholder' => 'MM/DD/YYYY'
                 ]) }}
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                {{ Form::label('spouse_name', 'Spouse Full Name') }}
-                {{ Form::text('spouse_name', optional($application)->spouse_name ?? '', [
-                    'class' => 'form-control',
-                    'placeholder' => 'Spouse full name'
-                ]) }}
+                <small class="text-muted">Enter the "Admit Until" date from your I-94 or "D/S".</small>
             </div>
         </div>
     </div>
 
     <!-- Navigation -->
-    <div class="d-flex justify-content-between mt-4">
-        {{ Form::button('<i class="fa fa-arrow-left me-2"></i>Previous: Applicant', [
-            'class' => 'btn btn-outline-secondary',
+    <div class="d-flex justify-content-between flex-wrap mt-4 gap-2">
+        {{ Form::button('<i class="fa fa-arrow-left me-2"></i>Previous', [
+            'class' => 'btn btn-primary aos-action-btn',
             'type' => 'button',
-            'onclick' => '$(\'#applicant-tab\').tab(\'show\')'
+            'onclick' => '$(\'#family-tab\').tab(\'show\')'
         ]) }}
-        {{ Form::button('Next: Sponsor/Petitioner <i class="fa fa-arrow-right ms-2"></i>', [
-            'class' => 'btn btn-primary',
-            'type' => 'button',
-            'onclick' => '$(\'#sponsor-tab\').tab(\'show\')'
-        ]) }}
+        <button type="button" class="btn btn-primary next-step aos-action-btn" data-next-tab="sponsor-tab">
+            Next <i class="fa fa-arrow-right ms-2"></i>
+        </button>
     </div>
 </div>
-
-<script>
-    $(document).on('change', '#marital_status', function() {
-        if ($(this).val() === 'Married') {
-            $('#marriage_info').show();
-        } else {
-            $('#marriage_info').hide();
-            $('input[name="marriage_date"], input[name="spouse_name"]').val('');
-        }
-    });
-</script>

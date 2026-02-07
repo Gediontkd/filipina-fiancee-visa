@@ -172,16 +172,14 @@
     </div>
 
     <!-- Navigation -->
-    <div class="d-flex justify-content-between mt-4">
-        {{ Form::button('<i class="fa fa-arrow-left me-2"></i>Previous: Immigration Status', [
-            'class' => 'btn btn-outline-secondary',
+    <div class="d-flex justify-content-between flex-wrap mt-4 gap-2">
+        {{ Form::button('<i class="fa fa-arrow-left me-2"></i>Previous', [
+            'class' => 'btn btn-primary aos-action-btn',
             'type' => 'button',
             'onclick' => '$(\'#immigration-tab\').tab(\'show\')'
         ]) }}
-        {{ Form::button('Next: Background Questions <i class="fa fa-arrow-right ms-2"></i>', [
-            'class' => 'btn btn-primary',
-            'type' => 'button',
-            'onclick' => '$(\'#background-tab\').tab(\'show\')'
-        ]) }}
+        <button type="button" class="btn btn-primary next-step aos-action-btn" data-next-tab="background-tab">
+            Next <i class="fa fa-arrow-right ms-2"></i>
+        </button>
     </div>
 </div>

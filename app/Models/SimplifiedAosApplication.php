@@ -23,21 +23,43 @@ class SimplifiedAosApplication extends Model
         'applicant_first_name',
         'applicant_middle_name',
         'applicant_last_name',
+        'applicant_other_names',
         'applicant_email',
         'applicant_phone',
         'applicant_address',
         'applicant_city',
         'applicant_state',
         'applicant_zip',
+        'applicant_address_history',
         'applicant_dob',
         'applicant_place_of_birth',
         'applicant_citizenship',
         'applicant_alien_number',
+        'uscis_account_number',
         'applicant_ssn',
+        'applicant_gender',
         'applicant_employment_status',
         'applicant_employer_name',
         'applicant_occupation',
+        'applicant_employment_history',
+
+        // Biographic Information (Part 7)
+        'ethnicity',
+        'race',
+        'height_feet',
+        'height_inches',
+        'weight_pounds',
+        'eye_color',
+        'hair_color',
         
+        // Family Information (Part 4, 5, 6)
+        'parent1_data',
+        'parent2_data',
+        'times_married',
+        'marital_history',
+        'has_children',
+        'children_data',
+
         // Immigration Status
         'current_visa_type',
         'visa_expiration_date',
@@ -67,14 +89,31 @@ class SimplifiedAosApplication extends Model
         'marriage_date',
         'spouse_name',
         
-        // Background Questions
+        // Background & Complex Questions (Part 8-12)
         'arrested_or_convicted',
         'immigration_violations',
         'public_assistance',
         'background_explanation',
+        'eligibility_questions',
+        'accommodation_details',
+        'applicant_statement_data',
+        'interpreter_data',
+        'preparer_data',
         
-        'status',
-        'submitted_at'
+        'submitted_at',
+
+        // New I-485 Standard Fields (Part 1 & 2)
+        'status_at_last_entry',
+        'i94_expiration_date',
+        'use_mailing_address',
+        'mailing_street',
+        'mailing_city',
+        'mailing_state',
+        'mailing_zip',
+        'filing_category',
+        'receipt_number_underlying_petition',
+        'priority_date',
+        'is_principal_applicant'
     ];
 
     protected $casts = [
@@ -84,6 +123,23 @@ class SimplifiedAosApplication extends Model
         'entry_date' => 'date',
         'marriage_date' => 'date',
         'submitted_at' => 'datetime',
+        'applicant_other_names' => 'array',
+        'applicant_address_history' => 'array',
+        'applicant_employment_history' => 'array',
+        'parent1_data' => 'array',
+        'parent2_data' => 'array',
+        'marital_history' => 'array',
+        'children_data' => 'array',
+        'eligibility_questions' => 'array',
+        'accommodation_details' => 'array',
+        'applicant_statement_data' => 'array',
+        'interpreter_data' => 'array',
+        'preparer_data' => 'array',
+        'has_children' => 'boolean',
+        'i94_expiration_date' => 'date',
+        'priority_date' => 'date',
+        'use_mailing_address' => 'boolean',
+        'is_principal_applicant' => 'boolean',
     ];
 
     /**

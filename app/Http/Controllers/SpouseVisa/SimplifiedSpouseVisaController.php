@@ -30,16 +30,17 @@ class SimplifiedSpouseVisaController extends Controller
     {
         $user = Auth::user();
         
-        // Get the active application
-        $submittedApp = UserSubmittedApplication::where('user_id', $user->id)
-            ->where('status', 'pending')
-            ->where('application_id', 3) // Spouse visa
-            ->first();
-
-        if (!$submittedApp) {
-            return redirect()->route('service')
-                ->with('error', 'Please select Spouse Visa application first.');
-        }
+        // Get or create the active application
+        $submittedApp = UserSubmittedApplication::firstOrCreate(
+            [
+                'user_id' => $user->id,
+                'application_id' => 3, // Spouse visa
+            ],
+            [
+                'status' => 'pending',
+                'submitted_at' => null
+            ]
+        );
 
         // Get or create the application
         $application = SimplifiedSpouseVisaApplication::firstOrCreate(
@@ -67,18 +68,19 @@ class SimplifiedSpouseVisaController extends Controller
     public function store(Request $request)
     {
         try {
-            // Get submitted app ID
-            $submittedApp = UserSubmittedApplication::where('user_id', Auth::id())
-                ->where('status', 'pending')
-                ->where('application_id', 3)
-                ->first();
+            // Get or create the active application (Consistent with index logic)
+            $submittedApp = UserSubmittedApplication::firstOrCreate(
+                [
+                    'user_id' => Auth::id(),
+                    'application_id' => 3, // Spouse visa
+                ],
+                [
+                    'status' => 'pending',
+                    'submitted_at' => null
+                ]
+            );
 
-            if (!$submittedApp) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'No active application found.',
-                ], 400);
-            }
+            // Removed explicit check because firstOrCreate guarantees a result
 
             // Add submitted_app_id to request
             $request->merge(['submitted_app_id' => $submittedApp->id]);

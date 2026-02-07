@@ -308,11 +308,22 @@ class ApplicationDataService
                     'first_name' => $app->applicant_first_name,
                     'middle_name' => $app->applicant_middle_name,
                     'last_name' => $app->applicant_last_name,
+                    'other_names' => $app->applicant_other_names ?? [],
                     'date_of_birth' => $app->applicant_dob?->format('m/d/Y'),
                     'place_of_birth' => $app->applicant_place_of_birth,
                     'citizenship' => $app->applicant_citizenship,
                     'alien_number' => $app->applicant_alien_number,
+                    'uscis_account_number' => $app->uscis_account_number,
                     'ssn' => $app->applicant_ssn,
+                    'gender' => $app->applicant_gender,
+                ],
+                'biographics' => [
+                    'ethnicity' => $app->ethnicity,
+                    'race' => $app->race,
+                    'height' => "{$app->height_feet}' {$app->height_inches}\"",
+                    'weight' => "{$app->weight_pounds} lbs",
+                    'eye_color' => $app->eye_color,
+                    'hair_color' => $app->hair_color,
                 ],
                 'contact_information' => [
                     'email' => $app->applicant_email,
@@ -323,11 +334,41 @@ class ApplicationDataService
                     'city' => $app->applicant_city,
                     'state' => $app->applicant_state,
                     'zip' => $app->applicant_zip,
+                    'use_mailing_address' => $app->use_mailing_address ? 'Yes' : 'No',
+                    'mailing_street' => $app->mailing_street,
+                    'mailing_city' => $app->mailing_city,
+                    'mailing_state' => $app->mailing_state,
+                    'mailing_zip' => $app->mailing_zip,
                 ],
+                'address_history' => $app->applicant_address_history ?? [],
                 'employment' => [
                     'status' => $app->applicant_employment_status,
                     'employer' => $app->applicant_employer_name,
                     'occupation' => $app->applicant_occupation,
+                ],
+                'employment_history' => $app->applicant_employment_history ?? [],
+            ],
+            'eligibility_basis' => [
+                'filing_category' => $app->filing_category,
+                'is_principal_applicant' => $app->is_principal_applicant ? 'Yes' : 'No',
+                'receipt_number' => $app->receipt_number_underlying_petition,
+                'priority_date' => $app->priority_date?->format('m/d/Y'),
+            ],
+            'family_information' => [
+                'parents' => [
+                    'parent_1' => $app->parent1_data ?? [],
+                    'parent_2' => $app->parent2_data ?? [],
+                ],
+                'marital_status' => [
+                    'status' => $app->marital_status,
+                    'times_married' => $app->times_married,
+                    'marriage_date' => $app->marriage_date?->format('m/d/Y'),
+                    'spouse_name' => $app->spouse_name,
+                    'previous_marriages' => $app->marital_history ?? [],
+                ],
+                'children' => [
+                    'has_children' => $app->has_children ? 'Yes' : 'No',
+                    'children_list' => $app->children_data ?? [],
                 ],
             ],
             'immigration_status' => [
@@ -335,6 +376,8 @@ class ApplicationDataService
                     'type' => $app->current_visa_type,
                     'expiration_date' => $app->visa_expiration_date?->format('m/d/Y'),
                     'i94_number' => $app->i94_number,
+                    'i94_expiration' => $app->i94_expiration_date?->format('m/d/Y'),
+                    'status_at_entry' => $app->status_at_last_entry,
                 ],
                 'passport' => [
                     'number' => $app->passport_number,
@@ -344,11 +387,6 @@ class ApplicationDataService
                 'entry' => [
                     'date' => $app->entry_date?->format('m/d/Y'),
                     'location' => $app->entry_location,
-                ],
-                'marital_status' => [
-                    'status' => $app->marital_status,
-                    'marriage_date' => $app->marriage_date?->format('m/d/Y'),
-                    'spouse_name' => $app->spouse_name,
                 ],
             ],
             'sponsor' => [
@@ -372,10 +410,19 @@ class ApplicationDataService
                 ],
             ],
             'background_questions' => [
-                'arrested_or_convicted' => $app->arrested_or_convicted,
-                'immigration_violations' => $app->immigration_violations,
-                'public_assistance' => $app->public_assistance,
+                'basic_checks' => [
+                    'arrested_or_convicted' => $app->arrested_or_convicted,
+                    'immigration_violations' => $app->immigration_violations,
+                    'public_assistance' => $app->public_assistance,
+                ],
+                'eligibility_responses' => $app->eligibility_questions ?? [],
                 'explanation' => $app->background_explanation,
+            ],
+            'legal_declarations' => [
+                'accommodations' => $app->accommodation_details ?? [],
+                'applicant_statement' => $app->applicant_statement_data ?? [],
+                'interpreter' => $app->interpreter_data ?? [],
+                'preparer' => $app->preparer_data ?? [],
             ],
             'metadata' => [
                 'status' => $app->status,

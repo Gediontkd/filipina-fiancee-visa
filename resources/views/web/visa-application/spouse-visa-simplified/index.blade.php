@@ -42,17 +42,19 @@
                             </div>
                         </div>
                         
-                        @if($completionPercentage >= 100)
-                            <div class="alert alert-success mt-3 mb-0">
-                                <i class="fa fa-check-circle me-2"></i>
-                                <strong>Ready to Submit!</strong> You have completed all required sections.
-                            </div>
-                        @elseif($completionPercentage >= 50)
-                            <div class="alert alert-info mt-3 mb-0">
-                                <i class="fa fa-info-circle me-2"></i>
-                                You're {{ $completionPercentage }}% complete. Keep going!
-                            </div>
-                        @endif
+                        <div id="completionAlertContainer">
+                            @if($completionPercentage >= 100)
+                                <div class="alert alert-success mt-3 mb-0">
+                                    <i class="fa fa-check-circle me-2"></i>
+                                    <strong>Ready to Submit!</strong> You have completed all required sections.
+                                </div>
+                            @elseif($completionPercentage >= 50)
+                                <div class="alert alert-info mt-3 mb-0">
+                                    <i class="fa fa-info-circle me-2"></i>
+                                    You're <span class="completion-value">{{ $completionPercentage }}</span>% complete. Keep going!
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
@@ -142,7 +144,7 @@
                                                         title="Complete all sections ({{ $completionPercentage }}% done)">
                                                         <i class="fa fa-lock me-2"></i>Complete All Sections First
                                                     </button>
-                                                    <small class="d-block text-muted mt-2">
+                                                    <small class="d-block text-muted mt-2" id="remainingText">
                                                         {{ 100 - $completionPercentage }}% remaining
                                                     </small>
                                                 @endif
@@ -188,6 +190,28 @@
                     $('#progressBar').css('width', response.completion + '%')
                         .attr('aria-valuenow', response.completion)
                         .html('<strong>' + response.completion + '%</strong>');
+                    
+                    // Update remaining text
+                    $('#remainingText').html((100 - response.completion) + '% remaining');
+
+                    // Update dynamic alert text
+                    if (response.completion >= 100) {
+                        $('#completionAlertContainer').html(`
+                            <div class="alert alert-success mt-3 mb-0">
+                                <i class="fa fa-check-circle me-2"></i>
+                                <strong>Ready to Submit!</strong> You have completed all required sections.
+                            </div>
+                        `);
+                    } else if (response.completion >= 50) {
+                        $('#completionAlertContainer').html(`
+                            <div class="alert alert-info mt-3 mb-0">
+                                <i class="fa fa-info-circle me-2"></i>
+                                You're <span class="completion-value">${response.completion}</span>% complete. Keep going!
+                            </div>
+                        `);
+                    } else {
+                        $('#completionAlertContainer').empty();
+                    }
                     
                     if (!isAutoSave) {
                         // FIXED: Show proper success toast with exact text from document
@@ -293,6 +317,15 @@
             const targetField = $(this).data('target');
             $(targetField).val('N/A').prop('disabled', true);
         });
+    });
+
+    /**
+     * Scroll to top of form when switching tabs or clicking "Next"
+     */
+    $(document).on('shown.bs.tab', function (e) {
+        $('html, body').animate({
+            scrollTop: $(".visa-application").offset().top - 20
+        }, 500);
     });
 </script>
 @endsection

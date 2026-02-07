@@ -423,17 +423,8 @@
             const feetInput = document.getElementById('sponsor_height_feet');
             const incInput = document.getElementById('sponsor_height_inches');
 
-            // Handle decimal feet (e.g. 5.5 -> 5' 6")
-            feetInput.addEventListener('blur', function() {
-                const val = parseFloat(this.value);
-                if (!isNaN(val) && val % 1 !== 0) {
-                    const feet = Math.floor(val);
-                    const inches = parseFloat(((val - feet) * 12).toFixed(1));
-                    
-                    feetInput.value = feet;
-                    incInput.value = inches;
-                }
-            });
+            // Handle decimal feet listener removed per user request
+            // feetInput.addEventListener('blur', function() { ... });
 
             // Handle total inches (e.g. 70 -> 5' 10")
             incInput.addEventListener('blur', function() {
