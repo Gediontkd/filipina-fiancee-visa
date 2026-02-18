@@ -21,6 +21,7 @@ class UserSubmittedApplication extends Model
         'payment_intent_id',
         'payment_amount',
         'paid_at',
+        'submitted_at',       // Add this for submission timestamp
     ];
 
     protected $appends = ['application'];

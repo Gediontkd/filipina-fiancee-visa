@@ -275,8 +275,8 @@ Route::group(['middleware' => ['auth', 'application']], function() {
     */
     
     Route::prefix('aos-simplified')->name('aos-simplified.')->group(function () {
-        // Main application form
-        Route::get('/', [SimplifiedAosController::class, 'index'])->name('index');
+        // Main application form with optional step parameter
+        Route::get('/{step?}', [SimplifiedAosController::class, 'index'])->name('index');
         
         // Save/update application
         Route::post('/store', [SimplifiedAosController::class, 'store'])->name('store');

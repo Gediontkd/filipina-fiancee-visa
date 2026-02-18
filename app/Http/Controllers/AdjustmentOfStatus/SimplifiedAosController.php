@@ -51,9 +51,28 @@ class SimplifiedAosController extends Controller
     /**
      * Display the simplified AOS application form
      */
-    public function index(Request $request)
+    public function index(Request $request, $step = 'personal')
     {
         try {
+            // Define step mapping
+            $steps = [
+                'personal' => 'applicant',
+                'filing-category' => 'basis',
+                'exemption' => 'exemption',
+                'address-employment' => 'history',
+                'family' => 'family',
+                'sponsor' => 'sponsor',
+                'children' => 'children',
+                'eligibility' => 'background',
+                'additional' => 'immigration',
+                'contact' => 'contact',
+            ];
+
+            // If invalid step, redirect to first step
+            if (!array_key_exists($step, $steps)) {
+                return redirect()->route('aos-simplified.index', ['step' => 'personal']);
+            }
+
             // Get existing application data if any
             $application = SimplifiedAosApplication::where('user_id', Auth::id())
                 ->where('submitted_app_id', $request->submitted_app_id)
@@ -67,6 +86,9 @@ class SimplifiedAosController extends Controller
             return view('web.visa-application.aos-simplified.index', [
                 'application' => $application,
                 'completionPercentage' => $completionPercentage,
+                'currentStep' => $step,
+                'activeTab' => $steps[$step],
+                'steps' => $steps,
             ]);
             
         } catch (\Exception $e) {

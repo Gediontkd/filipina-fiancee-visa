@@ -18,13 +18,6 @@
             font-size: 0.85rem;
         }
     }
-    .nav-tabs-wrapper {
-        border-bottom: 1px solid #dee2e6;
-        margin-bottom: 1.5rem;
-    }
-    .nav-tabs-wrapper .nav-tabs {
-        border-bottom: none;
-    }
     .btn-cancel-custom {
         background-color: #dc3545 !important;
         color: #fff !important;
@@ -34,11 +27,26 @@
         background-color: #8b4513 !important; /* Brownish */
         color: #fff !important;
     }
+    .visa-application label, 
+    .visa-application h5 {
+        font-weight: 400 !important;
+    }
+    /* Sidebar navigation styles */
+    .aos-step-nav a {
+        color: inherit;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+    .aos-step-nav a:hover {
+        text-decoration: none !important;
+    }
 </style>
 @endsection
 
 @section('content')
-<section class="visa-application ptb-80 bg-lightgrey">
+<section class="mypetition myaccount visa-application ptb-80 bg-lightgrey">
     {{ getLanguage() }}
     <div class="container">
         <div class="row">
@@ -96,127 +104,128 @@
                 <div class="card p-0">
                     <div class="card-body p-0">
                         <div class="row">
-                            <div class="col-md-12 p-4">
-                                <!-- Tab Navigation -->
-                                <div class="nav-tabs-wrapper overflow-auto">
-                                    <ul class="nav nav-tabs mb-4 flex-nowrap" id="aosTabs" role="tablist" style="min-width: max-content;">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="applicant-tab" data-bs-toggle="tab" data-bs-target="#applicant" type="button" role="tab">
-                                            <i class="fa fa-user me-2"></i>1. Personal & Biographics
-                                        </button>
+                            <!-- Sidebar Navigation -->
+                            <div class="col-md-4 col-lg-3 br-r-1 pe-0">
+                                <ul id="progressbar" class="progessbar2 mb-0">
+                                @php
+                                    $tabIcons = [
+                                        'personal' => 'fa-user',
+                                        'filing-category' => 'fa-file-alt',
+                                        'exemption' => 'fa-shield-alt',
+                                        'address-employment' => 'fa-home',
+                                        'family' => 'fa-users',
+                                        'sponsor' => 'fa-ring',
+                                        'children' => 'fa-child',
+                                        'eligibility' => 'fa-id-card',
+                                        'additional' => 'fa-info-circle',
+                                        'contact' => 'fa-phone',
+                                    ];
+                                    $tabLabels = [
+                                        'personal' => 'Personal & Biographics',
+                                        'filing-category' => 'Application Type or Filing Category',
+                                        'exemption' => 'Affidavit of Support Exemption',
+                                        'address-employment' => 'History & Additional Info',
+                                        'family' => 'Family Information',
+                                        'sponsor' => 'Marital History',
+                                        'children' => 'Information About Your Children',
+                                        'eligibility' => 'Biographic Information',
+                                        'additional' => 'General Eligibility and Inadmissibility Grounds',
+                                        'contact' => 'Applicant\'s Contact Information',
+                                    ];
+                                @endphp
+                                @foreach($steps as $slug => $tabId)
+                                    <li class="aos-step-nav {{ $currentStep === $slug ? 'active' : '' }}" 
+                                        data-step="{{ $slug }}">
+                                        <a href="{{ route('aos-simplified.index', ['step' => $slug]) }}" class="text-decoration-none">
+                                            <span><i class="fa {{ $tabIcons[$slug] }}"></i></span>
+                                            <strong>{{ $tabLabels[$slug] }}</strong>
+                                        </a>
                                     </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="basis-tab" data-bs-toggle="tab" data-bs-target="#basis" type="button" role="tab">
-                                            <i class="fa fa-list-check me-2"></i>2. Eligibility Basis
-                                        </button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">
-                                            <i class="fa fa-history me-2"></i>3. Address & Employment
-                                        </button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="family-tab" data-bs-toggle="tab" data-bs-target="#family" type="button" role="tab">
-                                            <i class="fa fa-users me-2"></i>4. Family Information
-                                        </button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="immigration-tab" data-bs-toggle="tab" data-bs-target="#immigration" type="button" role="tab">
-                                            <i class="fa fa-passport me-2"></i>5. Immigration Status
-                                        </button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="sponsor-tab" data-bs-toggle="tab" data-bs-target="#sponsor" type="button" role="tab">
-                                            <i class="fa fa-hand-holding-heart me-2"></i>6. Sponsor Info
-                                        </button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="background-tab" data-bs-toggle="tab" data-bs-target="#background" type="button" role="tab">
-                                            <i class="fa fa-shield-alt me-2"></i>7. Eligibility
-                                        </button>
-                                    </li>
-                                    </ul>
-                                </div>
-
-                                <!-- Form -->
-                                {{ Form::open(['id' => 'simplifiedAosForm', 'class' => 'needs-validation']) }}
+                                @endforeach
+                                </ul>
+                            </div>
+                            
+                            <!-- Form Content -->
+                            <div class="col-md-8 col-lg-9">
+                                <div class="p-4 p-md-5">
+                                    <!-- Form -->
+                                    {{ Form::open(['id' => 'simplifiedAosForm', 'class' => 'needs-validation']) }}
                                     {{ Form::hidden('submitted_app_id', $application ? $application->submitted_app_id : request()->submitted_app_id) }}
                                     <!-- Tab Content -->
-                                    <div class="tab-content" id="aosTabContent">
-                                        <!-- Tab 1: Applicant Personal & Biographics (Part 1, 7) -->
-                                        <div class="tab-pane fade show active" id="applicant" role="tabpanel">
-                                            @include('web.visa-application.aos-simplified._applicant-tab')
-                                        </div>
-
-                                        <!-- Tab 2: Eligibility Basis (Part 2) -->
-                                        <div class="tab-pane fade" id="basis" role="tabpanel">
-                                            @include('web.visa-application.aos-simplified._basis-tab')
-                                        </div>
-
-                                        <!-- Tab 3: History (Part 3) -->
-                                        <div class="tab-pane fade" id="history" role="tabpanel">
-                                            @include('web.visa-application.aos-simplified._history-tab')
-                                        </div>
-
-                                        <!-- Tab 4: Family (Part 4, 5, 6) -->
-                                        <div class="tab-pane fade" id="family" role="tabpanel">
-                                            @include('web.visa-application.aos-simplified._family-tab')
-                                        </div>
-
-                                        <!-- Tab 5: Immigration Status (Part 1) -->
-                                        <div class="tab-pane fade" id="immigration" role="tabpanel">
-                                            @include('web.visa-application.aos-simplified._immigration-tab')
-                                        </div>
-
-                                        <!-- Tab 6: Sponsor Info -->
-                                        <div class="tab-pane fade" id="sponsor" role="tabpanel">
-                                            @include('web.visa-application.aos-simplified._sponsor-tab')
-                                        </div>
-
-                                        <!-- Tab 7: Eligibility (Part 8-12) -->
-                                        <div class="tab-pane fade" id="background" role="tabpanel">
-                                            @include('web.visa-application.aos-simplified._background-tab')
+                                    <div class="tab-content px-1" id="aosTabContent">
+                                        <div class="tab-pane fade show active">
+                                            @include('web.visa-application.aos-simplified._' . $activeTab . '-tab')
                                         </div>
                                     </div>
 
                                     <!-- Form Actions -->
                                     <div class="border-top pt-4 mt-4">
-                                        <div class="d-flex justify-content-between flex-wrap gap-3">
-                                            <div>
+                                        @php
+                                            $stepKeys = array_keys($steps);
+                                            $currentIdx = array_search($currentStep, $stepKeys);
+                                            $prevStep = $currentIdx > 0 ? $stepKeys[$currentIdx - 1] : null;
+                                            $nextStep = $currentIdx < count($stepKeys) - 1 ? $stepKeys[$currentIdx + 1] : null;
+                                        @endphp
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                            <!-- Left side: Previous -->
+                                            <div class="order-1">
+                                                @if($prevStep)
+                                                    <a href="{{ route('aos-simplified.index', ['step' => $prevStep]) }}" class="btn btn-outline-primary aos-action-btn">
+                                                        <i class="fa fa-arrow-left me-2"></i>Previous
+                                                    </a>
+                                                @else
+                                                    <div class="d-none d-md-block" style="min-width: 160px;"></div>
+                                                @endif
+                                            </div>
+
+                                            <!-- Middle: Save & Cancel -->
+                                            <div class="d-flex gap-2 order-3 order-md-2 mx-auto">
                                                 {{ Form::button('<i class="fa fa-save me-2"></i>Save Progress', [
                                                     'class' => 'btn btn-primary aos-action-btn',
                                                     'id' => 'saveBtn',
                                                     'type' => 'button',
                                                     'onclick' => 'saveApplication(false)'
                                                 ]) }}
-                                            </div>
-                                            <div class="d-flex flex-wrap gap-2" id="submit-action-container">
+                                                
                                                 <a href="{{ route('user.page', 'progress') }}" class="btn btn-cancel-custom aos-action-btn">
                                                     <i class="fa fa-times me-2"></i>Cancel
                                                 </a>
-                                                @if($completionPercentage >= 100)
-                                                    <a href="{{ route('application.review') }}" class="btn btn-success aos-action-btn">
-                                                        <i class="fa fa-paper-plane me-2"></i>Review & Submit
-                                                    </a>
-                                                @else
-                                                    <button type="button" 
-                                                        class="btn btn-success aos-action-btn" 
-                                                        disabled 
-                                                        title="Complete all sections ({{ $completionPercentage }}% done)">
-                                                        <i class="fa fa-lock me-2"></i>Submit
+                                            </div>
+
+                                            <!-- Right side: Next or Submit -->
+                                            <div class="order-2 order-md-3">
+                                                @if($nextStep)
+                                                    <button type="button" class="btn btn-success aos-action-btn" onclick="saveAndContinue('{{ $nextStep }}')">
+                                                        Next <i class="fa fa-arrow-right ms-2"></i>
                                                     </button>
+                                                @else
+                                                    @if($completionPercentage >= 100)
+                                                        <a href="{{ route('application.review') }}" class="btn btn-success aos-action-btn">
+                                                            <i class="fa fa-paper-plane me-2"></i>Review & Submit
+                                                        </a>
+                                                    @else
+                                                        <button type="button" 
+                                                            class="btn btn-success aos-action-btn" 
+                                                            disabled 
+                                                            title="Complete all sections ({{ $completionPercentage }}% done)">
+                                                            <i class="fa fa-lock me-2"></i>Submit
+                                                        </button>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </div>
+
                                         @if($completionPercentage < 100)
-                                            <div class="text-end mt-2">
+                                            <div class="text-center text-md-end mt-3">
                                                 <small class="text-muted" id="remainingText">
                                                     {{ 100 - $completionPercentage }}% remaining
                                                 </small>
                                             </div>
                                         @endif
                                     </div>
+                                    </div>
                                 {{ Form::close() }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -236,7 +245,11 @@
 
     setInterval(autoSave, 30000);
 
-    function saveApplication(isAutoSave = false, callback = null, triggerBtn = null) {
+    function saveAndContinue(nextStep) {
+        saveApplication(false, null, null, nextStep);
+    }
+
+    function saveApplication(isAutoSave = false, callback = null, triggerBtn = null, nextStep = null) {
         const btn = triggerBtn || $('#saveBtn');
         const originalText = btn.html();
         
@@ -279,20 +292,14 @@
                         $('#completionAlertContainer').empty();
                     }
                     
-                    if (response.completion >= 100) {
-                        $('#submit-action-container').html(`
-                            <a href="{{ route('user.page', 'progress') }}" class="btn btn-cancel-custom aos-action-btn">
-                                <i class="fa fa-times me-2"></i>Cancel
-                            </a>
-                            <a href="{{ route('application.review') }}" class="btn btn-success aos-action-btn">
-                                <i class="fa fa-paper-plane me-2"></i>Review & Submit
-                            </a>
-                        `);
-                    }
-                    
                     if (!isAutoSave) {
                         toastr.success('Application saved successfully');
                         
+                        if (nextStep) {
+                            window.location.href = "{{ route('aos-simplified.index') }}/" + nextStep;
+                            return;
+                        }
+
                         if (callback && typeof callback === 'function') {
                             callback();
                         }
@@ -378,14 +385,8 @@
     });
 
     $(document).ready(function() {
-        // Handle "Other Names" raw text to hidden JSON sync
-        $(document).on('input', 'textarea[name="applicant_other_names_raw"]', function() {
-            const names = $(this).val().split("\n").filter(n => n.trim() !== "");
-            $('input[name="applicant_other_names_json"]').val(JSON.stringify(names));
-        });
-
-        // Add history/family items
-        $(document).on('click', '.add-history-item, .add-family-item', function() {
+        // Add history/family/other-name items
+        $(document).on('click', '.add-history-item, .add-family-item, .add-other-name', function() {
             const type = $(this).data('type');
             let container, itemHtml, index;
 
@@ -399,12 +400,59 @@
                             <button type="button" class="btn btn-sm btn-outline-danger remove-history-item"><i class="fa fa-trash"></i></button>
                         </div>
                         <div class="row">
-                            <div class="col-md-12 mb-2"><input type="text" name="applicant_address_history[${index}][street]" class="form-control" placeholder="Street Address"></div>
-                            <div class="col-md-4 mb-2"><input type="text" name="applicant_address_history[${index}][city]" class="form-control" placeholder="City"></div>
-                            <div class="col-md-4 mb-2"><input type="text" name="applicant_address_history[${index}][state]" class="form-control" placeholder="State/Province"></div>
-                            <div class="col-md-4 mb-2"><input type="text" name="applicant_address_history[${index}][zip]" class="form-control" placeholder="ZIP Code"></div>
-                            <div class="col-md-6"><label class="small">Date From</label><input type="text" name="applicant_address_history[${index}][date_from]" class="form-control datePicker" placeholder="MM/DD/YYYY"></div>
-                            <div class="col-md-6"><label class="small">Date To</label><input type="text" name="applicant_address_history[${index}][date_to]" class="form-control datePicker" placeholder="MM/DD/YYYY"></div>
+                            <div class="col-md-6 mb-2">
+                                <label class="small">In Care Of Name (if any)</label>
+                                <input type="text" name="applicant_address_history[${index}][in_care_of]" class="form-control" placeholder="In Care Of">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="small">Street Number and Name</label>
+                                <input type="text" name="applicant_address_history[${index}][street]" class="form-control" placeholder="Street Address">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="small">Unit Type</label>
+                                <select name="applicant_address_history[${index}][unit_type]" class="form-control">
+                                    <option value="">-Select-</option>
+                                    <option value="Apt">Apt.</option>
+                                    <option value="Ste">Ste.</option>
+                                    <option value="Flr">Flr.</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="small">Unit Number</label>
+                                <input type="text" name="applicant_address_history[${index}][unit_number]" class="form-control" placeholder="Number">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="small">City or Town</label>
+                                <input type="text" name="applicant_address_history[${index}][city]" class="form-control" placeholder="City">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="small">State (U.S. Only)</label>
+                                <input type="text" name="applicant_address_history[${index}][state]" class="form-control" placeholder="State">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="small">ZIP Code (U.S. Only)</label>
+                                <input type="text" name="applicant_address_history[${index}][zip]" class="form-control" placeholder="ZIP">
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label class="small">Province (Foreign Only)</label>
+                                <input type="text" name="applicant_address_history[${index}][province]" class="form-control" placeholder="Province">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="small">Postal Code (Foreign Only)</label>
+                                <input type="text" name="applicant_address_history[${index}][postal_code]" class="form-control" placeholder="Postal Code">
+                            </div>
+                            <div class="col-md-8 mb-3">
+                                <label class="small">Country</label>
+                                <input type="text" name="applicant_address_history[${index}][country]" class="form-control" placeholder="Country">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small">Date From</label>
+                                <input type="text" name="applicant_address_history[${index}][date_from]" class="form-control datePicker" placeholder="MM/DD/YYYY">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small">Date To</label>
+                                <input type="text" name="applicant_address_history[${index}][date_to]" class="form-control datePicker" placeholder="MM/DD/YYYY">
+                            </div>
                         </div>
                     </div>`;
             } else if (type === 'employment') {
@@ -439,6 +487,49 @@
                             <div class="col-md-12"><label class="small">A-Number (if any)</label><input type="text" name="children_data[${index}][a_number]" class="form-control"></div>
                         </div>
                     </div>`;
+            } else if (type === 'prior-marriage') {
+                container = $('#prior-marriages-container');
+                index = container.find('.prior-marriage-item').length;
+                itemHtml = `
+                    <div class="prior-marriage-item border p-3 mb-3 rounded bg-light shadow-sm">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h6>Prior Spouse #${index + 1}</h6>
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-family-item"><i class="fa fa-trash"></i></button>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <label class="small">Legal Name (First and Last)</label>
+                                <input type="text" name="marital_history[${index}][spouse_name]" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="small">Date of Marriage</label>
+                                <input type="text" name="marital_history[${index}][marriage_date]" class="form-control datePicker">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="small">Date Marriage Legally Ended</label>
+                                <input type="text" name="marital_history[${index}][end_date]" class="form-control datePicker">
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="small">Place Marriage Legally Ended (City, State/Country)</label>
+                                <input type="text" name="marital_history[${index}][end_place]" class="form-control">
+                            </div>
+                        </div>
+                    </div>`;
+            } else if (type === 'other-name') {
+                container = $('#other-names-container');
+                index = container.find('.other-name-item').length;
+                itemHtml = `
+                    <div class="other-name-item border p-3 mb-3 rounded bg-light shadow-sm">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h6>Other Name #${index + 1}</h6>
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-other-name"><i class="fa fa-trash"></i></button>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-2"><label class="small">Family Name (Last Name)</label><input type="text" name="applicant_other_names[${index}][family_name]" class="form-control" placeholder="Last Name"></div>
+                            <div class="col-md-4 mb-2"><label class="small">Given Name (First Name)</label><input type="text" name="applicant_other_names[${index}][given_name]" class="form-control" placeholder="First Name"></div>
+                            <div class="col-md-4 mb-2"><label class="small">Middle Name</label><input type="text" name="applicant_other_names[${index}][middle_name]" class="form-control" placeholder="Middle Name (if any)"></div>
+                        </div>
+                    </div>`;
             }
 
             if (container) {
@@ -448,11 +539,176 @@
             }
         });
 
-        $(document).on('click', '.remove-history-item, .remove-family-item', function() {
-            var container = $(this).closest('.address-history-container, .employment-history-container, #children-items');
-            $(this).closest('.address-item, .employment-item, .child-item').fadeOut(300, function() {
+        $(document).on('click', '.remove-history-item, .remove-family-item, .remove-other-name', function() {
+            var container = $(this).closest('.address-history-container, .employment-history-container, #children-items, #other-names-container');
+            $(this).closest('.address-item, .employment-item, .child-item, .other-name-item').fadeOut(300, function() {
                 $(this).remove();
             });
+        });
+
+        // A-Number conditional display
+        $(document).on('change', 'input[name="has_a_number"]', function() {
+            if ($(this).val() == '1' && $(this).is(':checked')) {
+                $('#a-number-field').slideDown(300);
+            } else if ($(this).val() == '0' && $(this).is(':checked')) {
+                $('#a-number-field').slideUp(300);
+                $('#a-number-field input').val('');
+            }
+        });
+
+        $(document).on('change', 'input[name="has_other_a_numbers"]', function() {
+            if ($(this).val() == '1' && $(this).is(':checked')) {
+                $('#other-a-numbers-section').slideDown(300);
+            } else if ($(this).val() == '0' && $(this).is(':checked')) {
+                $('#other-a-numbers-section').slideUp(300);
+                $('#other-a-numbers-container input').val('');
+            }
+        });
+
+        // Add other A-Number
+        $(document).on('click', '.add-other-a-number', function() {
+            const container = $('#other-a-numbers-container');
+            const newItem = `
+                <div class="other-a-number-item mb-2">
+                    <div class="d-flex gap-2 align-items-center">
+                        <input type="text" name="other_a_numbers[]" class="form-control" placeholder="A-1234567" maxlength="10">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-other-a-number"><i class="fa fa-trash"></i></button>
+                    </div>
+                </div>`;
+            container.append(newItem);
+        });
+
+        // Remove other A-Number
+        $(document).on('click', '.remove-other-a-number', function() {
+            $(this).closest('.other-a-number-item').fadeOut(300, function() {
+                $(this).remove();
+            });
+        });
+
+        // Immigration Entry Type conditional display
+        $(document).on('change', 'input[name="immigration_entry_type"]', function() {
+            // Hide all status containers first
+            $('#admitted_status_container, #paroled_status_container, #other_status_container').slideUp(300);
+            
+            if ($(this).val() === 'admitted' && $(this).is(':checked')) {
+                $('#admitted_status_container').slideDown(300);
+            } else if ($(this).val() === 'paroled' && $(this).is(':checked')) {
+                $('#paroled_status_container').slideDown(300);
+            } else if ($(this).val() === 'other' && $(this).is(':checked')) {
+                $('#other_status_container').slideDown(300);
+            }
+        });
+
+        // Date of Birth conditional display
+        $(document).on('change', 'input[name="has_other_dob"]', function() {
+            if ($(this).val() == '1' && $(this).is(':checked')) {
+                $('#other_dob_field').slideDown(300);
+            } else if ($(this).val() == '0' && $(this).is(':checked')) {
+                $('#other_dob_field').slideUp(300);
+                $('#other_dob_field input').val('');
+            }
+        });
+
+        // Residency Check Logic
+        $(document).on('change', 'input[name="resided_at_current_address_5_years"]', function() {
+            if ($(this).val() == '0') {
+                $('#prior_addresses_container').slideDown(300).removeClass('d-none');
+            } else {
+                $('#prior_addresses_container').slideUp(300);
+            }
+        });
+
+        // Other Names Toggle Logic
+        $(document).on('change', 'input[name="has_other_names"]', function() {
+            if ($(this).val() == '1') {
+                $('#other-names-section').slideDown(300);
+            } else {
+                $('#other-names-section').slideUp(300);
+            }
+        });
+
+        // Add prior address
+        $(document).on('click', '#add-prior-address', function() {
+            const container = $('#prior-address-items');
+            const index = container.find('.prior-address-item').length;
+            const newItem = `
+                <div class="prior-address-item border p-3 mb-3 bg-white rounded shadow-sm" style="display:none">
+                    <div class="d-flex justify-content-between mb-2">
+                        <h6>Prior Address #${index + 1}</h6>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-prior-address"><i class="fa fa-trash"></i></button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <label class="small">Street Number and Name</label>
+                            <input type="text" name="prior_addresses_data[${index}][street]" class="form-control">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="small">City or Town</label>
+                            <input type="text" name="prior_addresses_data[${index}][city]" class="form-control">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="small">State</label>
+                            <input type="text" name="prior_addresses_data[${index}][state]" class="form-control">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="small">ZIP Code</label>
+                            <input type="text" name="prior_addresses_data[${index}][zip]" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="small">Date From (mm/dd/yyyy)</label>
+                            <input type="text" name="prior_addresses_data[${index}][date_from]" class="form-control datePicker">
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="small">Date To (mm/dd/yyyy)</label>
+                            <input type="text" name="prior_addresses_data[${index}][date_to]" class="form-control datePicker">
+                        </div>
+                    </div>
+                </div>`;
+            container.append(newItem);
+            container.find('.prior-address-item').last().fadeIn(300);
+            initNewDatePickers();
+        });
+
+        // Remove prior address
+        $(document).on('click', '.remove-prior-address', function() {
+            $(this).closest('.prior-address-item').fadeOut(300, function() {
+                $(this).remove();
+                // Re-index remaining items
+                $('#prior-address-items .prior-address-item').each(function(idx) {
+                    $(this).find('h6').first().text('Prior Address #' + (idx + 1));
+                    $(this).find('input').each(function() {
+                        let name = $(this).attr('name');
+                        if (name) {
+                            $(this).attr('name', name.replace(/\[\d+\]/, '[' + idx + ']'));
+                        }
+                    });
+                });
+            });
+        });
+
+        // SSA Logic
+        $(document).on('change', 'input[name="ssa_ever_issued_card"]', function() {
+            if ($(this).val() == '1') {
+                $('#ssn_field_container').show();
+            } else {
+                $('#ssn_field_container').hide();
+            }
+        });
+
+        $(document).on('change', 'input[name="ssa_issue_card_request"]', function() {
+            if ($(this).val() == '1') {
+                $('#ssa_consent_container').show();
+            } else {
+                $('#ssa_consent_container').hide();
+            }
+        });
+
+        $(document).on('change', '#use_mailing_address_toggle', function() {
+            if ($(this).is(':checked')) {
+                $('#mailing_address_fields').removeClass('d-none');
+            } else {
+                $('#mailing_address_fields').addClass('d-none');
+            }
         });
 
         function initNewDatePickers() {
