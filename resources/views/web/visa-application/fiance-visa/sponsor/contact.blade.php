@@ -7,6 +7,12 @@
             </div>
             <div class="clearfix"></div>
             <div class="row">
+                <div class="col-md-12 mb-3">
+                    <div class="alert alert-info mb-0">
+                        <strong>K-1 contact rules:</strong> leave the <strong>USCIS Online Account Number</strong> blank unless USCIS explicitly issued one to you.
+                        If you are a <strong>U.S. citizen petitioner</strong>, your <strong>A-Number must be blank or marked Does Not Apply</strong>.
+                    </div>
+                </div>
                 <div class="col-md-12">
                     <div class="form-group">
                     	{{ Form::label('email', "Email Address") }}
@@ -43,20 +49,19 @@
                         @include('web.component.does-not-apply', ['field' => 'socialSecNo', 'value' => @$step->detail['socialSecNo']])                       
                     </div>
                 </div>
-                {{-- <div class="col-md-12">
+                <div class="col-md-12">
                     <div class="form-group">
-                        {{ Form::label("uscis_no", "USCIS Online Account Number. Uncommon") }}
-                        <span class="required">*</span>
-                        {{ Form::text("uscis_no", @$step->detail['uscisNo'] ? 'N/A' : @$step->detail['uscis_no'], ['class' => 'form-control uscisNo', 'placeholder' => "Enter number"]) }}
-                        @include('web.component.does-not-apply', ['field' => 'uscisNo', 'value' => @$step->detail['uscisNo']])                        
+                        {{ Form::label("uscis_no", "USCIS Online Account Number") }}
+                        {{ Form::text("uscis_no", @$step->detail['uscis_no'], ['class' => 'form-control uscisNo', 'placeholder' => "Leave blank unless USCIS gave you one"]) }}
+                        <small class="text-muted d-block mt-1">Do not enter N/A here. Leave this field blank unless USCIS has issued an online account number.</small>
                     </div>
-                </div> --}}
+                </div>
                 <div class="col-md-12">
                     <div class="form-group">
                         {{ Form::label('sponsor_a', "Sponsor's A#. Uncommon") }}
-                        <span class="required">*</span>
                         {{ Form::text('sponsor_a', @$step->detail['sponsorA'] ? 'N/A' : @$step->detail['sponsor_a'], ['class' => 'form-control sponsorA', 'placeholder' => '']) }}
                         @include('web.component.does-not-apply', ['field' => 'sponsorA', 'value' => @$step->detail['sponsorA']])
+                        <small class="text-muted d-block mt-1">If you are a U.S. citizen petitioner, this must stay blank or Does Not Apply.</small>
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -269,13 +274,13 @@
                     required: true,
                 },
                 sponsor_a: {
-                    required: true,
+                    required: false,
                 },
                 social_sec_no: {
                     required: true,
                 },
                 uscis_no: {
-                    required: true,
+                    required: false,
                 },
                 diffrent_mailing_address: {
                     required: true,
@@ -326,7 +331,7 @@
                tax_id: "Please enter id!",
                sponsor_a: "Please enter sponsor a!",
                social_sec_no: "Please enter social securety number!",
-               uscis_no: "Please enter number!",
+               uscis_no: "Enter the USCIS online account number only if USCIS gave you one.",
                diffrent_mailing_address: "Please enter address!",
                in_care_name: "Please enter name!",
                apartment_suite_or_floor: "Please choose address!",
@@ -339,6 +344,12 @@
                postal_code: "Please enter postal code!",
             },
             submitHandler: function(form) {
+                const uscisNumber = ($('.uscisNo').val() || '').trim().toUpperCase();
+                if (uscisNumber === 'N/A') {
+                    toastr.error('USCIS Online Account Number must be left blank unless USCIS explicitly provided one.');
+                    return false;
+                }
+
                 $('#fianceSponsorContactBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
                 var serializedData = $(form).serialize();
                 $.ajax({

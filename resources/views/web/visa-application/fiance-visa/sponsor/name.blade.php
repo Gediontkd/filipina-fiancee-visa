@@ -7,6 +7,22 @@
         </div>
         <div class="clearfix"></div>
         <div class="row">
+            <div class="col-md-12 mb-3">
+                <div class="alert alert-info mb-0">
+                    <strong>USCIS Part 1 classification:</strong> this package is being prepared as a <strong>K-1 Fiancé(e)</strong> petition.
+                    If you need K-3 spouse classification instead, do not continue in this flow.
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    {{ Form::label('classification_display', 'Classification Sought') }}
+                    {{ Form::text('classification_display', 'K-1 Fiancé(e)', [
+                        'class' => 'form-control',
+                        'readonly' => true,
+                    ]) }}
+                    {{ Form::hidden('classification_sought', 'K-1') }}
+                </div>
+            </div>
             <div class="col-md-6">
                 <div class="form-group">
                     {{ Form::label('first_name', "Sponsor's First Name") }}

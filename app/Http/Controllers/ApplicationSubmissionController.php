@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\VisaApplication;
 use App\Models\UserSubmittedApplication;
 use App\Services\ApplicationDataService;
+use App\Services\Fiance\K1FormReviewService;
 use App\Mail\ApplicationSubmittedMail;
 use App\Helpers\PaymentHelper;
 use Illuminate\Http\Request;
@@ -20,10 +21,12 @@ use Illuminate\Support\Facades\File;
 class ApplicationSubmissionController extends Controller
 {
     protected ApplicationDataService $dataService;
+    protected K1FormReviewService $k1FormReviewService;
 
-    public function __construct(ApplicationDataService $dataService)
+    public function __construct(ApplicationDataService $dataService, K1FormReviewService $k1FormReviewService)
     {
         $this->dataService = $dataService;
+        $this->k1FormReviewService = $k1FormReviewService;
     }
 
     /**
@@ -244,14 +247,12 @@ class ApplicationSubmissionController extends Controller
         switch (strtolower($user->chosen_application)) {
             case 'fiance':
             case 'fiancee':
-                $sponsorSteps = $user->fianceVisaSteps()->count();
-                $alienData = $user->fianceAlien;
-                $childrenData = $user->fianceAlienChildren;
-                
-                $sections['sponsor'] = $sponsorSteps > 0;
-                $sections['alien'] = $alienData ? true : false;
-                $sections['children'] = $childrenData ? true : false;
-                
+                $k1Progress = $this->k1FormReviewService->getProgressForUser($user);
+
+                $sections['sponsor'] = $k1Progress['is_sponsor_complete'];
+                $sections['alien'] = $k1Progress['is_alien_complete'];
+                $sections['review_rules'] = empty($k1Progress['blocking_issues']);
+
                 $totalSections = 3;
                 $completedSections = count(array_filter($sections));
                 break;

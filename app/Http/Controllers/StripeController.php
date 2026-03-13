@@ -9,6 +9,7 @@ use App\Helpers\PaymentHelper;
 use App\Models\User;
 use App\Models\UserSubmittedApplication;
 use App\Services\ApplicationDataService;
+use App\Services\Fiance\K1FormReviewService;
 use App\Mail\ApplicationSubmittedMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,16 +22,26 @@ use Stripe\Checkout\Session as StripeSession;
 class StripeController extends Controller
 {
     protected ApplicationDataService $dataService;
+    protected K1FormReviewService $k1FormReviewService;
 
-    public function __construct(ApplicationDataService $dataService)
+    public function __construct(ApplicationDataService $dataService, K1FormReviewService $k1FormReviewService)
     {
         Stripe::setApiKey(config('services.stripe.secret'));
         $this->dataService = $dataService;
+        $this->k1FormReviewService = $k1FormReviewService;
     }
 
     public function index(Request $request)
     {
         $user = Auth::user();
+        if (in_array(strtolower((string) $user->chosen_application), ['fiance', 'fiancee'], true)) {
+            $k1Progress = $this->k1FormReviewService->getProgressForUser($user);
+            if (!$k1Progress['can_request_review']) {
+                return redirect()->route('user.page', 'progress')
+                    ->with('error', 'Complete every required K-1 section and clear the blocking review rules before payment.');
+            }
+        }
+
         $paymentStatus = PaymentHelper::checkPaymentStatus($user->id);
         
         if ($paymentStatus['has_paid']) {
@@ -51,6 +62,16 @@ class StripeController extends Controller
     {
         try {
             $user = Auth::user();
+            if (in_array(strtolower((string) $user->chosen_application), ['fiance', 'fiancee'], true)) {
+                $k1Progress = $this->k1FormReviewService->getProgressForUser($user);
+                if (!$k1Progress['can_request_review']) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Complete every required K-1 section and resolve the blocking review rules before payment.',
+                    ], 422);
+                }
+            }
+
             $paymentStatus = PaymentHelper::checkPaymentStatus($user->id);
             
             if ($paymentStatus['has_paid']) {

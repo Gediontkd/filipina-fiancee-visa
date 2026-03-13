@@ -6,8 +6,8 @@
             <div class="col-md-12">
                 <div class="heading mb-30">
                     <h2>Your Employment for the Past Five Years (U.S. Citizen Sponsor)</h2>
-                    <p>Enter "Unemployed" or "Retired" if appropriate. More space will be provided as needed to go back
-                        5 years. You will need a source of income or adequate assets to be approved.</p>
+                    <p>Employment must be a continuous 5-year timeline. Employer 1 must always be your current or present status.</p>
+                    <p>Enter <strong>Unemployed</strong> with a start date and <strong>PRESENT</strong> if you are not working right now. Enter <strong>Retired</strong> if that is your current status.</p>
                 </div>
             </div>
             <div class="emploperSection">
@@ -323,6 +323,11 @@
                 }
             },
             submitHandler: function(form) {
+                if (!$('#present_date_checkbox').is(':checked')) {
+                    toastr.error('Employer 1 must always be your current or present status. If you are not working, enter Unemployed and mark PRESENT.');
+                    return false;
+                }
+
                 $('#fianceSponsorEmploymentBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
                 
                 // Re-enable end date field temporarily for form submission

@@ -6,7 +6,8 @@
             <div class="col-md-12">
                 <div class="heading mb-30">
                     <h2>Alien's Employment Last Five Years</h2>
-                    <p>More space will be provided if needed. Enter Unemployed or Student if appropriate.</p>
+                    <p>Employment must be a continuous 5-year timeline. Employer 1 must always be the beneficiary's current or present status.</p>
+                    <p>Enter <strong>Unemployed</strong> with a start date and <strong>PRESENT</strong> if the beneficiary is not working right now. Enter <strong>Student</strong> if school is the current status.</p>
                     {{-- <h4>Current Job</h4> --}}
                 </div>
             </div>
@@ -266,6 +267,28 @@
     {{ Form::close() }}
     <script type="text/javascript" src="{{asset('assets/js/date-range.js')}}"></script>
     <script type="text/javascript">
+        $(document).ready(function () {
+            if ($('input[name=present_date]:checked').length == 1) {
+                $('.employementEndDate1').prop('disabled', true);
+                $('.employementEndDate1').val('Present');
+                $('.employementEndDate1').removeClass('error');
+            }
+        });
+
+        $(document).on('change', 'input[name=present_date]', function() {
+            if ($(this).is(':checked')) {
+                $('.employementEndDate1').val('Present');
+                $('.employementEndDate1').prop('disabled', true);
+                $('.employementEndDate1').addClass('disableDatePicker');
+                $('.employementEndDate1').removeClass('error');
+                $('label[for="employement_end_date1"].error').remove();
+                employerForm1($('.employementEndDate1'));
+            } else {
+                $('.employementEndDate1').val('');
+                $('.employementEndDate1').prop('disabled', false);
+                $('.employementEndDate1').removeClass('disableDatePicker');
+            }
+        });
 
         $(document).on('change', '.employementEndDate', function () {
             if ($('input[name=present_date]:checked').length == 1) {
@@ -470,7 +493,9 @@
                     required: true,
                 },
                 employement_end_date1: {
-                    required: true,
+                    required: function() {
+                        return $('input[name=present_date]:checked').length == 0;
+                    },
                 },
                 full_name_of_employer2: {
                     required: true,
@@ -642,7 +667,7 @@
                 country1: "Please chose country!",
                 occupation_specify1: "Please enter occupation specify!",
                 employement_start_date1: "Please enter start date!",
-                employement_end_date1: "Please enter end date!",
+                employement_end_date1: "Please enter end date or check PRESENT.",
                 full_name_of_employer2: "Please enter full name!",
                 street_number_and_name2: "Please enter street number and name!",
                 aptsteflr2: "This field is required!",
@@ -705,8 +730,22 @@
                 }
             },
             submitHandler: function (form) {
+                if (!$('#present_date_checkbox').is(':checked')) {
+                    toastr.error('Employer 1 must always be the beneficiary\'s current or present status. If the beneficiary is not working, enter Unemployed and mark PRESENT.');
+                    return false;
+                }
+
                 $('#fianceAlienEmploymentBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
+                var wasDisabled = $('.employementEndDate1').prop('disabled');
+                if (wasDisabled) {
+                    $('.employementEndDate1').prop('disabled', false);
+                }
+
                 var serializedData = $(form).serialize();
+
+                if (wasDisabled) {
+                    $('.employementEndDate1').prop('disabled', true);
+                }
                 $.ajax({
                     headers: {
                         'X-CSRF-Token': $('input[name="_token"]').val()

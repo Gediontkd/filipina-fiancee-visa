@@ -114,6 +114,33 @@
                         ]) }}
                     </div>
                 </div>
+                <div class="col-md-12 mt-3">
+                    <div class="alert alert-info mb-0">
+                        <strong>Native alphabet rule:</strong> complete this section exactly as it should appear on the package.
+                        For Philippine cases, both fields below should be <strong>N/A</strong>.
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        {{ Form::label('native_alphabet_name', 'Beneficiary Name in Native Alphabet') }}
+                        <span class="required">*</span>
+                        {{ Form::text('native_alphabet_name', @$step->detail['native_alphabet_name'], [
+                            'class' => 'form-control nativeAlphabetName',
+                            'placeholder' => 'Enter native alphabet name or N/A'
+                        ]) }}
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        {{ Form::label('native_alphabet_address', 'Beneficiary Physical Address in Native Alphabet') }}
+                        <span class="required">*</span>
+                        {{ Form::textarea('native_alphabet_address', @$step->detail['native_alphabet_address'], [
+                            'class' => 'form-control nativeAlphabetAddress',
+                            'rows' => 3,
+                            'placeholder' => 'Enter native alphabet address or N/A'
+                        ]) }}
+                    </div>
+                </div>
             </div>            
         </div>
         {!! Form::hidden('id', @$step->id) !!}
@@ -142,11 +169,13 @@
     <script type="text/javascript">
         $(document).ready(function(){
             getState(231);
+            applyNativeAlphabetRule($('.countryId').val());
         });
 
         $(document).on('change', '.countryId', function(){
             // var countryId = $(this).val();
             getState(231);
+            applyNativeAlphabetRule($(this).val());
         });
 
         function getState(countryId)
@@ -161,6 +190,26 @@
                     $('.states').html(data);                    
                 }
             });
+        }
+
+        function applyNativeAlphabetRule(country) {
+            const isPhilippines = (country || '').toString().trim() === 'Philippines';
+            const $nameField = $('.nativeAlphabetName');
+            const $addressField = $('.nativeAlphabetAddress');
+
+            if (isPhilippines) {
+                $nameField.val('N/A').prop('readonly', true);
+                $addressField.val('N/A').prop('readonly', true);
+            } else {
+                if (($nameField.val() || '').trim().toUpperCase() === 'N/A') {
+                    $nameField.val('');
+                }
+                if (($addressField.val() || '').trim().toUpperCase() === 'N/A') {
+                    $addressField.val('');
+                }
+                $nameField.prop('readonly', false);
+                $addressField.prop('readonly', false);
+            }
         }
 
         $("#fianceAlienAddress").validate({
@@ -194,7 +243,13 @@
                 },
                 date_from: {
                     required: true,
-                },               
+                },
+                native_alphabet_name: {
+                    required: true,
+                },
+                native_alphabet_address: {
+                    required: true,
+                },
             },
             messages: {
                in_care_name: "Please enter name!",
@@ -204,8 +259,10 @@
                town_or_city: "Please enter town or city!",
                country: "Please choose birth country!",
                state: "Please choose state!",
-               province: "Please enter province!",
-               date_from: "Please choose date!",              
+                province: "Please enter province!",
+                date_from: "Please choose date!",              
+                native_alphabet_name: "Please enter the beneficiary name in native alphabet or N/A.",
+                native_alphabet_address: "Please enter the beneficiary address in native alphabet or N/A.",
             },
             submitHandler: function(form) {
                 $('#fianceAlienAddressBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
