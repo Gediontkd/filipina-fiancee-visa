@@ -9,25 +9,15 @@
     </div>
     <div class="card-body p-3">
         @php
-            // Check actual submitted steps (where form data is stored)
-            $sponsorCount = \App\Models\FianceVisaSubmittedStep::where('user_id', Auth::id())
-                ->where('type', 'sponsor')
-                ->count();
-            
-            $alienCount = \App\Models\FianceVisaSubmittedStep::where('user_id', Auth::id())
-                ->where('type', 'alien')
-                ->count();
-            
-            $childrenCount = \App\Models\FianceVisaSubmittedStep::where('user_id', Auth::id())
-                ->where('type', 'alien-children')
-                ->count();
-            
-            // Calculate individual section progress
-            $sponsorProgress = min(100, ($sponsorCount / 10) * 100);
-            $alienProgress = min(100, ($alienCount / 21) * 100);
+            $sponsorCount = $k1Progress['sponsor_count'] ?? 0;
+            $alienCount = $k1Progress['alien_count'] ?? 0;
+            $childrenCount = $k1Progress['children_count'] ?? 0;
+            $sponsorRequired = $k1Progress['sponsor_required'] ?? 10;
+            $alienRequired = $k1Progress['alien_required'] ?? 21;
+            $sponsorProgress = $sponsorRequired > 0 ? min(100, ($sponsorCount / $sponsorRequired) * 100) : 0;
+            $alienProgress = $alienRequired > 0 ? min(100, ($alienCount / $alienRequired) * 100) : 0;
             $childrenProgress = min(100, ($childrenCount / 5) * 100);
             
-            // Get latest update timestamp
             $lastUpdate = \App\Models\FianceVisaSubmittedStep::where('user_id', Auth::id())
                 ->latest('updated_at')
                 ->first();
@@ -37,7 +27,7 @@
             <div class="col-md-12">
                 <h6 class="mb-2">Application Progress</h6>
                 <div class="progress" style="height: 30px;">
-                    <div class="progress-bar progress-bar-striped {{ $overAll >= 100 ? 'bg-success' : 'bg-info' }}" 
+                    <div class="progress-bar progress-bar-striped {{ ($k1Progress['can_request_review'] ?? false) ? 'bg-success' : 'bg-info' }}" 
                         role="progressbar" 
                         style="width: {{ number_format($overAll, 1) }}%" 
                         aria-valuenow="{{ $overAll }}" 
@@ -52,12 +42,12 @@
         <div class="row mb-4">
             {{-- Sponsor Section --}}
             <div class="col-md-4 mb-3">
-                <div class="card border-{{ $sponsorCount > 0 ? 'success' : 'secondary' }} h-100">
+                <div class="card border-{{ ($k1Progress['is_sponsor_complete'] ?? false) ? 'success' : ($sponsorCount > 0 ? 'info' : 'secondary') }} h-100">
                     <div class="card-body p-3 text-center">
-                        <i class="fa fa-user fa-2x mb-2 text-{{ $sponsorCount > 0 ? 'success' : 'muted' }}"></i>
+                        <i class="fa fa-user fa-2x mb-2 text-{{ ($k1Progress['is_sponsor_complete'] ?? false) ? 'success' : ($sponsorCount > 0 ? 'info' : 'muted') }}"></i>
                         <h6>Sponsor (Petitioner)</h6>
-                        <span class="badge bg-{{ $sponsorCount > 0 ? 'success' : 'secondary' }} mb-2">
-                            {{ $sponsorCount > 0 ? 'In Progress' : 'Not Started' }}
+                        <span class="badge bg-{{ ($k1Progress['is_sponsor_complete'] ?? false) ? 'success' : ($sponsorCount > 0 ? 'info' : 'secondary') }} mb-2">
+                            {{ ($k1Progress['is_sponsor_complete'] ?? false) ? 'Complete' : ($sponsorCount > 0 ? 'In Progress' : 'Not Started') }}
                         </span>
                         @if($sponsorCount > 0)
                             <div class="progress mt-2" style="height: 20px;">
@@ -70,7 +60,7 @@
                                     {{ number_format($sponsorProgress, 0) }}%
                                 </div>
                             </div>
-                            <small class="text-muted d-block mt-1">{{ $sponsorCount }}/10 steps</small>
+                            <small class="text-muted d-block mt-1">{{ $sponsorCount }}/{{ $sponsorRequired }} steps</small>
                         @endif
                     </div>
                 </div>
@@ -78,12 +68,12 @@
 
             {{-- Alien Section --}}
             <div class="col-md-4 mb-3">
-                <div class="card border-{{ $alienCount > 0 ? 'success' : 'secondary' }} h-100">
+                <div class="card border-{{ ($k1Progress['is_alien_complete'] ?? false) ? 'success' : ($alienCount > 0 ? 'info' : 'secondary') }} h-100">
                     <div class="card-body p-3 text-center">
-                        <i class="fa fa-user-friends fa-2x mb-2 text-{{ $alienCount > 0 ? 'success' : 'muted' }}"></i>
+                        <i class="fa fa-user-friends fa-2x mb-2 text-{{ ($k1Progress['is_alien_complete'] ?? false) ? 'success' : ($alienCount > 0 ? 'info' : 'muted') }}"></i>
                         <h6>Alien (Beneficiary)</h6>
-                        <span class="badge bg-{{ $alienCount > 0 ? 'success' : 'secondary' }} mb-2">
-                            {{ $alienCount > 0 ? 'In Progress' : 'Not Started' }}
+                        <span class="badge bg-{{ ($k1Progress['is_alien_complete'] ?? false) ? 'success' : ($alienCount > 0 ? 'info' : 'secondary') }} mb-2">
+                            {{ ($k1Progress['is_alien_complete'] ?? false) ? 'Complete' : ($alienCount > 0 ? 'In Progress' : 'Not Started') }}
                         </span>
                         @if($alienCount > 0)
                             <div class="progress mt-2" style="height: 20px;">
@@ -96,7 +86,7 @@
                                     {{ number_format($alienProgress, 0) }}%
                                 </div>
                             </div>
-                            <small class="text-muted d-block mt-1">{{ $alienCount }}/21 steps</small>
+                            <small class="text-muted d-block mt-1">{{ $alienCount }}/{{ $alienRequired }} steps</small>
                         @endif
                     </div>
                 </div>

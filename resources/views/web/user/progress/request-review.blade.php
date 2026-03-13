@@ -31,6 +31,17 @@
             </div>
         </div>
 
+        @if(!empty($blockingIssues))
+            <div class="alert alert-warning mb-4" role="alert">
+                <strong class="d-block mb-2">Before Request Review can unlock, please fix the following:</strong>
+                <ul class="mb-0 ps-3">
+                    @foreach($blockingIssues as $issue)
+                        <li>{{ $issue }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="text-center">
             {{-- ALWAYS VISIBLE BUTTON --}}
             <button 
@@ -47,11 +58,11 @@
             @if($isComplete)
                 <p class="text-success mt-3 mb-0">
                     <i class="fa fa-check-circle me-1"></i>
-                    <strong>Great! Your application is complete and ready to submit.</strong>
+                    <strong>Great! Your application is complete. Request Review will open payment, and payment will automatically submit your review.</strong>
                 </p>
             @else
                 <p class="text-muted mt-3 mb-0">
-                    Complete all required sections above to unlock this button
+                    Complete all required sections and resolve any blocking review rules above to unlock this button
                 </p>
             @endif
         </div>

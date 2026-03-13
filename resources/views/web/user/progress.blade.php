@@ -44,18 +44,14 @@
                     @php
                         $applicationType = $activeSubmission->application_id;
                         $overAll = 0;
+                        $k1Progress = null;
                         
                         // Calculate completion based on app type
                         if ($applicationType == 1) {
                             // Fiancée Visa (K-1)
-                            $fianceeSponsor = \App\Models\FianceVisaStep::where('user_id', Auth::id())->first();
-                            $fianceeAlien = \App\Models\FianceAlien::where('user_id', Auth::id())->first();
-                            
-                            if ($fianceeSponsor || $fianceeAlien) {
-                                $sponsorComplete = $fianceeSponsor ? 50 : 0;
-                                $alienComplete = $fianceeAlien ? 50 : 0;
-                                $overAll = $sponsorComplete + $alienComplete;
-                            }
+                            $k1Progress = app(\App\Services\Fiance\K1FormReviewService::class)
+                                ->getProgressForUser(Auth::id());
+                            $overAll = $k1Progress['percent_complete'];
                             
                         } elseif ($applicationType == 2) {
                             // Adjustment of Status (AOS)
@@ -76,14 +72,17 @@
                             }
                         }
                         
-                        $isComplete = $overAll >= 100;
+                        $isComplete = $applicationType == 1
+                            ? ($k1Progress['can_request_review'] ?? false)
+                            : $overAll >= 100;
                     @endphp
 
                     {{-- APPLICATION TYPE SPECIFIC PROGRESS CARDS --}}
                     @if($applicationType == 1)
                         @include('web.user.progress.fiancee-visa', [
                             'activeSubmission' => $activeSubmission,
-                            'overAll' => $overAll
+                            'overAll' => $overAll,
+                            'k1Progress' => $k1Progress
                         ])
                     @elseif($applicationType == 2)
                         @include('web.user.progress.adjustment-of-status', [
@@ -101,7 +100,8 @@
                     @include('web.user.progress.request-review', [
                         'overAll' => $overAll,
                         'isComplete' => $isComplete,
-                        'paymentStatus' => $paymentStatus
+                        'paymentStatus' => $paymentStatus,
+                        'blockingIssues' => $k1Progress['blocking_issues'] ?? []
                     ])
 
                 @else

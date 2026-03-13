@@ -7,6 +7,10 @@
                     <div class="heading mb-30">
                         <h2>All questions are about the Alien (foreign citizen).</h2>
                     </div>
+                    <div class="alert alert-info">
+                        <strong>How to answer this section:</strong> criminal-history yes/no questions cannot be left blank.
+                        If the beneficiary has any charge history, enter one charge per row with the exact charge name, the charge date in <strong>mm/dd/yyyy</strong>, and the final outcome.
+                    </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
@@ -90,9 +94,43 @@
                     </div>
                 </div>
                 <div class="col-md-12 arrestedConvictedSec" style="display: {{ @$step->detail['arrested_convicted'] == 'yes' ? 'block' : 'none'  }};">
-                   <div class="form-group">
-                        {{ Form::label('explain_conviction', "Explain all arrests and/or convictions.") }}
-                        <span class="required">*</span>
+                    <div class="alert alert-warning">
+                        <strong>Legal infractions:</strong> enter only the beneficiary's actual user data.
+                        Use a separate row for each charge, even if several charges came from the same case.
+                    </div>
+                    @for ($i = 1; $i <= 5; $i++)
+                        <div class="row alienLegalInfractionRow mb-2">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    {{ Form::label("legal_infraction_charge_name{$i}", "Charge {$i} Name") }}
+                                    {{ Form::text("legal_infraction_charge_name{$i}", @$step->detail["legal_infraction_charge_name{$i}"], [
+                                        'class' => 'form-control',
+                                        'placeholder' => 'Exact charge name',
+                                    ]) }}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {{ Form::label("legal_infraction_charge_date{$i}", "Charge {$i} Date") }}
+                                    {{ Form::text("legal_infraction_charge_date{$i}", @$step->detail["legal_infraction_charge_date{$i}"], [
+                                        'class' => 'form-control datePicker',
+                                        'placeholder' => 'mm/dd/yyyy',
+                                    ]) }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ Form::label("legal_infraction_outcome{$i}", "Charge {$i} Final Outcome") }}
+                                    {{ Form::text("legal_infraction_outcome{$i}", @$step->detail["legal_infraction_outcome{$i}"], [
+                                        'class' => 'form-control',
+                                        'placeholder' => 'Final outcome',
+                                    ]) }}
+                                </div>
+                            </div>
+                        </div>
+                    @endfor
+                    <div class="form-group">
+                        {{ Form::label('explain_conviction', "Additional details about arrests and/or convictions (optional)") }}
                         {{ Form::textarea('explain_conviction', @$step->detail['explain_conviction'], ['class' => 'form-control', 'rows' => 4]) }}
                     </div>
                 </div> 
@@ -183,6 +221,51 @@
             }
         });        
 
+        function validateAlienLegalInfractionRows() {
+            if ($('.arrestedConvicted:checked').val() !== 'yes') {
+                return true;
+            }
+
+            const datePattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/;
+            let completedRows = 0;
+            let invalidMessage = '';
+
+            $('.alienLegalInfractionRow').each(function(index) {
+                const rowNumber = index + 1;
+                const charge = ($(this).find('[name="legal_infraction_charge_name' + rowNumber + '"]').val() || '').trim();
+                const date = ($(this).find('[name="legal_infraction_charge_date' + rowNumber + '"]').val() || '').trim();
+                const outcome = ($(this).find('[name="legal_infraction_outcome' + rowNumber + '"]').val() || '').trim();
+
+                if (!charge && !date && !outcome) {
+                    return;
+                }
+
+                if (!charge || !date || !outcome) {
+                    invalidMessage = 'Each legal-infraction row you use must include the exact charge name, mm/dd/yyyy date, and final outcome.';
+                    return false;
+                }
+
+                if (!datePattern.test(date)) {
+                    invalidMessage = 'Legal-infraction dates must use mm/dd/yyyy format.';
+                    return false;
+                }
+
+                completedRows += 1;
+            });
+
+            if (invalidMessage) {
+                toastr.error(invalidMessage);
+                return false;
+            }
+
+            if (completedRows === 0) {
+                toastr.error('Add at least one legal-infraction row when the beneficiary arrest or conviction answer is Yes.');
+                return false;
+            }
+
+            return true;
+        }
+
         $("#fianceAlienActivity").validate({
             rules: {
                 organization: {
@@ -206,9 +289,6 @@
                 arrested_convicted: {
                     required: true,
                 },
-                explain_conviction: {
-                    required: true,
-                },
                 clan_tribe: {
                     required: true,
                 },
@@ -224,7 +304,6 @@
                org_name4: "Please enter name!",              
                org_name5: "Please enter name!",              
                arrested_convicted: "Please choose option!",              
-               explain_conviction: "Please explain!",              
                clan_tribe: "Please choose option!",              
                clan_tribe_name: "Please enter name!",              
             },
@@ -236,6 +315,10 @@
                 }
             },
             submitHandler: function(form) {
+                if (!validateAlienLegalInfractionRows()) {
+                    return false;
+                }
+
                 $('#fianceAlienActivityBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
                 var serializedData = $(form).serialize();
                 $.ajax({

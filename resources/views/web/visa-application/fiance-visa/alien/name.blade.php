@@ -7,6 +7,21 @@
             </div>
             <div class="clearfix"></div>
             <div class="row">
+                <div class="col-md-12 mb-3">
+                    <div class="alert alert-info mb-0">
+                        <strong>USCIS Part 2 classification:</strong> this beneficiary section is being prepared for a <strong>K-1 Fiancé(e)</strong> classification.
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        {{ Form::label('beneficiary_classification_display', 'Beneficiary Classification Sought') }}
+                        {{ Form::text('beneficiary_classification_display', 'K-1 Fiancé(e)', [
+                            'class' => 'form-control',
+                            'readonly' => true,
+                        ]) }}
+                        {{ Form::hidden('beneficiary_classification_sought', 'K-1') }}
+                    </div>
+                </div>
                 <div class="col-md-6">
                     <div class="form-group">
                     	{{ Form::label('first_name', "Alien's First Name") }}

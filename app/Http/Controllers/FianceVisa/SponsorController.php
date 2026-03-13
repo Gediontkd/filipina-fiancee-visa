@@ -40,6 +40,7 @@ use App\Models\State;
 use App\Models\EmbassyCity;
 use App\Models\UserFianceVisaType;
 use Auth;
+use Illuminate\Support\Facades\Validator;
 
 class SponsorController extends Controller
 {
@@ -89,6 +90,47 @@ class SponsorController extends Controller
 
     public function contact(Request $request, FianceSponsorService $fianceSponsor)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => ['required'],
+            'daytime_telephone_no' => ['required'],
+            'mobile_telephone_number' => ['required'],
+            'social_sec_no' => ['required'],
+            'diffrent_mailing_address' => ['required', 'in:yes,no'],
+        ], [
+            'email.required' => 'Please enter your email address.',
+            'daytime_telephone_no.required' => 'Please enter the daytime phone number.',
+            'mobile_telephone_number.required' => 'Please enter the mobile phone number.',
+            'social_sec_no.required' => 'Please enter the Social Security Number or mark Does Not Apply.',
+            'diffrent_mailing_address.required' => 'Please answer whether your mailing address is different.',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+            $uscisNumber = strtoupper(trim((string) $request->input('uscis_no')));
+            if ($uscisNumber === 'N/A') {
+                $validator->errors()->add('uscis_no', 'USCIS Online Account Number must be left blank unless USCIS explicitly provided one.');
+            }
+
+            $statusStepId = FianceSponsor::where('user_id', Auth::id())
+                ->where('name', 'status')
+                ->pluck('step_id')
+                ->first();
+            $statusStep = $statusStepId ? FianceVisaSubmittedStep::find($statusStepId) : null;
+            $currentStatus = $statusStep->detail['current_status'] ?? null;
+            $sponsorA = strtoupper(trim((string) $request->input('sponsor_a')));
+
+            if ($currentStatus === 'USCitizen' && $sponsorA !== '' && $sponsorA !== 'N/A') {
+                $validator->errors()->add('sponsor_a', 'A U.S. citizen petitioner must not have an A-Number.');
+            }
+        });
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 200);
+        }
+
         $step = $fianceSponsor->create($request);
         return response()->json([
             'status' => true,
@@ -111,6 +153,22 @@ class SponsorController extends Controller
 
     public function status(Request $request, FianceSponsorService $fianceSponsor)
     {
+        if ($request->input('current_status') === 'USCitizen') {
+            $contactStepId = FianceSponsor::where('user_id', Auth::id())
+                ->where('name', 'contact')
+                ->pluck('step_id')
+                ->first();
+            $contactStep = $contactStepId ? FianceVisaSubmittedStep::find($contactStepId) : null;
+            $sponsorA = strtoupper(trim((string) ($contactStep->detail['sponsor_a'] ?? '')));
+
+            if ($sponsorA !== '' && $sponsorA !== 'N/A') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'A U.S. citizen petitioner must not have an A-Number. Please return to the contact step and clear that field.',
+                ], 200);
+            }
+        }
+
         $step = $fianceSponsor->create($request);
         return response()->json([
             'status' => true,
@@ -214,6 +272,47 @@ class SponsorController extends Controller
 
     public function militaryAndConvictions(Request $request, FianceSponsorService $fianceSponsor)
     {
+        $validator = Validator::make($request->all(), [
+            'member_of_us' => ['required', 'in:yes,no'],
+            'protection' => ['required', 'in:yes,no'],
+            'violence' => ['required', 'in:yes,no'],
+            'manslaughter' => ['required', 'in:yes,no'],
+            'convictions' => ['required', 'in:yes,no'],
+            'drug_related' => ['required', 'in:yes,no'],
+            'specified_offense' => ['required', 'in:yes,no'],
+            'provide_information' => ['nullable', 'string'],
+            'provide_information1' => ['nullable', 'string'],
+        ], [
+            'member_of_us.required' => 'Please choose whether you are currently on active duty.',
+            'protection.required' => 'Please answer the protection or restraining order question.',
+            'violence.required' => 'Please answer the domestic violence question.',
+            'manslaughter.required' => 'Please answer the homicide or rape question.',
+            'convictions.required' => 'Please answer the controlled substance or alcohol question.',
+            'drug_related.required' => 'Please answer the arrests or convictions question.',
+            'specified_offense.required' => 'Please answer the specified offense against a minor question.',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+            if ($request->input('violence') === 'yes' && empty($request->input('battered'))) {
+                $validator->errors()->add('battered', 'Please select the explanation that applies to the domestic violence question.');
+            }
+
+            $this->validateLegalInfractionRows(
+                $request->all(),
+                $validator,
+                ['protection', 'violence', 'manslaughter', 'convictions', 'drug_related', 'specified_offense'],
+                'Petitioner'
+            );
+        });
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 200);
+        }
+
         $step = $fianceSponsor->create($request);
         return response()->json([
             'status' => true,
@@ -329,5 +428,67 @@ class SponsorController extends Controller
         }
         
         return $getCity;
-    }  
+    }
+
+    private function validateLegalInfractionRows(array $data, $validator, array $triggerFields, string $label): void
+    {
+        $requiresRows = false;
+
+        foreach ($triggerFields as $field) {
+            if (($data[$field] ?? null) === 'yes') {
+                $requiresRows = true;
+                break;
+            }
+        }
+
+        if (!$requiresRows) {
+            return;
+        }
+
+        $completedRows = 0;
+
+        for ($i = 1; $i <= 5; $i++) {
+            $charge = trim((string) ($data["legal_infraction_charge_name{$i}"] ?? ''));
+            $date = trim((string) ($data["legal_infraction_charge_date{$i}"] ?? ''));
+            $outcome = trim((string) ($data["legal_infraction_outcome{$i}"] ?? ''));
+
+            if ($charge === '' && $date === '' && $outcome === '') {
+                continue;
+            }
+
+            if ($charge === '' || $date === '' || $outcome === '') {
+                $validator->errors()->add(
+                    "legal_infraction_charge_name{$i}",
+                    "{$label} legal infractions require the exact charge name, mm/dd/yyyy date, and final outcome on each row used."
+                );
+
+                continue;
+            }
+
+            if (!$this->isValidUsDate($date)) {
+                $validator->errors()->add(
+                    "legal_infraction_charge_date{$i}",
+                    "{$label} legal infraction dates must be in mm/dd/yyyy format."
+                );
+
+                continue;
+            }
+
+            $completedRows++;
+        }
+
+        if ($completedRows === 0) {
+            $validator->errors()->add(
+                'legal_infraction_charge_name1',
+                "{$label} legal infractions must be entered one charge per row with exact charge name, mm/dd/yyyy date, and final outcome."
+            );
+        }
+    }
+
+    private function isValidUsDate(string $value): bool
+    {
+        $date = \DateTime::createFromFormat('m/d/Y', $value);
+
+        return $date !== false && $date->format('m/d/Y') === $value;
+    }
 }

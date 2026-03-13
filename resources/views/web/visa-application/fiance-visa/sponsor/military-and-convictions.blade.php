@@ -6,7 +6,12 @@
                 <div class="col-md-12">
                     <div class="heading mb-30">
                         <h2>Military Personnel Overseas</h2>
-                    </div>                    
+                    </div>
+                    <div class="alert alert-info">
+                        <strong>How to answer this section:</strong> every criminal-history yes/no answer must be completed.
+                        If any answer is <strong>Yes</strong>, enter each charge on its own row using the exact charge name, the charge date in <strong>mm/dd/yyyy</strong>, and the final outcome.
+                        If there were multiple charges in one case, still enter them separately.
+                    </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
@@ -156,13 +161,6 @@
                         </div>                        
                     </div>
                 </div>
-                <div class="col-md-12 drugRelatedSec" style="display: {{ @$step->detail['drug_related'] == 'yes' ? 'block' : 'none' }};">
-                    <div class="form-group">
-                        {{ Form::label('provide_information', 'Provide information about each of those arrests, citations, charges, indictments, convictions, fines, or imprisonments in the space below. If you were the subject of an order of protection or restraining order and believe you are the victim, please explain those circumstances and provide any evidence to support your claims. Include the dates and outcomes.') }}
-                            <span class="required">*</span>
-                        {{ Form::textarea('provide_information', @$step->detail['provide_information'], ['class' => 'form-control', 'rows' => 4]) }}
-                    </div>
-                </div>
                 <div class="col-md-12">
                     <div class="form-group">
                         <p class="text-danger specifiedOffenseP" style="display: none;">At this time, Boundless|RapidVisa is not able to help applicants who are convicted of any of the specified offense against a minor, as these applications require additional documentation and legal support outside the scope of the Boundless process. If you have already paid RapidVisa, please contact the Customer Success team so they can initiate a refund.</p>                        
@@ -194,10 +192,56 @@
                         </div>                        
                     </div>
                 </div>      
-                <div class="col-md-12 specifiedOffenseSec" style="display: {{ @$step->detail['specified_offense'] == 'yes' ? 'block' : 'none' }};">
+                @php
+                    $showLegalInfractions = in_array(@$step->detail['protection'], ['yes'], true)
+                        || in_array(@$step->detail['violence'], ['yes'], true)
+                        || in_array(@$step->detail['manslaughter'], ['yes'], true)
+                        || in_array(@$step->detail['convictions'], ['yes'], true)
+                        || in_array(@$step->detail['drug_related'], ['yes'], true)
+                        || in_array(@$step->detail['specified_offense'], ['yes'], true);
+                @endphp
+                <div class="col-md-12 legalInfractionsSec" style="display: {{ $showLegalInfractions ? 'block' : 'none' }};">
+                    <div class="alert alert-warning">
+                        <strong>Legal infractions:</strong> enter only information that matches the user's records.
+                        Use one row per charge with the exact charge name, the charge date in <strong>mm/dd/yyyy</strong>, and the final outcome.
+                    </div>
+                    @for ($i = 1; $i <= 5; $i++)
+                        <div class="row sponsorLegalInfractionRow mb-2">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    {{ Form::label("legal_infraction_charge_name{$i}", "Charge {$i} Name") }}
+                                    {{ Form::text("legal_infraction_charge_name{$i}", @$step->detail["legal_infraction_charge_name{$i}"], [
+                                        'class' => 'form-control',
+                                        'placeholder' => 'Exact charge name',
+                                    ]) }}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {{ Form::label("legal_infraction_charge_date{$i}", "Charge {$i} Date") }}
+                                    {{ Form::text("legal_infraction_charge_date{$i}", @$step->detail["legal_infraction_charge_date{$i}"], [
+                                        'class' => 'form-control datePicker',
+                                        'placeholder' => 'mm/dd/yyyy',
+                                    ]) }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {{ Form::label("legal_infraction_outcome{$i}", "Charge {$i} Final Outcome") }}
+                                    {{ Form::text("legal_infraction_outcome{$i}", @$step->detail["legal_infraction_outcome{$i}"], [
+                                        'class' => 'form-control',
+                                        'placeholder' => 'Final outcome',
+                                    ]) }}
+                                </div>
+                            </div>
+                        </div>
+                    @endfor
                     <div class="form-group">
-                        {{ Form::label('provide_information1', 'Provide information about each of those arrests, citations, charges, indictments, convictions, fines, or imprisonments in the space below. If you were the subject of an order of protection or restraining order and believe you are the victim, please explain those circumstances and provide any evidence to support your claims. Include the dates and outcomes. ') }}
-                            <span class="required">*</span>
+                        {{ Form::label('provide_information', 'Additional context for these legal infractions (optional)') }}
+                        {{ Form::textarea('provide_information', @$step->detail['provide_information'], ['class' => 'form-control', 'rows' => 4]) }}
+                    </div>
+                    <div class="form-group">
+                        {{ Form::label('provide_information1', 'Additional victim or restraining-order context (optional)') }}
                         {{ Form::textarea('provide_information1', @$step->detail['provide_information1'], ['class' => 'form-control', 'rows' => 4]) }}
                     </div>
                 </div>  
@@ -227,12 +271,9 @@
     {{ Form::close() }}
     <script type="text/javascript" src="{{asset('assets/js/date-range.js')}}"></script>
     <script type="text/javascript">
-        $(document).on('change', '.drugRelated', function(){
-            if ($(this).val() == 'yes') {
-                $('.drugRelatedSec').show();
-            } else {
-                $('.drugRelatedSec').hide();
-            }
+        $(document).ready(function(){
+            toggleSponsorLegalInfractions();
+            toggleSpecifiedOffenseWarning();
         });
 
         $(document).on('change', '.domesticViolence', function(){
@@ -243,16 +284,70 @@
                 $('.domesticViolenceSec').hide();
             }
         });    
-        
-        $(document).on('change', '.specifiedOffense', function(){
-            if ($(this).val() == 'yes') {
-                $('.specifiedOffenseSec').show();
-                $('.specifiedOffenseP').show();
-            } else {
-                $('.specifiedOffenseSec').hide();
-                $('.specifiedOffenseP').hide();
+
+        $(document).on('change', '.drugRelated, .domesticViolence, .specifiedOffense, input[name="protection"], input[name="manslaughter"], input[name="convictions"]', function(){
+            toggleSponsorLegalInfractions();
+            toggleSpecifiedOffenseWarning();
+        });
+
+        function sponsorLegalInfractionsRequired() {
+            return ['protection', 'violence', 'manslaughter', 'convictions', 'drug_related', 'specified_offense'].some(function(field) {
+                return $('input[name="' + field + '"]:checked').val() === 'yes';
+            });
+        }
+
+        function toggleSponsorLegalInfractions() {
+            $('.legalInfractionsSec').toggle(sponsorLegalInfractionsRequired());
+        }
+
+        function toggleSpecifiedOffenseWarning() {
+            $('.specifiedOffenseP').toggle($('.specifiedOffense:checked').val() === 'yes');
+        }
+
+        function validateSponsorLegalInfractionRows() {
+            if (!sponsorLegalInfractionsRequired()) {
+                return true;
             }
-        });     
+
+            const datePattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/;
+            let completedRows = 0;
+            let invalidMessage = '';
+
+            $('.sponsorLegalInfractionRow').each(function(index) {
+                const rowNumber = index + 1;
+                const charge = ($(this).find('[name="legal_infraction_charge_name' + rowNumber + '"]').val() || '').trim();
+                const date = ($(this).find('[name="legal_infraction_charge_date' + rowNumber + '"]').val() || '').trim();
+                const outcome = ($(this).find('[name="legal_infraction_outcome' + rowNumber + '"]').val() || '').trim();
+
+                if (!charge && !date && !outcome) {
+                    return;
+                }
+
+                if (!charge || !date || !outcome) {
+                    invalidMessage = 'Each legal-infraction row you use must include the exact charge name, mm/dd/yyyy date, and final outcome.';
+                    return false;
+                }
+
+                if (!datePattern.test(date)) {
+                    invalidMessage = 'Legal-infraction dates must use mm/dd/yyyy format.';
+                    return false;
+                }
+
+                completedRows += 1;
+            });
+
+            if (invalidMessage) {
+                toastr.error(invalidMessage);
+                return false;
+            }
+
+            if (completedRows === 0) {
+                toastr.error('Add at least one legal-infraction row when any criminal-history answer is Yes.');
+                return false;
+            }
+
+            return true;
+        }
 
         $("#fianceSponsorMilitaryAndConvictions").validate({
             rules: {
@@ -266,14 +361,10 @@
                     required: true,
                 },
                 battered: {
-                    required: true,
+                    required: function() {
+                        return $('.domesticViolence:checked').val() === 'yes';
+                    },
                 },
-                // battered2: {
-                //     required: true,
-                // },
-                // battered3: {
-                //     required: true,
-                // },
                 manslaughter: {
                     required: true,
                 },
@@ -283,13 +374,7 @@
                 drug_related: {
                     required: true,
                 },
-                provide_information: {
-                    required: true,
-                },
                 specified_offense: {
-                    required: true,
-                },
-                provide_information1: {
                     required: true,
                 },
             },
@@ -305,16 +390,16 @@
                protection: "Please choose option!",                                        
                violence: "Please choose option!",                                        
                battered: "Please choose option!",                                        
-            //    battered2: "Please choose option!",                                        
-            //    battered3: "Please choose option!",                                        
                manslaughter: "Please choose option!",                                        
                convictions: "Please choose option!",                                        
                drug_related: "Please choose option!",                                        
-               provide_information: "Please enter information!",                                        
                specified_offense: "Please choose option!",                                        
-               provide_information1: "Please enter information!",                                        
             },
             submitHandler: function(form) {
+                if (!validateSponsorLegalInfractionRows()) {
+                    return false;
+                }
+
                 $('#fianceSponsorMilitaryAndConvictionsBtn').html('Processing <i class="fa fa-spinner fa-spin"></i>');
                 var serializedData = $(form).serialize();
                 $.ajax({

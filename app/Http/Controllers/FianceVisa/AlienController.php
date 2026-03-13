@@ -41,6 +41,7 @@ use App\Models\State;
 use App\Models\EmbassyCity;
 use App\Models\UserFianceVisaType;
 use Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AlienController extends Controller
 {
@@ -156,6 +157,42 @@ class AlienController extends Controller
 
     public function address(Request $request, Alien $alien)
     {
+        $validator = Validator::make($request->all(), [
+            'number_and_street' => ['required'],
+            'apartment_suite_or_floor' => ['required'],
+            'apartment_suite_or_floor_no' => ['required'],
+            'town_or_city' => ['required'],
+            'country' => ['required'],
+            'state' => ['required'],
+            'province' => ['required'],
+            'postal_code' => ['required'],
+            'date_from' => ['required'],
+            'native_alphabet_name' => ['required'],
+            'native_alphabet_address' => ['required'],
+        ], [
+            'native_alphabet_name.required' => 'Please enter the beneficiary native alphabet name or N/A.',
+            'native_alphabet_address.required' => 'Please enter the beneficiary native alphabet address or N/A.',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+            if ($request->input('country') === 'Philippines') {
+                $nativeName = strtoupper(trim((string) $request->input('native_alphabet_name')));
+                $nativeAddress = strtoupper(trim((string) $request->input('native_alphabet_address')));
+
+                if ($nativeName !== 'N/A' || $nativeAddress !== 'N/A') {
+                    $validator->errors()->add('native_alphabet_name', 'For Philippine cases, the native alphabet section must be completed as N/A.');
+                }
+            }
+        });
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 200);
+        }
+
         $step = $alien->create($request);
         return response()->json([
             'status' => true,
@@ -210,8 +247,34 @@ class AlienController extends Controller
         ]);
     }
 
-    public function activity(Request $request, Alien $alien)
+    public function activity(ActivityRequest $request, Alien $alien)
     {
+        $validator = Validator::make($request->all(), [
+            'org_name1' => ['required_if:organization,yes'],
+            'clan_tribe_name' => ['required_if:clan_tribe,yes'],
+            'explain_conviction' => ['nullable', 'string'],
+        ], [
+            'org_name1.required_if' => 'Please enter at least one organization name.',
+            'clan_tribe_name.required_if' => 'Please enter the clan or tribe name.',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+            $this->validateLegalInfractionRows(
+                $request->all(),
+                $validator,
+                ['arrested_convicted'],
+                'Beneficiary'
+            );
+        });
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 200);
+        }
+
         $step = $alien->create($request);
         return response()->json([
             'status' => true,
@@ -254,7 +317,7 @@ class AlienController extends Controller
         ]);
     }
 
-    public function question1(Request $request, Alien $alien)
+    public function question1(Ques1Request $request, Alien $alien)
     {
         $step = $alien->create($request);
         return response()->json([
@@ -265,7 +328,7 @@ class AlienController extends Controller
         ]);
     }
 
-    public function question2(Request $request, Alien $alien)
+    public function question2(Ques2Request $request, Alien $alien)
     {
         $step = $alien->create($request);
         return response()->json([
@@ -276,7 +339,7 @@ class AlienController extends Controller
         ]);
     }
 
-    public function question3(Request $request, Alien $alien)
+    public function question3(Ques3Request $request, Alien $alien)
     {
         $step = $alien->create($request);
         return response()->json([
@@ -287,7 +350,7 @@ class AlienController extends Controller
         ]);
     }
 
-    public function question4(Request $request, Alien $alien)
+    public function question4(Ques4Request $request, Alien $alien)
     {
         $step = $alien->create($request);
         return response()->json([
@@ -298,7 +361,7 @@ class AlienController extends Controller
         ]);
     }
 
-    public function question5(Request $request, Alien $alien)
+    public function question5(Ques5Request $request, Alien $alien)
     {
         $step = $alien->create($request);
         if (FianceAlien::where('user_id', Auth::id())->count() == 21) {
@@ -352,5 +415,67 @@ class AlienController extends Controller
             $getCity .= '<option value='.$city.'>'.$city.'</option>';
         }
         return $getCity;
+    }
+
+    private function validateLegalInfractionRows(array $data, $validator, array $triggerFields, string $label): void
+    {
+        $requiresRows = false;
+
+        foreach ($triggerFields as $field) {
+            if (($data[$field] ?? null) === 'yes') {
+                $requiresRows = true;
+                break;
+            }
+        }
+
+        if (!$requiresRows) {
+            return;
+        }
+
+        $completedRows = 0;
+
+        for ($i = 1; $i <= 5; $i++) {
+            $charge = trim((string) ($data["legal_infraction_charge_name{$i}"] ?? ''));
+            $date = trim((string) ($data["legal_infraction_charge_date{$i}"] ?? ''));
+            $outcome = trim((string) ($data["legal_infraction_outcome{$i}"] ?? ''));
+
+            if ($charge === '' && $date === '' && $outcome === '') {
+                continue;
+            }
+
+            if ($charge === '' || $date === '' || $outcome === '') {
+                $validator->errors()->add(
+                    "legal_infraction_charge_name{$i}",
+                    "{$label} legal infractions require the exact charge name, mm/dd/yyyy date, and final outcome on each row used."
+                );
+
+                continue;
+            }
+
+            if (!$this->isValidUsDate($date)) {
+                $validator->errors()->add(
+                    "legal_infraction_charge_date{$i}",
+                    "{$label} legal infraction dates must be in mm/dd/yyyy format."
+                );
+
+                continue;
+            }
+
+            $completedRows++;
+        }
+
+        if ($completedRows === 0) {
+            $validator->errors()->add(
+                'legal_infraction_charge_name1',
+                "{$label} legal infractions must be entered one charge per row with exact charge name, mm/dd/yyyy date, and final outcome."
+            );
+        }
+    }
+
+    private function isValidUsDate(string $value): bool
+    {
+        $date = \DateTime::createFromFormat('m/d/Y', $value);
+
+        return $date !== false && $date->format('m/d/Y') === $value;
     }
 }
