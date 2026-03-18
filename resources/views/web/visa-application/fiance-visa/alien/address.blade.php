@@ -114,6 +114,129 @@
                         ]) }}
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ Form::label('date_to', 'Date To (mm/dd/yyyy)') }}
+                        <span class="required">*</span>
+                        {{ Form::text('date_to', @$step->detail['date_to'] ? @$step->detail['date_to'] : 'PRESENT', [
+                            'class' => 'form-control datePicker',
+                            'placeholder' => 'PRESENT or Enter Date'
+                        ]) }}
+                        <small class="text-muted">Enter PRESENT if you still live at this address.</small>
+                    </div>
+                </div>
+
+                {{-- Prior Physical Address (Address 2) --}}
+                <div class="col-md-12 mt-3">
+                    <h5>Prior Physical Address (Address 2)</h5>
+                    <p>Do you have a prior physical address to report?</p>
+                    <div class="form-group">
+                        <div class="radiogroup">
+                            <label class="custom-control custom-radio mb-0">
+                                {{ Form::radio('has_prior_address', 'no', @$step->detail['has_prior_address'] == 'no' || !isset($step->detail['has_prior_address']) ? true : '', [
+                                    'class' => 'custom-control-input alienHasPriorAddress'
+                                ]) }}
+                                <span class="custom-control-label"></span> No
+                            </label>
+                            <label class="custom-control custom-radio mb-0">
+                                {{ Form::radio('has_prior_address', 'yes', @$step->detail['has_prior_address'] == 'yes' ? true : '', [
+                                    'class' => 'custom-control-input alienHasPriorAddress'
+                                ]) }}
+                                <span class="custom-control-label"></span> Yes
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 alienPriorAddressSec" style="display: {{ @$step->detail['has_prior_address'] == 'yes' ? 'block' : 'none' }};">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('p_number_and_street', 'Street Number and Name') }}
+                                {{ Form::text('p_number_and_street', @$step->detail['p_number_and_street'], [
+                                    'class' => 'form-control',
+                                    'placeholder' => 'Enter number and street'
+                                ]) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('p_apartment_suite_or_floor', 'Apartment, Suite or Floor?') }}
+                                {{ Form::select('p_apartment_suite_or_floor', [
+                                    '' => 'Select',
+                                    'Apartment' => 'Apartment',
+                                    'Suite' => 'Suite',
+                                    'Floor' => 'Floor',
+                                    'Does Not Apply' => 'Does Not Apply'
+                                ], @$step->detail['p_apartment_suite_or_floor'], [
+                                    'class' => 'form-control'
+                                ]) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('p_apartment_suite_or_floor_no', 'Apartment, Suite or Floor Number') }}
+                                {{ Form::text('p_apartment_suite_or_floor_no', @$step->detail['p_apartment_suite_or_floor_no'], [
+                                    'class' => 'form-control',
+                                    'placeholder' => 'Enter number'
+                                ]) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('p_town_or_city', 'City or Town') }}
+                                {{ Form::text('p_town_or_city', @$step->detail['p_town_or_city'], [
+                                    'class' => 'form-control',
+                                    'placeholder' => 'Enter city or town'
+                                ]) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('p_province', 'Province') }}
+                                {{ Form::text('p_province', @$step->detail['p_province'], [
+                                    'class' => 'form-control',
+                                    'placeholder' => 'Enter province'
+                                ]) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('p_postal_code', 'Postal Code') }}
+                                {{ Form::text('p_postal_code', @$step->detail['p_postal_code'], [
+                                    'class' => 'form-control',
+                                    'placeholder' => 'Enter postal code'
+                                ]) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('p_country', 'Country') }}
+                                {{ Form::select('p_country', getAllCountry(), @$step->detail['p_country'], [
+                                    'class' => 'form-control'
+                                ]) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('p_date_from', 'Date From (mm/dd/yyyy)') }}
+                                {{ Form::text('p_date_from', @$step->detail['p_date_from'], [
+                                    'class' => 'form-control datePicker',
+                                    'placeholder' => 'Enter date'
+                                ]) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ Form::label('p_date_to', 'Date To (mm/dd/yyyy)') }}
+                                {{ Form::text('p_date_to', @$step->detail['p_date_to'], [
+                                    'class' => 'form-control datePicker',
+                                    'placeholder' => 'Enter date'
+                                ]) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-md-12 mt-3">
                     <div class="alert alert-info mb-0">
                         <strong>Native alphabet rule:</strong> complete this section exactly as it should appear on the package.
@@ -167,6 +290,14 @@
     {{ Form::close() }}
     <script type="text/javascript" src="{{asset('assets/js/date-range.js')}}"></script>
     <script type="text/javascript">
+        $(document).on('change', '.alienHasPriorAddress', function(){
+            if ($(this).val() == 'yes') {
+                $('.alienPriorAddressSec').show();
+            } else {
+                $('.alienPriorAddressSec').hide();
+            }
+        });
+
         $(document).ready(function(){
             getState(231);
             applyNativeAlphabetRule($('.countryId').val());
@@ -244,6 +375,24 @@
                 date_from: {
                     required: true,
                 },
+                date_to: {
+                    required: true,
+                },
+                p_number_and_street: {
+                    required: function() { return $('input[name=has_prior_address]:checked').val() == 'yes'; }
+                },
+                p_town_or_city: {
+                    required: function() { return $('input[name=has_prior_address]:checked').val() == 'yes'; }
+                },
+                p_country: {
+                    required: function() { return $('input[name=has_prior_address]:checked').val() == 'yes'; }
+                },
+                p_date_from: {
+                    required: function() { return $('input[name=has_prior_address]:checked').val() == 'yes'; }
+                },
+                p_date_to: {
+                    required: function() { return $('input[name=has_prior_address]:checked').val() == 'yes'; }
+                },
                 native_alphabet_name: {
                     required: true,
                 },
@@ -260,7 +409,13 @@
                country: "Please choose birth country!",
                state: "Please choose state!",
                 province: "Please enter province!",
-                date_from: "Please choose date!",              
+                date_from: "Please choose date!",
+                date_to: "Please enter date or PRESENT!",
+                p_number_and_street: "Please enter prior address street!",
+                p_town_or_city: "Please enter prior address city!",
+                p_country: "Please choose prior address country!",
+                p_date_from: "Please enter prior address date from!",
+                p_date_to: "Please enter prior address date to!",
                 native_alphabet_name: "Please enter the beneficiary name in native alphabet or N/A.",
                 native_alphabet_address: "Please enter the beneficiary address in native alphabet or N/A.",
             },

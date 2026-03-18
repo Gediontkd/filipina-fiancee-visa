@@ -17,7 +17,7 @@
                     use App\Helpers\PdfControlHelper;
                     
                     $activeSubmission = \App\Models\UserSubmittedApplication::where('user_id', Auth::id())
-                        ->where('status', 'pending')
+                        ->whereIn('status', ['pending', 'progress'])
                         ->with('visaApplication')
                         ->first();
                     

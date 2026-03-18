@@ -29,7 +29,7 @@ class ProfileController extends Controller
     
     // Get submitted application
     $submission = UserSubmittedApplication::where('user_id', Auth::id())
-        ->where('status', 'pending')
+        ->whereIn('status', ['pending', 'progress'])
         ->with('visaApplication')
         ->first();
     

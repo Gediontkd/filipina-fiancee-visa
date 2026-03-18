@@ -24,6 +24,105 @@
             </div>
         </div>
     </div>
+    {{-- Part 7: Preparer and/or Interpreter --}}
+    <div class="form-card mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="heading mb-30">
+                    <h2>Part 7 — Preparer and/or Interpreter (Optional)</h2>
+                    <p>Complete this section if someone other than you prepared or helped prepare this petition. Leave blank if you completed this form yourself.</p>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Did someone help you prepare or interpret this form?</label>
+                    <div class="radiogroup">
+                        <label class="custom-control custom-radio mb-0">
+                            {{ Form::radio('has_preparer', 'no', @$step->detail['has_preparer'] == 'no' ? true : (@$step->detail['has_preparer'] ? '' : true), [
+                                'class' => 'custom-control-input hasPreparer'
+                            ]) }}
+                            <span class="custom-control-label"></span> No
+                        </label>
+                        <label class="custom-control custom-radio mb-0">
+                            {{ Form::radio('has_preparer', 'yes', @$step->detail['has_preparer'] == 'yes' ? true : '', [
+                                'class' => 'custom-control-input hasPreparer'
+                            ]) }}
+                            <span class="custom-control-label"></span> Yes
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 preparerSec" style="display: {{ @$step->detail['has_preparer'] == 'yes' ? 'block' : 'none' }};">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ Form::label('preparer_family_name', 'Preparer Family Name (Last Name)') }}
+                            {{ Form::text('preparer_family_name', @$step->detail['preparer_family_name'], [
+                                'class' => 'form-control',
+                                'placeholder' => 'Enter last name'
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ Form::label('preparer_given_name', 'Preparer Given Name (First Name)') }}
+                            {{ Form::text('preparer_given_name', @$step->detail['preparer_given_name'], [
+                                'class' => 'form-control',
+                                'placeholder' => 'Enter first name'
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            {{ Form::label('preparer_business_name', 'Business or Organization Name (if applicable)') }}
+                            {{ Form::text('preparer_business_name', @$step->detail['preparer_business_name'], [
+                                'class' => 'form-control',
+                                'placeholder' => 'Enter business or organization name'
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ Form::label('preparer_daytime_phone', 'Preparer Daytime Phone Number') }}
+                            {{ Form::text('preparer_daytime_phone', @$step->detail['preparer_daytime_phone'], [
+                                'class' => 'form-control',
+                                'placeholder' => 'Enter phone number'
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ Form::label('preparer_email', 'Preparer Email Address') }}
+                            {{ Form::text('preparer_email', @$step->detail['preparer_email'], [
+                                'class' => 'form-control',
+                                'placeholder' => 'Enter email address'
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Did an interpreter assist in completing this form?</label>
+                            <div class="radiogroup">
+                                <label class="custom-control custom-radio mb-0">
+                                    {{ Form::radio('has_interpreter', 'no', @$step->detail['has_interpreter'] == 'no' ? true : (@$step->detail['has_interpreter'] ? '' : true), [
+                                        'class' => 'custom-control-input'
+                                    ]) }}
+                                    <span class="custom-control-label"></span> No
+                                </label>
+                                <label class="custom-control custom-radio mb-0">
+                                    {{ Form::radio('has_interpreter', 'yes', @$step->detail['has_interpreter'] == 'yes' ? true : '', [
+                                        'class' => 'custom-control-input'
+                                    ]) }}
+                                    <span class="custom-control-label"></span> Yes
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{ Form::hidden("remaingYear", 'valid', ['class' => "remaingYear"]) }}
     {!! Form::hidden('id', @$step->id) !!}
     {!! Form::hidden('name', 'employment') !!}
@@ -48,6 +147,14 @@
     {{ Form::close() }}
     <script type="text/javascript" src="{{ asset('assets/js/date-range.js') }}"></script>
     <script type="text/javascript">
+        $(document).on('change', '.hasPreparer', function() {
+            if ($(this).val() == 'yes') {
+                $('.preparerSec').show();
+            } else {
+                $('.preparerSec').hide();
+            }
+        });
+
         $(document).ready(function() {
             var checkLength = parseInt($('.emploperSection > .emploperSec').length);
             if (checkLength < 5) {
@@ -254,6 +361,19 @@
                 occupation_specify5: { required: true },
                 employement_start_date5: { required: true },
                 employement_end_date5: { required: false },
+                preparer_family_name: {
+                    required: function() { return $('input[name=has_preparer]:checked').val() == 'yes'; }
+                },
+                preparer_given_name: {
+                    required: function() { return $('input[name=has_preparer]:checked').val() == 'yes'; }
+                },
+                preparer_daytime_phone: {
+                    required: function() { return $('input[name=has_preparer]:checked').val() == 'yes'; }
+                },
+                preparer_email: {
+                    required: function() { return $('input[name=has_preparer]:checked').val() == 'yes'; },
+                    email: true
+                },
             },
             messages: {
                 full_name_of_employer1: "Please enter full name!",

@@ -228,6 +228,95 @@
                 </div>
             </div>
         </div>
+
+        {{-- Beneficiary Intended U.S. Address --}}
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h5>Beneficiary's Intended U.S. Address</h5>
+                <p>Provide the address where the beneficiary will live in the United States after entering on the K-1 visa.</p>
+                <div class="form-group">
+                    <label>Is the beneficiary's intended U.S. address the same as the petitioner's address?</label>
+                    <div class="radiogroup">
+                        <label class="custom-control custom-radio mb-0">
+                            {{ Form::radio('us_address_same_as_petitioner', 'yes', @$step->detail['us_address_same_as_petitioner'] == 'yes' ? true : (@$step->detail['us_address_same_as_petitioner'] ? '' : true), [
+                                'class' => 'custom-control-input usAddressSamePetitioner'
+                            ]) }}
+                            <span class="custom-control-label"></span> Yes (same as petitioner's address)
+                        </label>
+                        <label class="custom-control custom-radio mb-0 ms-3">
+                            {{ Form::radio('us_address_same_as_petitioner', 'no', @$step->detail['us_address_same_as_petitioner'] == 'no' ? true : '', [
+                                'class' => 'custom-control-input usAddressSamePetitioner'
+                            ]) }}
+                            <span class="custom-control-label"></span> No (different address)
+                        </label>
+                        <div class="us_address_same_as_petitioner"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 usDestinationAddressSec" style="display: {{ @$step->detail['us_address_same_as_petitioner'] == 'no' ? 'block' : 'none' }};">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ Form::label('us_dest_number_and_street', 'Street Number and Name') }}
+                            {{ Form::text('us_dest_number_and_street', @$step->detail['us_dest_number_and_street'], [
+                                'class' => 'form-control',
+                                'placeholder' => 'Enter number and street'
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ Form::label('us_dest_apartment_suite_or_floor', 'Apartment, Suite or Floor?') }}
+                            {{ Form::select('us_dest_apartment_suite_or_floor', [
+                                '' => 'Select',
+                                'Apartment' => 'Apartment',
+                                'Suite' => 'Suite',
+                                'Floor' => 'Floor',
+                                'Does Not Apply' => 'Does Not Apply'
+                            ], @$step->detail['us_dest_apartment_suite_or_floor'], [
+                                'class' => 'form-control'
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ Form::label('us_dest_apartment_suite_or_floor_no', 'Apartment, Suite or Floor Number') }}
+                            {{ Form::text('us_dest_apartment_suite_or_floor_no', @$step->detail['us_dest_apartment_suite_or_floor_no'], [
+                                'class' => 'form-control',
+                                'placeholder' => 'Enter number'
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ Form::label('us_dest_town_or_city', 'City or Town') }}
+                            {{ Form::text('us_dest_town_or_city', @$step->detail['us_dest_town_or_city'], [
+                                'class' => 'form-control',
+                                'placeholder' => 'Enter city or town'
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ Form::label('us_dest_state', 'State') }}
+                            {{ Form::select('us_dest_state', [], @$step->detail['us_dest_state'], [
+                                'class' => 'form-control usDestState',
+                                'data-state' => @$step->detail['us_dest_state']
+                            ]) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {{ Form::label('us_dest_zip_code', 'ZIP Code') }}
+                            {{ Form::text('us_dest_zip_code', @$step->detail['us_dest_zip_code'], [
+                                'class' => 'form-control',
+                                'placeholder' => 'Enter ZIP code'
+                            ]) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     {!! Form::hidden('id', @$step->id) !!}
     {!! Form::hidden('name', 'contact') !!}
@@ -253,6 +342,14 @@
     {{ Form::close() }}
 
     <script type="text/javascript">
+        $(document).on('change', '.usAddressSamePetitioner', function() {
+            if ($(this).val() == 'no') {
+                $('.usDestinationAddressSec').show();
+            } else {
+                $('.usDestinationAddressSec').hide();
+            }
+        });
+
         $(document).on('change', '.diffrentMailingAddress', function() {
             if ($(this).val() == 'yes') {
                 $('.diffrentMailingAddressSec').show();
@@ -264,6 +361,12 @@
         $(document).ready(function() {
             var state = $('.contactState').data('state');
             getState(231, state);
+            var usDestState = $('.usDestState').data('state');
+            if (usDestState) {
+                getUsDestState(231, usDestState);
+            } else {
+                getUsDestState(231);
+            }
         });
 
         $(document).on('change', '.countryId', function() {            
@@ -280,6 +383,20 @@
                 },
                 success: function(data) {
                     $('.contactState').html(data);
+                }
+            });
+        }
+
+        function getUsDestState(countryId, state='') {
+            $.ajax({
+                type: 'get',
+                url: "{{ route('getState') }}",
+                data: {
+                    countryId: countryId,
+                    state: state
+                },
+                success: function(data) {
+                    $('.usDestState').html(data);
                 }
             });
         }
@@ -319,6 +436,21 @@
                 diffrent_mailing_address: {
                     required: true,
                 },
+                us_address_same_as_petitioner: {
+                    required: true,
+                },
+                us_dest_number_and_street: {
+                    required: function() { return $('input[name=us_address_same_as_petitioner]:checked').val() == 'no'; }
+                },
+                us_dest_town_or_city: {
+                    required: function() { return $('input[name=us_address_same_as_petitioner]:checked').val() == 'no'; }
+                },
+                us_dest_state: {
+                    required: function() { return $('input[name=us_address_same_as_petitioner]:checked').val() == 'no'; }
+                },
+                us_dest_zip_code: {
+                    required: function() { return $('input[name=us_address_same_as_petitioner]:checked').val() == 'no'; }
+                },
                 in_care_name: {
                     required: true,
                 },
@@ -349,7 +481,7 @@
                 },
             },
             errorPlacement: function(error, element) {
-                if (element.attr("name") == "diffrent_mailing_address") {
+                if (element.attr("name") == "diffrent_mailing_address" || element.attr("name") == "us_address_same_as_petitioner") {
                     error.appendTo($("." + element.attr("name")));
                 } else {
                     error.insertAfter(element);
@@ -367,6 +499,11 @@
                 social_sec_no: "Please enter social securety number!",
                 uscis_no: "Please enter number!",
                 diffrent_mailing_address: "Please enter address!",
+                us_address_same_as_petitioner: "Please indicate the beneficiary's intended U.S. address!",
+                us_dest_number_and_street: "Please enter street number and name!",
+                us_dest_town_or_city: "Please enter city or town!",
+                us_dest_state: "Please choose state!",
+                us_dest_zip_code: "Please enter ZIP code!",
                 in_care_name: "Please enter name!",
                 apartment_suite_or_floor: "Please choose address!",
                 number_and_street: "Please address!",
