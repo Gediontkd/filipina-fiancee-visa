@@ -78,9 +78,16 @@ use App\Models\UserSubmittedApplication;
  * relationship  : met_in_person (yes|no), met_date, met_description,
  *                 intend_to_marry (yes|no), marriage_location
  *
- * employment    : full_name_of_employer1, employement_start_date1,
- *                 employement_end_date1 ('' if present), present_date ('1' if current),
- *                 [employer2–5 same pattern, leave blank if unused]
+ * employment    : per employer {i} (component field names from employer.blade.php):
+ *                   full_name_of_employer{i}, street_number_and_name{i},
+ *                   aptsteflr{i} (select: Apt|Ste|Flr|''), employerAptSteFlr{i} (bool),
+ *                   apt_ste_flr{i} (number), city{i}, state{i}, employerState{i} (bool),
+ *                   zip_postal_code{i}, zIPPostalCode{i} (bool), province{i},
+ *                   employerProvince{i} (bool), country{i}, occupation_specify{i},
+ *                   employement_start_date{i}, employement_end_date{i},
+ *                   employer{i} (hidden = index), remaingYears{i} (hidden = '5')
+ *                 present_date ('Present' for current employer)
+ *                 [employer2–5 same pattern, leave blank name/dates if unused]
  *                 has_preparer (yes|no)
  *                 [if yes → preparer_family_name, preparer_given_name,
  *                  preparer_business_name, preparer_daytime_phone, preparer_email,
@@ -133,13 +140,16 @@ class K1Mock1Seeder extends Seeder
 
         $submittedApp = UserSubmittedApplication::where('user_id', $user->id)
             ->where('application_id', 1)
-            ->where('status', 'pending')
+            ->whereIn('status', ['pending', 'progress'])
             ->first();
 
         if (!$submittedApp) {
-            $this->command->error('No pending K-1 application found for this user. Make sure the user has selected K-1 Fiancé(e) Visa first.');
+            $this->command->error('No K-1 application found for this user. Make sure the user has selected K-1 Fiancé(e) Visa first.');
             return;
         }
+
+        // Reset to pending so we can re-seed cleanly
+        $submittedApp->update(['status' => 'pending']);
 
         $submittedAppId = $submittedApp->id;
 
@@ -311,15 +321,48 @@ class K1Mock1Seeder extends Seeder
             //      Gap check: 08/31/2022 + 1 day = 09/01/2022 = start of employer 1 ✓
             //      Coverage : 05/15/2018 < 2021-03-17 (5 yrs ago) ✓
             'employment' => [
+                // Employer 1 — current (all fields match employer.blade.php component)
                 'full_name_of_employer1'   => 'Sullivan & Associates Law Group',
+                'street_number_and_name1'  => '321 N Clark Street',
+                'aptsteflr1'               => 'Ste',       // select: Apt|Ste|Flr|''
+                'employerAptSteFlr1'       => false,       // does-not-apply checkbox
+                'apt_ste_flr1'             => '1800',      // suite/floor number
+                'city1'                    => 'Chicago',
+                'state1'                   => 'Illinois',
+                'employerState1'           => false,
+                'zip_postal_code1'         => '60654',
+                'zIPPostalCode1'           => false,
+                'province1'                => 'N/A',
+                'employerProvince1'        => true,        // does-not-apply
+                'country1'                 => 'United States (+1)',
+                'occupation_specify1'      => 'Attorney',
                 'employement_start_date1'  => '09/01/2022',
-                'employement_end_date1'    => '',
-                'present_date'             => '1',
+                'employement_end_date1'    => 'Present',   // set by JS when Present? checked
+                'present_date'             => 'Present',   // component checks == 'Present'
+                'employer1'                => '1',         // hidden field
+                'remaingYears1'            => '5',
 
+                // Employer 2 — prior
                 'full_name_of_employer2'   => 'Midwest Legal Partners LLC',
+                'street_number_and_name2'  => '111 Monument Circle',
+                'aptsteflr2'               => 'Ste',
+                'employerAptSteFlr2'       => false,
+                'apt_ste_flr2'             => '400',
+                'city2'                    => 'Indianapolis',
+                'state2'                   => 'Indiana',
+                'employerState2'           => false,
+                'zip_postal_code2'         => '46204',
+                'zIPPostalCode2'           => false,
+                'province2'                => 'N/A',
+                'employerProvince2'        => true,
+                'country2'                 => 'United States (+1)',
+                'occupation_specify2'      => 'Associate Attorney',
                 'employement_start_date2'  => '05/15/2018',
                 'employement_end_date2'    => '08/31/2022',
+                'employer2'                => '2',
+                'remaingYears2'            => '5',
 
+                // Employers 3–5 unused
                 'full_name_of_employer3'   => '',
                 'employement_start_date3'  => '',
                 'employement_end_date3'    => '',
@@ -520,15 +563,48 @@ class K1Mock1Seeder extends Seeder
             //      NOTE: Python mock ends employer 2 on 02/28/2021 which creates a
             //      14-day gap; end date adjusted to 03/14/2021 to satisfy validation.
             'employment' => [
+                // Employer 1 — current (Philippine employer, no US state)
                 'full_name_of_employer1'   => 'BDO Unibank Inc',
+                'street_number_and_name1'  => '8737 Paseo de Roxas',
+                'aptsteflr1'               => '',           // no apt/ste/flr
+                'employerAptSteFlr1'       => true,         // does-not-apply
+                'apt_ste_flr1'             => '',
+                'city1'                    => 'Makati City',
+                'state1'                   => 'N/A',
+                'employerState1'           => true,         // does-not-apply (non-US)
+                'zip_postal_code1'         => '1226',
+                'zIPPostalCode1'           => false,
+                'province1'                => 'Metro Manila',
+                'employerProvince1'        => false,
+                'country1'                 => 'Philippines',
+                'occupation_specify1'      => 'Bank Teller',
                 'employement_start_date1'  => '03/15/2021',
-                'employement_end_date1'    => '',
-                'present_date'             => '1',
+                'employement_end_date1'    => 'Present',
+                'present_date'             => 'Present',
+                'employer1'                => '1',
+                'remaingYears1'            => '5',
 
+                // Employer 2 — prior
                 'full_name_of_employer2'   => 'Mountain Province Credit Cooperative',
+                'street_number_and_name2'  => '12 Session Road',
+                'aptsteflr2'               => '',
+                'employerAptSteFlr2'       => true,
+                'apt_ste_flr2'             => '',
+                'city2'                    => 'Baguio City',
+                'state2'                   => 'N/A',
+                'employerState2'           => true,
+                'zip_postal_code2'         => '2600',
+                'zIPPostalCode2'           => false,
+                'province2'                => 'Benguet',
+                'employerProvince2'        => false,
+                'country2'                 => 'Philippines',
+                'occupation_specify2'      => 'Loan Officer',
                 'employement_start_date2'  => '08/01/2018',
                 'employement_end_date2'    => '03/14/2021',
+                'employer2'                => '2',
+                'remaingYears2'            => '5',
 
+                // Employers 3–5 unused
                 'full_name_of_employer3'   => '',
                 'employement_start_date3'  => '',
                 'employement_end_date3'    => '',
