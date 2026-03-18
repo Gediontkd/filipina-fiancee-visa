@@ -9,6 +9,30 @@
                     </div>                    
                 </div>
                 
+                <!-- I-130 Question -->
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>
+                            Have you ever filed Form I-130, Petition for Alien Relative, for this beneficiary?
+                        </label>
+                        <div class="radiogroup">
+                            <label class="custom-control custom-radio mb-0">
+                                {{ Form::radio('i_130', 'no', @$step->detail['i_130'] == 'no' ? true : (@$step->detail['i_130'] ? '' : true), [
+                                    'class' => 'custom-control-input i130Radio'
+                                ]) }}
+                                <span class="custom-control-label"></span> No
+                            </label>
+                            <label class="custom-control custom-radio mb-0">
+                                {{ Form::radio('i_130', 'yes', @$step->detail['i_130'] == 'yes' ? true : '', [
+                                    'class' => 'custom-control-input i130Radio'
+                                ]) }}
+                                <span class="custom-control-label"></span> Yes
+                            </label>
+                            <div class="i_130"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Info Box - Added per Duane's request -->
                 <div class="col-md-12 mb-4">
                     <div class="alert" role="alert" style="background-color: #fff9e6; border-color: #ffe69c; color: #664d03;">
@@ -312,8 +336,15 @@
         }
             
 
+        $(document).on('change', '.i130Radio', function(){
+            // No conditional section needed; just record the answer
+        });
+
         $("#fianceSponsorOtherFilings").validate({
             rules: {
+                i_130: {
+                    required: true,
+                },
                 i_129F: {
                     required: true,
                 },
@@ -412,7 +443,7 @@
                 },
             },
             errorPlacement: function (error, element) {
-                if (element.attr("name") == "i_129F" || element.attr("name") == "situation" || element.attr("name") == "previous_filing" || element.attr("name") == "approved_i_129F" || element.attr("name") == "previously_filed") {
+                if (element.attr("name") == "i_130" || element.attr("name") == "i_129F" || element.attr("name") == "situation" || element.attr("name") == "previous_filing" || element.attr("name") == "approved_i_129F" || element.attr("name") == "previously_filed") {
                     error.appendTo($("."+element.attr("name")));
                 } else if (element.attr("name") == "waiver_document") {
                     error.appendTo($(".waiver_document"));
@@ -421,6 +452,7 @@
                 }               
             },
             messages: {
+               i_130: "Please choose option!",
                i_129F: "Please choose option!",                                                                   
                situation: "Please choose option!",
                waiver_document: {

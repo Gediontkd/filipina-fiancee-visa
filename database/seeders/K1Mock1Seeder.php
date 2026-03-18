@@ -11,13 +11,116 @@ use App\Models\UserFianceVisaType;
 use App\Models\UserSubmittedApplication;
 
 /**
- * Mock 1 — Edge cases: Prior K-1 filing, divorced petitioner, 3 physical addresses.
+ * Mock 1 — Edge cases: Prior K-1 filing, divorced petitioner, prior physical address.
  *
  * Petitioner : James Patrick Sullivan  (U.S. citizen, divorced, Chicago IL)
  *              → previously filed an I-129F that was approved (prior K-1)
  * Beneficiary: Anna Luz Mendoza        (Filipino national, Quezon City)
+ *
+ * ═══════════════════════════════════════════════════════════════════════════
+ * STANDARD FIELD MAPPING — use this as the reference for all K-1 seeders
+ * ═══════════════════════════════════════════════════════════════════════════
+ *
+ * SPONSOR STEPS (10 steps → type = 'sponsor')
+ * ─────────────────────────────────────────────
+ * name          : first_name, middle_name, last_name, gender (male|female),
+ *                 prior_name1 (yes|no), prior_fname1, prior_mname1, prior_lname1,
+ *                 prior_maiden_name1 (yes|no), prior_name2 (yes|no)
+ *
+ * contact       : email, daytime_telephone_no, mobile_telephone_number,
+ *                 social_sec_no (or 'N/A' + socialSecNo:true),
+ *                 uscis_no (''), sponsor_a (''),
+ *                 diffrent_mailing_address (yes|no)
+ *                 [if yes → in_care_name, number_and_street, apartment_suite_or_floor,
+ *                  apartment_suite_or_floor_no, town_or_city, country, state, province,
+ *                  postal_code (or 'N/A' + postalCode:true)]
+ *
+ * place-of-birth: country_of_birth, city_of_birth, state_of_birth, date_of_birth
+ *                 father_first_name, father_middle_name, father_last_name,
+ *                 father_date_of_birth, father_city_of_birth, father_country_of_birth,
+ *                 father_alive (yes|no)
+ *                 mother_first_name, mother_middle_name, mother_last_name,
+ *                 mother_date_of_birth, mother_city_of_birth, mother_country_of_birth,
+ *                 mother_alive (yes|no)
+ *
+ * status        : current_status (USCitizen|PermanentResident|USNational)
+ *                 height_feet, height_inches, weight_lbs, ethnicity, race[],
+ *                 hair_color, eye_color, citizenship_basis
+ *
+ * marital-status: current_marital_status (single|married|divorced|widowed)
+ *                 previous_marriages (yes|no)
+ *                 [if divorced/widowed → prior_spouse_fname1, prior_spouse_lname1,
+ *                  prior_marriage_date1, prior_divorce_date1, prior_divorce_place1]
+ *
+ * other-filings : i_130 (yes|no) ← "Have you filed I-130 for this beneficiary?"
+ *                 i_129F (yes|no), situation (situation1–4),
+ *                 waiver_document_path (null or path)
+ *                 [if yes → alien_fname1, alien_mname1, alien_mlname1,
+ *                  alien_reg_no1, alien_city_filing1, us_State1,
+ *                  date_of_filing1, results_of_App1]
+ *                 previous_filing (yes|no), approved_i_129F (yes|no)
+ *
+ * military-and-convictions: member_of_us (yes|no), protection (yes|no),
+ *                 violence (yes|no), manslaughter (yes|no), convictions (yes|no),
+ *                 drug_related (yes|no), specified_offense (yes|no)
+ *
+ * address       : in_care_name ('N/A' + inCareName:true if N/A),
+ *                 number_and_street, apartment_suite_or_floor (Apartment|Suite|Floor|Dose Not Apply),
+ *                 apartment_suite_or_floor_no, town_or_city,
+ *                 country (e.g. 'United States (+1)'), state, province, postal_code,
+ *                 date_from (mm/dd/yyyy), date_to (mm/dd/yyyy or 'PRESENT'),
+ *                 has_prior_address (yes|no)
+ *                 [if yes → p_number_and_street, p_apartment_suite_or_floor,
+ *                  p_apartment_suite_or_floor_no, p_town_or_city, p_country,
+ *                  p_state, p_zip_code, p_date_from, p_date_to]
+ *                 foreign_state1, foreign_country1 (residence since 18th birthday)
+ *
+ * relationship  : met_in_person (yes|no), met_date, met_description,
+ *                 intend_to_marry (yes|no), marriage_location
+ *
+ * employment    : full_name_of_employer1, employement_start_date1,
+ *                 employement_end_date1 ('' if present), present_date ('1' if current),
+ *                 [employer2–5 same pattern, leave blank if unused]
+ *                 has_preparer (yes|no)
+ *                 [if yes → preparer_family_name, preparer_given_name,
+ *                  preparer_business_name, preparer_daytime_phone, preparer_email,
+ *                  has_interpreter (yes|no)]
+ *
+ * ─────────────────────────────────────────────
+ * ALIEN STEPS (21 steps → type = 'alien')
+ * ─────────────────────────────────────────────
+ * name          : first_name, middle_name, last_name, gender (male|female),
+ *                 prior_name1 (yes|no), prior_fname1, prior_mname1, prior_lname1
+ *
+ * citizenship   : country_of_citizenship, country_of_birth, city_of_birth, date_of_birth
+ *
+ * embassy       : embassy_country, embassy_city
+ *
+ * contact       : email,
+ *                 country_code (e.g. 'Philippines (+63)'), telephone_number,
+ *                 mob_no_country, mob_telephone_number,
+ *                 reg_no ('N/A' + regNo:true if N/A),
+ *                 social_sec_no ('N/A' + socialSecNo:true if N/A),
+ *                 diffrent_mailing_address (yes|no),
+ *                 us_address_same_as_petitioner (yes|no)
+ *                 [if no → us_dest_number_and_street, us_dest_apartment_suite_or_floor,
+ *                  us_dest_apartment_suite_or_floor_no, us_dest_town_or_city,
+ *                  us_dest_state, us_dest_zip_code]
+ *
+ * address       : in_care_name, number_and_street,
+ *                 apartment_suite_or_floor (Apartment|Suite|Floor|Does Not Apply),
+ *                 apartment_suite_or_floor_no, town_or_city, country,
+ *                 state ('N/A' + dontHasState:true if no US state), province, postal_code,
+ *                 date_from (mm/dd/yyyy), date_to (mm/dd/yyyy or 'PRESENT'),
+ *                 has_prior_address (yes|no)
+ *                 [if yes → p_number_and_street, p_apartment_suite_or_floor,
+ *                  p_apartment_suite_or_floor_no, p_town_or_city, p_province,
+ *                  p_postal_code, p_country, p_date_from, p_date_to]
+ *                 native_alphabet_name ('N/A' for Philippines),
+ *                 native_alphabet_address ('N/A' for Philippines)
+ * ═══════════════════════════════════════════════════════════════════════════
  */
-class K1MockDataSeeder extends Seeder
+class K1Mock1Seeder extends Seeder
 {
     public function run(): void
     {
@@ -122,6 +225,8 @@ class K1MockDataSeeder extends Seeder
             // Edge case: prior approved K-1 filing → waiver requested with this petition
             // situation4 does NOT require an uploaded waiver document
             'other-filings' => [
+                // NEW: I-130 question (Have you ever filed I-130 for this beneficiary?)
+                'i_130'                 => 'no',
                 'i_129F'                => 'yes',
                 'situation'             => 'situation4',
                 'waiver_document_path'  => null,
@@ -145,38 +250,40 @@ class K1MockDataSeeder extends Seeder
                 'type'                 => 'sponsor',
             ],
 
-            // Three physical addresses over the last 5 years:
-            //   1. 740 N Wabash Ave, Apt 12C, Chicago IL 60611  (03/01/2023 – present)
-            //   2. 301 E Market St, Indianapolis IN 46204         (07/01/2021 – 02/28/2023)
-            //   3. Prior marital home — captured in additional info
+            // Two physical addresses:
+            //   1. 740 N Wabash Ave, Apt 12C, Chicago IL 60611  (03/01/2023 – PRESENT) ← current
+            //   2. 301 E Market St, Indianapolis IN 46204         (07/01/2021 – 02/28/2023) ← prior
             'address' => [
+                // Current physical address fields (match form field names exactly)
+                'in_care_name'             => 'N/A',
+                'inCareName'               => true,
                 'number_and_street'        => '740 N Wabash Avenue',
-                'apartment_suite_or_floor' => 'Apt 12C',
+                'apartment_suite_or_floor' => 'Apartment',   // SELECT: Apartment|Suite|Floor|Dose Not Apply
+                'apartment_suite_or_floor_no' => '12C',
                 'town_or_city'             => 'Chicago',
+                'country'                  => 'United States (+1)',
                 'state'                    => 'Illinois',
-                'country'                  => 'United States',
+                'province'                 => 'N/A',
+                'provinceOption'           => true,
                 'postal_code'              => '60611',
-                // Address 1 dates
-                'address_from1'            => '03/01/2023',
-                'address_to1'              => 'PRESENT',
-                // Address 2 (Indianapolis — post-divorce)
-                'number_and_street2'       => '301 E Market Street',
-                'apartment_suite_or_floor2'=> '',
-                'town_or_city2'            => 'Indianapolis',
-                'state2'                   => 'Indiana',
-                'country2'                 => 'United States',
-                'postal_code2'             => '46204',
-                'address_from2'            => '07/01/2021',
-                'address_to2'              => '02/28/2023',
-                // Address 3 (prior marital home)
-                'number_and_street3'       => '817 Meridian Street',
-                'apartment_suite_or_floor3'=> '',
-                'town_or_city3'            => 'Indianapolis',
-                'state3'                   => 'Indiana',
-                'country3'                 => 'United States',
-                'postal_code3'             => '46206',
-                'address_from3'            => '08/15/2010',
-                'address_to3'              => '06/30/2021',
+                'postalCode'               => false,
+                // Address 1 dates (date_from / date_to — the form field names)
+                'date_from'                => '03/01/2023',
+                'date_to'                  => 'PRESENT',
+                // Prior address toggle + Address 2 fields (p_ prefix matches form field names)
+                'has_prior_address'        => 'yes',
+                'p_number_and_street'      => '301 E Market Street',
+                'p_apartment_suite_or_floor'    => 'Does Not Apply',
+                'p_apartment_suite_or_floor_no' => '',
+                'p_town_or_city'           => 'Indianapolis',
+                'p_country'                => 'United States (+1)',
+                'p_state'                  => 'Indiana',
+                'p_zip_code'               => '46204',
+                'p_date_from'              => '07/01/2021',
+                'p_date_to'                => '02/28/2023',
+                // Residence history since 18th birthday (foreign_state / foreign_country)
+                'foreign_state1'           => 'Illinois',
+                'foreign_country1'         => 'United States',
                 'name'                     => 'address',
                 'next'                     => 'relationship',
                 'type'                     => 'sponsor',
@@ -224,6 +331,9 @@ class K1MockDataSeeder extends Seeder
                 'full_name_of_employer5'   => '',
                 'employement_start_date5'  => '',
                 'employement_end_date5'    => '',
+
+                // Part 7: Preparer (none in this case)
+                'has_preparer' => 'no',
 
                 'name' => 'employment',
                 'next' => 'employment',
@@ -301,14 +411,26 @@ class K1MockDataSeeder extends Seeder
             ],
 
             'contact' => [
-                'email'                   => 'anna.mendoza@example.com',
-                'daytime_telephone_no'    => '+63-2-8888-0147',
-                'mobile_telephone_number' => '+63-917-555-0147',
-                // US address (sponsor's address where she will live)
-                'us_daytime_phone'        => '312-555-0145',
-                'name'                    => 'contact',
-                'next'                    => 'marital-status',
-                'type'                    => 'alien',
+                'email'                        => 'anna.mendoza@example.com',
+                // Daytime phone — form field name is 'telephone_number' (with country_code select)
+                'country_code'                 => 'Philippines (+63)',
+                'telephone_number'             => '2-8888-0147',
+                // Mobile phone — form field name is 'mob_telephone_number'
+                'mob_no_country'               => 'Philippines (+63)',
+                'mob_telephone_number'         => '917-555-0147',
+                // Alien Registration Number (does not apply for new applicant)
+                'reg_no'                       => 'N/A',
+                'regNo'                        => true,
+                // US Social Security Number (does not apply)
+                'social_sec_no'                => 'N/A',
+                'socialSecNo'                  => true,
+                // Mailing address same as physical
+                'diffrent_mailing_address'     => 'no',
+                // Beneficiary's intended U.S. address (same as petitioner's)
+                'us_address_same_as_petitioner' => 'yes',
+                'name'                         => 'contact',
+                'next'                         => 'marital-status',
+                'type'                         => 'alien',
             ],
 
             'marital-status' => [
@@ -352,29 +474,42 @@ class K1MockDataSeeder extends Seeder
 
             // Philippine case → native_alphabet_name & native_alphabet_address must be 'N/A'
             'address' => [
-                'number_and_street'        => '14 Katipunan Avenue',
-                'apartment_suite_or_floor' => 'Apt 2A',
-                'town_or_city'             => 'Quezon City',
-                'state'                    => 'Metro Manila',
-                'country'                  => 'Philippines',
-                'postal_code'              => '1108',
-                'address_from1'            => '01/10/2021',
-                'address_to1'              => 'PRESENT',
-                // Previous address (Baguio City)
-                'number_and_street2'       => '56 Session Road',
-                'apartment_suite_or_floor2'=> '',
-                'town_or_city2'            => 'Baguio City',
-                'state2'                   => 'Benguet',
-                'country2'                 => 'Philippines',
-                'postal_code2'             => '2600',
-                'address_from2'            => '05/01/2017',
-                'address_to2'              => '01/09/2021',
+                // Current physical address (field names match alien/address.blade.php exactly)
+                'in_care_name'                  => 'N/A',
+                'inCareName'                    => true,
+                'number_and_street'             => '14 Katipunan Avenue',
+                'apartment_suite_or_floor'      => 'Apartment',   // SELECT value
+                'apartmentSuiteOrFloor'         => false,
+                'apartment_suite_or_floor_no'   => '2A',
+                'apartmentSuiteOrFloorNo'       => false,
+                'town_or_city'                  => 'Quezon City',
+                'country'                       => 'Philippines',
+                'state'                         => 'N/A',
+                'dontHasState'                  => true,          // "Does Not Apply" for US state
+                'province'                      => 'Metro Manila',
+                'provinceApply'                 => false,
+                'postal_code'                   => '1108',
+                'postalCode'                    => false,
+                // Date fields (form field names: date_from / date_to)
+                'date_from'                     => '01/10/2021',
+                'date_to'                       => 'PRESENT',
+                // Prior address toggle + prior address fields (p_ prefix)
+                'has_prior_address'             => 'yes',
+                'p_number_and_street'           => '56 Session Road',
+                'p_apartment_suite_or_floor'    => 'Does Not Apply',
+                'p_apartment_suite_or_floor_no' => '',
+                'p_town_or_city'                => 'Baguio City',
+                'p_province'                    => 'Benguet',
+                'p_postal_code'                 => '2600',
+                'p_country'                     => 'Philippines',
+                'p_date_from'                   => '05/01/2017',
+                'p_date_to'                     => '01/09/2021',
                 // Philippine case: native alphabet fields → N/A
-                'native_alphabet_name'     => 'N/A',
-                'native_alphabet_address'  => 'N/A',
-                'name'                     => 'address',
-                'next'                     => 'employment',
-                'type'                     => 'alien',
+                'native_alphabet_name'          => 'N/A',
+                'native_alphabet_address'       => 'N/A',
+                'name'                          => 'address',
+                'next'                          => 'employment',
+                'type'                          => 'alien',
             ],
 
             // Two employers covering > 5 years with no gaps:
