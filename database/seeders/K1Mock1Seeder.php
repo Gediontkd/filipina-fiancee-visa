@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\State;
 use App\Models\FianceVisaSubmittedStep;
 use App\Models\FianceSponsor;
 use App\Models\FianceAlien;
@@ -11,10 +12,10 @@ use App\Models\UserFianceVisaType;
 use App\Models\UserSubmittedApplication;
 
 /**
- * Mock 1 — Edge cases: Prior K-1 filing, divorced petitioner, prior physical address.
+ * Mock 1 — Edge cases: multiple I-129F filings (waiver needed), divorced petitioner, prior addresses.
  *
  * Petitioner : James Patrick Sullivan  (U.S. citizen, divorced, Chicago IL)
- *              → previously filed an I-129F that was approved (prior K-1)
+ *              → previously filed two I-129F petitions; waiver required (situation3)
  * Beneficiary: Anna Luz Mendoza        (Filipino national, Quezon City)
  *
  * ═══════════════════════════════════════════════════════════════════════════
@@ -31,63 +32,82 @@ use App\Models\UserSubmittedApplication;
  *                 social_sec_no (or 'N/A' + socialSecNo:true),
  *                 uscis_no (''), sponsor_a (''),
  *                 diffrent_mailing_address (yes|no)
- *                 [if yes → in_care_name, number_and_street, apartment_suite_or_floor,
- *                  apartment_suite_or_floor_no, town_or_city, country, state, province,
- *                  postal_code (or 'N/A' + postalCode:true)]
  *
- * place-of-birth: country_of_birth, city_of_birth, state_of_birth, date_of_birth
- *                 father_first_name, father_middle_name, father_last_name,
- *                 father_date_of_birth, father_city_of_birth, father_country_of_birth,
- *                 father_alive (yes|no)
- *                 mother_first_name, mother_middle_name, mother_last_name,
- *                 mother_date_of_birth, mother_city_of_birth, mother_country_of_birth,
- *                 mother_alive (yes|no)
+ * place-of-birth: s_dob (mm/dd/yyyy), s_city_of_birth, s_state_of_birth,
+ *                 s_country_of_birth (from getAllCountryForSponsor dropdown)
+ *                 father_last_name, father_first_name,
+ *                 father_middle_name (+ fatherMiddleName:bool for does-not-apply),
+ *                 father_dob (+ fatherDob:bool), father_city_or_province_of_birth,
+ *                 father_birth_country, he_deceased (yes|no),
+ *                 father_city_of_res (if alive), father_country (if alive)
+ *                 mother_maiden_last_name, mother_first_name,
+ *                 mother_middle_name (+ motherMiddleName:bool),
+ *                 mother_dob (+ motherDob:bool), mother_city_of_birth,
+ *                 mother_birth_country (+ motherBirthCountry:bool),
+ *                 she_deceased (yes|no),
+ *                 mother_city_of_res (if alive), mother_country (if alive)
  *
- * status        : current_status (USCitizen|PermanentResident|USNational)
- *                 height_feet, height_inches, weight_lbs, ethnicity, race[],
- *                 hair_color, eye_color, citizenship_basis
+ * status        : current_status (USCitizen|PermanentResident|Nationalborn)
+ *                 height_feet, height_inches, weight_pound,
+ *                 ethnicity (Not Hispanic or Latino|Hispanic or Latino),
+ *                 race (White|Asian|Black or African American|
+ *                       American Indian or Alaska Native|
+ *                       Native Hawaiian or Other Pacific Islander),
+ *                 hair_color (Black|Brown|Blond|Gray|White|Red|Sandy|Bald (No Hair)|Other),
+ *                 eye_color (Black|Blue|Brown|Gray|Green|Hazel|Maroon|Other|Pink),
+ *                 obtain_citizenship (Born in U.S.A|Naturalized|From Parents)
+ *                 [if Naturalized → certificate_citizenship (yes|no),
+ *                  if yes → naturalization_certificate, place_of_issue, dob]
  *
  * marital-status: current_marital_status (single|married|divorced|widowed)
  *                 previous_marriages (yes|no)
- *                 [if divorced/widowed → prior_spouse_fname1, prior_spouse_lname1,
- *                  prior_marriage_date1, prior_divorce_date1, prior_divorce_place1]
+ *                 [if divorced/widowed → prior_spouse_fname1, prior_spouse_mname1,
+ *                  prior_spouse_lname1, prior_marriage_date1 (''),
+ *                  prior_divorce_date1, prior_divorce_place1 ('')]
  *
  * other-filings : i_130 (yes|no) ← "Have you filed I-130 for this beneficiary?"
  *                 i_129F (yes|no), situation (situation1–4),
  *                 waiver_document_path (null or path)
- *                 [if yes → alien_fname1, alien_mname1, alien_mlname1,
- *                  alien_reg_no1, alien_city_filing1, us_State1,
+ *                 [if i_129F=yes → alien_fname1, alien_mname1, alien_mlname1,
+ *                  alien_reg_no1, alien_city_filing1, us_State1 (state ID),
  *                  date_of_filing1, results_of_App1]
  *                 previous_filing (yes|no), approved_i_129F (yes|no)
  *
  * military-and-convictions: member_of_us (yes|no), protection (yes|no),
  *                 violence (yes|no), manslaughter (yes|no), convictions (yes|no),
  *                 drug_related (yes|no), specified_offense (yes|no)
+ *                 [if any yes → provide_information, provide_information1]
  *
- * address       : in_care_name ('N/A' + inCareName:true if N/A),
- *                 number_and_street, apartment_suite_or_floor (Apartment|Suite|Floor|Dose Not Apply),
+ * address       : in_care_name ('' or 'N/A' + inCareName:true),
+ *                 number_and_street,
+ *                 apartment_suite_or_floor (Apartment|Suite|Floor|Dose Not Apply),
  *                 apartment_suite_or_floor_no, town_or_city,
- *                 country (e.g. 'United States (+1)'), state, province, postal_code,
+ *                 country (e.g. 'United States (+1)'), state (DB id via State model),
+ *                 province (+ provinceOption:bool), postal_code (+ postalCode:bool),
  *                 date_from (mm/dd/yyyy), date_to (mm/dd/yyyy or 'PRESENT'),
  *                 has_prior_address (yes|no)
  *                 [if yes → p_number_and_street, p_apartment_suite_or_floor,
  *                  p_apartment_suite_or_floor_no, p_town_or_city, p_country,
- *                  p_state, p_zip_code, p_date_from, p_date_to]
+ *                  p_state (DB id), p_zip_code, p_date_from, p_date_to]
  *                 foreign_state1, foreign_country1 (residence since 18th birthday)
  *
- * relationship  : met_in_person (yes|no), met_date, met_description,
- *                 intend_to_marry (yes|no), marriage_location
+ * relationship  : responsibility (yes|no) ← "Have you met in person?"
+ *                 res_text_2 (meeting story textarea)
+ *                 marriage_broker (yes|no) ← "Introduced by IMB?"
+ *                 [if yes → number_and_street, apartment_suite_or_floor_no,
+ *                  town_or_city, country, province (+ provinceOptional:bool),
+ *                  postal_code (+ postalCode:bool)]
  *
- * employment    : per employer {i} (component field names from employer.blade.php):
+ * employment    : per employer {i} (employer.blade.php component field names):
  *                   full_name_of_employer{i}, street_number_and_name{i},
  *                   aptsteflr{i} (select: Apt|Ste|Flr|''), employerAptSteFlr{i} (bool),
- *                   apt_ste_flr{i} (number), city{i}, state{i}, employerState{i} (bool),
- *                   zip_postal_code{i}, zIPPostalCode{i} (bool), province{i},
- *                   employerProvince{i} (bool), country{i}, occupation_specify{i},
+ *                   apt_ste_flr{i} (number), city{i}, state{i} (DB id),
+ *                   employerState{i} (bool), zip_postal_code{i},
+ *                   zIPPostalCode{i} (bool), province{i}, employerProvince{i} (bool),
+ *                   country{i}, occupation_specify{i},
  *                   employement_start_date{i}, employement_end_date{i},
  *                   employer{i} (hidden = index), remaingYears{i} (hidden = '5')
  *                 present_date ('Present' for current employer)
- *                 [employer2–5 same pattern, leave blank name/dates if unused]
  *                 has_preparer (yes|no)
  *                 [if yes → preparer_family_name, preparer_given_name,
  *                  preparer_business_name, preparer_daytime_phone, preparer_email,
@@ -110,14 +130,11 @@ use App\Models\UserSubmittedApplication;
  *                 social_sec_no ('N/A' + socialSecNo:true if N/A),
  *                 diffrent_mailing_address (yes|no),
  *                 us_address_same_as_petitioner (yes|no)
- *                 [if no → us_dest_number_and_street, us_dest_apartment_suite_or_floor,
- *                  us_dest_apartment_suite_or_floor_no, us_dest_town_or_city,
- *                  us_dest_state, us_dest_zip_code]
  *
  * address       : in_care_name, number_and_street,
  *                 apartment_suite_or_floor (Apartment|Suite|Floor|Does Not Apply),
  *                 apartment_suite_or_floor_no, town_or_city, country,
- *                 state ('N/A' + dontHasState:true if no US state), province, postal_code,
+ *                 state ('' + dontHasState:true if non-US), province, postal_code,
  *                 date_from (mm/dd/yyyy), date_to (mm/dd/yyyy or 'PRESENT'),
  *                 has_prior_address (yes|no)
  *                 [if yes → p_number_and_street, p_apartment_suite_or_floor,
@@ -153,6 +170,10 @@ class K1Mock1Seeder extends Seeder
 
         $submittedAppId = $submittedApp->id;
 
+        // Resolve US state IDs (state dropdown uses DB id as option value)
+        $stateMap = State::where('country_id', 231)->pluck('id', 'name')->toArray();
+        $sid = fn($name) => $stateMap[$name] ?? $name;
+
         // Clean up any existing steps for this user
         FianceVisaSubmittedStep::where('user_id', $user->id)->delete();
         FianceSponsor::where('user_id', $user->id)->delete();
@@ -168,19 +189,16 @@ class K1Mock1Seeder extends Seeder
 
             'name' => [
                 'classification_sought'  => 'K-1',
-                // Name order in the web form: first / middle / last
                 'first_name'             => 'James',
                 'middle_name'            => 'Patrick',
                 'last_name'              => 'Sullivan',
                 'gender'                 => 'male',
-                // Prior name used: Jim P Sullivan
                 'prior_name1'            => 'yes',
                 'prior_fname1'           => 'Jim',
                 'prior_mname1'           => 'P',
                 'prior_lname1'           => 'Sullivan',
                 'prior_maiden_name1'     => 'no',
                 'prior_name2'            => 'no',
-                'f_m_l_name'             => null,
                 'name'                   => 'name',
                 'next'                   => 'contact',
                 'type'                   => 'sponsor',
@@ -191,7 +209,6 @@ class K1Mock1Seeder extends Seeder
                 'daytime_telephone_no'     => '312-555-0189',
                 'mobile_telephone_number'  => '312-555-0290',
                 'social_sec_no'            => '222-33-4444',
-                // U.S. citizen → A-Number must be blank
                 'uscis_no'                 => '',
                 'sponsor_a'                => '',
                 'diffrent_mailing_address' => 'no',
@@ -201,45 +218,91 @@ class K1Mock1Seeder extends Seeder
             ],
 
             'place-of-birth' => [
-                'country_of_birth'  => 'United States',
-                'city_of_birth'     => 'Springfield',
-                'state_of_birth'    => 'Illinois',
-                'name'              => 'place-of-birth',
-                'next'              => 'status',
-                'type'              => 'sponsor',
+                // Sponsor birth fields (s_ prefix — blade uses s_dob, s_city_of_birth etc.)
+                's_dob'                          => '11/04/1980',
+                's_city_of_birth'                => 'Springfield',
+                's_state_of_birth'               => 'Illinois',
+                's_country_of_birth'             => 'United States',
+                // Father: Patrick Joseph Sullivan — alive, Springfield IL
+                'father_last_name'               => 'Sullivan',
+                'father_first_name'              => 'Patrick',
+                'father_middle_name'             => 'Joseph',
+                'fatherMiddleName'               => false,
+                'father_dob'                     => '03/15/1952',
+                'fatherDob'                      => false,
+                'father_city_or_province_of_birth' => 'Springfield',
+                'father_birth_country'           => 'United States',
+                'he_deceased'                    => 'no',
+                'father_city_of_res'             => 'Springfield',
+                'father_country'                 => 'United States',
+                // Mother: Catherine Marie O'Brien — alive, Peoria IL
+                'mother_maiden_last_name'        => "O'Brien",
+                'mother_first_name'              => 'Catherine',
+                'mother_middle_name'             => 'Marie',
+                'motherMiddleName'               => false,
+                'mother_dob'                     => '08/27/1955',
+                'motherDob'                      => false,
+                'mother_city_of_birth'           => 'Peoria',
+                'mother_birth_country'           => 'United States',
+                'motherBirthCountry'             => false,
+                'she_deceased'                   => 'no',
+                'mother_city_of_res'             => 'Peoria',
+                'mother_country'                 => 'United States',
+                'name'                           => 'place-of-birth',
+                'next'                           => 'status',
+                'type'                           => 'sponsor',
             ],
 
             'status' => [
-                'current_status' => 'USCitizen',
-                'name'           => 'status',
-                'next'           => 'marital-status',
-                'type'           => 'sponsor',
+                'current_status'     => 'USCitizen',
+                'height_feet'        => '6',
+                'height_inches'      => '0',
+                'weight_pound'       => '175',
+                'ethnicity'          => 'Not Hispanic or Latino',
+                'race'               => 'White',
+                'hair_color'         => 'Brown',
+                'eye_color'          => 'Green',
+                'obtain_citizenship' => 'Born in U.S.A',
+                'name'               => 'status',
+                'next'               => 'marital-status',
+                'type'               => 'sponsor',
             ],
 
-            // Edge case: divorced petitioner with one prior marriage
+            // Edge case: divorced petitioner with one prior marriage (Jennifer Walsh)
             'marital-status' => [
                 'current_marital_status' => 'divorced',
                 'previous_marriages'     => 'yes',
-                // Prior spouse: Jennifer Walsh — divorced 2021
                 'prior_spouse_fname1'    => 'Jennifer',
-                'prior_spouse_mname1'    => '',
+                'prior_spouse_mname1'    => '',          // NMI — not captured in form
                 'prior_spouse_lname1'    => 'Walsh',
-                'prior_marriage_date1'   => '08/15/2010',
-                'prior_divorce_date1'    => '06/30/2021',
-                'prior_divorce_place1'   => 'Indianapolis, Indiana',
+                'prior_marriage_date1'   => '',          // not captured in form
+                'prior_divorce_date1'    => '06/15/2021',
+                'prior_divorce_place1'   => '',          // not captured in form
                 'name'                   => 'marital-status',
                 'next'                   => 'other-filings',
                 'type'                   => 'sponsor',
             ],
 
-            // Edge case: prior approved K-1 filing → waiver requested with this petition
-            // situation4 does NOT require an uploaded waiver document
+            // Edge case: two prior I-129F filings → situation3 (request waiver with petition)
+            // Most recent: Sofia Reyes Vargas — filed 06/01/2025 — Withdrawn
+            // Older:       Maria Elena Santos  — filed 03/15/2019 — Approved (no travel)
             'other-filings' => [
-                // NEW: I-130 question (Have you ever filed I-130 for this beneficiary?)
                 'i_130'                 => 'no',
                 'i_129F'                => 'yes',
-                'situation'             => 'situation4',
+                'situation'             => 'situation3',
                 'waiver_document_path'  => null,
+                // Most recent I-129F filing details
+                'alien_fname1'          => 'Sofia',
+                'alien_mname1'          => 'Reyes',
+                'alien_mlname1'         => 'Vargas',
+                'alien_reg_no1'         => '',
+                'alien_city_filing1'    => '',
+                'us_State1'             => $sid('Illinois'),
+                'date_of_filing1'       => '06/01/2025',
+                'results_of_App1'       => 'Petition Withdrawn',
+                // Older filing (Part 8 — answered via previous_filing)
+                'previous_filing'       => 'yes',
+                'approved_i_129F'       => 'no',
                 'name'                  => 'other-filings',
                 'next'                  => 'military-and-convictions',
                 'type'                  => 'sponsor',
@@ -261,55 +324,46 @@ class K1Mock1Seeder extends Seeder
             ],
 
             // Two physical addresses:
-            //   1. 740 N Wabash Ave, Apt 12C, Chicago IL 60611  (03/01/2023 – PRESENT) ← current
-            //   2. 301 E Market St, Indianapolis IN 46204         (07/01/2021 – 02/28/2023) ← prior
+            //   1. 740 N Wabash Ave, Apt 12C, Chicago IL 60611  (03/01/2023 – PRESENT)
+            //   2. 301 E Market St, Indianapolis IN 46204         (07/01/2021 – 02/28/2023)
             'address' => [
-                // Current physical address fields (match form field names exactly)
-                'in_care_name'             => 'N/A',
-                'inCareName'               => true,
-                'number_and_street'        => '740 N Wabash Avenue',
-                'apartment_suite_or_floor' => 'Apartment',   // SELECT: Apartment|Suite|Floor|Dose Not Apply
-                'apartment_suite_or_floor_no' => '12C',
-                'town_or_city'             => 'Chicago',
-                'country'                  => 'United States (+1)',
-                'state'                    => 'Illinois',
-                'province'                 => 'N/A',
-                'provinceOption'           => true,
-                'postal_code'              => '60611',
-                'postalCode'               => false,
-                // Address 1 dates (date_from / date_to — the form field names)
-                'date_from'                => '03/01/2023',
-                'date_to'                  => 'PRESENT',
-                // Prior address toggle + Address 2 fields (p_ prefix matches form field names)
-                'has_prior_address'        => 'yes',
-                'p_number_and_street'      => '301 E Market Street',
-                'p_apartment_suite_or_floor'    => 'Does Not Apply',
+                'in_care_name'                  => '',
+                'inCareName'                    => false,
+                'number_and_street'             => '740 N Wabash Avenue',
+                'apartment_suite_or_floor'      => 'Apartment',
+                'apartment_suite_or_floor_no'   => '12C',
+                'town_or_city'                  => 'Chicago',
+                'country'                       => 'United States (+1)',
+                'state'                         => $sid('Illinois'),
+                'province'                      => 'N/A',
+                'provinceOption'                => true,
+                'postal_code'                   => '60611',
+                'postalCode'                    => false,
+                'date_from'                     => '03/01/2023',
+                'date_to'                       => 'PRESENT',
+                'has_prior_address'             => 'yes',
+                'p_number_and_street'           => '301 E Market Street',
+                'p_apartment_suite_or_floor'    => 'Dose Not Apply',
                 'p_apartment_suite_or_floor_no' => '',
-                'p_town_or_city'           => 'Indianapolis',
-                'p_country'                => 'United States (+1)',
-                'p_state'                  => 'Indiana',
-                'p_zip_code'               => '46204',
-                'p_date_from'              => '07/01/2021',
-                'p_date_to'                => '02/28/2023',
-                // Residence history since 18th birthday (foreign_state / foreign_country)
-                'foreign_state1'           => 'Illinois',
-                'foreign_country1'         => 'United States',
-                'name'                     => 'address',
-                'next'                     => 'relationship',
-                'type'                     => 'sponsor',
+                'p_town_or_city'                => 'Indianapolis',
+                'p_country'                     => 'United States (+1)',
+                'p_state'                       => $sid('Indiana'),
+                'p_zip_code'                    => '46204',
+                'p_date_from'                   => '07/01/2021',
+                'p_date_to'                     => '02/28/2023',
+                // Residence since 18th birthday (text fields)
+                'foreign_state1'                => 'Illinois',
+                'foreign_country1'              => 'United States',
+                'name'                          => 'address',
+                'next'                          => 'relationship',
+                'type'                          => 'sponsor',
             ],
 
+            // Met in person in Quezon City, April 2022; not via IMB
             'relationship' => [
-                'met_in_person'      => 'yes',
-                'met_date'           => '04/01/2022',
-                'met_description'    =>
-                    'We met in person in Quezon City, Philippines in April 2022 while ' .
-                    'petitioner was attending a legal conference. We have met in person ' .
-                    'on three subsequent occasions in Manila (July 2022, January 2023, ' .
-                    'and September 2023).',
-                'relationship_start' => '04/01/2022',
-                'intend_to_marry'    => 'yes',
-                'marriage_location'  => 'Philippines',
+                'responsibility'     => 'yes',   // "Have you met your fiancée in person?"
+                'res_text_2'         => 'SEE SUPPLEMENT: I-129F Explanation of meeting',
+                'marriage_broker'    => 'no',
                 'name'               => 'relationship',
                 'next'               => 'employment',
                 'type'               => 'sponsor',
@@ -318,38 +372,35 @@ class K1Mock1Seeder extends Seeder
             // Two employers covering > 5 years with no gaps:
             //   1. Sullivan & Associates Law Group   09/01/2022 – PRESENT
             //   2. Midwest Legal Partners LLC        05/15/2018 – 08/31/2022
-            //      Gap check: 08/31/2022 + 1 day = 09/01/2022 = start of employer 1 ✓
-            //      Coverage : 05/15/2018 < 2021-03-17 (5 yrs ago) ✓
             'employment' => [
-                // Employer 1 — current (all fields match employer.blade.php component)
+                // Employer 1 — current (US employer)
                 'full_name_of_employer1'   => 'Sullivan & Associates Law Group',
-                'street_number_and_name1'  => '321 N Clark Street',
-                'aptsteflr1'               => 'Ste',       // select: Apt|Ste|Flr|''
-                'employerAptSteFlr1'       => false,       // does-not-apply checkbox
-                'apt_ste_flr1'             => '1800',      // suite/floor number
+                'street_number_and_name1'  => '233 S Wacker Drive',
+                'aptsteflr1'               => '',
+                'employerAptSteFlr1'       => true,
+                'apt_ste_flr1'             => '',
                 'city1'                    => 'Chicago',
-                'state1'                   => 'Illinois',
+                'state1'                   => $sid('Illinois'),
                 'employerState1'           => false,
-                'zip_postal_code1'         => '60654',
+                'zip_postal_code1'         => '60606',
                 'zIPPostalCode1'           => false,
                 'province1'                => 'N/A',
-                'employerProvince1'        => true,        // does-not-apply
+                'employerProvince1'        => true,
                 'country1'                 => 'United States (+1)',
                 'occupation_specify1'      => 'Attorney',
                 'employement_start_date1'  => '09/01/2022',
-                'employement_end_date1'    => 'Present',   // set by JS when Present? checked
-                'present_date'             => 'Present',   // component checks == 'Present'
-                'employer1'                => '1',         // hidden field
+                'employement_end_date1'    => 'Present',
+                'present_date'             => 'Present',
+                'employer1'                => '1',
                 'remaingYears1'            => '5',
-
-                // Employer 2 — prior
+                // Employer 2 — prior (US employer)
                 'full_name_of_employer2'   => 'Midwest Legal Partners LLC',
                 'street_number_and_name2'  => '111 Monument Circle',
-                'aptsteflr2'               => 'Ste',
-                'employerAptSteFlr2'       => false,
-                'apt_ste_flr2'             => '400',
+                'aptsteflr2'               => '',
+                'employerAptSteFlr2'       => true,
+                'apt_ste_flr2'             => '',
                 'city2'                    => 'Indianapolis',
-                'state2'                   => 'Indiana',
+                'state2'                   => $sid('Indiana'),
                 'employerState2'           => false,
                 'zip_postal_code2'         => '46204',
                 'zIPPostalCode2'           => false,
@@ -361,26 +412,21 @@ class K1Mock1Seeder extends Seeder
                 'employement_end_date2'    => '08/31/2022',
                 'employer2'                => '2',
                 'remaingYears2'            => '5',
-
                 // Employers 3–5 unused
                 'full_name_of_employer3'   => '',
                 'employement_start_date3'  => '',
                 'employement_end_date3'    => '',
-
                 'full_name_of_employer4'   => '',
                 'employement_start_date4'  => '',
                 'employement_end_date4'    => '',
-
                 'full_name_of_employer5'   => '',
                 'employement_start_date5'  => '',
                 'employement_end_date5'    => '',
-
-                // Part 7: Preparer (none in this case)
-                'has_preparer' => 'no',
-
-                'name' => 'employment',
-                'next' => 'employment',
-                'type' => 'sponsor',
+                // Part 7: Preparer (none)
+                'has_preparer'             => 'no',
+                'name'                     => 'employment',
+                'next'                     => 'employment',
+                'type'                     => 'sponsor',
             ],
         ];
 
@@ -423,13 +469,11 @@ class K1Mock1Seeder extends Seeder
                 'last_name'                         => 'Mendoza',
                 'gender'                            => 'female',
                 'related_to_you'                    => 'no',
-                // Prior name used: Ana Mendoza
                 'prior_name1'                       => 'yes',
                 'prior_fname1'                      => 'Ana',
                 'prior_mname1'                      => '',
                 'prior_lname1'                      => 'Mendoza',
                 'prior_name2'                       => 'no',
-                'fMLName'                           => null,
                 'name'                              => 'name',
                 'next'                              => 'citizenship',
                 'type'                              => 'alien',
@@ -454,26 +498,18 @@ class K1Mock1Seeder extends Seeder
             ],
 
             'contact' => [
-                'email'                        => 'anna.mendoza@example.com',
-                // Daytime phone — form field name is 'telephone_number' (with country_code select)
-                'country_code'                 => 'Philippines (+63)',
-                'telephone_number'             => '2-8888-0147',
-                // Mobile phone — form field name is 'mob_telephone_number'
-                'mob_no_country'               => 'Philippines (+63)',
-                'mob_telephone_number'         => '917-555-0147',
-                // Alien Registration Number (does not apply for new applicant)
-                'reg_no'                       => 'N/A',
-                'regNo'                        => true,
-                // US Social Security Number (does not apply)
-                'social_sec_no'                => 'N/A',
-                'socialSecNo'                  => true,
-                // Mailing address same as physical
-                'diffrent_mailing_address'     => 'no',
-                // Beneficiary's intended U.S. address (same as petitioner's)
+                'email'                         => 'anna.mendoza@example.com',
+                'country_code'                  => 'Philippines (+63)',
+                'telephone_number'              => '+63-2-8888-0147',
+                'reg_no'                        => 'N/A',
+                'regNo'                         => true,
+                'social_sec_no'                 => 'N/A',
+                'socialSecNo'                   => true,
+                'diffrent_mailing_address'      => 'no',
                 'us_address_same_as_petitioner' => 'yes',
-                'name'                         => 'contact',
-                'next'                         => 'marital-status',
-                'type'                         => 'alien',
+                'name'                          => 'contact',
+                'next'                          => 'marital-status',
+                'type'                          => 'alien',
             ],
 
             'marital-status' => [
@@ -485,7 +521,7 @@ class K1Mock1Seeder extends Seeder
             ],
 
             'parents' => [
-                // Father: Ricardo Santos Mendoza
+                // Father: Ricardo Santos Mendoza — alive, Philippines
                 'father_first_name'           => 'Ricardo',
                 'father_middle_name'          => 'Santos',
                 'father_last_name'            => 'Mendoza',
@@ -494,7 +530,7 @@ class K1Mock1Seeder extends Seeder
                 'father_country_of_birth'     => 'Philippines',
                 'father_alive'                => 'yes',
                 'father_country_of_residence' => 'Philippines',
-                // Mother: Marites Oliveros Cruz
+                // Mother: Marites Oliveros Cruz — alive, Philippines
                 'mother_first_name'           => 'Marites',
                 'mother_middle_name'          => 'Oliveros',
                 'mother_last_name'            => 'Cruz',
@@ -515,31 +551,28 @@ class K1Mock1Seeder extends Seeder
                 'type'       => 'alien',
             ],
 
-            // Philippine case → native_alphabet_name & native_alphabet_address must be 'N/A'
+            // Philippine case: state = N/A (dontHasState:true), native alphabet = N/A
             'address' => [
-                // Current physical address (field names match alien/address.blade.php exactly)
-                'in_care_name'                  => 'N/A',
-                'inCareName'                    => true,
+                'in_care_name'                  => '',
+                'inCareName'                    => false,
                 'number_and_street'             => '14 Katipunan Avenue',
-                'apartment_suite_or_floor'      => 'Apartment',   // SELECT value
+                'apartment_suite_or_floor'      => 'Apartment',
                 'apartmentSuiteOrFloor'         => false,
                 'apartment_suite_or_floor_no'   => '2A',
                 'apartmentSuiteOrFloorNo'       => false,
                 'town_or_city'                  => 'Quezon City',
                 'country'                       => 'Philippines',
                 'state'                         => 'N/A',
-                'dontHasState'                  => true,          // "Does Not Apply" for US state
+                'dontHasState'                  => true,
                 'province'                      => 'Metro Manila',
                 'provinceApply'                 => false,
                 'postal_code'                   => '1108',
                 'postalCode'                    => false,
-                // Date fields (form field names: date_from / date_to)
                 'date_from'                     => '01/10/2021',
                 'date_to'                       => 'PRESENT',
-                // Prior address toggle + prior address fields (p_ prefix)
                 'has_prior_address'             => 'yes',
                 'p_number_and_street'           => '56 Session Road',
-                'p_apartment_suite_or_floor'    => 'Does Not Apply',
+                'p_apartment_suite_or_floor'    => 'Dose Not Apply',
                 'p_apartment_suite_or_floor_no' => '',
                 'p_town_or_city'                => 'Baguio City',
                 'p_province'                    => 'Benguet',
@@ -547,7 +580,6 @@ class K1Mock1Seeder extends Seeder
                 'p_country'                     => 'Philippines',
                 'p_date_from'                   => '05/01/2017',
                 'p_date_to'                     => '01/09/2021',
-                // Philippine case: native alphabet fields → N/A
                 'native_alphabet_name'          => 'N/A',
                 'native_alphabet_address'       => 'N/A',
                 'name'                          => 'address',
@@ -555,26 +587,21 @@ class K1Mock1Seeder extends Seeder
                 'type'                          => 'alien',
             ],
 
-            // Two employers covering > 5 years with no gaps:
+            // Two Philippine employers — no US state (employerState:true = does-not-apply)
             //   1. BDO Unibank Inc                        03/15/2021 – PRESENT
             //   2. Mountain Province Credit Cooperative   08/01/2018 – 03/14/2021
-            //      Gap check: 03/14/2021 + 1 day = 03/15/2021 = start of employer 1 ✓
-            //      Coverage : 08/01/2018 < 2021-03-17 (5 yrs ago) ✓
-            //      NOTE: Python mock ends employer 2 on 02/28/2021 which creates a
-            //      14-day gap; end date adjusted to 03/14/2021 to satisfy validation.
             'employment' => [
-                // Employer 1 — current (Philippine employer, no US state)
                 'full_name_of_employer1'   => 'BDO Unibank Inc',
-                'street_number_and_name1'  => '8737 Paseo de Roxas',
-                'aptsteflr1'               => '',           // no apt/ste/flr
-                'employerAptSteFlr1'       => true,         // does-not-apply
+                'street_number_and_name1'  => '8755 Paseo de Roxas',
+                'aptsteflr1'               => '',
+                'employerAptSteFlr1'       => true,
                 'apt_ste_flr1'             => '',
                 'city1'                    => 'Makati City',
                 'state1'                   => 'N/A',
-                'employerState1'           => true,         // does-not-apply (non-US)
+                'employerState1'           => true,
                 'zip_postal_code1'         => '1226',
                 'zIPPostalCode1'           => false,
-                'province1'                => 'Metro Manila',
+                'province1'               => 'Metro Manila',
                 'employerProvince1'        => false,
                 'country1'                 => 'Philippines',
                 'occupation_specify1'      => 'Bank Teller',
@@ -584,9 +611,8 @@ class K1Mock1Seeder extends Seeder
                 'employer1'                => '1',
                 'remaingYears1'            => '5',
 
-                // Employer 2 — prior
                 'full_name_of_employer2'   => 'Mountain Province Credit Cooperative',
-                'street_number_and_name2'  => '12 Session Road',
+                'street_number_and_name2'  => '10 Bokod Road',
                 'aptsteflr2'               => '',
                 'employerAptSteFlr2'       => true,
                 'apt_ste_flr2'             => '',
@@ -595,24 +621,21 @@ class K1Mock1Seeder extends Seeder
                 'employerState2'           => true,
                 'zip_postal_code2'         => '2600',
                 'zIPPostalCode2'           => false,
-                'province2'                => 'Benguet',
+                'province2'               => 'Benguet',
                 'employerProvince2'        => false,
                 'country2'                 => 'Philippines',
-                'occupation_specify2'      => 'Loan Officer',
+                'occupation_specify2'      => 'Accounts Clerk',
                 'employement_start_date2'  => '08/01/2018',
                 'employement_end_date2'    => '03/14/2021',
                 'employer2'                => '2',
                 'remaingYears2'            => '5',
 
-                // Employers 3–5 unused
                 'full_name_of_employer3'   => '',
                 'employement_start_date3'  => '',
                 'employement_end_date3'    => '',
-
                 'full_name_of_employer4'   => '',
                 'employement_start_date4'  => '',
                 'employement_end_date4'    => '',
-
                 'full_name_of_employer5'   => '',
                 'employement_start_date5'  => '',
                 'employement_end_date5'    => '',
@@ -698,20 +721,20 @@ class K1Mock1Seeder extends Seeder
             ],
 
             'question2' => [
-                'trafficking_offense'    => 'no',
-                'trafficking_activitie'  => 'no',
-                'significant_role'       => 'no',
-                'violated_controlled'    => 'no',
-                'illegal_activity'       => 'no',
-                'terrorist_activities'   => 'no',
-                'terrorist_orga'         => 'no',
-                'member_terr_orga'       => 'no',
-                'participated_genocide'  => 'no',
-                'participated_torture'   => 'no',
-                'withholding_custody'    => 'no',
-                'name'                   => 'question2',
-                'next'                   => 'question3',
-                'type'                   => 'alien',
+                'trafficking_offense'   => 'no',
+                'trafficking_activitie' => 'no',
+                'significant_role'      => 'no',
+                'violated_controlled'   => 'no',
+                'illegal_activity'      => 'no',
+                'terrorist_activities'  => 'no',
+                'terrorist_orga'        => 'no',
+                'member_terr_orga'      => 'no',
+                'participated_genocide' => 'no',
+                'participated_torture'  => 'no',
+                'withholding_custody'   => 'no',
+                'name'                  => 'question2',
+                'next'                  => 'question3',
+                'type'                  => 'alien',
             ],
 
             'question3' => [
@@ -731,23 +754,23 @@ class K1Mock1Seeder extends Seeder
             ],
 
             'question4' => [
-                'transplantation'      => 'no',
-                'civil_penalty'        => 'no',
-                'ordered_removed'      => 'no',
-                'ordered_removed_2'    => 'no',
-                'unlawfully_present'   => 'no',
-                'convicted_aggravated' => 'no',
-                'voluntarily_departed' => 'no',
-                'aggregate_at_any_time'=> 'no',
-                'withheld_custody'     => 'no',
-                'removed_deported'     => 'no',
-                'deportation_hearing'  => 'no',
-                'inadmissibilty'       => 'no',
-                'admitted_u_s'         => 'no',
-                'immigration_official' => 'no',
-                'name'                 => 'question4',
-                'next'                 => 'question5',
-                'type'                 => 'alien',
+                'transplantation'       => 'no',
+                'civil_penalty'         => 'no',
+                'ordered_removed'       => 'no',
+                'ordered_removed_2'     => 'no',
+                'unlawfully_present'    => 'no',
+                'convicted_aggravated'  => 'no',
+                'voluntarily_departed'  => 'no',
+                'aggregate_at_any_time' => 'no',
+                'withheld_custody'      => 'no',
+                'removed_deported'      => 'no',
+                'deportation_hearing'   => 'no',
+                'inadmissibilty'        => 'no',
+                'admitted_u_s'          => 'no',
+                'immigration_official'  => 'no',
+                'name'                  => 'question4',
+                'next'                  => 'question5',
+                'type'                  => 'alien',
             ],
 
             'question5' => [
@@ -792,14 +815,14 @@ class K1Mock1Seeder extends Seeder
             'status'  => 'completed',
         ]);
 
-        // Mark application as in-progress (all 10 sponsor + 21 alien steps complete)
+        // Mark application as in-progress
         $submittedApp->update(['status' => 'progress']);
 
-        $this->command->info("K-1 mock data seeded successfully.");
-        $this->command->info("  Petitioner : James Patrick Sullivan (james.sullivan@example.com)");
-        $this->command->info("  Beneficiary: Anna Luz Mendoza (Quezon City, Philippines)");
-        $this->command->info("  Sponsor steps : " . count($sponsorSteps) . "/10");
-        $this->command->info("  Alien steps   : " . count($alienSteps) . "/21");
-        $this->command->info("  Edge cases    : prior K-1 filing, divorced petitioner, 3 addresses");
+        $this->command->info('K-1 Mock 1 seeded successfully.');
+        $this->command->info('  Petitioner : James Patrick Sullivan (james.sullivan@example.com)');
+        $this->command->info('  Beneficiary: Anna Luz Mendoza (Quezon City, Philippines)');
+        $this->command->info('  Edge cases : multiple I-129F filings (waiver), divorced petitioner, prior addresses');
+        $this->command->info('  Sponsor steps : ' . count($sponsorSteps) . '/10');
+        $this->command->info('  Alien steps   : ' . count($alienSteps) . '/21');
     }
 }
